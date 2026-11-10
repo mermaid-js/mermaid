@@ -107,8 +107,8 @@ describe('slideEdgesOffClusterTitles', () => {
     x: CENTRE,
     y: 210,
   });
-  const slide = (edges: any[], nodes: any[], topMargin = 0) =>
-    slideEdgesOffClusterTitles(edges, nodes, topMargin);
+  const slide = (edges: any[], nodes: any[], topMargin = 0, cornerRadius?: number) =>
+    slideEdgesOffClusterTitles(edges, nodes, topMargin, cornerRadius);
 
   it.each([101.734375, 123.28125])(
     'slides a straight edge to the right of a %s wide title it runs through',
@@ -723,6 +723,43 @@ describe('slideEdgesOffClusterTitles', () => {
     });
   });
 
+  describe('an edge that ends on a rounded node', () => {
+    const NARROW_CORNER = 5;
+    const WIDE_CORNER = 12;
+    // Puts the slid column between the arrowhead margin and a wide corner.
+    const beyondTheWideCorner = 2 * (NODE_RIGHT - ARROWHEAD_HALF_WIDTH - 2 - TITLE_GAP - CENTRE);
+
+    it('slides onto the flat of its side while the corner is narrower than an arrowhead', () => {
+      const stock = frame(beyondTheWideCorner);
+      const edge = labelled(straight());
+
+      slide([edge], [stock, node('A', 99), node('B', 370, 'rounded')], 0, NARROW_CORNER);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    });
+
+    it.each(['rounded', 'roundedRect'])(
+      'leaves a %s node end where it is rather than slide it onto a corner wider than the arrowhead margin',
+      (shape) => {
+        const stock = frame(beyondTheWideCorner);
+        const edge = labelled(straight());
+
+        slide([edge], [stock, node('A', 99), node('B', 370, shape)], 0, WIDE_CORNER);
+
+        expect(edge.points[0].x).toBe(CENTRE);
+      }
+    );
+
+    it('lets a square node end take the same column under a wide corner radius', () => {
+      const stock = frame(beyondTheWideCorner);
+      const edge = labelled(straight());
+
+      slide([edge], [stock, node('A', 99), node('B', 370)], 0, WIDE_CORNER);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    });
+  });
+
   it('keeps the title where it is when the top margin puts it below the edge', () => {
     const stock = frame(101.734375);
     const points = straight().slice(0, 3);
@@ -796,6 +833,35 @@ describe('an edge into a titled frame', () => {
         .map((title: any) => `${edge.id} x ${title.id}`)
     );
   };
+
+  describe('whose end node is rounded', () => {
+    const WIDE_CORNER = 24;
+    const roundedChain = (themeVariables?: Record<string, unknown>) => {
+      const data = chain('TB', [107.859375, 101.734375, 123.28125]);
+      data.nodes.find(({ id }: any) => id === 'B').shape = 'rounded';
+      data.config.themeVariables = themeVariables;
+      return data;
+    };
+
+    it.each([
+      ['no theme radius', undefined],
+      ['a radius that is not a number', { radius: String(WIDE_CORNER) }],
+    ])('steps past the title with %s', async (_, themeVariables) => {
+      const data = roundedChain(themeVariables);
+
+      await runElkLayoutCore(data, elkRenderContext);
+
+      expect(crossings(data)).toEqual([]);
+    });
+
+    it('stays on the title rather than end on a corner of the theme radius', async () => {
+      const data = roundedChain({ radius: WIDE_CORNER });
+
+      await runElkLayoutCore(data, elkRenderContext);
+
+      expect(crossings(data)).toContain('L_A_B_0 x stock');
+    });
+  });
 
   it.each([
     ['the title widths a short label gives', [107.859375, 101.734375, 123.28125]],

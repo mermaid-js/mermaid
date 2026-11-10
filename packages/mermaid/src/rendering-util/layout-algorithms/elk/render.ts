@@ -1990,10 +1990,17 @@ const TITLE_EDGE_GAP = 4;
 const SLID_EDGE_SEPARATION = 2 * ARROWHEAD_HALF_WIDTH;
 
 /**
- * Node shapes whose top and bottom sides are straight across the whole width,
- * so an edge end that slides along the side stays on the outline.
+ * Node shapes whose top and bottom sides are straight, so an edge end that
+ * slides along the side stays on the outline: across the whole width, or
+ * between the corners for the rounded ones.
  */
 const FLAT_SIDED_SHAPES = new Set(['rect', 'squareRect', 'rounded', 'roundedRect']);
+
+/** The flat-sided shapes `roundedRect` draws, with corners of the theme's `radius`. */
+const ROUNDED_SHAPES = new Set(['rounded', 'roundedRect']);
+
+/** The corner radius `roundedRect` draws when the theme sets none. */
+const ROUNDED_RECT_DEFAULT_RADIUS = 5;
 
 /** A maximal stretch of a route that runs straight down or up, as indices into its points. */
 interface VerticalRun {
@@ -2012,6 +2019,8 @@ interface TitleSlideContext {
   nodeBoxes: Box[];
   nodeById: Map<string, Node>;
   edges: RoutedEdge[];
+  /** The radius of the corners of a rounded node. */
+  cornerRadius: number;
 }
 
 function placedBox(node: Node): Box | undefined {
@@ -2105,11 +2114,15 @@ function withoutRepeats(route: P[]): P[] {
   );
 }
 
-function standsOnFlatSide(node: Node | undefined, x: number): boolean {
+function standsOnFlatSide(node: Node | undefined, x: number, cornerRadius: number): boolean {
+  const shape = node?.shape ?? 'rect';
+  const corner = ROUNDED_SHAPES.has(shape)
+    ? Math.max(ARROWHEAD_HALF_WIDTH, cornerRadius)
+    : ARROWHEAD_HALF_WIDTH;
   return (
     node?.x !== undefined &&
-    FLAT_SIDED_SHAPES.has(node.shape ?? 'rect') &&
-    Math.abs(x - node.x) <= (node.width ?? 0) / 2 - ARROWHEAD_HALF_WIDTH
+    FLAT_SIDED_SHAPES.has(shape) &&
+    Math.abs(x - node.x) <= (node.width ?? 0) / 2 - corner
   );
 }
 
@@ -2119,13 +2132,13 @@ function runEndsFit(
   run: VerticalRun,
   lastIndex: number,
   x: number,
-  nodeById: Map<string, Node>
+  { nodeById, cornerRadius }: TitleSlideContext
 ): boolean {
   const ends = [
     ...(run.first === 0 ? [edge.start] : []),
     ...(run.last === lastIndex ? [edge.end] : []),
   ];
-  return ends.every((id) => standsOnFlatSide(id ? nodeById.get(id) : undefined, x));
+  return ends.every((id) => standsOnFlatSide(id ? nodeById.get(id) : undefined, x, cornerRadius));
 }
 
 /**
@@ -2238,7 +2251,7 @@ function slideFits(target: SlideTarget, slid: SlidRoute, context: TitleSlideCont
   const x = moved.new.a.x;
   const others = context.edges.filter((other) => other !== edge);
   return (
-    runEndsFit(edge, run, points.length - 1, x, context.nodeById) &&
+    runEndsFit(edge, run, points.length - 1, x, context) &&
     legsKeepHeading(points, run, x) &&
     countHits(route, context.titles) < target.titlesCrossed &&
     !crowdsOtherEdge(moved.new.a, moved.new.b, others) &&
@@ -2298,7 +2311,8 @@ function slideRunOffTitle(
 export function slideEdgesOffClusterTitles(
   edges: Edge[],
   nodes: LayoutData['nodes'],
-  titleTopMargin: number
+  titleTopMargin: number,
+  cornerRadius = ROUNDED_RECT_DEFAULT_RADIUS
 ): { edge: Edge; runs: StraightenedRun[] }[] {
   const titles = nodes.map((node) => plainTitleBox(node, titleTopMargin)).filter(isBox);
   if (titles.length === 0) {
@@ -2313,6 +2327,7 @@ export function slideEdgesOffClusterTitles(
       .filter(isBox),
     nodeById: new Map(nodes.map((node) => [node.id, node])),
     edges: routed,
+    cornerRadius,
   };
   const changed: { edge: Edge; runs: StraightenedRun[] }[] = [];
   for (const edge of routed) {
@@ -2503,7 +2518,13 @@ function applyElkEdgeLayout(
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins({
     flowchart: data4Layout.config.flowchart ?? {},
   });
-  slideEdgesOffClusterTitles(data4Layout.edges, data4Layout.nodes, subGraphTitleTopMargin);
+  const radius: unknown = data4Layout.config.themeVariables?.radius;
+  slideEdgesOffClusterTitles(
+    data4Layout.edges,
+    data4Layout.nodes,
+    subGraphTitleTopMargin,
+    typeof radius === 'number' ? radius : ROUNDED_RECT_DEFAULT_RADIUS
+  );
   for (const [layoutEdge, ports] of terminalLabelPorts) {
     followMovedEndpoints(layoutEdge, ports);
   }
