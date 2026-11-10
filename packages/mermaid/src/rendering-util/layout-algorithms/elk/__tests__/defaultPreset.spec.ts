@@ -208,6 +208,43 @@ describe('ELK graph wrapping configuration', () => {
     }
   );
 
+  const boxContainerAspectRatio = '2.0';
+  const boxContainer = (crossEdge: boolean) => {
+    mermaidAPI.initialize({ elk: { wrappingStrategy: 'MULTI_EDGE', aspectRatio: 3 } });
+    return buildElkGraphFromLayoutData(
+      {
+        direction: 'TB',
+        config: getConfig(),
+        edges: crossEdge ? [{ id: 'e0', start: 'outside', end: 'child' }] : [],
+        nodes: [
+          {
+            id: 'group',
+            isGroup: true,
+            label: 'Group',
+            padding: 8,
+            metadata: { algorithm: 'elk.box' },
+          },
+          { id: 'child', parentId: 'group', label: 'Child', width: 100, height: 40 },
+          { id: 'outside', label: 'Outside', width: 100, height: 40 },
+        ],
+      } as any,
+      context
+    ).nodeDb.group.layoutOptions;
+  };
+
+  it('keeps the container algorithm and its own aspect ratio without a cross-boundary edge', () => {
+    const options = boxContainer(false);
+    expect(options?.['elk.algorithm']).toBe('elk.box');
+    expect(options?.['elk.aspectRatio']).toBe(boxContainerAspectRatio);
+  });
+
+  it('restores the configured aspect ratio on a container that falls back to layered', () => {
+    const options = boxContainer(true);
+    expect(options?.['elk.algorithm']).toBeUndefined();
+    expect(options?.['elk.layered.wrapping.strategy']).toBe('MULTI_EDGE');
+    expect(options?.['elk.aspectRatio']).toBe(3);
+  });
+
   it.each([
     [undefined, '1.6'],
     [4, 4],

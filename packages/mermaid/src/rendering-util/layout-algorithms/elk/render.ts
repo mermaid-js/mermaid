@@ -266,11 +266,18 @@ const CONTAINER_ALGORITHM_OVERRIDES = [
 
 /**
  * Undo the algorithm-scoped options on a container, restoring the values a
- * plain subgraph would have had.
+ * plain subgraph would have had. `aspectRatio` is the configured
+ * `elk.aspectRatio`, which a plain subgraph carries for its own wrapping.
  */
-export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unknown>): void {
+export function clearContainerAlgorithmOptions(
+  layoutOptions: Record<string, unknown>,
+  aspectRatio?: number
+): void {
   for (const key of CONTAINER_ALGORITHM_OVERRIDES) {
     delete layoutOptions[key];
+  }
+  if (aspectRatio !== undefined) {
+    layoutOptions['elk.aspectRatio'] = aspectRatio;
   }
   // `spacing.baseValue` and `spacing.nodeNode` are base options that the
   // rectpacking overrides stomp on, so restore the defaults rather than leaving
@@ -728,7 +735,13 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
-  configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  configureCrossHierarchyEdges(
+    elkGraph,
+    nodeDb,
+    parentLookupDb,
+    data4Layout.config.elk?.aspectRatio,
+    elkContext.log
+  );
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
@@ -1329,6 +1342,7 @@ function configureCrossHierarchyEdges(
   elkGraph: { edges: any[] },
   nodeDb: Record<string, NodeWithVertex>,
   parentLookupDb: TreeData,
+  aspectRatio: number | undefined,
   log: ElkLayoutContext['log']
 ): void {
   log.debug('APA01 processing edges, count:', elkGraph.edges.length);
@@ -1342,8 +1356,8 @@ function configureCrossHierarchyEdges(
 
     if (nodeDb[source] && nodeDb[target] && nodeDb[source].parentId !== nodeDb[target].parentId) {
       const ancestorId = findCommonAncestor(source, target, parentLookupDb);
-      setIncludeChildrenPolicy(nodeDb, source, ancestorId, log);
-      setIncludeChildrenPolicy(nodeDb, target, ancestorId, log);
+      setIncludeChildrenPolicy(nodeDb, source, ancestorId, aspectRatio, log);
+      setIncludeChildrenPolicy(nodeDb, target, ancestorId, aspectRatio, log);
     }
   });
 }
@@ -1352,6 +1366,7 @@ function setIncludeChildrenPolicy(
   nodeDb: Record<string, NodeWithVertex>,
   nodeId: string,
   ancestorId: string,
+  aspectRatio: number | undefined,
   log: ElkLayoutContext['log']
 ): void {
   const node = nodeDb[nodeId];
@@ -1370,13 +1385,13 @@ function setIncludeChildrenPolicy(
     resolveContainerAlgorithm(node.metadata?.algorithm)
   ) {
     log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
-    clearContainerAlgorithmOptions(node.layoutOptions);
+    clearContainerAlgorithmOptions(node.layoutOptions, aspectRatio);
     Object.assign(node.layoutOptions, groupTitleSizeOptions(node));
   }
 
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
   if (node.id !== ancestorId && node.parentId) {
-    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log);
+    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, aspectRatio, log);
   }
 }
 
