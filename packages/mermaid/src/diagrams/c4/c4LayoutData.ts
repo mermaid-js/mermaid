@@ -12,7 +12,7 @@ import type {
 } from './c4Types.js';
 import type { C4TagStyle } from './c4ShapeAdapter.js';
 import { formatUrl } from '../../utils.js';
-import { asColor, buildC4Node, buildEdgeLabel } from './c4ShapeAdapter.js';
+import { asColor, buildC4Node, buildEdgeLabel, splitTags } from './c4ShapeAdapter.js';
 
 /**
  * Converts the legacy C4 db state (elements, boundaries, relationships) into the
@@ -43,9 +43,8 @@ const resolveTags = <T extends { tagName: string }>(
   defined: Map<string, T>
 ): T[] =>
   tags
-    ? tags
-        .split(',')
-        .map((tag) => defined.get(tag.trim()))
+    ? splitTags(tags)
+        .map((tag) => defined.get(tag))
         .filter((tag): tag is T => tag !== undefined)
     : [];
 

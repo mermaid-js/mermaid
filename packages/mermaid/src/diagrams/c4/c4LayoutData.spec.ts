@@ -443,6 +443,29 @@ UpdateRelStyle(c, d, $lineColor="red")`);
       // the explicit style wins for the second pair
       expect(edges[1].style).toEqual(expect.arrayContaining(['stroke:red']));
     });
+
+    // C4-PlantUML joins several tags with `+`.
+    it('applies every tag of a list joined with +, the later one winning', () => {
+      const db = parse(`C4Context
+AddElementTag(v1.0, $bgColor="#eeeeee", $borderColor="#999999")
+AddElementTag(v1.1, $bgColor="#dddddd")
+AddRelTag(async, $lineColor="green")
+Person(a, "A", $tags="v1.0+v1.1")
+Person(b, "B")
+Rel(a, b, "queued", $tags="v1.0+async")`);
+
+      const { nodes, edges } = getData(db, config());
+      expect(nodes.find((n) => n.id === 'a')?.cssStyles).toEqual(
+        expect.arrayContaining(['fill:#dddddd', 'stroke:#999999'])
+      );
+      expect(edges[0].style).toEqual(expect.arrayContaining(['stroke:green']));
+    });
+
+    it('takes a shape keyword from a list joined with +', () => {
+      const db = parse(`C4Context\nSystem(a, "A", $tags="v1.0+cylinder")`);
+
+      expect(getData(db, config()).nodes.find((n) => n.id === 'a')?.shape).toBe('cylinder');
+    });
   });
 });
 

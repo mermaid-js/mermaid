@@ -60,6 +60,16 @@ const SHAPE_KEYWORDS: Record<string, ShapeID> = {
   component: 'fr-rect',
 };
 
+/**
+ * The tag names in a `$tags` value. C4-PlantUML joins several with `+` (`"v1.0+v1.1"`); a
+ * comma is accepted as well.
+ */
+export const splitTags = (tags: string): string[] =>
+  tags
+    .split(/[+,]/)
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+
 const keywordShape = (value: string | undefined): ShapeID | undefined =>
   value ? SHAPE_KEYWORDS[value.toLowerCase()] : undefined;
 
@@ -90,8 +100,8 @@ export const resolveNodeShape = (shape: C4ShapeLike, tagStyle?: C4TagStyle): Sha
     if (definedShape) {
       return definedShape;
     }
-    for (const tag of shape.tags.split(',')) {
-      const tagged = keywordShape(tag.trim());
+    for (const tag of splitTags(shape.tags)) {
+      const tagged = keywordShape(tag);
       if (tagged) {
         return tagged;
       }
