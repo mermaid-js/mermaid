@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, realpath, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, realpath, rm, stat, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -46,6 +46,15 @@ const findUnreachableExpressions = (code: string): ts.ExpressionStatement[] => {
   };
   visit(sourceFile);
   return unreachable;
+};
+
+const pathExists = async (path: string): Promise<boolean> => {
+  try {
+    await stat(path);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 // Use the production plugin list so removing the build registration also
@@ -103,27 +112,41 @@ describe('deadCodePlugin', () => {
   });
 
   it('guards the eval inside the installed @chevrotain/utils helper', async () => {
-    // Resolve the real dependency instead of the local fixture. chevrotain's
-    // entry gives a starting directory that can see its own dependencies
-    // (pnpm's layout places @chevrotain/utils beside it in the store); the
-    // helper itself is a deep path not exported by the package's exports map.
+    // Resolve the real dependency instead of the local fixture.
+    // @chevrotain/utils exports only its api entry — neither package.json nor
+    // the deep helper file is resolvable through Node's exports map. The one
+    // stable route to the helper is the import upstream itself uses, so bundle
+    // chevrotain's resolved entry and read the metafile to locate the
+    // installed helper regardless of the package-manager layout.
     const requireMermaid = createRequire(
       new URL('../packages/mermaid/package.json', import.meta.url)
     );
     const chevrotainEntry = await realpath(requireMermaid.resolve('chevrotain'));
-    const helperEntry = await realpath(
-      join(
-        dirname(chevrotainEntry),
-        '..', // lib/
-        '..', // chevrotain/
-        '..', // node_modules/
-        '@chevrotain',
-        'utils',
-        'lib',
-        'src',
-        'to-fast-properties.js'
-      )
+    const chevrotainDir = dirname(chevrotainEntry);
+    const discovery = await build({
+      entryPoints: [chevrotainEntry],
+      bundle: true,
+      format: 'esm',
+      write: false,
+      metafile: true,
+      logLevel: 'silent',
+      absWorkingDir: chevrotainDir,
+    });
+    const helperInput = Object.keys(discovery.metafile?.inputs ?? {}).find(
+      (input) =>
+        input.replaceAll('\\', '/').includes('@chevrotain/utils/') &&
+        input.endsWith('to-fast-properties.js')
     );
+    if (helperInput === undefined) {
+      throw new Error(
+        'bundling chevrotain did not include @chevrotain/utils to-fast-properties.js; upstream may have moved or removed the helper this plugin targets'
+      );
+    }
+    const helperEntry = join(chevrotainDir, helperInput);
+    expect(
+      await pathExists(helperEntry),
+      `installed @chevrotain/utils has no to-fast-properties.js at ${helperEntry}; upstream may have moved or removed the helper this plugin targets`
+    ).toBe(true);
     const bundleInstalled = (plugins: Plugin[]) =>
       build({
         entryPoints: [helperEntry],
@@ -137,14 +160,20 @@ describe('deadCodePlugin', () => {
       });
 
     const original = await bundleInstalled([]);
-    expect(findUnreachableExpressions(original.outputFiles[0].text)).toHaveLength(1);
+    expect(
+      findUnreachableExpressions(original.outputFiles[0].text),
+      'installed @chevrotain/utils no longer has the return-then-eval shape this plugin targets; the plugin may be removable'
+    ).toHaveLength(1);
 
     const result = await bundleInstalled(productionPlugins());
     expect(findUnreachableExpressions(result.outputFiles[0].text)).toEqual([]);
     expect(result.outputFiles[0].text).toMatch(/\beval\b/);
     // Non-empty means upstream changed the helper and the rewrite did not
     // apply — that warning, not silence, is the intended signal.
-    expect(result.warnings).toEqual([]);
+    expect(
+      result.warnings,
+      'upstream @chevrotain/utils helper changed shape; the deadCodePlugin rewrite did not apply and may need updating or removal'
+    ).toEqual([]);
 
     const context = { helpers: { toFastProperties: (value: object) => value } };
     runInNewContext(result.outputFiles[0].text, context);
