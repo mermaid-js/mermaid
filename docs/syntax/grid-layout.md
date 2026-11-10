@@ -14,7 +14,7 @@ Grid layout supports flowchart, agentflow, state, class, entity relationship, re
 
 ## Enable the layout
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -24,7 +24,7 @@ flowchart TB
   B --> C@{ row: 2, column: 2 }
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -40,7 +40,7 @@ The flowchart example above uses inline placement metadata. The following exampl
 
 ### Agentflow
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -54,7 +54,7 @@ agentflow-beta
   request --> plan --> run --> publish
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -70,7 +70,7 @@ agentflow-beta
 
 ### State diagram
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -88,7 +88,7 @@ stateDiagram-v2
   Review --> Draft : changes requested
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -108,7 +108,7 @@ stateDiagram-v2
 
 ### Class diagram
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -128,7 +128,7 @@ classDiagram
   Order --> Shipment : creates
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -150,7 +150,7 @@ classDiagram
 
 ### Entity relationship diagram
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -169,7 +169,7 @@ erDiagram
   ORDER ||--o| PAYMENT : has
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -190,7 +190,7 @@ erDiagram
 
 ### Requirement diagram
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -213,7 +213,7 @@ requirementDiagram
   storefront - satisfies -> checkout
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -238,7 +238,7 @@ requirementDiagram
 
 ### Use case diagram
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -260,7 +260,7 @@ usecase-beta
   Customer --> Track
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -284,7 +284,7 @@ usecase-beta
 
 ### Mindmap
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -304,7 +304,7 @@ mindmap
     Deploy
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -356,7 +356,7 @@ the colon) is an unknown key, not a column coordinate, so that column is placed 
 
 When inline metadata and `config.grid.placements` both set the same property, inline metadata takes precedence.
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -373,7 +373,7 @@ flowchart TB
   B --> C
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -394,7 +394,7 @@ flowchart TB
 
 All supported diagram types can use the global placement map:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -409,7 +409,7 @@ flowchart TB
   B --> C
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -431,7 +431,7 @@ order. A single placement object is equivalent to an array with one entry. Occur
 matching entry are placed automatically, and extra entries are ignored with a console warning.
 Inline metadata still takes precedence over the matching placement-map entry.
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -448,7 +448,7 @@ mindmap
     service[Automatically placed]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -494,7 +494,7 @@ Use `0` or negative coordinates to place items above or to the left of the autom
 
 Horizontal alignment applies to each item. Vertical alignment applies to the whole stack in an explicitly shared cell. Items in the same cell must resolve to the same vertical alignment; otherwise, Mermaid reports `GRID_CELL_ALIGNMENT_CONFLICT`.
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -507,7 +507,7 @@ flowchart TB
   A --> B
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -524,7 +524,7 @@ flowchart TB
 
 Groups are laid out recursively from the inside out. Child coordinates are always local to the immediate parent group; diagram direction (`TB`, `BT`, `LR`, `RL`) does not rotate or mirror the authored grid.
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: grid
@@ -545,7 +545,7 @@ flowchart TB
   B --> C
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
@@ -608,18 +608,6 @@ flowchart curve style, including `basis`, `cardinal`, `catmullRom`, `step`, or
 by other curve styles, and each corner is automatically limited by the adjacent
 segment lengths.
 
-```mermaid-example
----
-config:
-  layout: grid
-  grid:
-    curve: rounded
-    edgeCornerRadius: 10
----
-flowchart TB
-  A@{ row: 1, column: 1 } --> B@{ row: 2, column: 2 }
-```
-
 ```mermaid
 ---
 config:
@@ -633,6 +621,18 @@ flowchart TB
 ```
 
 ```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    curve: rounded
+    edgeCornerRadius: 10
+---
+flowchart TB
+  A@{ row: 1, column: 1 } --> B@{ row: 2, column: 2 }
+```
+
+```mermaid
 ---
 config:
   layout: grid
@@ -643,7 +643,7 @@ flowchart TB
   A@{ row: 1, column: 1 } --> B@{ row: 2, column: 2 }
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: grid
