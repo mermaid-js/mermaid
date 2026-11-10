@@ -140,9 +140,11 @@ ${labelFontStyles()}
     fill: ${options.lineColor ?? '#666666'};
     stroke: ${options.lineColor ?? '#666666'};
   }
-  /* Relationship labels: smaller, on an opaque background so they stay legible over lines. */
+  /* Relationship labels: smaller, on an opaque background so they stay legible over lines.
+     An HTML label takes its text colour from color, which SVG fill does not set. */
   .edgeLabel {
     font-size: 0.85em;
+    color: ${options.textColor ?? '#333333'};
     background-color: ${options.background ?? '#ffffff'};
   }
   .edgeLabel .label foreignObject {
