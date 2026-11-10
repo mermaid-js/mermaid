@@ -393,7 +393,7 @@ export interface MermaidConfig {
  */
 export interface GridLayoutConfig {
   /**
-   * Mapping of authored placement ids or emitted node ids to explicit grid placements. Arrays target repeated ids in source order; a single object is equivalent to a one-item array.
+   * Placement map keyed by the authored placement ID when present; otherwise, by the emitted node ID. Non-empty arrays target repeated IDs in source order; a single object is equivalent to a one-item array.
    */
   placements?: {
     [k: string]: GridPlacement | [GridPlacement, ...GridPlacement[]];
