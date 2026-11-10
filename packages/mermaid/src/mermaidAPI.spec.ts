@@ -1246,6 +1246,79 @@ flowchart TB
       expect(texts).toContain('Syntax error in text');
       expect(texts.join(' ')).toContain(message);
     });
+
+    describe.each([
+      {
+        entryPoint: 'inline',
+        source: `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 0.5 }`,
+      },
+      {
+        entryPoint: 'frontmatter',
+        source: `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: { row: 0.5 }
+---
+flowchart TB
+  A`,
+      },
+      {
+        entryPoint: 'directive',
+        source: `%%{init: {"layout": "grid", "grid": {"placements": {"A": {"row": 0.5}}}}}%%
+flowchart TB
+  A`,
+      },
+      {
+        entryPoint: 'multiple directives',
+        source: `%%{init: {"layout": "grid"}}%%
+%%{init: {"grid": {"placements": {"A": {"row": 0.5}}}}}%%
+flowchart TB
+  A`,
+      },
+    ])('invalid $entryPoint grid coordinates', ({ entryPoint, source }) => {
+      afterEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      for (const suppressErrorRendering of [false, true]) {
+        jsdomIt(`rejects with suppressErrorRendering=${suppressErrorRendering}`, async () => {
+          mermaidAPI.initialize({ theme: 'default', suppressErrorRendering });
+          if (entryPoint === 'multiple directives') {
+            await mermaidAPI.parse('%%{init: {"theme": "forest"}}%%\nflowchart TB\n  A');
+          }
+          const container = document.createElement('div');
+          document.body.append(container);
+          const message =
+            'GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received 0.5 (number).';
+
+          await expect(
+            mermaid.render('invalid-config-grid-coordinate', source, container)
+          ).rejects.toMatchObject({
+            code: 'GRID_INVALID_COORDINATE',
+            message,
+            details: { nodeId: 'A', placementId: 'A', field: 'row', value: 0.5 },
+          });
+          expect(configApi.getConfig().theme).toBe('default');
+
+          if (suppressErrorRendering) {
+            expect(container.childElementCount).toBe(0);
+          } else {
+            const texts = [...container.querySelectorAll('.error-text')].map(
+              (element) => element.textContent ?? ''
+            );
+            expect(texts).toContain('Syntax error in text');
+            expect(texts.join(' ')).toContain(message);
+          }
+        });
+      }
+    });
   });
 
   describe('getDiagramFromText', () => {
