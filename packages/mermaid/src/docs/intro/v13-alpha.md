@@ -17,9 +17,9 @@ This is an **alpha**. Don't use it in production. APIs, output and defaults can 
 
 ## What works in the alpha
 
-- **Nine diagram types.** Flowchart, sequence, ER, class, state, pie, quadrant chart, user journey and timeline have v13 renderers. Other v12 diagram types (Gantt, gitGraph, mindmap, C4, architecture, …) are not ported yet. Mermaid still recognizes them, but rendering one fails with an `UNSUPPORTED_DIAGRAM` error.
+- **22 diagram types.** Flowchart, sequence, ER, class, state, pie, quadrant chart, user journey, timeline, Gantt, gitGraph, mindmap, kanban, packet, radar, Sankey, treemap, Venn, Wardley map, XY chart, Cynefin and info have v13 renderers. Other v12 diagram types (C4, architecture, block, requirement, ZenUML, …) are not ported yet. Mermaid still recognizes them, but rendering one fails with an `UNSUPPORTED_DIAGRAM` error.
 - **ESM only, Node 20 or newer.** The alpha ships no `mermaid.min.js`, IIFE or "tiny" build. Bundle it with your own bundler (Vite, webpack, esbuild, Rollup, …).
-- **New output formats.** Every diagram renders to SVG. Flowchart, sequence and ER diagrams also render to text (ASCII or Unicode box drawing).
+- **New output formats.** Every diagram renders to SVG. Flowchart, sequence, ER, kanban, packet and info diagrams also render to text (ASCII or Unicode box drawing).
 - **Split into packages.** Most people only need `mermaid`: it includes the core and every diagram type, and loads each diagram the first time a page uses it. Icons, math, the hand-drawn look, ELK layouts and v12 click callbacks are optional plugins. See [Packages](#packages).
 
 ## Install
@@ -40,15 +40,16 @@ When you add an optional package, install the `v13-alpha` build of it together w
 
 We publish alpha builds often, numbered `13.0.0-alpha.0`, `13.0.0-alpha.1` and so on. Each package has its own alpha number. A change to one package also re-releases the packages that depend on it, so `mermaid@v13-alpha` always pulls in a matching set. Mermaid's own packages depend on each other at exact versions.
 
-| Build            | Released        | Packages                                                                                                                                       |
-| ---------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `13.0.0-alpha.1` | 6 November 2026 | All 21 packages listed under [Packages](#packages). 17 are new in this build.                                                                  |
-| `13.0.0-alpha.0` | 4 November 2026 | `mermaid`, `@mermaid-js/core`, `@mermaid-js/diagram-flowchart` and `@mermaid-js/plugin-interactions`. The flowchart was the only diagram type. |
+| Build            | Released        | Packages                                                                                                                                                                                                                                                 |
+| ---------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `13.0.0-alpha.2` | 9 November 2026 | 34 packages. 13 diagram packages are new: Gantt, gitGraph, mindmap, kanban, packet, radar, Sankey, treemap, Venn, Wardley map, XY chart and info start at `13.0.0-alpha.1`, and Cynefin at `13.0.0-alpha.2`. All other packages are at `13.0.0-alpha.2`. |
+| `13.0.0-alpha.1` | 6 November 2026 | 21 packages. 17 are new in this build.                                                                                                                                                                                                                   |
+| `13.0.0-alpha.0` | 4 November 2026 | `mermaid`, `@mermaid-js/core`, `@mermaid-js/diagram-flowchart` and `@mermaid-js/plugin-interactions`. The flowchart was the only diagram type.                                                                                                           |
 
 - **Pin an exact build.** Any build can change APIs or output, so a version range could pull in a breaking change without you noticing:
 
   ```bash
-  npm install mermaid@13.0.0-alpha.1 --save-exact
+  npm install mermaid@13.0.0-alpha.2 --save-exact
   ```
 
 - **Move to the newest build** when you're ready, and read the release notes for what changed:
@@ -117,7 +118,7 @@ npx mermaid@v13-alpha render diagram.mmd --format svg > diagram.svg
 
 ## Packages
 
-Mermaid v13 is split into small packages. Most people only need `mermaid`. The other packages are optional add-ons, or building blocks for smaller bundles and editors. All packages below are at `13.0.0-alpha.1`.
+Mermaid v13 is split into small packages. Most people only need `mermaid`. The other packages are optional add-ons, or building blocks for smaller bundles and editors. Each package has its own alpha number: twelve of the diagram packages first published in `13.0.0-alpha.2` are at `13.0.0-alpha.1` (see [Alpha builds](#alpha-builds)), and every other package is at `13.0.0-alpha.2`. `npm install mermaid@v13-alpha` pulls in a matching set.
 
 ### Which packages do I need?
 
@@ -164,6 +165,19 @@ const mermaid = createMermaid({ diagrams: [flowchart] });
 | `@mermaid-js/diagram-quadrant`  | `quadrantChart`                   | No                              |
 | `@mermaid-js/diagram-journey`   | `journey`                         | No                              |
 | `@mermaid-js/diagram-timeline`  | `timeline`                        | No                              |
+| `@mermaid-js/diagram-gantt`     | `gantt`                           | No                              |
+| `@mermaid-js/diagram-gitgraph`  | `gitGraph`                        | No                              |
+| `@mermaid-js/diagram-mindmap`   | `mindmap`                         | No                              |
+| `@mermaid-js/diagram-kanban`    | `kanban`                          | Yes                             |
+| `@mermaid-js/diagram-packet`    | `packet`, `packet-beta`           | Yes                             |
+| `@mermaid-js/diagram-radar`     | `radar-beta`                      | No                              |
+| `@mermaid-js/diagram-sankey`    | `sankey`, `sankey-beta`           | No                              |
+| `@mermaid-js/diagram-treemap`   | `treemap`, `treemap-beta`         | No                              |
+| `@mermaid-js/diagram-venn`      | `venn-beta`                       | No                              |
+| `@mermaid-js/diagram-wardley`   | `wardley-beta`                    | No                              |
+| `@mermaid-js/diagram-xychart`   | `xychart`, `xychart-beta`         | No                              |
+| `@mermaid-js/diagram-cynefin`   | `cynefin-beta`                    | No                              |
+| `@mermaid-js/diagram-info`      | `info`                            | Yes                             |
 
 Each diagram package also has a `/language` entry with its editor support (see [Editor tooling](#editor-tooling)).
 
@@ -173,8 +187,8 @@ These add features that are not in `mermaid` by default. Install the ones you ne
 
 | Package                           | What it does                                                                                                                                                                                                                                        | Third-party dependency                                    |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `@mermaid-js/plugin-interactions` | Brings back v12 click callbacks (`click A callback`, `call fn()`) and the sequence diagram actor menus. Plain links and tooltips work without it.                                                                                                   | none                                                      |
-| `@mermaid-js/plugin-icons`        | Draws Iconify icon packs: label icons such as `fa:fa-car` and the flowchart icon shapes. You register the packs with `registerIconPacks`, and each pack is loaded only when a diagram uses it.                                                      | none (you supply the packs)                               |
+| `@mermaid-js/plugin-interactions` | Brings back v12 click callbacks (`click A callback`, `call fn()`, including on Gantt tasks) and the sequence diagram actor menus. Plain links and tooltips work without it.                                                                         | none                                                      |
+| `@mermaid-js/plugin-icons`        | Draws Iconify icon packs: label icons such as `fa:fa-car`, the flowchart icon shapes and mindmap `::icon()`. You register the packs with `registerIconPacks`, and each pack is loaded only when a diagram uses it.                                  | none (you supply the packs)                               |
 | `@mermaid-js/plugin-math`         | TeX math in labels: `$$…$$` is typeset by MathJax into SVG. MathJax loads only for diagrams that contain math.                                                                                                                                      | none at install (MathJax is bundled and loaded on demand) |
 | `@mermaid-js/plugin-hand-drawn`   | The hand-drawn look (`handDrawn: true`, or v12's `look: handDrawn`). It draws the same sketch every time for the same diagram.                                                                                                                      | `roughjs`                                                 |
 | `@mermaid-js/layout-elk`          | ELK layouts: `elk`, `elk.layered`, `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box`, `elk.rectpacking`, `elk.radial`. Works for flowchart, class, state and ER diagrams. It keeps its v12 name and its v12 registration code. | `elkjs`                                                   |
@@ -230,7 +244,7 @@ Most v12 setups render without code changes. Check these first. Like everything 
 
 Report bugs as issues. If a diagram renders differently from v12, or something breaks, [open a v13 alpha bug report](https://github.com/mermaid-js/mermaid/issues/new?template=v13_alpha_bug.yml). The template adds the `v13` label and asks for:
 
-- the exact alpha build, e.g. `13.0.0-alpha.1` (`npm ls mermaid` shows it)
+- the exact alpha build, e.g. `13.0.0-alpha.2` (`npm ls mermaid` shows it)
 - the diagram source
 - what you expected, and what you got (a screenshot helps)
 
