@@ -723,6 +723,147 @@ describe('slideEdgesOffClusterTitles', () => {
     });
   });
 
+  describe('a slide that would add a contact the route did not have', () => {
+    const plain = (points: P[], id = 'L_A_B_0'): any => ({ id, start: 'A', end: 'B', points });
+    const horizontal = (id: string, y: number, from: number, to: number): any => ({
+      id,
+      start: 'P',
+      end: 'Q',
+      points: [
+        { x: from, y },
+        { x: to, y },
+      ],
+    });
+
+    it('takes the other side when the near one meets another edge at a bend of the run', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+      const across = horizontal('across', 273, 146, 186);
+
+      slide([edge, across], [stock, node('A', 99), node('B', 370)]);
+
+      expect(edge.points[0].x).toBe(leftOfTitle(stock));
+    });
+
+    it('still takes the near side when the other edge ends short of it', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+      const across = horizontal('across', 273, 175, 186);
+
+      slide([edge, across], [stock, node('A', 99), node('B', 370)]);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    });
+
+    it('does not join a column the route comes back up along', () => {
+      const stock = frame(101.734375);
+      const edge = plain([
+        { x: 300, y: 135 },
+        { x: 300, y: 200 },
+        { x: CENTRE, y: 200 },
+        { x: CENTRE, y: 330 },
+        { x: 250, y: 330 },
+        { x: 250, y: 240 },
+        { x: 400, y: 240 },
+        { x: 400, y: 135 },
+      ]);
+
+      slide([edge], [stock, node('A', 99, 'squareRect', 300), node('B', 99, 'squareRect', 400)]);
+
+      expect(edge.points.map(({ x }: P) => x)).not.toContain(CENTRE);
+      expect(edge.points[2].x).toBe(clearOfTitle(stock));
+    });
+
+    it('does not trade a crossing it removes for a node it runs into', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+      const crossed = horizontal('crossed', 200, 90, 140);
+      const inTheWay = {
+        id: 'N',
+        isGroup: false,
+        shape: 'squareRect',
+        x: 170,
+        y: 235,
+        width: 20,
+        height: 30,
+      };
+
+      slide([edge, crossed], [stock, node('A', 99), node('B', 370), inTheWay]);
+
+      expect(edge.points[0].x).toBe(leftOfTitle(stock));
+    });
+
+    it('still takes the near side when it keeps a crossing the route already had', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+      const crossed = horizontal('crossed', 200, 40, 200);
+
+      slide([edge, crossed], [stock, node('A', 99), node('B', 370)]);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    });
+
+    it('does not trade a node the route ran into for another one', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+      const box = (id: string, x: number) => ({
+        id,
+        isGroup: false,
+        shape: 'squareRect',
+        x,
+        y: 235,
+        width: 20,
+        height: 30,
+      });
+
+      slide([edge], [stock, node('A', 99), node('B', 370), box('left', CENTRE), box('right', 170)]);
+
+      expect(edge.points[0].x).toBe(leftOfTitle(stock));
+    });
+
+    it('does not trade an edge the route crossed for another one', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+
+      slide(
+        [edge, horizontal('near', 200, 90, 140), horizontal('far', 230, 150, 200)],
+        [stock, node('A', 99), node('B', 370)]
+      );
+
+      expect(edge.points[0].x).toBe(leftOfTitle(stock));
+    });
+
+    it('does not trade a label the route ran into for another one', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+      const labelAt = (id: string, x: number) => ({
+        ...horizontal(id, 120, 300, 400),
+        label: id,
+        width: 20,
+        height: 30,
+        x,
+        y: 235,
+      });
+
+      slide(
+        [edge, labelAt('near', CENTRE), labelAt('far', 170)],
+        [stock, node('A', 99), node('B', 370)]
+      );
+
+      expect(edge.points[0].x).toBe(leftOfTitle(stock));
+    });
+
+    it('still removes the crossing when the near side runs into nothing', () => {
+      const stock = frame(101.734375);
+      const edge = plain(straight());
+      const crossed = horizontal('crossed', 200, 90, 140);
+
+      slide([edge, crossed], [stock, node('A', 99), node('B', 370)]);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    });
+  });
+
   describe('an edge that ends on a rounded node', () => {
     const NARROW_CORNER = 5;
     const WIDE_CORNER = 12;

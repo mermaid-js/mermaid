@@ -15,6 +15,7 @@ import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
+import { routeContacts, selfContacts } from './routeContacts.js';
 import {
   EDGE_ROUTING_OPTIONS,
   PLACEMENT_OPTIONS,
@@ -2016,7 +2017,7 @@ function isRouted(edge: Edge): edge is RoutedEdge {
 
 interface TitleSlideContext {
   titles: Box[];
-  nodeBoxes: Box[];
+  nodeBoxes: { id: string; box: Box }[];
   nodeById: Map<string, Node>;
   edges: RoutedEdge[];
   /** The radius of the corners of a rounded node. */
@@ -2181,33 +2182,50 @@ function isBox(box: Box | undefined): box is Box {
   return box !== undefined;
 }
 
-function labelBoxes(edges: Edge[]): Box[] {
-  return edges.map((edge) => centreLabelBox(edge)).filter(isBox);
-}
+/** How often a route meets each obstacle, by a key naming the obstacle. */
+type Contacts = Map<string, number>;
 
-/** What `label` sits on: a node, a frame title, another label, or another edge's route. */
-function labelConflicts(label: Box, others: RoutedEdge[], context: TitleSlideContext): number {
-  const obstacles = [...context.nodeBoxes, ...context.titles, ...labelBoxes(others)];
-  return (
-    obstacles.filter((box) => boxesOverlap(label, box)).length +
-    others.filter(({ points }) => routeHitsBox(points, label)).length
-  );
-}
-
-/** What `route`, and the label riding on it, runs into: a node, another edge's label or route. */
-function routeConflicts(
+/**
+ * Everything a route and the label riding on it run into, each obstacle on
+ * its own: a node, a frame title under the label, another edge's label, the
+ * points where it touches, crosses or runs along another edge's route, and
+ * the points where it meets or doubles back on itself.
+ */
+function contactsOf(
   edge: RoutedEdge,
   route: P[],
   label: Box | undefined,
   context: TitleSlideContext
-): number {
-  const others = context.edges.filter((other) => other !== edge);
-  const crossings = others.reduce((sum, other) => sum + crossingCount(route, other.points), 0);
-  return (
-    countHits(route, [...context.nodeBoxes, ...labelBoxes(others)]) +
-    crossings +
-    (label ? labelConflicts(label, others, context) : 0)
-  );
+): Contacts {
+  const contacts: Contacts = new Map();
+  const add = (key: string, count: number) => {
+    if (count > 0) {
+      contacts.set(key, (contacts.get(key) ?? 0) + count);
+    }
+  };
+  const meets = (box: Box) => routeHitsBox(route, box) || (!!label && boxesOverlap(label, box));
+  for (const { id, box } of context.nodeBoxes) {
+    add(`node:${id}`, meets(box) ? 1 : 0);
+  }
+  context.titles.forEach((title, index) => {
+    add(`title:${index}`, label && boxesOverlap(label, title) ? 1 : 0);
+  });
+  for (const other of context.edges) {
+    if (other === edge) {
+      continue;
+    }
+    const otherLabel = centreLabelBox(other);
+    add(`label:${other.id}`, otherLabel && meets(otherLabel) ? 1 : 0);
+    add(`route:${other.id}`, routeContacts(route, other.points).length);
+    add(`route:${other.id}`, label && routeHitsBox(other.points, label) ? 1 : 0);
+  }
+  add('self', selfContacts(route));
+  return contacts;
+}
+
+/** Whether `after` meets some obstacle more often than `before` did. */
+function addsContact(before: Contacts, after: Contacts): boolean {
+  return [...after].some(([key, count]) => count > (before.get(key) ?? 0));
 }
 
 /** A run that crosses a frame title, with what the edge runs into as ELK routed it. */
@@ -2217,7 +2235,7 @@ interface SlideTarget {
   run: VerticalRun;
   title: Box;
   titlesCrossed: number;
-  conflicts: number;
+  contacts: Contacts;
 }
 
 /** What sliding a run would leave: the route, the run in both places, and the label's box. */
@@ -2255,7 +2273,7 @@ function slideFits(target: SlideTarget, slid: SlidRoute, context: TitleSlideCont
     legsKeepHeading(points, run, x) &&
     countHits(route, context.titles) < target.titlesCrossed &&
     !crowdsOtherEdge(moved.new.a, moved.new.b, others) &&
-    routeConflicts(edge, route, label, context) <= target.conflicts
+    !addsContact(target.contacts, contactsOf(edge, route, label, context))
   );
 }
 
@@ -2267,7 +2285,7 @@ function slideTargetOf(edge: RoutedEdge, context: TitleSlideContext): SlideTarge
         points: edge.points,
         ...crossed,
         titlesCrossed: countHits(edge.points, context.titles),
-        conflicts: routeConflicts(edge, edge.points, centreLabelBox(edge), context),
+        contacts: contactsOf(edge, edge.points, centreLabelBox(edge), context),
       }
     : undefined;
 }
@@ -2321,10 +2339,10 @@ export function slideEdgesOffClusterTitles(
   const routed = edges.filter(isRouted);
   const context: TitleSlideContext = {
     titles,
-    nodeBoxes: nodes
-      .filter((node) => !node.isGroup)
-      .map((node) => placedBox(node))
-      .filter(isBox),
+    nodeBoxes: nodes.flatMap((node) => {
+      const box = node.isGroup ? undefined : placedBox(node);
+      return box ? [{ id: node.id, box }] : [];
+    }),
     nodeById: new Map(nodes.map((node) => [node.id, node])),
     edges: routed,
     cornerRadius,
