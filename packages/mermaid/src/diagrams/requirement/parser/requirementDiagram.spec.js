@@ -45,6 +45,40 @@ describe('when parsing requirement diagram it...', function () {
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(0);
   });
 
+  it.each([
+    ['spaces', '  '],
+    ['a tab', '\t'],
+  ])('will accept %s at the end of lines', function (_, ws) {
+    const lines = [
+      `requirementDiagram${ws}`,
+      ``,
+      `requirement test_req {${ws}`,
+      `id: test_id${ws}`,
+      `text: the test text.${ws}`,
+      `risk: high${ws}`,
+      `verifymethod: analysis${ws}`,
+      `}${ws}`,
+      ``,
+      `element test_el {${ws}`,
+      `type: test_type${ws}`,
+      `}${ws}`,
+      ``,
+      `test_el - satisfies -> test_req${ws}`,
+    ];
+
+    reqDiagram.parser.parse(lines.join('\n'));
+
+    const foundReq = requirementDb.getRequirements().get('test_req');
+    expect(foundReq.requirementId).toBe('test_id');
+    expect(foundReq.text).toBe('the test text.');
+    expect(foundReq.risk).toBe(requirementDb.RiskLevel.HIGH_RISK);
+    expect(foundReq.verifyMethod).toBe(requirementDb.VerifyType.VERIFY_ANALYSIS);
+    expect(requirementDb.getElements().get('test_el').type).toBe('test_type');
+    expect(requirementDb.getRelationships()).toEqual([
+      { type: 'satisfies', src: 'test_el', dst: 'test_req' },
+    ]);
+  });
+
   it('will accept full element definition', function () {
     const expectedName = 'test_el';
     const expectedType = 'test_type';

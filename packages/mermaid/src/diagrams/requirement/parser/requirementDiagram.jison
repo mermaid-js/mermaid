@@ -27,7 +27,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 .*direction\s+BT[^\n]*                       return 'direction_bt';
 .*direction\s+RL[^\n]*                       return 'direction_rl';
 .*direction\s+LR[^\n]*                       return 'direction_lr';
-(\r?\n)+                               return 'NEWLINE';
+[^\S\r\n]*(\r?\n)+                   return 'NEWLINE';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
 \%%[^\n]*                              /* skip comments */
