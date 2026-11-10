@@ -951,6 +951,16 @@ graph TD;A--x|text including URL space|B;`)
           text: 'xychart-beta\n  x-axis [a, b]\n  bar [1, %%{init:\n{"theme":"dark"}\n}%% 2, ]',
           line: 5,
         },
+        {
+          case: 'a directive across lines inside the last line, at the end of input',
+          text: 'sequenceDiagram\n  alt %%{x\ny\n}%%cond',
+          line: 5,
+        },
+        {
+          case: 'a directive across lines inside a line before the last, at the end of input',
+          text: 'sequenceDiagram\n  alt %%{x\ny\n}%%cond\n  A->>B: hi',
+          line: 6,
+        },
       ])('in the message after $case', async ({ text, line }) => {
         const error = await parseError(text);
         const lines = reportedLines(error);
@@ -988,6 +998,11 @@ graph TD;A--x|text including URL space|B;`)
         {
           case: 'a directive across lines inside a line',
           text: 'xychart-beta\n  x-axis [a, b]\n  bar [1, %%{init:\n{"theme":"dark"}\n}%% 2, ]',
+          hash: { line: 4, loc: { first_line: 5, last_line: 5 } },
+        },
+        {
+          case: 'a directive across lines inside the last line, at the end of input',
+          text: 'sequenceDiagram\n  alt %%{x\ny\n}%%cond',
           hash: { line: 4, loc: { first_line: 5, last_line: 5 } },
         },
       ])('in the jison hash after $case', async ({ text, hash }) => {

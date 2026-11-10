@@ -61,7 +61,14 @@ export const sourceLineMap = (
       joinsByLine.set(join.line, [join]);
     }
   }
+  const last = sourceLines.length;
+  const lastJoins = joinsByLine.get(last);
+  // The source line the last line ends on, which a line past the last one keeps its distance from.
+  const lastSourceLine = lastJoins ? lastJoins[lastJoins.length - 1].sourceLine : undefined;
   return (line, column) => {
+    if (lastSourceLine !== undefined && line > last) {
+      return lastSourceLine + line - last;
+    }
     const lineJoins = joinsByLine.get(line);
     if (column === undefined || lineJoins === undefined) {
       return startSourceLine(sourceLines, line);
@@ -83,7 +90,8 @@ export const sourceLineMap = (
 
 /**
  * Maps a line of a derived text to the source line it comes from. A line past the last one,
- * such as the end of input after a trailing newline, keeps its distance from the last line.
+ * such as the end of input after a trailing newline, keeps its distance from the source line
+ * the last line ends on, which is that of its last join when it has one.
  * With a `column`, counted from 1, a line with `joins` maps to the source line of the text at
  * that column; without one, to the source line of its first character.
  */

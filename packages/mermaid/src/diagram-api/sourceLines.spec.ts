@@ -184,6 +184,15 @@ describe('toSourceLine', () => {
     expect(toSourceLine([3, 5], line)).toBe(expected);
   });
 
+  it.each([
+    { case: 'the last line', joinLine: 2, expected: 11 },
+    { case: 'a line before the last', joinLine: 1, expected: 7 },
+  ])('maps a line past the last one from the last join of $case', ({ joinLine, expected }) => {
+    const lastJoin = [{ line: joinLine, column: 3, sourceLine: 9 }];
+    expect(sourceLineMap([3, 5], lastJoin)(4)).toBe(expected);
+    expect(sourceLineMap([3, 5], lastJoin)(4, 1)).toBe(expected);
+  });
+
   it('leaves every line as it is without source lines', () => {
     expect(toSourceLine([], 3)).toBe(3);
   });
