@@ -254,7 +254,7 @@ It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&
 
 Sometimes nothing says it better than a Post-it note. That is also the case in state diagrams.
 
-Here you can choose to put the note to the _right of_ or to the _left of_ a node.
+Here you can choose to put the note to the _right of_ or to the _left of_ a node. The position keywords are case-insensitive: `note Left of` and `note left of` put the note on the same side.
 
 ```mermaid-example
     stateDiagram-v2
