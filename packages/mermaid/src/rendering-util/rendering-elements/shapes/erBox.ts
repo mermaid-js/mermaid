@@ -9,7 +9,7 @@ import type { EntityNode } from '../../../diagrams/er/erTypes.js';
 import { createText } from '../../createText.js';
 import { evaluate, parseGenericTypes } from '../../../diagrams/common/common.js';
 import { select } from 'd3';
-import { calculateTextHeight, calculateTextWidth } from '../../../utils.js';
+import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
 
@@ -64,12 +64,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     ) {
       node.width = config.er!.minEntityWidth;
     }
-    if (
-      calculateTextHeight(node.label, config) + options.labelPaddingY * 2 <
-      config.er!.minEntityHeight!
-    ) {
-      node.height = config.er!.minEntityHeight;
-    }
+    node.height = Math.max(node.height ?? 0, config.er?.minEntityHeight ?? 0);
     const shapeSvg = await drawRect(parent, node, options);
     if (theme != null && COLOR_THEMES.has(theme)) {
       const colorIndex = entityNode.colorIndex ?? 0;
