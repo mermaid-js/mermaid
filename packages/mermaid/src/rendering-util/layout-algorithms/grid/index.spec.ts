@@ -22,7 +22,7 @@ describe('grid renderer line hops', () => {
     mermaidAPI.initialize({});
   });
 
-  for (const lineHops of [undefined, false] as const) {
+  for (const lineHops of [undefined, false, 'gap'] as const) {
     jsdomIt(`paints routed crossings with lineHops=${lineHops}`, async ({ svg }) => {
       mermaidAPI.initialize({ flowchart: { htmlLabels: false } });
       svg.append('g');
@@ -51,7 +51,10 @@ describe('grid renderer line hops', () => {
       const paths = [...document.querySelectorAll('.edgePaths path[data-id]')];
       expect(paths).toHaveLength(2);
       expect(paths.some((path) => path.getAttribute('d')?.includes('A6,6'))).toBe(
-        lineHops !== false
+        lineHops === undefined
+      );
+      expect(paths.some((path) => (path.getAttribute('d')?.match(/M/g) ?? []).length > 1)).toBe(
+        lineHops === 'gap'
       );
     });
   }
