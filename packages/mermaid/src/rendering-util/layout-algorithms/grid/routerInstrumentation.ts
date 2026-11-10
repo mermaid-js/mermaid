@@ -8,18 +8,9 @@ export type GridRoutingFallbackReason =
   | 'vertex_cap'
   | 'adjacency_cap'
   | 'estimated_memory_cap'
-  | 'search_state_cap';
-
-export class GridRoutingResourceLimitError extends Error {
-  constructor(
-    public readonly reason: GridRoutingFallbackReason,
-    message: string,
-    public readonly searchStateScope?: 'edge' | 'invocation'
-  ) {
-    super(message);
-    this.name = 'GridRoutingResourceLimitError';
-  }
-}
+  | 'search_state_cap'
+  | 'label_index_work_cap'
+  | 'label_placement_exhausted';
 
 export interface GridRouteInstrumentation {
   edgeId: string;
@@ -48,6 +39,13 @@ export interface GridRoutingInstrumentation {
   hierarchyBoundaryTransitions: number;
   labelOverlayBuilds: number;
   labelOverlayVertices: number;
+  labelSpacingEdgesExamined: number;
+  labelSpacingEligibleEdges: number;
+  labelSpacingBoundariesExpanded: number;
+  labelSpacingPixelsAdded: number;
+  labelAwareSelfLoopCandidates: number;
+  labelAwareSelfLoopsCommitted: number;
+  labelAwareSelfLoopFallbacks: number;
   searches: number;
   expandedStates: number;
   maxOpenSet: number;
@@ -89,6 +87,13 @@ export const gridRoutingMetricDisposition = {
   hierarchyBoundaryTransitions: 'transactional',
   labelOverlayBuilds: 'cumulative',
   labelOverlayVertices: 'cumulative',
+  labelSpacingEdgesExamined: 'cumulative',
+  labelSpacingEligibleEdges: 'cumulative',
+  labelSpacingBoundariesExpanded: 'cumulative',
+  labelSpacingPixelsAdded: 'cumulative',
+  labelAwareSelfLoopCandidates: 'cumulative',
+  labelAwareSelfLoopsCommitted: 'transactional',
+  labelAwareSelfLoopFallbacks: 'cumulative',
   searches: 'cumulative',
   expandedStates: 'cumulative',
   maxOpenSet: 'cumulative',
@@ -182,6 +187,13 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     hierarchyBoundaryTransitions: 0,
     labelOverlayBuilds: 0,
     labelOverlayVertices: 0,
+    labelSpacingEdgesExamined: 0,
+    labelSpacingEligibleEdges: 0,
+    labelSpacingBoundariesExpanded: 0,
+    labelSpacingPixelsAdded: 0,
+    labelAwareSelfLoopCandidates: 0,
+    labelAwareSelfLoopsCommitted: 0,
+    labelAwareSelfLoopFallbacks: 0,
     searches: 0,
     expandedStates: 0,
     maxOpenSet: 0,
@@ -193,6 +205,8 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
       adjacency_cap: 0,
       estimated_memory_cap: 0,
       search_state_cap: 0,
+      label_index_work_cap: 0,
+      label_placement_exhausted: 0,
     },
     fallbackValidationFailures: 0,
     compatibilitySegments: 0,
