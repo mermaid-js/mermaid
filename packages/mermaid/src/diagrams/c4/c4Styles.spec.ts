@@ -4,15 +4,18 @@ import getStyles from './styles.js';
 
 const styles = () => getStyles({});
 
+const BOUNDARY_RULE = /\.cluster\.c4-boundary \.cluster-label[^{]*{([^}]*)}/;
 const MESSAGE_RULE = /g\.edgeLabel[^{]*{([^}]*)}/;
 
-describe('c4 styles: relationship fonts', () => {
+describe('c4 styles: boundary and relationship fonts', () => {
   afterEach(() => {
     setConfig({ c4: {} });
   });
 
-  it('adds no font rule for relationship labels with the default config', () => {
-    expect(styles()).not.toMatch(MESSAGE_RULE);
+  it('adds no font rule for either label with the default config', () => {
+    const css = styles();
+    expect(css).not.toMatch(BOUNDARY_RULE);
+    expect(css).not.toMatch(MESSAGE_RULE);
   });
 
   it('adds no font rule for a value equal to its default', () => {
@@ -21,9 +24,12 @@ describe('c4 styles: relationship fonts', () => {
       c4: {
         messageFontSize: c4.messageFontSize,
         messageFontFamily: c4.messageFontFamily,
+        boundaryFontWeight: c4.boundaryFontWeight,
       },
     });
-    expect(styles()).not.toMatch(MESSAGE_RULE);
+    const css = styles();
+    expect(css).not.toMatch(BOUNDARY_RULE);
+    expect(css).not.toMatch(MESSAGE_RULE);
   });
 
   it('sets relationship labels from c4.messageFont*', () => {
@@ -36,6 +42,14 @@ describe('c4 styles: relationship fonts', () => {
     expect(declarations).toContain('font-weight: bold;');
   });
 
+  it('sets boundary titles from c4.boundaryFont*, and only the values that differ', () => {
+    setConfig({ c4: { boundaryFontSize: '1.5em', boundaryFontWeight: 600 } });
+    const [, declarations] = BOUNDARY_RULE.exec(styles()) ?? [];
+    expect(declarations).toContain('font-size: 1.5em;');
+    expect(declarations).toContain('font-weight: 600;');
+    expect(declarations).not.toContain('font-family');
+  });
+
   it('keeps the element font rules', () => {
     setConfig({ c4: { personFontSize: 18 } });
     expect(styles()).toMatch(/\.c4-shape\.c4-person \.label {[^}]*font-size: 18px;/);
@@ -43,19 +57,25 @@ describe('c4 styles: relationship fonts', () => {
 
   // An HTML label nests the text inside the label group, and both match a selector that
   // names the two; a relative size set on both would apply twice.
-  it('sets a relative message size once and lets the nested label inherit it', () => {
-    setConfig({ c4: { messageFontSize: '1.5em' } });
-    const rules = styles()
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith('g.edgeLabel'));
-    const sizes = rules.map((rule) => {
-      const [selectors, body] = rule.split('{');
-      const size = /font-size: ([^;]+);/.exec(body)?.[1];
-      return { nestedOnly: selectors.trim() === 'g.edgeLabel .edgeLabel', size };
-    });
-    expect(sizes).toContainEqual({ nestedOnly: false, size: '1.5em' });
-    expect(sizes).toContainEqual({ nestedOnly: true, size: 'inherit' });
-    expect(sizes.filter((entry) => entry.size === '1.5em')).toHaveLength(1);
-  });
+  it.each([
+    ['boundary', 'boundaryFontSize', '.cluster.c4-boundary .cluster-label', '.nodeLabel'],
+    ['message', 'messageFontSize', 'g.edgeLabel', '.edgeLabel'],
+  ])(
+    'sets a relative %s size once and lets the nested label inherit it',
+    (_kind, key, outer, nested) => {
+      setConfig({ c4: { [key]: '1.5em' } });
+      const rules = styles()
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith(outer));
+      const sizes = rules.map((rule) => {
+        const [selectors, body] = rule.split('{');
+        const size = /font-size: ([^;]+);/.exec(body)?.[1];
+        return { nestedOnly: selectors.trim() === `${outer} ${nested}`, size };
+      });
+      expect(sizes).toContainEqual({ nestedOnly: false, size: '1.5em' });
+      expect(sizes).toContainEqual({ nestedOnly: true, size: 'inherit' });
+      expect(sizes.filter((entry) => entry.size === '1.5em')).toHaveLength(1);
+    }
+  );
 });

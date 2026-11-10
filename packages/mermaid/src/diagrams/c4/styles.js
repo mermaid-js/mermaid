@@ -39,7 +39,10 @@ const elementFontStyles = () => {
  * goes on the outer group; the label nested in it, which the stylesheet sizes on its own in
  * `em`, inherits instead, so a relative size applies once.
  */
-const LABEL_FONT_RULES = [{ outer: 'g.edgeLabel', nested: '.edgeLabel', prefix: 'message' }];
+const LABEL_FONT_RULES = [
+  { outer: '.cluster.c4-boundary .cluster-label', nested: '.nodeLabel', prefix: 'boundary' },
+  { outer: 'g.edgeLabel', nested: '.edgeLabel', prefix: 'message' },
+];
 
 /** A number font size is taken as pixels. */
 const FONT_PROPERTIES = [
@@ -52,9 +55,9 @@ const FONT_PROPERTIES = [
   { suffix: 'FontWeight', property: 'font-weight', toCss: String },
 ];
 
-// Relationship labels (`messageFont*`) keep the stylesheet's own typography unless the config
-// sets a value other than its default; only such a value gets a rule, built through the CSSOM
-// like the element rules above.
+// Boundary titles (`boundaryFont*`) and relationship labels (`messageFont*`) keep the
+// stylesheet's own typography unless the config sets a value other than its default; only
+// such a value gets a rule, built through the CSSOM like the element rules above.
 const labelFontStyles = () => {
   const c4 = getConfig().c4 ?? {};
   const defaults = defaultConfig.c4;
