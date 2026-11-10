@@ -65,12 +65,17 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   // The layout may replace `data4Layout.edges` with only the edges it routed at the top level
   // (dagre lays out a boundary nothing crosses as a graph of its own), so the relationships
-  // are taken before it runs and each label is nudged exactly once.
+  // are taken before it runs. It may also split one into segments with ids of their own (dagre
+  // draws a self-loop's label on its `-cyclic-special-mid` segment), so the edges it returns
+  // are added to them. Each label is nudged once per id.
   const relationships: (Edge & C4LabelNudge)[] = [...data4Layout.edges];
 
   await render(data4Layout, svg);
 
-  nudgeRelationshipLabels(svg, relationships);
+  const laidOut: (Edge & C4LabelNudge)[] = data4Layout.edges;
+  nudgeRelationshipLabels(svg, [
+    ...new Map([...relationships, ...laidOut].map((edge) => [edge.id, edge])).values(),
+  ]);
 
   utils.insertTitle(svg, 'c4TitleText', conf?.diagramMarginY ?? 10, db.getTitle());
 
