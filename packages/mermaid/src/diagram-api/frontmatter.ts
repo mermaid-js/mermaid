@@ -45,32 +45,48 @@ const SHORT_ESCAPES = new Map([
  * Control characters, the Unicode line breaks and the bidirectional format controls
  * (U+202A-202E, U+2066-2069), which would split a log line or reorder the text around them.
  */
-const escapeControls = (text: string): string =>
-  text.replace(
-    /[\p{Cc}\u2028\u2029\u202A-\u202E\u2066-\u2069]/gu,
-    (char) =>
-      SHORT_ESCAPES.get(char) ??
-      `\\u${char.charCodeAt(0).toString(HEX_RADIX).padStart(UNICODE_ESCAPE_DIGITS, '0')}`
-  );
+const CONTROL_CHARACTER = /[\p{Cc}\u2028\u2029\u202A-\u202E\u2066-\u2069]/u;
 
-const clip = (text: string): string =>
-  text.length > MAX_SHOWN_LENGTH ? `${text.slice(0, MAX_SHOWN_LENGTH)}...` : text;
+/** `char`, one code point, or its backslash escape when it is a control character. */
+const escapeControl = (char: string): string =>
+  CONTROL_CHARACTER.test(char)
+    ? (SHORT_ESCAPES.get(char) ??
+      `\\u${char.charCodeAt(0).toString(HEX_RADIX).padStart(UNICODE_ESCAPE_DIGITS, '0')}`)
+    : char;
+
+/** `char`, one code point, as it is written inside a double-quoted YAML string. */
+const escapeQuoted = (char: string): string =>
+  char === '"' || char === '\\' ? `\\${char}` : escapeControl(char);
+
+/**
+ * `text` with each code point written by `escape`, cut after the last whole escape that fits
+ * the limit. A cut never splits an escape or a surrogate pair, so a quoted key stays valid YAML.
+ */
+const shownWith = (text: string, escape: (char: string) => string): string => {
+  let kept = '';
+  for (const char of text) {
+    const written = escape(char);
+    if (kept.length + written.length > MAX_SHOWN_LENGTH) {
+      return `${kept}...`;
+    }
+    kept += written;
+  }
+  return kept;
+};
 
 /** Escaped before it is cut, so the shown text is one line of at most the limit. */
-const shown = (text: string): string => clip(escapeControls(text));
+const shown = (text: string): string => shownWith(text, escapeControl);
 
 /** A part that YAML reads back as the same key without quotes. */
 const PLAIN_YAML_KEY = /^[\w-]+$/;
 
 /**
  * Shows one part of the suggested nested form. A part that is not a plain word is written as a
- * double-quoted YAML string, whose `\n` and `\uXXXX` escapes are the ones `escapeControls` makes,
+ * double-quoted YAML string, whose `\n` and `\uXXXX` escapes are the ones `escapeControl` makes,
  * so the suggestion means the key the author wrote.
  */
 const suggestedKey = (segment: string): string =>
-  PLAIN_YAML_KEY.test(segment)
-    ? shown(segment)
-    : `"${clip(escapeControls(segment.replace(/["\\]/g, '\\$&')))}"`;
+  PLAIN_YAML_KEY.test(segment) ? shown(segment) : `"${shownWith(segment, escapeQuoted)}"`;
 
 /** Writes `['elk', 'mergeEdges']` as `elk: { mergeEdges: ... }`. */
 const nestedForm = (path: string[]): string =>

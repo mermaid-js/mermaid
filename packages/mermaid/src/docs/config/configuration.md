@@ -46,7 +46,7 @@ config:
 When a key directly under `config:` contains dots and starts with the name of a config section, such as `elk`, `flowchart` or `themeVariables`, mermaid logs a warning that names the key and shows the nested form.
 A section is any option of the default configuration that holds nested options, so `dompurifyConfig`, which has no default, is not one.
 The key stays ignored.
-The warning shows at most four parts of the key, and cuts the key and each part at 80 characters.
+The warning shows at most four parts of the key, and cuts the key and each part at 80 characters, never inside a backslash sequence.
 Control characters in the key, such as a newline or a tab, and the bidirectional format controls (U+202A to U+202E and U+2066 to U+2069) are shown as backslash sequences like `\n`, so the warning stays on one line.
 A part of the suggested form that is not a plain word is written in double quotes, as YAML needs.
 

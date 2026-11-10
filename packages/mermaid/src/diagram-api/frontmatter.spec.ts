@@ -1,3 +1,4 @@
+import * as yaml from 'js-yaml';
 import { log } from '../logger.js';
 import { extractFrontMatter, MAX_SHOWN_LENGTH } from './frontmatter.js';
 
@@ -300,6 +301,46 @@ describe('dotted config keys in frontmatter', () => {
       const warn = warnSpy();
       extractFrontMatter(withConfigKey(written, 'true'));
       expect(String(warn.mock.calls[0][0]).endsWith(`write it nested: ${nested}`)).toBe(true);
+    });
+
+    /** The suggestion with `value` in place of its `...`, read as the front matter is read. */
+    const readBack = (message: string, value: number): unknown => {
+      const nested = message.slice(
+        message.indexOf('write it nested: ') + 'write it nested: '.length
+      );
+      const placeholder = nested.lastIndexOf('...');
+      return yaml.load(
+        `${nested.slice(0, placeholder)}${value}${nested.slice(placeholder + '...'.length)}`,
+        { schema: yaml.JSON_SCHEMA }
+      );
+    };
+
+    describe('cut at the limit', () => {
+      const BELOW_LIMIT = MAX_SHOWN_LENGTH - 1;
+      it.each([
+        ['a quote', `'elk.${'a'.repeat(BELOW_LIMIT)}"'`],
+        ['a backslash', `'elk.${'a'.repeat(BELOW_LIMIT)}\\'`],
+        ['a control character', `"elk.${'a'.repeat(BELOW_LIMIT)}\\x01"`],
+        ['a character outside the BMP', `"elk.${'a'.repeat(BELOW_LIMIT)}\\U0001F600"`],
+      ])('keeps a whole escape when %s crosses it, so the key is valid YAML', (_name, written) => {
+        const warn = warnSpy();
+        extractFrontMatter(withConfigKey(written, 'true'));
+        const message = String(warn.mock.calls[0][0]);
+        expect(message).toMatch(`write it nested: elk: { "${'a'.repeat(BELOW_LIMIT)}...": ... }`);
+        expect(readBack(message, 1)).toEqual({ elk: { [`${'a'.repeat(BELOW_LIMIT)}...`]: 1 } });
+      });
+
+      it.each([
+        ['a control character', '\\x01'],
+        ['a character outside the BMP', '\\U0001F600'],
+      ])('keeps a whole escape when %s crosses it in the shown key', (_name, written) => {
+        const warn = warnSpy();
+        const filler = 'a'.repeat(MAX_SHOWN_LENGTH - 'elk.'.length - 1);
+        extractFrontMatter(withConfigKey(`"elk.${filler}${written}"`, 'true'));
+        const message = String(warn.mock.calls[0][0]);
+        expect(message).toMatch(`config key 'elk.${filler}...' is ignored`);
+        expect(message).not.toMatch(/\p{Cs}/u);
+      });
     });
 
     it('stays bare when every part is a plain word', () => {
