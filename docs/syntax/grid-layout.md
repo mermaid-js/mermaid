@@ -581,6 +581,7 @@ flowchart TB
 | `verticalAlign`    | `center`  | Sets the default vertical alignment for a cell stack.               |
 | `curve`            | `rounded` | Sets the edge rendering curve.                                      |
 | `edgeCornerRadius` | `5`       | Sets the corner radius for `rounded` edges.                         |
+| `lineHops`         | `arc`     | Draws edge crossings as arcs, gaps, or plain crossings.             |
 
 For accepted values and validation rules, see the [grid layout configuration reference](/config/schema-docs/config-defs-grid-layout-config.html).
 
@@ -655,6 +656,30 @@ flowchart TB
 ```
 
 `linear` and `rounded` preserve the calculated route corridor. Other curves interpolate between the obstacle-aware route points and can move outside that corridor. The interpolated curve is not revalidated against obstacles.
+
+## Edge crossings
+
+Grid draws a small arc where routed edges cross, distinguishing a crossing from a
+connection without changing the route or node positions.
+
+Set `grid.lineHops` in frontmatter, a directive, or `mermaid.initialize()`:
+
+| Value   | Behavior                            |
+| ------- | ----------------------------------- |
+| `'arc'` | Draw an arc at crossings (default). |
+| `'gap'` | Leave a visible gap at crossings.   |
+| `false` | Draw plain crossings without hops.  |
+
+```yaml
+config:
+  layout: grid
+  grid:
+    lineHops: gap
+```
+
+Line hops preserve corner radii and arrowhead offsets. The renderer reduces or
+omits a hop when there is too little space near a bend or endpoint. Smoothing
+curves such as `basis` are left unchanged.
 
 ## Current limits
 
