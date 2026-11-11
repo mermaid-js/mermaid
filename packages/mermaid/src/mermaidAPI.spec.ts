@@ -900,6 +900,7 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
       { textDiagramType: 'treeView-beta', expectedType: 'treeView' },
       { textDiagramType: 'radar-beta', expectedType: 'radar' },
+      { textDiagramType: 'timingDiagram-beta', expectedType: 'timingDiagram' },
       { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
     ];
 
@@ -919,6 +920,9 @@ graph TD;A--x|text including URL space|B;`)
             'should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription',
             async () => {
               const { svg } = await mermaidAPI.render(id, diagramText);
+              if (expectedDiagramType === 'timingDiagram') {
+                expect(svg).not.toContain('NaN');
+              }
               const dom = new JSDOM(svg);
               const svgNode = ensureNodeFromSelector('svg', dom.window.document);
               const descNode = ensureNodeFromSelector('desc', svgNode);

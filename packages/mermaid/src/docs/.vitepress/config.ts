@@ -184,6 +184,7 @@ function sidebarSyntax() {
         syntaxItem('C4 Diagram', 'c4'),
         syntaxItem('Mindmaps', 'mindmap'),
         syntaxItem('Timeline', 'timeline'),
+        syntaxItem('Timing Diagram', 'timing'),
         syntaxItem('ZenUML', 'zenuml'),
         syntaxItem('Sankey', 'sankey'),
         syntaxItem('XY Chart', 'xyChart'),

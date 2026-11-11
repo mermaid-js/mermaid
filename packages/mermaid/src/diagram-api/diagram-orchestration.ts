@@ -22,6 +22,7 @@ import kanban from '../diagrams/kanban/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
 import { radar } from '../diagrams/radar/detector.js';
+import { timingDiagram } from '../diagrams/timing/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import treeView from '../diagrams/treeView/detector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
@@ -112,6 +113,7 @@ export const addDiagrams = () => {
     eventmodeling,
     treeView,
     radar,
+    timingDiagram,
     ishikawa,
     treemap,
     railroad,

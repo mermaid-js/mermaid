@@ -137,6 +137,14 @@ describe('per-diagram appearance defaults', () => {
       expect((await configFor('classDiagram-v2\n  class Duck')).theme).toBe('forest');
     });
 
+    it('resolves timing appearance through its configuration section', async () => {
+      // Timing uses a different detector id from its configuration section.
+      mermaidAPI.initialize({ timing: { theme: 'dark' } });
+      const timing = await configFor('timingDiagram-beta\nbinary EN\nEN : 0, 1');
+      expect(timing.theme).toBe('dark');
+      expect(timing.themeVariables.primaryColor).toBe(theme.dark.getThemeVariables().primaryColor);
+    });
+
     it('opts a diagram type into a layout', async () => {
       mermaidAPI.initialize({ er: { layout: 'dagre' } });
       expect((await configFor(REDESIGNED_DIAGRAMS.er)).layout).toBe('dagre');
