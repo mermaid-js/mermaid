@@ -18,9 +18,9 @@
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+<acc_title>(?!\n|;)*[^\n]*                                     { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+<acc_descr>(?!\n|;)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
@@ -69,13 +69,13 @@ that id.
 <click>[^\s\n]*         return 'click';
 
 "gantt"                         return 'gantt';
-"dateFormat"\s[^#\n;]+          return 'dateFormat';
+"dateFormat"\s[^\n;]+          return 'dateFormat';
 "inclusiveEndDates"             return 'inclusiveEndDates';
 "topAxis"                       return 'topAxis';
-"axisFormat"\s[^#\n;]+          return 'axisFormat';
-"tickInterval"\s[^#\n;]+        return 'tickInterval';
-"includes"\s[^#\n;]+            return 'includes';
-"excludes"\s[^#\n;]+            return 'excludes';
+"axisFormat"\s[^\n;]+          return 'axisFormat';
+"tickInterval"\s[^\n;]+        return 'tickInterval';
+"includes"\s[^\n;]+            return 'includes';
+"excludes"\s[^\n;]+            return 'excludes';
 "todayMarker"\s[^\n;]+          return 'todayMarker';
 weekday\s+monday                return 'weekday_monday'
 weekday\s+tuesday               return 'weekday_tuesday'
@@ -88,10 +88,10 @@ weekend\s+friday                return 'weekend_friday'
 weekend\s+saturday              return 'weekend_saturday'
 \d\d\d\d"-"\d\d"-"\d\d          return 'date';
 "title"\s[^\n]+               return 'title';
-"accDescription"\s[^#\n;]+      return 'accDescription'
+"accDescription"\s[^\n;]+      return 'accDescription'
 "section"\s[^\n]+            return 'section';
 [^:\n]+                       return 'taskTxt';
-":"[^#\n;]+                     return 'taskData';
+":"[^\n;]+                     return 'taskData';
 ":"                             return ':';
 <<EOF>>                         return 'EOF';
 .                               return 'INVALID';
