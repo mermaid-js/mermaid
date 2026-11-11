@@ -421,4 +421,28 @@ describe('getConfig snapshot', () => {
     expect(configApi.getConfig()).not.toBe(before);
     expect(configApi.getConfig().fontSize).toBe(configApi.defaultConfig.fontSize);
   });
+
+  it.each([
+    '{"__proto__":{"polluted":1}}',
+    '{"constructor":{"prototype":{"polluted":1}}}',
+    '{"flowchart":{"__proto__":{"polluted":1}}}',
+    '{"prototype":{"polluted":1}}',
+  ])('does not pollute prototypes with %s', (payload) => {
+    configApi.setConfig(JSON.parse(payload));
+    for (const config of [configApi.getConfig(), configApi.getConfigCopy()]) {
+      expect(Object.getPrototypeOf(config)).toBe(Object.prototype);
+      expect(Object.getPrototypeOf(config.flowchart)).toBe(Object.prototype);
+      expect((config as Record<string, unknown>).polluted).toBeUndefined();
+    }
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+  });
+
+  it('keeps non-plain objects such as RegExp as they are', () => {
+    const tagNameCheck = /^x-/g;
+    configApi.setSiteConfig({ dompurifyConfig: { CUSTOM_ELEMENT_HANDLING: { tagNameCheck } } });
+    for (const config of [configApi.getConfig(), configApi.getConfigCopy()]) {
+      expect(config.dompurifyConfig?.CUSTOM_ELEMENT_HANDLING?.tagNameCheck).toBe(tagNameCheck);
+    }
+    expect(Object.isFrozen(tagNameCheck)).toBe(false);
+  });
 });
