@@ -1166,6 +1166,11 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
    */
   arrowMarkerAbsolute?: boolean;
   dividerMargin?: number;
+  /**
+   * Override the padding for class boxes, namespaces, and notes.
+   * When omitted, class boxes use 12, namespaces use 16, and notes use 6.
+   *
+   */
   padding?: number;
   textHeight?: number;
   nodeSpacing?: number;

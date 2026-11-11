@@ -69,15 +69,9 @@ const config: RequiredDeep<MermaidConfig> = {
     },
   },
   class: {
-    // Built from scratch rather than spread from the schema, so the appearance defaults
-    // have to be carried across by hand; the rest stay off, `padding` above all — the
-    // schema default of 5 would change class node dimensions on the unified renderer.
-    // Optional chaining: the docs scripts short-circuit `.schema.yaml` to `{}`.
-    theme: defaultConfigJson.class?.theme,
-    look: defaultConfigJson.class?.look,
-    layout: defaultConfigJson.class?.layout,
-    hideEmptyMembersBox: false,
-    hierarchicalNamespaces: true,
+    ...defaultConfigJson.class,
+    // Preserve per-shape padding defaults while making the override discoverable by configKeys.
+    padding: undefined,
   },
   gantt: {
     ...defaultConfigJson.gantt,
