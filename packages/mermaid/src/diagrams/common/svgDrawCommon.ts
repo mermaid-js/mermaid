@@ -145,6 +145,8 @@ export const createTooltip = () => {
       .attr('class', 'mermaidTooltip')
       .style('opacity', 0)
       .style('position', 'absolute')
+      .style('top', '0px')
+      .style('left', '0px')
       .style('text-align', 'center')
       .style('max-width', '200px')
       .style('padding', '2px')
@@ -156,4 +158,12 @@ export const createTooltip = () => {
       .style('z-index', '100');
   }
   return tooltipElem;
+};
+
+export const hideTooltip = (tooltipElem: ReturnType<typeof createTooltip>) => {
+  return tooltipElem
+    .transition()
+    .duration(500)
+    .style('opacity', 0)
+    .on('end', () => tooltipElem.html('').style('top', '0px').style('left', '0px'));
 };
