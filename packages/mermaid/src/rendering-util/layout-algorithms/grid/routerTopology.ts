@@ -1,8 +1,6 @@
 import { compareCodeUnits } from '../layout-utils/helpers.js';
-import {
-  GridRoutingResourceLimitError,
-  type GridRoutingInstrumentation,
-} from './routerInstrumentation.js';
+import { GridRoutingResourceLimitError } from './routerErrors.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import type {
   ContainerRoutingTopology,
   GridOrientation,
@@ -21,6 +19,12 @@ import type {
 // Builds immutable orthogonal visibility graphs per container. Endpoint-specific vertices are added
 // through bounded overlays so the expensive obstacle sweep is paid once per container.
 export const ROUTE_CLEARANCE_PX = 6;
+
+/**
+ * Parallel runs of different edges closer than this are hard to tell apart, so candidates avoid them.
+ * Perpendicular crossings are not affected.
+ */
+export const EDGE_CLEARANCE_PX = 24;
 
 // Caps bound both adversarial geometry and ordinary large-diagram memory growth. Exceeding one is a
 // recoverable routing condition handled by the validated compatibility path.
