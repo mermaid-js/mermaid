@@ -1042,7 +1042,7 @@ function adjustCreatedDestroyedData(
  */
 export const draw = async function (_text: string, id: string, _version: string, diagObj: Diagram) {
   const { securityLevel, sequence, look, themeVariables } = getConfig();
-  conf = sequence;
+  conf = assignWithDepth({}, sequence);
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {

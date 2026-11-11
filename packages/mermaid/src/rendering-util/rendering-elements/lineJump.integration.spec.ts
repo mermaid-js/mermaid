@@ -67,12 +67,17 @@ async function parseLayout(): Promise<LayoutData> {
   const direction = getDirection?.call(diagram.db) ?? 'TB';
   (layoutData as LayoutData & { direction?: string }).direction = direction;
 
-  const cfg = (layoutData.config ??= {} as LayoutData['config']);
-  const flowchartCfg = ((cfg as { flowchart?: Record<string, unknown> }).flowchart ??= {});
-  flowchartCfg.nodeSpacing = (flowchartCfg.nodeSpacing as number | undefined) ?? 40;
-  flowchartCfg.rankSpacing = (flowchartCfg.rankSpacing as number | undefined) ?? 100;
-  flowchartCfg.ignoreCrossLaneEdges = true;
-  flowchartCfg.optimizeRanksByCrossings = true;
+  const flowchart = layoutData.config?.flowchart;
+  layoutData.config = {
+    ...layoutData.config,
+    flowchart: {
+      ...flowchart,
+      nodeSpacing: flowchart?.nodeSpacing ?? 40,
+      rankSpacing: flowchart?.rankSpacing ?? 100,
+      ignoreCrossLaneEdges: true,
+      optimizeRanksByCrossings: true,
+    },
+  } as LayoutData['config'];
 
   return layoutData;
 }

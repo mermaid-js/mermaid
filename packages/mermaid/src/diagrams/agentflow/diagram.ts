@@ -14,7 +14,6 @@ export const diagram = {
   renderer,
   styles: agentflowStyles,
   init: (cnf: MermaidConfig) => {
-    cnf.agentflow ??= {};
     if (cnf.layout) {
       setConfig({ layout: cnf.layout });
     }
@@ -22,8 +21,6 @@ export const diagram = {
     // and state namespaces for `arrowMarkerAbsolute`, so mirror the global flag
     // into `flowchart` to keep absolute marker URLs working. Mirrors what
     // `createFlowDiagram` does.
-    cnf.flowchart ??= {};
-    cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
   },
 };
