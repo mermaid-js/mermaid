@@ -136,7 +136,9 @@ const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[
       tmpConfigFromInitialize.themeVariables || {},
       sumOfDirectives.themeVariables
     );
-    cfg.themeVariables = theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables);
+    cfg.themeVariables = {
+      ...theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables),
+    };
   }
 
   currentConfig = cfg;
