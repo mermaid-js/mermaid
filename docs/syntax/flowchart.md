@@ -1904,6 +1904,27 @@ config:
 graph LR
 ```
 
+### Node tooltips (v\<MERMAID_RELEASE_VERSION>+)
+
+Add a `tooltip` key to a node's metadata to show text when the user hovers over the node. Unlike `click` tooltips, no click handler or JavaScript callback is needed.
+
+```mermaid-example
+flowchart LR
+  A@{ tooltip: "Extra details shown on hover" } --> B
+  B@{ shape: circle, tooltip: "I'm a circle" } --> C
+```
+
+```mermaid
+flowchart LR
+  A@{ tooltip: "Extra details shown on hover" } --> B
+  B@{ shape: circle, tooltip: "I'm a circle" } --> C
+```
+
+> **Note**
+> Like `click` tooltips, node tooltips only work after `bindFunctions` has run. `mermaid.run()` does this for you. If you call `mermaid.render()` and insert the SVG yourself, call `bindFunctions(element)` afterwards, or the tooltip won't appear. See [Usage](../config/usage.md).
+
+Tooltips apply to nodes only. A `tooltip` key on a subgraph is ignored.
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
