@@ -95,5 +95,16 @@ UK land based bioenergy,Bio-conversion,182.01
 """Wave""",Electricity grid,19.013
 """Wind""",Electricity grid,289.366
 
+%% lines contain Non-ASCII characters
+太阳能,中国,200
+太陽光発電,日本,300
+태양광,한국,400
+Ηλιακή ενέργεια,Ελλάδα,500
+Солнечная энергия,Россия,600
+Solarenergie,Deutschland,700
+الطاقة الشمسية,المملكة العربية السعودية,800
+พลังงานแสงอาทิตย์,ประเทศไทย,900
+Năng lượng mặt trời,Việt Nam,1000
+
 %% lines at the end, do not remove
 
