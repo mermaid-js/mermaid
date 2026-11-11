@@ -983,6 +983,9 @@ export const insertEdge = function (
 
       // No offset needed because we already start with a zero-length dash that effectively sets us up for a gap at the start.
       const mOffset = `stroke-dasharray: ${dashArray}; stroke-dashoffset: 0;`;
+      if (edge.pattern !== 'dotted' && edge.pattern !== 'dashed') {
+        svgPath.attr('data-line-hop-dasharray', 'true');
+      }
       svgPath.attr('style', mOffset + svgPath.attr('style'));
     }
   }

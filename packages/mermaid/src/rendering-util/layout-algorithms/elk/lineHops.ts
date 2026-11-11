@@ -32,9 +32,8 @@ interface EdgePaintGroups {
  *
  * ELK's curve is compatible either way — `applyElkEdgeLayout` sets `rounded`
  * for a routed edge and `linear` for its straight-line fallback, and
- * `curveSupportsLineHops` accepts both. An edge that takes a hop loses its
- * corner rounding in exchange, which is the trade the line-jump module
- * documents.
+ * `curveSupportsLineHops` accepts both. Rounded corners are preserved, and
+ * the other edge can carry the hop if the preferred edge has too little room.
  */
 export function applyElkLineJumps(
   data4Layout: LayoutData,
@@ -58,6 +57,8 @@ export function applyElkLineJumps(
       cornerRadius: edge.cornerRadius,
       arrowTypeStart: edge.arrowTypeStart,
       arrowTypeEnd: edge.arrowTypeEnd,
+      terminalClearanceStart: (edge as unknown as EdgeGeom).terminalClearanceStart,
+      terminalClearanceEnd: (edge as unknown as EdgeGeom).terminalClearanceEnd,
     }));
 
   applyLineJumpsToSvg(measure.groups.edgePaths, edgeGeometries, {
