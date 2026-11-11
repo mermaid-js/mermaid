@@ -437,6 +437,13 @@ describe('getConfig snapshot', () => {
     expect(({} as Record<string, unknown>).polluted).toBeUndefined();
   });
 
+  it('freezes and copies themeVariables when a directive changes the theme', () => {
+    configApi.addDirective({ theme: 'dark' });
+    const { themeVariables } = configApi.getConfig();
+    expect(Object.isFrozen(themeVariables)).toBe(true);
+    expect(configApi.getConfigCopy().themeVariables).not.toBe(themeVariables);
+  });
+
   it('keeps non-plain objects such as RegExp as they are', () => {
     const tagNameCheck = /^x-/g;
     configApi.setSiteConfig({ dompurifyConfig: { CUSTOM_ELEMENT_HANDLING: { tagNameCheck } } });
