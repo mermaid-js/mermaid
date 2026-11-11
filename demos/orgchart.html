@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Org chart Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      body {
+        margin: 2rem;
+        font-family: sans-serif;
+      }
+
+      section {
+        margin-block: 3rem;
+      }
+
+      @media print {
+        body {
+          margin: 0;
+        }
+
+        section {
+          margin-block: 2rem;
+        }
+
+        h2,
+        section > p {
+          break-after: avoid;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Org chart diagram demo</h1>
+    <p>
+      Browser and print-test gallery. Open this page in each browser and compare labels, reporting
+      lines, staff placement, and chart boundaries. In print preview, check clipping, page breaks,
+      contrast, and legibility. Wide or tall charts may require landscape orientation, larger paper,
+      or print-dialog scaling; the gallery does not hide overflow or automatically paginate charts.
+    </p>
+    <p>
+      For a screen-reader check, use the accessibility example below. Confirm its title and
+      relationship description are announced. The hierarchy is not keyboard-navigable; the text
+      outline provides an alternative to following the visual connectors.
+    </p>
+
+    <section>
+      <h2>Classic: hierarchy with staff nodes</h2>
+      <pre class="mermaid">
+---
+config:
+  look: classic
+---
+orgchart-beta
+    CEO "Anna Andersson"
+        staff CFO "Bo Berg"
+        staff HR "Carina Carlson"
+        Engineering "David Dahl"
+            Development "Eva Ek"
+            Systems "Fred Ford"
+        Sales "Greta Gran"
+            Europe "Helena Holm"
+    </pre
+      >
+    </section>
+
+    <section>
+      <h2>Several staff nodes and unbalanced branches</h2>
+      <pre class="mermaid">
+orgchart-beta
+    ceo[CEO] "Anna Andersson"
+        staff Finance
+        staff HR
+        staff Legal
+        Engineering
+            staff Quality "Ida Ives"
+            Platform
+                Infrastructure
+                Security
+            Product
+        Sales
+    </pre
+      >
+    </section>
+
+    <section>
+      <h2>Hand-drawn look</h2>
+      <pre class="mermaid">
+---
+config:
+  look: handDrawn
+  handDrawnSeed: 42
+---
+orgchart-beta
+    CEO "Anna Andersson"
+        staff Finance
+        staff HR
+        staff Legal
+        Engineering
+            staff Quality
+            Development
+            Systems
+        Sales
+            Europe
+    </pre
+      >
+    </section>
+
+    <section>
+      <h2>Dark theme</h2>
+      <pre class="mermaid">
+%%{init: { 'theme': 'dark' } }%%
+orgchart-beta
+    CEO "Anna Andersson"
+        staff CFO "Bo Berg"
+        Engineering "David Dahl"
+        Sales "Greta Gran"
+    </pre
+      >
+    </section>
+
+    <section>
+      <h2>Neo look: classic fallback</h2>
+      <p>
+        Neo currently uses classic boxes and connectors. Compare this with the first example;
+        distinct Neo styling is not implemented for org charts.
+      </p>
+      <pre class="mermaid">
+---
+config:
+  look: neo
+---
+orgchart-beta
+    CEO "Anna Andersson"
+        staff CFO "Bo Berg"
+        staff HR "Carina Carlson"
+        Engineering "David Dahl"
+            Development "Eva Ek"
+            Systems "Fred Ford"
+        Sales "Greta Gran"
+            Europe "Helena Holm"
+      </pre>
+    </section>
+
+    <section>
+      <h2>Multilingual labels</h2>
+      <p>
+        Check CJK glyphs, Arabic and Hebrew shaping, and emoji. Font availability differs by
+        platform; all labels should remain within their boxes.
+      </p>
+      <pre class="mermaid">
+orgchart-beta
+    "Global team 🌍"
+        "開発部" "山田 太郎"
+        "研发部" "王 小明"
+        "الهندسة" "ليلى"
+        "הנדסה" "דנה"
+        "Design 🎨" "Alex 🚀"
+      </pre>
+    </section>
+
+    <section>
+      <h2>Wide hierarchy: 30 siblings at natural size</h2>
+      <p>
+        All reports should share one level without overlapping. This deliberately wide chart uses
+        natural sizing so overflow remains visible during browser and print checks.
+      </p>
+      <pre class="mermaid">
+---
+config:
+  orgchart:
+    useMaxWidth: false
+---
+orgchart-beta
+    Root
+        Report01
+        Report02
+        Report03
+        Report04
+        Report05
+        Report06
+        Report07
+        Report08
+        Report09
+        Report10
+        Report11
+        Report12
+        Report13
+        Report14
+        Report15
+        Report16
+        Report17
+        Report18
+        Report19
+        Report20
+        Report21
+        Report22
+        Report23
+        Report24
+        Report25
+        Report26
+        Report27
+        Report28
+        Report29
+        Report30
+      </pre>
+    </section>
+
+    <section>
+      <h2>Deep hierarchy: 15 levels</h2>
+      <p>
+        Check that every level and connector is present. This tall chart may span printed pages;
+        Mermaid does not repeat headings or rearrange the hierarchy at page boundaries.
+      </p>
+      <pre class="mermaid">
+orgchart-beta
+    Level01
+        Level02
+            Level03
+                Level04
+                    Level05
+                        Level06
+                            Level07
+                                Level08
+                                    Level09
+                                        Level10
+                                            Level11
+                                                Level12
+                                                    Level13
+                                                        Level14
+                                                            Level15
+      </pre>
+    </section>
+
+    <section>
+      <h2>Eight staff nodes under one manager</h2>
+      <p>Staff should alternate sides across four rows, above the reporting children.</p>
+      <pre class="mermaid">
+orgchart-beta
+    CEO
+        staff Finance
+        staff HR
+        staff Legal
+        staff Strategy
+        staff Compliance
+        staff Communications
+        staff Security
+        staff Quality
+        Engineering
+        Sales
+      </pre>
+    </section>
+
+    <section>
+      <h2>Explicit IDs reused across two charts</h2>
+      <p>
+        Both charts use the IDs ceo, advisor, and team. Both should render independently, with
+        unique SVG element IDs.
+      </p>
+      <pre class="mermaid">
+orgchart-beta
+    ceo[CEO] "Anna"
+        staff advisor[Finance] "Bob"
+        team[Engineering]
+      </pre>
+      <pre class="mermaid">
+orgchart-beta
+    ceo[Director] "Carina"
+        staff advisor[Legal] "David"
+        team[Operations]
+      </pre>
+    </section>
+
+    <section>
+      <h2>Accessible title, description, and text alternative</h2>
+      <pre class="mermaid">
+orgchart-beta
+title Company reporting structure
+accTitle: Company organization
+accDescr {
+    Anna is the CEO. Engineering and Sales report to Anna.
+    Bob in Finance provides staff support to Anna, not a reporting branch.
+}
+    CEO "Anna"
+        staff Finance "Bob"
+        Engineering
+        Sales
+      </pre>
+      <p>Equivalent text outline:</p>
+      <ul>
+        <li>
+          CEO: Anna
+          <ul>
+            <li>Reporting units: Engineering and Sales.</li>
+            <li>Staff support: Finance (Bob).</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Responsive sizing</h2>
+      <p>
+        This wide chart scales down to fit the available width. Resize the browser and compare its
+        boxes and labels with the identical, natural-size chart below.
+      </p>
+      <pre class="mermaid">
+---
+config:
+  orgchart:
+    useMaxWidth: true
+---
+orgchart-beta
+    CEO
+        staff Finance
+        Engineering and Infrastructure
+        Product and Design
+        Sales and Business Development
+        Marketing and Communications
+        Customer Support and Success
+        Operations and Logistics
+        Research and Development
+        People and Administration
+      </pre>
+    </section>
+
+    <section>
+      <h2>Natural sizing</h2>
+      <p>
+        This chart retains its natural dimensions, even in a narrow browser window. Overflow is
+        intentional and should remain visible in print preview.
+      </p>
+      <pre class="mermaid">
+---
+config:
+  orgchart:
+    useMaxWidth: false
+---
+orgchart-beta
+    CEO
+        staff Finance
+        Engineering and Infrastructure
+        Product and Design
+        Sales and Business Development
+        Marketing and Communications
+        Customer Support and Success
+        Operations and Logistics
+        Research and Development
+        People and Administration
+      </pre>
+    </section>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        theme: 'default',
+        startOnLoad: true,
+        logLevel: 0,
+      });
+    </script>
+  </body>
+</html>

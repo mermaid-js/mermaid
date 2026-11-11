@@ -34,6 +34,7 @@ mrtree
 multigraph
 nodesep
 NOTEGROUP
+orgchart
 Pinterest
 procs
 rankdir

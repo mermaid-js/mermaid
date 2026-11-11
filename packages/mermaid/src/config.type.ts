@@ -357,6 +357,7 @@ export interface MermaidConfig {
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
   usecase?: UsecaseDiagramConfig;
+  orgchart?: OrgChartDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
@@ -2473,6 +2474,21 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    *
    */
   colorScheme?: 'role' | 'rotate';
+}
+/**
+ * The object containing configurations specific for org chart diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "OrgChartDiagramConfig".
+ */
+export interface OrgChartDiagramConfig extends BaseDiagramConfig {
+  /**
+   * When this flag is set to `true`, the height and width is set to 100%
+   * and is then scaled with the available space.
+   * If set to `false`, the absolute space required is used.
+   *
+   */
+  useMaxWidth?: boolean;
 }
 /**
  * The object containing configurations specific for Venn diagrams.
