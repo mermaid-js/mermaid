@@ -93,6 +93,33 @@ describe('when working with site config', () => {
     expect(currentConfig.railroad?.fontSize).toBe(18);
     expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
   });
+
+  it('removes grid placement ids beginning with double underscores from directives', () => {
+    configApi.addDirective({
+      grid: {
+        placements: {
+          __start: { row: 1, column: 1 },
+          start: { row: 1, column: 2 },
+        },
+      },
+    });
+
+    expect(configApi.getConfig().grid?.placements).toEqual({
+      start: { row: 1, column: 2 },
+    });
+  });
+
+  it('rounds layered edges by default and keeps a layered.edgeRouting directive', () => {
+    configApi.reset();
+    expect(configApi.getConfig().layered?.edgeRouting).toBe('rounded');
+    expect(configApi.getConfig().flowchart?.curve).toBe('basis');
+
+    for (const edgeRouting of ['curved', 'stepped', 'straight', 'rounded'] as const) {
+      configApi.addDirective({ layered: { edgeRouting } });
+      expect(configApi.getConfig().layered?.edgeRouting).toBe(edgeRouting);
+    }
+    configApi.reset();
+  });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);

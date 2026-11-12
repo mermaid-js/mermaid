@@ -485,13 +485,21 @@ const renderDiagram = async function (
     profiler.start('render');
   }
 
-  const processed = processAndSetConfigs(text);
+  let processed: ReturnType<typeof processAndSetConfigs> | undefined;
+  let preprocessingError: unknown;
+  try {
+    processed = processAndSetConfigs(text);
+  } catch (error) {
+    // Defer the error until the SVG exists, using only the site's configuration.
+    preprocessingError = error;
+    configApi.reset();
+  }
   // Keep the DiagramCode object, not just the cleaned string: diagrams that
   // report source positions need `withComments` and `frontmatterLineOffset`,
   // and dropping them here silently disabled that on the render path while
   // `parse()` still had them.
-  let code: DiagramCode = processed.code;
-  text = code.cleaned;
+  let code: DiagramCode | undefined = processed?.code;
+  text = code?.cleaned ?? text;
 
   const config = configApi.getConfig();
   log.debug(config);
@@ -574,6 +582,9 @@ const renderDiagram = async function (
   let parseEncounteredException;
 
   try {
+    if (!processed || !code) {
+      throw preprocessingError;
+    }
     diag = injected.profiling
       ? await profiler.span('parse', () => Diagram.fromText(code, { title: processed.title }))
       : await Diagram.fromText(code, { title: processed.title });
