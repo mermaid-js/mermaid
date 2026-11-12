@@ -926,6 +926,23 @@ export const decodeEntities = function (text: string): string {
   return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
 };
 
+/**
+ * Turns {@link encodeEntities} placeholders into the characters a label is drawn as.
+ * Text with no placeholder is unchanged. Without a DOM, the HTML reference is kept (`&#35;x`).
+ *
+ * @param text - Parsed text that may still contain entity placeholders.
+ * @returns Text for a plain-text error message.
+ */
+export const decodeEntityPlaceholders = (text: string): string => {
+  if (!text.includes('ﬂ°')) {
+    return text;
+  }
+  return text.replace(/ﬂ°°\d+¶ß|ﬂ°\w+¶ß/g, (placeholder) => {
+    const html = decodeEntities(placeholder);
+    return typeof document !== 'undefined' ? entityDecode(html) : html;
+  });
+};
+
 export const isString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
