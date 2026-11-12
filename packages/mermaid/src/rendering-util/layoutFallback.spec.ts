@@ -4,7 +4,11 @@
  * runs before `render()` has to terminate at something always registered.
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { getRegisteredLayoutAlgorithm, registerLayoutLoaders } from './render.js';
+import {
+  getLayoutLoaderDefinition,
+  getRegisteredLayoutAlgorithm,
+  registerLayoutLoaders,
+} from './render.js';
 import { log } from '../logger.js';
 
 describe('layout fallback', () => {
@@ -15,8 +19,15 @@ describe('layout fallback', () => {
   it('returns a registered layout unchanged', () => {
     expect(getRegisteredLayoutAlgorithm('dagre')).toBe('dagre');
     expect(getRegisteredLayoutAlgorithm('swimlane')).toBe('swimlane');
+    expect(getRegisteredLayoutAlgorithm('grid')).toBe('grid');
     // Bundled by default now; only the tiny build omits it.
     expect(getRegisteredLayoutAlgorithm('elk')).toBe('elk');
+  });
+
+  it('loads the built-in grid renderer through its registered loader', async () => {
+    const renderer = await getLayoutLoaderDefinition('grid').loader();
+
+    expect(renderer).toBe(await import('./layout-algorithms/grid/index.js'));
   });
 
   it('falls back to dagre for a layout nobody registered', () => {
