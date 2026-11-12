@@ -32,6 +32,7 @@ import type { MermaidConfig } from './config.type.js';
 import { memoize, merge } from 'es-toolkit/compat';
 import { directiveRegex } from './diagram-api/regexes.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
+import { splitTextToChars } from './rendering-util/splitText.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -618,7 +619,9 @@ const breakString: (
       { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 },
       config
     );
-    const characters = [...word];
+    // Grapheme clusters, not code points: breaking inside one and inserting a
+    // hyphen splits an emoji from its modifier or a letter from its mark.
+    const characters = splitTextToChars(word);
     const lines: string[] = [];
     let currentLine = '';
     characters.forEach((character, index) => {
