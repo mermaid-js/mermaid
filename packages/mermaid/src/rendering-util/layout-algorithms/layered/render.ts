@@ -10,13 +10,21 @@ import type { InternalHelpers } from '../../../internals.js';
 import { log } from '../../../logger.js';
 import type { RenderOptions } from '../../render.js';
 import type { LayoutData } from '../../types.js';
-import { clearLayoutRenderState, createCommonLayoutRenderer } from '../common/index.js';
+import {
+  clearLayoutRenderState,
+  createCommonLayoutRenderer,
+  defaultMeasureLayout,
+} from '../common/index.js';
 import { layeredThrowsOnFailure } from './failureMode.js';
 import { runLayeredLayoutCore } from './layoutData.js';
 
 export { setLayeredThrowsOnFailure } from './failureMode.js';
 
 const renderLayered = createCommonLayoutRenderer({
+  // The engine sizes a subgraph from its title, so the title is measured as it is painted: on
+  // one line, not wrapped at `flowchart.wrappingWidth`.
+  measureLayout: (data4Layout, context) =>
+    defaultMeasureLayout(data4Layout, context, { unwrapGroupLabels: true }),
   runLayoutCore: runLayeredLayoutCore,
 });
 

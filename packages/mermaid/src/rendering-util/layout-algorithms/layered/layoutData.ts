@@ -142,6 +142,22 @@ function toLayoutGroup(n: Node, data: LayoutData, groupIds: Set<string>): Layout
   return group;
 }
 
+// A subgraph that sits inside one of its own descendants cannot be drawn as nested boxes. The
+// flowchart grammar accepts such input, and the engine would lift the loop apart into a drawing
+// that looks valid, so it is refused here, as dagre refuses it.
+function checkNesting(groups: LayoutGroup[]): void {
+  const parentOf = new Map(groups.map((g) => [g.id, g.parent]));
+  for (const { id } of groups) {
+    const seen = new Set<string>([id]);
+    for (let p = parentOf.get(id); p !== undefined; p = parentOf.get(p)) {
+      if (seen.has(p)) {
+        throw new Error(`layered: subgraph '${p}' is nested inside itself`);
+      }
+      seen.add(p);
+    }
+  }
+}
+
 function hasLabel(edge: Edge): boolean {
   return typeof edge.label === 'string' ? edge.label.trim().length > 0 : Boolean(edge.label);
 }
@@ -158,6 +174,7 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
   });
   const groupIds = new Set(data.nodes.filter((n) => n.isGroup).map((n) => n.id));
   const groups = data.nodes.filter((n) => n.isGroup).map((n) => toLayoutGroup(n, data, groupIds));
+  checkNesting(groups);
   const nodes: LayoutNode[] = [];
   const ids = new Set<string>(groupIds);
   for (const n of data.nodes) {

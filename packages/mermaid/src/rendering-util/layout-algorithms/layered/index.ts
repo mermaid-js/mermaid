@@ -42,6 +42,9 @@ export const TURN_BREAKPOINT = 640;
 const TIGHT_NODE = 0.5;
 const TIGHT_RANK = 0.75;
 const TIGHT_PAD = 0.6;
+// The most ranks one edge may ask for. The engine's time and memory grow with it, and no drawing
+// reads better with an edge longer than this.
+export const MAX_MIN_LEN = 1000;
 
 /** The spacing keys of a diagram's resolved config (flowchart: `nodeSpacing`, …). */
 export interface SpacingConfig {
@@ -185,6 +188,37 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
   const ends = graph.edges.map((e) => [index.get(e.source)!, index.get(e.target)!] as const);
   inheritCrossedDirections(cnodes, ends);
 
+  // An edge between a group and something inside it has no rank to span, so the engine has no
+  // route for it. It is drawn here instead, along the flow between the group's border and the
+  // inner end, and the group gets room on that side for the edge's label.
+  const inner: (InnerEdge | undefined)[] = ends.map(([src, dst], k) => {
+    const out = holds(cnodes, src, dst);
+    if (!out && !holds(cnodes, dst, src)) return undefined;
+    const group = out ? src : dst;
+    const dir = flowIn(cnodes, group, rootDir);
+    const down = !runsAcross(dir);
+    const label = graph.edges[k]!.label;
+    const labelLen = label ? (down ? label.height : label.width) : 0;
+    const c = cnodes[group]!;
+    const atTop = down && out === (dir === 'TB');
+    const band = !down ? c.padX : atTop ? c.padTop : c.padBottom;
+    // The title sits in the top padding; the edge starts below it instead of crossing it.
+    const j = group - nodeCount;
+    const title = atTop ? graph.groups[j]!.title : undefined;
+    const skip = title ? padTops[j]! / 2 + title.height : 0;
+    return { group, member: out ? dst : src, out, dir, band, skip, labelLen };
+  });
+  for (const edge of inner) {
+    if (!edge || (edge.labelLen === 0 && edge.skip === 0)) continue;
+    const c = cnodes[edge.group]!;
+    const room = edge.band + edge.labelLen + (graph.headRoom ?? 0);
+    if (runsAcross(edge.dir)) {
+      c.minW += 2 * Math.max(0, room - c.padX);
+      c.padX = Math.max(c.padX, room);
+    } else if (edge.out === (edge.dir === 'TB')) c.padTop = Math.max(c.padTop, room);
+    else c.padBottom = Math.max(c.padBottom, room);
+  }
+
   const sideways = (i: number): boolean => {
     let dir: Dir | undefined;
     const seen = new Set<number>();
@@ -231,7 +265,7 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     return {
       src,
       dst,
-      minlen: Math.max(1, Math.round(e.minLen)),
+      minlen: Math.min(MAX_MIN_LEN, Math.max(1, Math.round(e.minLen))),
       labelW,
       labelH,
       route: [],
@@ -292,6 +326,11 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
       );
       return;
     }
+    const within = inner[k];
+    if (within) {
+      edges.set(e.id, innerEdge(box(within.group), box(within.member), within, e.label));
+      return;
+    }
     const points: RoutePoint[] = [];
     for (let p = 0; p + 2 < ce.route.length; p += 3) {
       points.push({
@@ -319,6 +358,80 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     groups,
     direction: rootDir,
   };
+}
+
+// An edge between a group and a node or group inside it.
+interface InnerEdge {
+  group: number;
+  member: number;
+  // The group is the source: the edge runs from the group's border in to the member.
+  out: boolean;
+  // The direction the group's content flows in.
+  dir: Dir;
+  // The group's padding on the side the edge is drawn at, before room for a label is added.
+  band: number;
+  // How far in from the border the group's title reaches on that side, 0 without one there.
+  skip: number;
+  // The label's size along the flow, 0 without a label.
+  labelLen: number;
+}
+
+// Whether group `g` holds `i`, at any depth.
+function holds(cnodes: CNode[], g: number, i: number): boolean {
+  if (g === i || !cnodes[g]!.isGroup) return false;
+  const seen = new Set<number>();
+  for (let p = cnodes[i]!.parent; p >= 0 && !seen.has(p); p = cnodes[p]!.parent) {
+    if (p === g) return true;
+    seen.add(p);
+  }
+  return false;
+}
+
+// The direction the content of group `g` flows in: its own, or that of the nearest group
+// around it that has one.
+function flowIn(cnodes: CNode[], g: number, rootDir: Dir): Dir {
+  const seen = new Set<number>();
+  for (let p = g; p >= 0 && !seen.has(p); p = cnodes[p]!.parent) {
+    seen.add(p);
+    const dir = cnodes[p]!.dir;
+    if (dir) return dir;
+  }
+  return rootDir;
+}
+
+// Draws an edge between a group and a member along the flow: from the border the flow starts at
+// to the member, or from the member to the border the flow ends at. Where the title is on that
+// border, the edge ends below the title. The label sits in the room the group keeps for it,
+// clear of the title and of the member.
+function innerEdge(
+  group: LayoutModelNode,
+  member: LayoutModelNode,
+  { out, dir, band, skip, labelLen }: InnerEdge,
+  label: { width: number; height: number } | undefined
+): LayoutModelEdge {
+  const down = !runsAcross(dir);
+  const sign = dir === 'TB' || dir === 'LR' ? 1 : -1;
+  const side = out ? -sign : sign;
+  const centre = down ? group.y : group.x;
+  const border = centre + (side * (down ? group.height : group.width)) / 2;
+  const face = (down ? member.y : member.x) + (side * (down ? member.height : member.width)) / 2;
+  const across = down ? member.x : member.y;
+  const at = (along: number): RoutePoint =>
+    down ? { x: across, y: along, axis: 'v' } : { x: along, y: across, axis: 'h' };
+  const edge = border - side * skip;
+  const [from, to] = out ? [edge, face] : [face, edge];
+  const model: LayoutModelEdge = {
+    points: [at(from), at(to)],
+    ports: {
+      source: out ? flowStart(dir) : flowEnd(dir),
+      target: out ? flowStart(dir) : flowEnd(dir),
+    },
+  };
+  if (label) {
+    const along = border - side * (band + labelLen / 2);
+    model.label = down ? { x: across, y: along } : { x: along, y: across };
+  }
+  return model;
 }
 
 const FLOW_START: Readonly<Record<Dir, Side>> = {

@@ -585,3 +585,36 @@ describe('layered adapter: subgraphs', () => {
     expect(run(3)).toBeGreaterThan(run(1) * 2);
   });
 });
+
+describe('layered adapter: subgraphs that are nested inside themselves', () => {
+  const group = (id: string, parentId?: string): Node =>
+    ({ id, isGroup: true, label: id, ...(parentId ? { parentId } : {}) }) as Node;
+  const inGroup = (id: string, parentId: string): Node => ({ ...node(id), parentId }) as Node;
+
+  // `subgraph a` / `x` / `subgraph b` / `y` / `subgraph a` / `end` / `end` / `end`
+  it('refuses a subgraph that holds its own ancestor, naming it', () => {
+    const data = layoutData(
+      'TB',
+      [group('a', 'b'), group('b', 'a'), inGroup('x', 'a'), inGroup('y', 'b')],
+      []
+    );
+
+    expect(() => toLayoutGraph(data)).toThrow(/subgraph '[ab]' is nested inside itself/);
+  });
+
+  it('refuses a subgraph that names itself as its parent', () => {
+    const data = layoutData('TB', [group('a', 'a'), inGroup('x', 'a')], []);
+
+    expect(() => toLayoutGraph(data)).toThrow("layered: subgraph 'a' is nested inside itself");
+  });
+
+  it('accepts subgraphs nested any number deep', () => {
+    const data = layoutData(
+      'TB',
+      [group('a'), group('b', 'a'), group('c', 'b'), inGroup('x', 'c')],
+      []
+    );
+
+    expect(() => toLayoutGraph(data)).not.toThrow();
+  });
+});
