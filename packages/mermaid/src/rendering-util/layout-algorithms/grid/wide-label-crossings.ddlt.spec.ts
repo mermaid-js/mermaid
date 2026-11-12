@@ -19,7 +19,7 @@ describe('Grid DDLT - wide-label-crossings.mmd', () => {
       'e2e/platform/dev-diagrams/layout-tests/grid/wide-label-crossings.mmd'
     );
     const layout = await parseMmdFileToLayoutData(fixturePath, {
-      stampFlowchartRendererFields: true,
+      stampRendererFields: true,
     });
     // The flowchart adapter does not retain the authored grid placement configuration.
     layout.config = extractFrontMatter(readFileSync(fixturePath, 'utf-8')).metadata.config!;

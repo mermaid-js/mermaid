@@ -1,3 +1,13 @@
+export type GridHorizontalAlign = 'left' | 'center' | 'right';
+export type GridVerticalAlign = 'top' | 'center' | 'bottom';
+
+/**
+ * Authored grid placement using safe integers, including zero and negative values.
+ * Omitted coordinates remain eligible for automatic placement.
+ * Only occupied rows and columns create tracks; empty indices contribute no size or additional gap.
+ */
+export type { GridPlacement } from './config.type.js';
+
 export interface NodeMetaData {
   shape?: string;
   label?: string;
@@ -20,6 +30,11 @@ export interface NodeMetaData {
   view?: 'expanded' | 'collapsed';
   /** The id of the phase a swimlane node belongs to, declared with a `phase` statement. */
   phase?: string;
+  /** Inline grid placement metadata forwarded to layout after diagram-specific fields are handled. */
+  row?: number;
+  column?: number;
+  horizontalAlign?: GridHorizontalAlign;
+  verticalAlign?: GridVerticalAlign;
 }
 
 export interface ParticipantMetaData {

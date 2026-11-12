@@ -1,0 +1,15 @@
+---
+config:
+  layout: grid
+  grid:
+    columns: 3
+    rowGap: 45
+    columnGap: 55
+---
+flowchart TB
+  A@{ row: 1, column: 1 }
+  C@{ row: 2, column: 1 }
+  D@{ row: 1, column: 3 }
+
+  A --> D
+  C --> D
