@@ -163,7 +163,11 @@ export function sparseSameContainerRoute(
   overlayScratch: EndpointOverlayScratch,
   options: GridRoutingTestOptions,
   pairRoutes: readonly (readonly Point[])[],
-  occupied?: { index: RouteOccupancyIndex; pairKey: string }
+  occupied?: {
+    index: RouteOccupancyIndex;
+    pairKey: string;
+    prioritizeEndpointCandidates?: boolean;
+  }
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(plan.lcaContainerId);
   if (fallbackReason) {
@@ -215,7 +219,10 @@ export function sparseSameContainerRoute(
 
   // Candidate pairs are ordered by an admissible lower bound. Once a completed route is no worse
   // than that bound, neither this pair nor any remaining pair can improve the current best.
-  const searchPairs = (avoidOccupied: boolean): void => {
+  const searchPairs = (
+    avoidOccupied: boolean,
+    mode: 'all' | 'preferred' | 'assigned-side' = 'all'
+  ): void => {
     const arcAllowed: ((from: RouterPoint, to: RouterPoint) => boolean) | undefined =
       plan.bundleSize > 1 || avoidOccupied
         ? (from, to) =>
@@ -223,6 +230,15 @@ export function sparseSameContainerRoute(
             !(avoidOccupied && occupied!.index.conflictsWithArc(from, to, occupied!.pairKey))
         : undefined;
     for (const { sourceCandidate, targetCandidate, pairRank, lowerCost } of pairs) {
+      if (mode === 'preferred' && pairRank !== 0) {
+        continue;
+      }
+      if (
+        mode === 'assigned-side' &&
+        (sourceCandidate.onAssignedSide === false || targetCandidate.onAssignedSide === false)
+      ) {
+        continue;
+      }
       if (best && compareTupleCost(best.result.cost, lowerCost) <= 0) {
         break;
       }
@@ -324,6 +340,7 @@ export function sparseSameContainerRoute(
         }
         if (!best || compareTupleCost(resultForPair.cost, best.result.cost) < 0) {
           best = { result: resultForPair, points };
+          searchCap = undefined;
         }
       } catch (error) {
         if (!(error instanceof GridRoutingResourceLimitError)) {
@@ -339,7 +356,16 @@ export function sparseSameContainerRoute(
   };
   // Prefer a route that does not share a corridor with another edge. Sharing is the last resort,
   // so a failed constrained search retries without it instead of reporting no route.
-  searchPairs(occupied !== undefined && occupied.index.size > 0);
+  const avoidOccupied = occupied !== undefined && occupied.index.size > 0;
+  if (occupied?.prioritizeEndpointCandidates) {
+    // The assigned ports win unless another pair on the same sides at coordinated owners is cheaper,
+    // which avoids accepting a legal but contorted route for the assigned ports.
+    searchPairs(avoidOccupied, 'preferred');
+    searchPairs(avoidOccupied, 'assigned-side');
+  }
+  if (!best) {
+    searchPairs(avoidOccupied);
+  }
   if (!best && !searchCap && occupied !== undefined && occupied.index.size > 0) {
     searchPairs(false);
   }
@@ -636,7 +662,8 @@ export function sparseContainerSegment(
   pairRoutes: readonly (readonly Point[])[] = [],
   endAlternatives: () => readonly SegmentAttachmentAlternative[] = () => [],
   startAlternatives: () => readonly SegmentAttachmentAlternative[] = () => [],
-  allowSharedPairCorridors = false
+  allowSharedPairCorridors = false,
+  occupied?: { index: RouteOccupancyIndex; pairKey: string }
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(containerId);
   if (fallbackReason) {
@@ -691,133 +718,144 @@ export function sparseContainerSegment(
       )
     );
   };
+  // Prefer attachments and corridors that do not run along another edge. Sharing is the last
+  // resort, so a failed constrained pass retries without it.
+  const passes = occupied !== undefined && occupied.index.size > 0 ? [true, false] : [false];
   try {
-    for (const [attemptIndex, attempt] of attempts.entries()) {
-      const attemptedStart = attempt.start;
-      const attemptedEnd = attempt.end;
-      if (attemptIndex > 0 && context.metrics) {
-        context.metrics.hierarchyPortalAlternativeAttempts++;
-      }
-      const aligned = areExactlyAxisAligned(attemptedStart.connect, attemptedEnd.connect);
-      if (aligned) {
-        const direct = normalizePolyline([
-          attemptedStart.port,
+    for (const avoidOccupied of passes) {
+      for (const [attemptIndex, attempt] of attempts.entries()) {
+        const attemptedStart = attempt.start;
+        const attemptedEnd = attempt.end;
+        if (attemptIndex > 0 && context.metrics) {
+          context.metrics.hierarchyPortalAlternativeAttempts++;
+        }
+        const aligned = areExactlyAxisAligned(attemptedStart.connect, attemptedEnd.connect);
+        if (aligned) {
+          const direct = normalizePolyline([
+            attemptedStart.port,
+            attemptedStart.connect,
+            attemptedEnd.connect,
+            attemptedEnd.port,
+          ]).points;
+          if (
+            validateContainerSegment(
+              direct,
+              attemptedStart.ownerId,
+              attemptedEnd.ownerId,
+              containerId,
+              result
+            ) &&
+            routeSatisfiesPairConstraints(direct, pairRoutes) &&
+            !(avoidOccupied && occupied!.index.conflictsWithRoute(direct, occupied!.pairKey))
+          ) {
+            for (const select of attempt.select) {
+              select();
+            }
+            if (attemptIndex > 0 && context.metrics) {
+              context.metrics.hierarchyPortalAlternativeSelections++;
+            }
+            return direct;
+          }
+        }
+        assertSearchBudgetAvailable({
+          metrics: context.metrics,
+          caps: options.searchCaps,
+          budget: context.searchBudget,
+        });
+        const overlay = buildEndpointRoutingOverlay(
+          topology,
           attemptedStart.connect,
           attemptedEnd.connect,
+          context.metrics,
+          overlayScratch
+        );
+        const liveEstimatedBytes =
+          context.baseEstimatedBytes + overlay.estimatedBytes - topology.estimatedBytes;
+        if (
+          liveEstimatedBytes >
+          (options.topologyCaps?.maxEstimatedBytes ?? DEFAULT_MAX_ROUTING_ESTIMATED_BYTES)
+        ) {
+          throw new GridRoutingResourceLimitError(
+            'estimated_memory_cap',
+            'Grid routing estimated_memory_cap exceeded'
+          );
+        }
+        const sourceId = overlay.pointVertexIds.get(routingPointKey(attemptedStart.connect));
+        const targetId = overlay.pointVertexIds.get(routingPointKey(attemptedEnd.connect));
+        if (sourceId === undefined || targetId === undefined) {
+          if (attemptIndex === 0) {
+            appendAlternatives();
+          }
+          continue;
+        }
+        const route = findShortestRoute(overlay, sourceId, targetId, {
+          metrics: context.metrics,
+          caps: {
+            ...options.searchCaps,
+            maxEstimatedBytes:
+              options.searchCaps?.maxEstimatedBytes ??
+              options.topologyCaps?.maxEstimatedBytes ??
+              DEFAULT_MAX_ROUTING_ESTIMATED_BYTES,
+          },
+          recordOutcome: false,
+          budget: context.searchBudget,
+          initialOrientation:
+            attemptedStart.side === 'left' || attemptedStart.side === 'right' ? 'H' : 'V',
+          initialSide: attemptedStart.side,
+          initialLength:
+            Math.abs(attemptedStart.port.x - attemptedStart.connect.x) +
+            Math.abs(attemptedStart.port.y - attemptedStart.connect.y),
+          targetOrientation:
+            attemptedEnd.side === 'left' || attemptedEnd.side === 'right' ? 'H' : 'V',
+          targetSide: attemptedEnd.side,
+          targetLength:
+            Math.abs(attemptedEnd.port.x - attemptedEnd.connect.x) +
+            Math.abs(attemptedEnd.port.y - attemptedEnd.connect.y),
+          topologyValidated: true,
+          workspace: searchWorkspace,
+          estimatedBytesBase: liveEstimatedBytes,
+          arcAllowed:
+            pairRoutes.length > 0 || avoidOccupied
+              ? (from, to) =>
+                  (pairRoutes.length === 0 || pairArcAllowed(from, to, pairRoutes)) &&
+                  !(avoidOccupied && occupied!.index.conflictsWithArc(from, to, occupied!.pairKey))
+              : undefined,
+        });
+        if (!route) {
+          if (attemptIndex === 0) {
+            appendAlternatives();
+          }
+          continue;
+        }
+        const points = normalizePolyline([
+          attemptedStart.port,
+          ...route.points,
           attemptedEnd.port,
         ]).points;
         if (
-          validateContainerSegment(
-            direct,
+          !validateContainerSegment(
+            points,
             attemptedStart.ownerId,
             attemptedEnd.ownerId,
             containerId,
             result
-          ) &&
-          routeSatisfiesPairConstraints(direct, pairRoutes)
+          ) ||
+          !routeSatisfiesPairConstraints(points, pairRoutes) ||
+          (avoidOccupied && occupied!.index.conflictsWithRoute(points, occupied!.pairKey))
         ) {
-          for (const select of attempt.select) {
-            select();
+          if (attemptIndex === 0) {
+            appendAlternatives();
           }
-          if (attemptIndex > 0 && context.metrics) {
-            context.metrics.hierarchyPortalAlternativeSelections++;
-          }
-          return direct;
+          continue;
         }
-      }
-      assertSearchBudgetAvailable({
-        metrics: context.metrics,
-        caps: options.searchCaps,
-        budget: context.searchBudget,
-      });
-      const overlay = buildEndpointRoutingOverlay(
-        topology,
-        attemptedStart.connect,
-        attemptedEnd.connect,
-        context.metrics,
-        overlayScratch
-      );
-      const liveEstimatedBytes =
-        context.baseEstimatedBytes + overlay.estimatedBytes - topology.estimatedBytes;
-      if (
-        liveEstimatedBytes >
-        (options.topologyCaps?.maxEstimatedBytes ?? DEFAULT_MAX_ROUTING_ESTIMATED_BYTES)
-      ) {
-        throw new GridRoutingResourceLimitError(
-          'estimated_memory_cap',
-          'Grid routing estimated_memory_cap exceeded'
-        );
-      }
-      const sourceId = overlay.pointVertexIds.get(routingPointKey(attemptedStart.connect));
-      const targetId = overlay.pointVertexIds.get(routingPointKey(attemptedEnd.connect));
-      if (sourceId === undefined || targetId === undefined) {
-        if (attemptIndex === 0) {
-          appendAlternatives();
+        for (const select of attempt.select) {
+          select();
         }
-        continue;
-      }
-      const route = findShortestRoute(overlay, sourceId, targetId, {
-        metrics: context.metrics,
-        caps: {
-          ...options.searchCaps,
-          maxEstimatedBytes:
-            options.searchCaps?.maxEstimatedBytes ??
-            options.topologyCaps?.maxEstimatedBytes ??
-            DEFAULT_MAX_ROUTING_ESTIMATED_BYTES,
-        },
-        recordOutcome: false,
-        budget: context.searchBudget,
-        initialOrientation:
-          attemptedStart.side === 'left' || attemptedStart.side === 'right' ? 'H' : 'V',
-        initialSide: attemptedStart.side,
-        initialLength:
-          Math.abs(attemptedStart.port.x - attemptedStart.connect.x) +
-          Math.abs(attemptedStart.port.y - attemptedStart.connect.y),
-        targetOrientation:
-          attemptedEnd.side === 'left' || attemptedEnd.side === 'right' ? 'H' : 'V',
-        targetSide: attemptedEnd.side,
-        targetLength:
-          Math.abs(attemptedEnd.port.x - attemptedEnd.connect.x) +
-          Math.abs(attemptedEnd.port.y - attemptedEnd.connect.y),
-        topologyValidated: true,
-        workspace: searchWorkspace,
-        estimatedBytesBase: liveEstimatedBytes,
-        arcAllowed:
-          pairRoutes.length > 0 ? (from, to) => pairArcAllowed(from, to, pairRoutes) : undefined,
-      });
-      if (!route) {
-        if (attemptIndex === 0) {
-          appendAlternatives();
+        if (attemptIndex > 0 && context.metrics) {
+          context.metrics.hierarchyPortalAlternativeSelections++;
         }
-        continue;
+        return points;
       }
-      const points = normalizePolyline([
-        attemptedStart.port,
-        ...route.points,
-        attemptedEnd.port,
-      ]).points;
-      if (
-        !validateContainerSegment(
-          points,
-          attemptedStart.ownerId,
-          attemptedEnd.ownerId,
-          containerId,
-          result
-        ) ||
-        !routeSatisfiesPairConstraints(points, pairRoutes)
-      ) {
-        if (attemptIndex === 0) {
-          appendAlternatives();
-        }
-        continue;
-      }
-      for (const select of attempt.select) {
-        select();
-      }
-      if (attemptIndex > 0 && context.metrics) {
-        context.metrics.hierarchyPortalAlternativeSelections++;
-      }
-      return points;
     }
   } catch (error) {
     if (!(error instanceof GridRoutingResourceLimitError)) {

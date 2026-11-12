@@ -1,0 +1,17 @@
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 72
+    columnGap: 96
+---
+flowchart TB
+  subgraph G["Group"]
+    M["Member"]@{ row: 1, column: 1 }
+  end
+  G@{ row: 1, column: 1 }
+  O["Outside"]@{ row: 2, column: 4 }
+
+  G --> M
+  M --> G
+  M -->|<b>very long HTML label that must detour cleanly</b>| O
