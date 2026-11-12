@@ -12,6 +12,8 @@ import {
 } from '../common/commonDb.js';
 import type { IshikawaNode } from './ishikawaTypes.js';
 
+const GAP_TEXT = '[]';
+
 interface StackEntry {
   level: number;
   node: IshikawaNode;
@@ -65,7 +67,7 @@ export class IshikawaDB implements DiagramDB {
     }
 
     const parent = this.stack[this.stack.length - 1].node;
-    const node: IshikawaNode = { text: label, children: [] };
+    const node: IshikawaNode = { text: label, children: [], isGap: label === GAP_TEXT };
     parent.children.push(node);
     this.stack.push({ level, node });
   }
