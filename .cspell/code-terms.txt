@@ -125,7 +125,6 @@ roughjs
 RPAREN
 sankey
 sequencenumber
-Shiki
 shrc
 Siebenhaller
 signaltype
