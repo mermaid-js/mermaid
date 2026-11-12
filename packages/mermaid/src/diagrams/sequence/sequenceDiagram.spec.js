@@ -1727,6 +1727,32 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(boxes[0].fill).toEqual('aqua');
   });
 
+  it('should keep a box color written in a non-canonical form', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  box Purple Group 1
+  participant a as Alice
+  end
+  box rgb(33,66,99) Group 2
+  participant b as Bob
+  end
+  box hsl(10, 40%, 90%) Group 3
+  participant c as Charlie
+  end
+  box Another Group
+  participant d as Dave
+  end
+  `);
+
+    const boxes = diagram.db.getBoxes();
+    expect(boxes.map(({ name, fill }) => ({ name, fill }))).toEqual([
+      { name: 'Group 1', fill: 'Purple' },
+      { name: 'Group 2', fill: 'rgb(33,66,99)' },
+      { name: 'Group 3', fill: 'hsl(10, 40%, 90%)' },
+      { name: 'Another Group', fill: 'transparent' },
+    ]);
+  });
+
   it('should handle simple actor creation', async () => {
     const diagram = await Diagram.fromText(`
   sequenceDiagram
