@@ -83,7 +83,7 @@ const copy = (clusterId, graph, newGraph, rootId) => {
           node !== clusterId
         );
       }
-      const edges = graph.edges(node);
+      const edges = graph.nodeEdges(node);
       log.debug('Copying Edges', edges);
       edges.forEach((edge) => {
         log.info('Edge', edge);
