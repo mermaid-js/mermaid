@@ -1,3 +1,4 @@
+import type { GridHorizontalAlign, GridPlacement, GridVerticalAlign } from '../../../types.js';
 import type { LayoutData, Node } from '../../types.js';
 import type { Point } from '../../../types.js';
 import { DEFAULT_EDGE_CORNER_RADIUS } from '../../edgeCornerRadius.js';
@@ -13,16 +14,6 @@ export const ROOT_CONTAINER_ID = '__grid_root__';
 export const GRID_LABEL_PREFIX = 'edge-label-';
 
 export type GridContainerId = string;
-export type GridHorizontalAlign = 'left' | 'center' | 'right';
-export type GridVerticalAlign = 'top' | 'center' | 'bottom';
-
-// Only occupied rows and columns create tracks; empty indices contribute no size or additional gap.
-export interface GridPlacement {
-  row?: number;
-  column?: number;
-  horizontalAlign?: GridHorizontalAlign;
-  verticalAlign?: GridVerticalAlign;
-}
 export type GridSide = 'left' | 'right' | 'top' | 'bottom';
 export type GridOrientation = 'H' | 'V';
 export type GridCurve =
@@ -153,7 +144,7 @@ export interface GridRoutingContext {
 }
 
 export interface GridLayoutConfigNormalized {
-  placements: Map<string, GridPlacement>;
+  placements: Map<string, GridPlacement[]>;
   columns: number;
   rowGap: number;
   columnGap: number;
@@ -239,6 +230,8 @@ export interface GridAttachmentDemand {
   oppositeCoord: number;
   preferredCoord: number;
   compactPortal: boolean;
+  // The next entry inward along the endpoint chain; a compact portal lines up with its port.
+  inner?: { demandKey: string; side: GridSide };
 }
 
 export interface GridAttachment {
@@ -294,23 +287,7 @@ export const GRID_DEFAULTS = {
   edgeCornerRadius: DEFAULT_EDGE_CORNER_RADIUS,
 };
 
-export type GridLayoutData = LayoutData & {
-  config: LayoutData['config'] & {
-    grid?: {
-      placements?: Record<string, GridPlacement>;
-      columns?: number;
-      rowGap?: number;
-      columnGap?: number;
-      cellGap?: number;
-      containerPadding?: number;
-      titleGap?: number;
-      horizontalAlign?: GridHorizontalAlign;
-      verticalAlign?: GridVerticalAlign;
-      curve?: GridCurve;
-      edgeCornerRadius?: number;
-    };
-  };
-};
+export type GridLayoutData = LayoutData;
 
 export function isEdgeLabelNode(node: Node): boolean {
   return Boolean((node as { isEdgeLabel?: boolean }).isEdgeLabel);
