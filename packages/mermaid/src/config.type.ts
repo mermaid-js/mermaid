@@ -393,6 +393,13 @@ export interface MermaidConfig {
  */
 export interface GridLayoutConfig {
   /**
+   * Draws grid edge crossings as arcs or visible gaps. Set to `false` for
+   * plain crossings. Corner radii and arrowhead offsets are preserved.
+   * Smoothing curves such as `basis` are left unchanged.
+   *
+   */
+  lineHops?: false | 'arc' | 'gap';
+  /**
    * Placement map keyed by the authored placement ID when present; otherwise, by the emitted node ID. Non-empty arrays target repeated IDs in source order; a single object is equivalent to a one-item array.
    */
   placements?: {

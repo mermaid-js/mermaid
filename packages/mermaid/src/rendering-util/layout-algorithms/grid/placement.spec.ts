@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
+import defaultConfig from '../../../defaultConfig.js';
 import { log } from '../../../logger.js';
 import type { LayoutData, Node } from '../../types.js';
 import { readGridConfig, resolveGridPlacements, validateGridPlacementMap } from './placement.js';
+import { GRID_DEFAULTS } from './types.js';
 
 function node(id: string, metadata?: Record<string, unknown>, placementId?: string): Node {
   return {
@@ -22,6 +24,14 @@ function config(overrides: Record<string, unknown> = {}): LayoutData['config'] {
 }
 
 describe('grid placement', () => {
+  it('declares every grid option in the config schema with the renderer defaults', () => {
+    const { lineHops, placements, ...declaredDefaults } = defaultConfig.grid;
+
+    expect(lineHops).toBe('arc');
+    expect(placements).toEqual({});
+    expect(declaredDefaults).toEqual(GRID_DEFAULTS);
+  });
+
   it('ignores arrays where grid configuration expects keyed records', () => {
     const gridConfig = readGridConfig({
       nodes: [],

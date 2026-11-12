@@ -136,6 +136,12 @@ export function validateGridPlacementCoordinates(
  * Only the fixed placement shape crosses the directive trust boundary.
  */
 export function sanitizeGridPlacements(dict: Record<string, unknown>): void {
+  if (Array.isArray(dict)) {
+    // Placements are keyed by ID; an array has no IDs to keep.
+    log.debug('sanitize emptying grid placements array');
+    dict.length = 0;
+    return;
+  }
   for (const key of Object.keys(dict)) {
     const value = dict[key];
     if (UNSAFE_OBJECT_KEYS.has(key) || typeof value !== 'object' || value === null) {

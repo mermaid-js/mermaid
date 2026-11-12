@@ -566,6 +566,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     additionalProperties: false
     properties:
+      lineHops:
+        description: |
+          Draws grid edge crossings as arcs or visible gaps. Set to `false` for
+          plain crossings. Corner radii and arrowhead offsets are preserved.
+          Smoothing curves such as `basis` are left unchanged.
+        type: [boolean, string]
+        enum: [false, 'arc', 'gap']
+        default: 'arc'
       placements:
         description: Placement map keyed by the authored placement ID when present; otherwise, by the emitted node ID. Non-empty arrays target repeated IDs in source order; a single object is equivalent to a one-item array.
         type: object
