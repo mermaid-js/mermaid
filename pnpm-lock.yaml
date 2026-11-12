@@ -36,6 +36,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.29.8(@types/node@22.20.1)
+      '@chevrotain/regexp-to-ast':
+        specifier: 11.1.2
+        version: 11.1.2
       '@codemirror/commands':
         specifier: ^6.10.4
         version: 6.10.4
