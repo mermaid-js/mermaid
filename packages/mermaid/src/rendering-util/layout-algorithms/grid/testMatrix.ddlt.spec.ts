@@ -66,7 +66,7 @@ async function loadGridFixtureWithResult(
   const sizesPath = resolve(FIXTURES_DIR, `${name}.sizes.json`);
   const sizes = loadFreshSizesFixture(sizesPath, mmdPath, `grid/${name}`);
   const layout = await parseMmdFileToLayoutData(mmdPath, {
-    stampFlowchartRendererFields: true,
+    stampRendererFields: true,
   });
   prepareGridLayout(layout);
   applyFixtureContentSizesStrict(layout, sizes);

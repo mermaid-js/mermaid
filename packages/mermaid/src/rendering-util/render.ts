@@ -91,6 +91,11 @@ const registerDefaultLayoutLoaders = () => {
       name: 'grid',
       loader: async () => await import('./layout-algorithms/grid/index.js'),
     },
+    // Small and dependency-free, so it ships in the tiny build too.
+    {
+      name: 'layered',
+      loader: async () => await import('./layout-algorithms/layered/render.js'),
+    },
     // elkjs is ~1.6 MB of source, so it is excluded from the tiny build along
     // with the other large features. `getRegisteredLayoutAlgorithm` then falls
     // back to dagre for diagrams that ask for an ELK layout there.

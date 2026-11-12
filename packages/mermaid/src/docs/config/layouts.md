@@ -36,6 +36,7 @@ build can opt back in.
 - **dagre**: Dagre layout for layered graphs
 - **grid**: Built-in deterministic row/column layout for unified renderers. See [Grid Layout](/syntax/grid-layout.html).
 - **cose-bilkent**: Cose Bilkent layout for force-directed graphs
+- **layered** (beta, v<MERMAID_RELEASE_VERSION>+): Built-in layered layout for flowcharts and other graph diagrams, with curved, stepped or straight edge routing. [Layered Layout](/config/layered)
 - **tidy-tree**: Tidy tree layout for hierarchical diagrams, from the [`@mermaid-js/layout-tidy-tree`](https://www.npmjs.com/package/@mermaid-js/layout-tidy-tree) package [Tidy Tree Configuration](/config/tidy-tree)
 
 Mindmaps are the one diagram type not laid out with ELK by default; they use

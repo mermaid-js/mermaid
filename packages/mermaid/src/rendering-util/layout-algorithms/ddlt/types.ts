@@ -41,7 +41,7 @@ export interface DdltManifest {
 }
 
 /** Runtime backend selected from a fixture profile; kept separate so profiles can fan out later. */
-export type LayoutTestBackendId = 'domus-orthogonal' | 'swimlanes' | 'grid';
+export type LayoutTestBackendId = 'domus-orthogonal' | 'swimlanes' | 'grid' | 'layered' | 'dagre';
 
 /** Pure layout stage: mutates `layout` in place (DOM-free). */
 export type LayoutTestBackend = (layout: LayoutData) => void | Promise<void>;
