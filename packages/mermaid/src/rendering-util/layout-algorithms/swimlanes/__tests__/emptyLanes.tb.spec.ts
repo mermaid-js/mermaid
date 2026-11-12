@@ -1,12 +1,8 @@
 import { beforeAll, describe, it, expect } from 'vitest';
-import { Diagram } from '../../../../Diagram.js';
 import { addDiagrams } from '../../../../diagram-api/diagram-orchestration.js';
 import type { LayoutData } from '../../../types.js';
-import { prepareLayoutForSwimlanes } from '../helpers.js';
-import { runSwimlaneLayoutCore } from '../layoutCore.js';
+import { layoutFromSource } from './emptyLaneHarness.js';
 
-const NODE_WIDTH = 80;
-const NODE_HEIGHT = 40;
 // An empty lane's column: two 36px title bands at least, or its title run plus padding.
 const EMPTY_LANE_MIN_WIDTH = 72;
 const LANE_PADDING = 20;
@@ -17,27 +13,6 @@ const TITLE_CHAR_WIDTH = DEFAULT_FONT_SIZE * CHAR_WIDTH_PER_FONT_SIZE;
 const EMPTY_ROW_HEIGHT = 72;
 const TITLE_BAND_HEIGHT = 21;
 const EPS = 1e-6;
-
-async function layoutFromSource(source: string, fontSize?: number): Promise<LayoutData> {
-  const diagram = await Diagram.fromText(source);
-  const layout = (diagram.db as { getData: () => LayoutData }).getData();
-  (layout as LayoutData & { direction?: string }).direction = (
-    diagram.db as { getDirection?: () => string }
-  ).getDirection?.();
-  layout.config = {
-    flowchart: { nodeSpacing: 40, rankSpacing: 100 },
-    ...(fontSize === undefined ? {} : { fontSize }),
-  } as LayoutData['config'];
-  for (const node of layout.nodes) {
-    if (!node.isGroup) {
-      node.width = NODE_WIDTH;
-      node.height = NODE_HEIGHT;
-    }
-  }
-  prepareLayoutForSwimlanes(layout);
-  runSwimlaneLayoutCore(layout);
-  return layout;
-}
 
 interface Span {
   id: string;
@@ -241,10 +216,9 @@ describe('Swimlanes: a lane with no nodes gets its own column in TB and BT', () 
   it('an empty column is exactly as wide as the title estimate plus padding, scaled by the font size', async () => {
     const title = 'Legal and compliance review board';
     const width = async (fontSize?: number) => {
-      const layout = await layoutFromSource(
-        lanes('TB', `  subgraph L2[${title}]\n  end`),
-        fontSize
-      );
+      const layout = await layoutFromSource(lanes('TB', `  subgraph L2[${title}]\n  end`), {
+        fontSize,
+      });
       return node(layout, 'L2').width;
     };
     const charWidth = (fontSize: number) => fontSize * CHAR_WIDTH_PER_FONT_SIZE;
