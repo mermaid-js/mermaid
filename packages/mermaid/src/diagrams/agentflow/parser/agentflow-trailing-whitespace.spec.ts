@@ -31,12 +31,13 @@ describe('agentflow trailing whitespace', () => {
 
     expect(() => agentflow.parser.parse(text)).not.toThrow();
 
-    const vertices = agentflow.parser.yy.getVertices();
+    const db: AgentFlowDB = agentflow.parser.yy;
+    const vertices = db.getVertices();
     expect(vertices.get('changes')?.text).toBe('Gather changes');
     expect(vertices.get('lint')?.text).toBe('run_linter');
-    expect(agentflow.parser.yy.getEdges()).toHaveLength(1);
+    expect(db.getEdges()).toHaveLength(1);
 
-    const flow = agentflow.parser.yy.getSubGraphs().find((s) => s.id === 'reviewer');
+    const flow = db.getSubGraphs().find((s) => s.id === 'reviewer');
     expect(flow?.title).toBe('Review Agent');
     expect(flow?.nodes).toEqual(expect.arrayContaining(['changes', 'lint']));
   });
