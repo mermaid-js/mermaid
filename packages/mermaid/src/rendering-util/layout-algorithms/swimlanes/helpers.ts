@@ -65,7 +65,7 @@ const EMPTY_LANE_MIN_WIDTH = 72;
 // Average advance of a label character as a fraction of the font size, for titles not yet measured.
 const TITLE_CHAR_WIDTH_PER_FONT_SIZE = 0.55;
 const DEFAULT_FONT_SIZE = 16;
-// A lane whose left edge is this close to a column boundary counts as starting there.
+// Lane centres, and a node's centre against a column boundary, this close count as the same place.
 const COLUMN_BOUNDARY_TOLERANCE = 0.5;
 
 function topLaneHorizontalPadding(lane: Node): number {
@@ -501,16 +501,28 @@ const leftOf = (node: Node): number => (node.x ?? 0) - (node.width ?? 0) / 2;
 const rightOf = (node: Node): number => (node.x ?? 0) + (node.width ?? 0) / 2;
 
 /**
- * Moves everything at or right of `line` right by `by`: groups whose left edge is there,
- * and every other node whose centre is. Pools are left alone.
+ * Opens a column `width` wide at `line` by moving `lanes` right, each with everything it holds,
+ * so a lane and its nodes never part, however the lane width solve left neighbouring lanes
+ * overlapping. The moved lanes also clear the new column: the leftmost of them starts where it
+ * ends. A node outside every lane moves when its centre is at or right of the line. Pools are
+ * left alone.
  */
-function openColumnAt(nodes: Node[], model: LaneModel, line: number, by: number): void {
+function openColumnAt(
+  nodes: Node[],
+  model: LaneModel,
+  lanes: readonly Node[],
+  line: number,
+  width: number
+): void {
+  const moving = new Set(lanes.map((lane) => lane.id));
+  const by = width + Math.max(0, line - Math.min(line, ...lanes.map(leftOf)));
   for (const node of nodes) {
     if (model.isPool(node.id) || typeof node.x !== 'number') {
       continue;
     }
-    const reference = node.isGroup ? leftOf(node) : node.x;
-    if (reference < line - COLUMN_BOUNDARY_TOLERANCE) {
+    const laneId = model.isLane(node.id) ? node.id : model.laneIdOf(node.id);
+    const moves = laneId === null ? node.x >= line - COLUMN_BOUNDARY_TOLERANCE : moving.has(laneId);
+    if (!moves) {
       continue;
     }
     node.x += by;
@@ -519,6 +531,28 @@ function openColumnAt(nodes: Node[], model: LaneModel, line: number, by: number)
       node.groupTitleRect.right += by;
     }
   }
+}
+
+/**
+ * The placed lanes an empty lane pushes right: those standing right of `before`, or else those
+ * from `after` on. They are judged by where the lanes stand, not by their edges or by the order
+ * they were declared in: with a tight node spacing a narrow lane can lie under the edge of the
+ * lane before it, and with `automaticLaneOrdering` a lane declared after the empty one can stand
+ * left of the line.
+ */
+function lanesRightOfInsertion(
+  placed: ReadonlySet<Node>,
+  before: Node | undefined,
+  after: Node | undefined
+): Node[] {
+  const centre = (lane: Node): number => lane.x ?? 0;
+  if (before) {
+    return [...placed].filter((lane) => centre(lane) > centre(before) + COLUMN_BOUNDARY_TOLERANCE);
+  }
+  if (after) {
+    return [...placed].filter((lane) => centre(lane) >= centre(after) - COLUMN_BOUNDARY_TOLERANCE);
+  }
+  return [];
 }
 
 type LaneNode = Node & { swimlaneContentTop?: number };
@@ -574,7 +608,7 @@ function placeEmptyTopLanes(
     const after = order.slice(index + 1).find((other) => placed.has(other));
     const line = before ? rightOf(before) : after ? leftOf(after) : 0;
     const width = emptyLaneWidth(lane, fontSize);
-    openColumnAt(nodes, model, line, width);
+    openColumnAt(nodes, model, lanesRightOfInsertion(placed, before, after), line, width);
     placeEmptyLane(lane, line, width, rowFrom);
     placed.add(lane);
   });
