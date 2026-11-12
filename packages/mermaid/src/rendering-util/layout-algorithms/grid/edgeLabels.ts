@@ -1,7 +1,11 @@
 import type { Point } from '../../../types.js';
 import { log } from '../../../logger.js';
 import type { Edge, LayoutData, Node, NonClusterNode } from '../../types.js';
-import { normalizePolyline, segmentsCross, type Segment } from '../layout-utils/geometry.js';
+import {
+  normalizePolyline as normalizeLayoutPolyline,
+  segmentsCross,
+  type Segment,
+} from '../layout-utils/geometry.js';
 import {
   clamp,
   compareCodeUnits,
@@ -37,6 +41,9 @@ const EDGE_END_MARKER_CLEARANCE = GRID_EDGE_END_MARKER_CLEARANCE;
 const LABEL_EPSILON = 1e-6;
 const MIN_SELF_PARALLEL_GAP = 7;
 const MIN_SELF_PARALLEL_OVERLAP = 8;
+
+// Preserve subpixel detours with the same tolerance used to validate label anchors.
+const normalizePolyline = (points: Point[]) => normalizeLayoutPolyline(points, LABEL_EPSILON);
 
 interface Interval {
   start: number;
