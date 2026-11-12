@@ -124,7 +124,7 @@ onMounted(() => {
         :href="productHuntBanner.href"
         target="_blank"
         rel="noopener"
-        class="unstyled flex justify-center items-center gap-4 no-tooltip text-white tracking-wide"
+        class="unstyled flex justify-center items-center gap-4 no-tooltip text-[#1E1A2E] tracking-wide"
         @click="trackProductHuntBanner('bannerClick')"
       >
         <span>
@@ -132,7 +132,7 @@ onMounted(() => {
           <span class="hidden lg:inline">&nbsp;{{ productHuntBanner.tagline }}</span>
         </span>
         <span
-          class="bg-white text-[#ff6154] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+          class="bg-[#1E1A2E] text-white shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide"
         >
           {{ productHuntBanner.button }} →
         </span>
@@ -142,7 +142,7 @@ onMounted(() => {
       type="button"
       aria-label="Dismiss banner"
       title="Dismiss banner"
-      class="shrink-0 px-2 text-white text-xl leading-none"
+      class="shrink-0 px-2 text-[#1E1A2E] text-xl leading-none"
       @click="closeProductHuntBanner"
     >
       ×
