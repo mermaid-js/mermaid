@@ -1,0 +1,24 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 180,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "02fd41c407cad767a825bab2c2526fdd9f6f749b241769ba1d8ab7d540d35219",
+    "capturedFrom": "synthetic routing fixture; fixed nodes=180x54"
+  }
+}
