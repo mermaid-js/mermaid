@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-21T01:21:52.083Z",
+    "capturedFrom": "browser-capture layout-tests/grid/stack-default.mmd theme=default look=classic",
+    "sourceSha256": "1ed4ec683b1811c8582ad565b15a136f9decf9def094b0bcf3f9cd3a250a5570"
+  },
+  "nodes": [
+    {
+      "id": "TopLeft",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "TopRight",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "TopPeer",
+      "width": 152,
+      "height": 87
+    },
+    {
+      "id": "CenterLeft",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "CenterRight",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "CenterPeer",
+      "width": 152,
+      "height": 87
+    },
+    {
+      "id": "BottomLeft",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "BottomCenter",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "BottomRight",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "BottomPeer",
+      "width": 152,
+      "height": 87
+    }
+  ]
+}

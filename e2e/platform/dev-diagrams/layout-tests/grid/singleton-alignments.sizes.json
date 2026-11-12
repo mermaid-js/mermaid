@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-21T01:21:22.906Z",
+    "capturedFrom": "browser-capture layout-tests/grid/singleton-alignments.mmd theme=default look=classic",
+    "sourceSha256": "a8ad5ddbb78989c2cf3be5fc1172ec12ae7342b4ceb1a8e5f29b1daeae586d96"
+  },
+  "nodes": [
+    {
+      "id": "LT",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "CT",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "RT",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "LC",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "CC",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "RC",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "LB",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "CB",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "RB",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "W1",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "W2",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "W3",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "T1",
+      "width": 152,
+      "height": 87
+    },
+    {
+      "id": "T2",
+      "width": 152,
+      "height": 87
+    },
+    {
+      "id": "T3",
+      "width": 152,
+      "height": 87
+    }
+  ]
+}
