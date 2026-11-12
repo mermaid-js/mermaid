@@ -94,6 +94,7 @@ const buildTinyMermaid = async () => {
 
   await writeFile('./packages/tiny/package.json', JSON.stringify(tinyPkg, null, 2) + '\n');
   await cp('./packages/mermaid/CHANGELOG.md', './packages/tiny/CHANGELOG.md');
+  await cp('./packages/mermaid/THIRD_PARTY_NOTICES', './packages/tiny/THIRD_PARTY_NOTICES');
 };
 
 const main = async () => {
