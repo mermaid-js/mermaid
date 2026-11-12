@@ -1,12 +1,10 @@
-// Based on Pele (https://github.com/obsidianmd/pele), src/layout/layered.ts.
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/layered/layered.ts`.
 // Changes from Pele: `const enum`s are `as const` objects, and index reads carry `!` for
 // noUncheckedIndexedAccess. `NODE_INPUTS`/`EDGE_INPUTS`/`layoutInputs` are new. `ease` moved to
 // rendering-elements/routeGeometry.ts (re-exported here) so edge drawing can share it without
 // depending on the engine. The algorithm
 // is unchanged.
-// cspell:ignore kepano lnode lnodes indeg topo cand maxs Köpf
+// cspell:ignore lnode lnodes indeg topo cand maxs Köpf
 import { ease } from '../../rendering-elements/routeGeometry.js';
 
 // Layered (Sugiyama-style) layout of one flat graph. Ranks run down the y axis; callers

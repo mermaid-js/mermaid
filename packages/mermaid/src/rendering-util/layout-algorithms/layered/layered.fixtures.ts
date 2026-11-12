@@ -1,5 +1,3 @@
-// Based on Pele (https://github.com/obsidianmd/pele).
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/layered/layered.fixtures.ts`.
 // Hand-built LayoutGraph fixtures for the DDLT-style layout specs. They stand in for graphs
 // produced by the v13 flowchart parser and table measurer until those exist; sizes are what a

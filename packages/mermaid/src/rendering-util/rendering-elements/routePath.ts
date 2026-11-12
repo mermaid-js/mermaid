@@ -1,5 +1,3 @@
-// Ported from Pele (https://github.com/obsidianmd/pele), src/svg/edges.ts.
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/diagram-flowchart/src/render/edges.ts` (`routePath`,
 // `curveKind`). Changes: the SvgWriter is replaced by a local path-string builder, `d` is a plain
 // string, and v13's inline arrowhead drawing is left out (mermaid draws `<marker>`s). The end

@@ -1,5 +1,3 @@
-// Based on Pele (https://github.com/obsidianmd/pele).
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/layered/available-width.spec.ts`.
 import { describe, expect, it } from 'vitest';
 import type { LayoutGraph, LayoutNode } from './types.js';

@@ -1,5 +1,3 @@
-// Based on Pele (https://github.com/obsidianmd/pele).
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/types.ts`.
 // The `layered` engine's input and output contract. Both sides are plain data: the caller
 // measures every box before layout and the engine never measures. In mermaid this is internal

@@ -1,8 +1,5 @@
-// Based on Pele (https://github.com/obsidianmd/pele), src/layout/layered.ts (`ease`).
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/layered/layered.ts` (`ease`) and
 // `packages/core/src/layout/types.ts` (`RoutePoint`).
-// cspell:ignore kepano
 //
 // Route geometry shared by the edge drawing (`routePath`) and any layout that hands over
 // axis-tagged route points. It lives next to the drawing so shared rendering code does not

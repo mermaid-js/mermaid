@@ -1,5 +1,3 @@
-// Based on Pele (https://github.com/obsidianmd/pele).
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/validate.ts`.
 // Engine-agnostic checks on a LayoutModel, for DDLT-style tests of any layout engine: every
 // coordinate finite, everything placed inside the drawing, no boxes overlapping, groups holding

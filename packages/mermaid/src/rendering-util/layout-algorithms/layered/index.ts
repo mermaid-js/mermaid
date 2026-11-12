@@ -1,5 +1,3 @@
-// Based on Pele (https://github.com/obsidianmd/pele).
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/layered/index.ts`.
 // The `layered` engine: LayoutGraph → LayoutModel over the compound layout ported from Pele.
 // The `availableWidth` handling follows Pele's src/diagrams/common/fit-width.ts (`tighten`,

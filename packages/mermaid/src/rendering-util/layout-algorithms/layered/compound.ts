@@ -1,10 +1,8 @@
-// Based on Pele (https://github.com/obsidianmd/pele), src/layout/compound.ts.
-// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/layered/compound.ts`.
 // Changes from Pele: `const enum`s are `as const` objects, and index reads carry `!` for
 // noUncheckedIndexedAccess. `snapshot`/`restore` copy objects instead of packed arrays, and the
 // layout cache keys on `layoutInputs`. The algorithm is unchanged.
-// cspell:ignore kepano lnode lnodes cnode
+// cspell:ignore lnode lnodes cnode
 //
 import {
   Kind,
