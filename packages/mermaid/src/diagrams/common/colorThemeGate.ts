@@ -60,6 +60,13 @@ export const safeLook = (look: unknown): string => {
   return SAFE_LOOK.test(s) ? s : 'classic';
 };
 
+/** Same reasoning as `SAFE_LOOK`, but for palette colour values: hex, keyword, or rgb/hsl(a). */
+const SAFE_COLOR =
+  /^(#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})|[\w-]+|(rgb|rgba|hsl|hsla)\([\d\s%,./]+\))$/i;
+
+export const safeColor = (color: unknown, fallback = 'currentColor'): string =>
+  typeof color === 'string' && SAFE_COLOR.test(color.trim()) ? color : fallback;
+
 /**
  * Number of palette slots a stylesheet should emit.
  *

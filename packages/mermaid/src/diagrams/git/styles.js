@@ -1,4 +1,5 @@
 import * as configApi from '../../config.js';
+import { safeColor } from '../common/colorThemeGate.js';
 const GIT_NAMED_COLOR_COUNT = 8;
 
 const REDUX_GEOMETRY_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
@@ -86,13 +87,13 @@ const genColor = (options) => {
         .commit-bullets { fill: ${options.nodeBorder}; }
         `;
       } else {
-        const colorIndex = i % borderColorArray.length;
+        const paletteColor = safeColor(borderColorArray[i % borderColorArray.length]);
         sections += `
         .branch-label${i} { fill: ${options.nodeBorder}; ${useReduxGeometry ? `font-weight:${options.noteFontWeight}` : ''} }
-        .commit${i} { stroke: ${borderColorArray[colorIndex]}; fill: ${borderColorArray[colorIndex]}; }
-        .commit-highlight${i} { stroke: ${borderColorArray[colorIndex]}; fill: ${borderColorArray[colorIndex]}; }
-        .label${i}  { fill: ${DARK_THEMES.has(theme) ? options.mainBkg : borderColorArray[colorIndex]}; stroke: ${borderColorArray[colorIndex]};  stroke-width: ${options.strokeWidth}; }
-        .arrow${i} { stroke: ${borderColorArray[colorIndex]}; }
+        .commit${i} { stroke: ${paletteColor}; fill: ${paletteColor}; }
+        .commit-highlight${i} { stroke: ${paletteColor}; fill: ${paletteColor}; }
+        .label${i}  { fill: ${DARK_THEMES.has(theme) ? options.mainBkg : paletteColor}; stroke: ${paletteColor};  stroke-width: ${options.strokeWidth}; }
+        .arrow${i} { stroke: ${paletteColor}; }
         `;
       }
     }
