@@ -22,8 +22,8 @@ import {
   simplifyPolyline,
 } from './geometry.js';
 import type { OrthogonalSegment, Point, RectBounds, RectSide } from './geometry.js';
-import { buildRouteCrossings } from './segmentCrossingIndex.js';
-import type { RouteCrossings } from './segmentCrossingIndex.js';
+import { buildRouteCrossings, buildTrackIndex } from './segmentCrossingIndex.js';
+import type { RouteCrossings, TrackIndex } from './segmentCrossingIndex.js';
 import type { Edge, Node } from '../../../types.js';
 import { EDGE_ROUTING } from '../config.js';
 import { buildLaneModel } from '../lanes.js';
@@ -46,6 +46,42 @@ const segmentsFor = orthogonalSegmentsForPoints;
 
 const orthogonallyAligned = (a: PointLite, b: PointLite): boolean =>
   sameX(a, b, EPS_LOCAL) || sameY(a, b, EPS_LOCAL);
+
+/** Two segments on one line that overlap enough to read as one track. */
+const sharesTrack = (first: SegmentLite, second: SegmentLite): boolean =>
+  sameAxisSegmentOverlapLength(first, second, 0.5) >= MIN_SHARED;
+
+/** The routes of the visible edges as a pass reads them while none of them moves. */
+interface RoundRoutes {
+  routes: RouteCrossings<MaterializedEdge>;
+  segmentsByEdge: Map<MaterializedEdge, SegmentLite[]>;
+  bendsByEdge: Map<MaterializedEdge, number>;
+  totalBends: number;
+  tracks: TrackIndex<MaterializedEdge>;
+}
+
+function roundRoutes(visibleEdges: MaterializedEdge[]): RoundRoutes {
+  const pointsByEdge = new Map(
+    visibleEdges.map((edge) => [edge, dedupeConsecutivePoints(edge.points ?? [])])
+  );
+  const segmentsByEdge = new Map(
+    visibleEdges.map((edge) => [edge, segmentsFor(pointsByEdge.get(edge) ?? [])])
+  );
+  const bendsByEdge = new Map(
+    visibleEdges.map((edge) => [edge, countOrthogonalBends(pointsByEdge.get(edge) ?? [])])
+  );
+  return {
+    routes: buildRouteCrossings(segmentsByEdge, EPS_LOCAL),
+    segmentsByEdge,
+    bendsByEdge,
+    totalBends: [...bendsByEdge.values()].reduce((sum, bends) => sum + bends, 0),
+    tracks: buildTrackIndex(
+      visibleEdges.flatMap((owner) =>
+        (segmentsByEdge.get(owner) ?? []).map((segment) => ({ segment, owner }))
+      )
+    ),
+  };
+}
 
 export function separateSharedRenderedTerminalLanes(
   edges: MaterializedEdge[],
@@ -1324,38 +1360,6 @@ export function reassignCrossingExternalRailChannels(
       replacements.get(edge) ?? (edge as { points?: PointLite[] }).points ?? []
     );
 
-  const strictCrossingCount = (replacements: EdgeReplacementMap = new Map()): number => {
-    let count = 0;
-    for (let i = 0; i < visibleEdges.length; i++) {
-      const firstSegments = segmentsFor(replacementPointsFor(visibleEdges[i], replacements));
-      for (let j = i + 1; j < visibleEdges.length; j++) {
-        const secondSegments = segmentsFor(replacementPointsFor(visibleEdges[j], replacements));
-        for (const firstSegment of firstSegments) {
-          for (const secondSegment of secondSegments) {
-            if (
-              orthogonalSegmentsStrictlyCross(
-                firstSegment.a,
-                firstSegment.b,
-                secondSegment.a,
-                secondSegment.b,
-                EPS_LOCAL
-              )
-            ) {
-              count++;
-            }
-          }
-        }
-      }
-    }
-    return count;
-  };
-
-  const totalBends = (replacements: EdgeReplacementMap = new Map()): number =>
-    visibleEdges.reduce(
-      (sum, edge) => sum + countOrthogonalBends(replacementPointsFor(edge, replacements)),
-      0
-    );
-
   const endpointRectsFor = (
     edge: MaterializedEdge
   ): { src: RectLite; dst: RectLite } | undefined => {
@@ -1503,166 +1507,419 @@ export function reassignCrossingExternalRailChannels(
     return coords;
   };
 
-  const coordinateAssignmentsFor = (component: ExternalRail[]): number[][] => {
+  /** Every arrangement of the component's coordinates that moves some rail by the tolerance. */
+  const permutedAssignmentsFor = (component: ExternalRail[]): number[][] => {
     const current = component.map((rail) => rail.coord);
     const coords = uniqueCoordsFor(component);
     const assignments: number[][] = [];
-
-    if (component.length <= MAX_EXHAUSTIVE_COMPONENT) {
-      const used = new Array(coords.length).fill(false);
-      const next: number[] = [];
-      const visit = () => {
-        if (next.length === component.length) {
-          if (next.some((coord, index) => Math.abs(coord - current[index]) >= EPS_LOCAL)) {
-            assignments.push([...next]);
-          }
-          return;
+    const used = new Array(coords.length).fill(false);
+    const next: number[] = [];
+    const visit = () => {
+      if (next.length === component.length) {
+        if (next.some((coord, index) => Math.abs(coord - current[index]) >= EPS_LOCAL)) {
+          assignments.push([...next]);
         }
-        for (const [i, coord] of coords.entries()) {
-          if (used[i]) {
-            continue;
-          }
-          used[i] = true;
-          next.push(coord);
-          visit();
-          next.pop();
-          used[i] = false;
-        }
-      };
-      visit();
-      return assignments;
-    }
-
-    for (let i = 0; i < current.length; i++) {
-      for (let j = i + 1; j < current.length; j++) {
-        const assignment = [...current];
-        [assignment[i], assignment[j]] = [assignment[j], assignment[i]];
-        assignments.push(assignment);
+        return;
       }
-    }
+      for (const [i, coord] of coords.entries()) {
+        if (used[i]) {
+          continue;
+        }
+        used[i] = true;
+        next.push(coord);
+        visit();
+        next.pop();
+        used[i] = false;
+      }
+    };
+    visit();
     return assignments;
   };
 
-  const replacementsForAssignment = (
-    component: ExternalRail[],
-    assignment: number[]
-  ): EdgeReplacementMap | undefined => {
-    const draftByEdge = new Map<MaterializedEdge, PointLite[]>();
-    for (const [i, rail] of component.entries()) {
-      const coord = assignment[i];
-      const points =
-        draftByEdge.get(rail.edge) ?? rail.points.map((point) => ({ x: point.x, y: point.y }));
-      if (rail.axis === 'vertical') {
-        points[rail.segmentIndex].x = coord;
-        points[rail.segmentIndex + 1].x = coord;
-      } else {
-        points[rail.segmentIndex].y = coord;
-        points[rail.segmentIndex + 1].y = coord;
-      }
-      draftByEdge.set(rail.edge, points);
-    }
+  /** One edge's route with its rails in a component at some coordinates. */
+  interface RailDraft {
+    points: PointLite[];
+    /** The segments other routes meet, once repeated points are dropped. */
+    segments: SegmentLite[];
+    bends: number;
+    /** A segment runs through a node other than the edge's ends, or through a label. */
+    blocked: boolean;
+  }
 
-    const replacements = new Map<MaterializedEdge, PointLite[]>();
-    for (const [edge, points] of draftByEdge) {
-      const simplified = simplifyPolyline(dedupeConsecutivePoints(points));
-      if (segmentsFor(simplified).length !== simplified.length - 1) {
-        return undefined;
-      }
-      replacements.set(edge, simplified);
-    }
-    return replacements;
+  /**
+   * A component of rails and its edges' routes while every rail keeps its coordinate. An
+   * assignment is scored from this by the edges whose routes it changes.
+   */
+  interface ComponentPlan {
+    rails: ExternalRail[];
+    /** The component's edges, in the order of their first rail. */
+    members: MaterializedEdge[];
+    memberSet: Set<MaterializedEdge>;
+    /** For each member, the places of its rails in `rails`. */
+    railPlaces: Map<MaterializedEdge, number[]>;
+    /** For each member, its drafts by the coordinates of its rails. */
+    drafts: Map<MaterializedEdge, Map<string, RailDraft | undefined>>;
+    kept: Map<MaterializedEdge, RailDraft | undefined>;
+    /** Members whose kept route is blocked: an assignment must change them. */
+    mustMove: MaterializedEdge[];
+    /** Members with no kept route at all: an assignment that leaves one is no route. */
+    withoutRoute: MaterializedEdge[];
+    /** Pairs of edges that share a track while every member keeps its route. */
+    keptConflicts: [MaterializedEdge, MaterializedEdge][];
+    keptTracks: TrackIndex<MaterializedEdge>;
+    keptRoutes: RouteCrossings<MaterializedEdge>;
+    keptBends: number;
+  }
+
+  /** One assignment to try: each rail's coordinate, and the rails whose coordinate it changes. */
+  interface RailTrial {
+    coordAt: (place: number) => number;
+    moved: number[];
+    displacement: () => number;
+  }
+
+  interface ScoredAssignment {
+    changed: Map<MaterializedEdge, RailDraft>;
+    crossings: number;
+    bends: number;
+  }
+
+  /** Exact coordinates as a key; a negative zero keeps its sign, since it reaches the route. */
+  const coordinateKey = (coords: number[]): string =>
+    coords.map((coord) => (Object.is(coord, -0) ? '-0' : String(coord))).join(' ');
+
+  const routeIsBlocked = (edge: MaterializedEdge, segments: SegmentLite[]): boolean => {
+    const endpointIds = [(edge as { start?: string }).start, (edge as { end?: string }).end].filter(
+      (id): id is string => Boolean(id)
+    );
+    return segments.some(
+      (segment) =>
+        segmentHitsAnyRect(segment.a, segment.b, realNodeRects, endpointIds, -BUFFER) ||
+        segmentHitsAnyRect(segment.a, segment.b, labelRects, [], -BUFFER)
+    );
   };
 
-  const candidateIsSafe = (replacements: EdgeReplacementMap): boolean => {
-    for (const [edge, points] of replacements) {
-      const endpointIds = [
-        (edge as { start?: string }).start,
-        (edge as { end?: string }).end,
-      ].filter((id): id is string => Boolean(id));
-      for (const segment of segmentsFor(points)) {
-        if (segmentHitsAnyRect(segment.a, segment.b, realNodeRects, endpointIds, -BUFFER)) {
-          return false;
-        }
-        if (segmentHitsAnyRect(segment.a, segment.b, labelRects, [], -BUFFER)) {
-          return false;
-        }
+  /** The route of `edge` with each of its rails moved to `coordAt(place)`; none if degenerate. */
+  const buildRailDraft = (
+    rails: ExternalRail[],
+    edge: MaterializedEdge,
+    places: number[],
+    coordAt: (place: number) => number
+  ): RailDraft | undefined => {
+    const points = rails[places[0]].points.map((point) => ({ x: point.x, y: point.y }));
+    for (const place of places) {
+      const { axis, segmentIndex } = rails[place];
+      const coord = coordAt(place);
+      const key = axis === 'vertical' ? 'x' : 'y';
+      points[segmentIndex][key] = coord;
+      points[segmentIndex + 1][key] = coord;
+    }
+    const simplified = simplifyPolyline(dedupeConsecutivePoints(points));
+    const segments = segmentsFor(simplified);
+    if (segments.length !== simplified.length - 1) {
+      return undefined;
+    }
+    const deduped = dedupeConsecutivePoints(simplified);
+    return {
+      points: simplified,
+      segments: segmentsFor(deduped),
+      bends: countOrthogonalBends(deduped),
+      blocked: routeIsBlocked(edge, segments),
+    };
+  };
+
+  const railDraft = (
+    plan: ComponentPlan,
+    edge: MaterializedEdge,
+    coordAt: (place: number) => number
+  ): RailDraft | undefined => {
+    const places = plan.railPlaces.get(edge) ?? [];
+    const drafts = plan.drafts.get(edge) ?? new Map<string, RailDraft | undefined>();
+    plan.drafts.set(edge, drafts);
+    const key = coordinateKey(places.map(coordAt));
+    if (!drafts.has(key)) {
+      drafts.set(key, buildRailDraft(plan.rails, edge, places, coordAt));
+    }
+    return drafts.get(key);
+  };
+
+  /** The edges whose route, kept or current, shares a track with `segment` of `edge`'s kept route. */
+  const keptPartners = (
+    round: RoundRoutes,
+    plan: ComponentPlan,
+    edge: MaterializedEdge,
+    segment: SegmentLite
+  ): MaterializedEdge[] => [
+    ...round.tracks
+      .alongside(segment, 1)
+      .filter(
+        ({ owner, segment: other }) => !plan.memberSet.has(owner) && sharesTrack(segment, other)
+      )
+      .map(({ owner }) => owner),
+    ...plan.keptTracks
+      .alongside(segment, 1)
+      .filter(({ owner, segment: other }) => owner !== edge && sharesTrack(segment, other))
+      .map(({ owner }) => owner),
+  ];
+
+  /** Pairs of routes that share a track while every member keeps its route. */
+  const keptConflictsOf = (
+    round: RoundRoutes,
+    plan: ComponentPlan
+  ): [MaterializedEdge, MaterializedEdge][] =>
+    plan.members.flatMap((edge) =>
+      (plan.kept.get(edge)?.segments ?? []).flatMap((segment) =>
+        keptPartners(round, plan, edge, segment).map(
+          (other): [MaterializedEdge, MaterializedEdge] => [edge, other]
+        )
+      )
+    );
+
+  const sameSegments = (first: SegmentLite[], second: SegmentLite[]): boolean =>
+    first.length === second.length &&
+    first.every(
+      ({ a, b }, index) =>
+        a.x === second[index].a.x &&
+        a.y === second[index].a.y &&
+        b.x === second[index].b.x &&
+        b.y === second[index].b.y
+    );
+
+  /** The crossings of every route while each member keeps its route. */
+  const keptRoutesOf = (
+    round: RoundRoutes,
+    plan: ComponentPlan
+  ): RouteCrossings<MaterializedEdge> => {
+    const keptSegments = (edge: MaterializedEdge): SegmentLite[] =>
+      plan.kept.get(edge)?.segments ?? round.segmentsByEdge.get(edge) ?? [];
+    const unchanged = plan.members.every((edge) =>
+      sameSegments(keptSegments(edge), round.segmentsByEdge.get(edge) ?? [])
+    );
+    return unchanged
+      ? round.routes
+      : buildRouteCrossings(
+          new Map(visibleEdges.map((edge) => [edge, keptSegments(edge)])),
+          EPS_LOCAL
+        );
+  };
+
+  const planComponent = (round: RoundRoutes, rails: ExternalRail[]): ComponentPlan => {
+    const railPlaces = new Map<MaterializedEdge, number[]>();
+    rails.forEach((rail, place) => {
+      railPlaces.set(rail.edge, [...(railPlaces.get(rail.edge) ?? []), place]);
+    });
+    const members = [...railPlaces.keys()];
+    const plan: ComponentPlan = {
+      rails,
+      members,
+      memberSet: new Set(members),
+      railPlaces,
+      drafts: new Map(),
+      kept: new Map(),
+      mustMove: [],
+      withoutRoute: [],
+      keptConflicts: [],
+      keptTracks: buildTrackIndex([]),
+      keptRoutes: round.routes,
+      keptBends: round.totalBends,
+    };
+    for (const edge of members) {
+      const kept = railDraft(plan, edge, (place) => rails[place].coord);
+      plan.kept.set(edge, kept);
+      plan.keptBends += kept ? kept.bends - (round.bendsByEdge.get(edge) ?? 0) : 0;
+      if (kept?.blocked) {
+        plan.mustMove.push(edge);
+      }
+      if (!kept) {
+        plan.withoutRoute.push(edge);
       }
     }
+    plan.keptTracks = buildTrackIndex(
+      members.flatMap((owner) =>
+        (plan.kept.get(owner)?.segments ?? []).map((segment) => ({ segment, owner }))
+      )
+    );
+    plan.keptConflicts = keptConflictsOf(round, plan);
+    plan.keptRoutes = keptRoutesOf(round, plan);
+    return plan;
+  };
 
-    for (let i = 0; i < visibleEdges.length; i++) {
-      const first = visibleEdges[i];
-      const firstChanged = replacements.has(first);
-      const firstSegments = segmentsFor(replacementPointsFor(first, replacements));
-      for (let j = i + 1; j < visibleEdges.length; j++) {
-        const second = visibleEdges[j];
-        if (!firstChanged && !replacements.has(second)) {
-          continue;
-        }
-        const secondSegments = segmentsFor(replacementPointsFor(second, replacements));
-        for (const firstSegment of firstSegments) {
-          for (const secondSegment of secondSegments) {
-            if (sameAxisSegmentOverlapLength(firstSegment, secondSegment, 0.5) >= MIN_SHARED) {
-              return false;
-            }
-          }
-        }
+  /**
+   * The members whose route the trial changes, with their new routes. None when some member
+   * would get no route, which rules the trial out.
+   */
+  const changedRoutes = (
+    plan: ComponentPlan,
+    trial: RailTrial
+  ): Map<MaterializedEdge, RailDraft> | undefined => {
+    const changed = new Map<MaterializedEdge, RailDraft>();
+    for (const place of trial.moved) {
+      const edge = plan.rails[place].edge;
+      const draft = changed.get(edge) ?? railDraft(plan, edge, trial.coordAt);
+      if (!draft) {
+        return undefined;
+      }
+      changed.set(edge, draft);
+    }
+    return plan.withoutRoute.some((edge) => !changed.has(edge)) ? undefined : changed;
+  };
+
+  /** A changed route that shares a track with a route that stays, or with a later change. */
+  const changedRouteConflicts = (
+    round: RoundRoutes,
+    plan: ComponentPlan,
+    changed: Map<MaterializedEdge, RailDraft>,
+    [edge, draft]: [MaterializedEdge, RailDraft],
+    later: [MaterializedEdge, RailDraft][]
+  ): boolean =>
+    draft.segments.some(
+      (segment) =>
+        round.tracks
+          .alongside(segment, 1)
+          .some(
+            ({ owner, segment: other }) => !plan.memberSet.has(owner) && sharesTrack(segment, other)
+          ) ||
+        plan.keptTracks
+          .alongside(segment, 1)
+          .some(
+            ({ owner, segment: other }) =>
+              owner !== edge && !changed.has(owner) && sharesTrack(segment, other)
+          ) ||
+        later.some(([, laterDraft]) =>
+          laterDraft.segments.some((other) => sharesTrack(segment, other))
+        )
+    );
+
+  /** No route runs through a node or a label, and no two routes share a track. */
+  const assignmentIsSafe = (
+    round: RoundRoutes,
+    plan: ComponentPlan,
+    changed: Map<MaterializedEdge, RailDraft>
+  ): boolean => {
+    if (plan.mustMove.some((edge) => !changed.has(edge))) {
+      return false;
+    }
+    if (plan.keptConflicts.some(([first, second]) => !changed.has(first) && !changed.has(second))) {
+      return false;
+    }
+    const moved = [...changed];
+    return moved.every(
+      (entry, index) =>
+        !entry[1].blocked &&
+        !changedRouteConflicts(round, plan, changed, entry, moved.slice(index + 1))
+    );
+  };
+
+  const scoreAssignment = (
+    round: RoundRoutes,
+    plan: ComponentPlan,
+    trial: RailTrial
+  ): ScoredAssignment | undefined => {
+    const changed = changedRoutes(plan, trial);
+    if (!changed || !assignmentIsSafe(round, plan, changed)) {
+      return undefined;
+    }
+    let bends = plan.keptBends;
+    for (const [edge, draft] of changed) {
+      bends += draft.bends - (plan.kept.get(edge)?.bends ?? round.bendsByEdge.get(edge) ?? 0);
+    }
+    const crossings = plan.keptRoutes.totalWith(
+      new Map([...changed].map(([edge, draft]) => [edge, draft.segments]))
+    );
+    return { changed, crossings, bends };
+  };
+
+  /** Every member takes its route under the assignment, changed or kept. */
+  const applyAssignment = (
+    plan: ComponentPlan,
+    changed: Map<MaterializedEdge, RailDraft>
+  ): void => {
+    for (const edge of plan.members) {
+      const draft = changed.get(edge) ?? plan.kept.get(edge);
+      if (draft) {
+        (edge as { points: PointLite[] }).points = draft.points;
       }
     }
+  };
 
-    return true;
+  const displacementOf = (component: ExternalRail[], assignment: number[]): number =>
+    component.reduce((sum, rail, index) => sum + Math.abs(assignment[index] - rail.coord), 0);
+
+  /** The exchange of the coordinates of rails `i < j`; no other rail moves. */
+  const swapTrial = (component: ExternalRail[], i: number, j: number): RailTrial => {
+    const [first, second] = [component[i].coord, component[j].coord];
+    return {
+      coordAt: (place) => (place === i ? second : place === j ? first : component[place].coord),
+      moved: Object.is(first, second) ? [] : [i, j],
+      // `displacementOf` for this assignment: every other rail adds a zero.
+      displacement: () => Math.abs(second - first) + Math.abs(first - second),
+    };
+  };
+
+  /**
+   * The assignments to try for a component, in order: every arrangement of its coordinates when
+   * it has at most `MAX_EXHAUSTIVE_COMPONENT` rails, otherwise every exchange of two rails.
+   */
+  const railTrials = function* (component: ExternalRail[]): Generator<RailTrial> {
+    if (component.length <= MAX_EXHAUSTIVE_COMPONENT) {
+      for (const assignment of permutedAssignmentsFor(component)) {
+        yield {
+          coordAt: (place) => assignment[place],
+          moved: component.flatMap((rail, place) =>
+            Object.is(assignment[place], rail.coord) ? [] : [place]
+          ),
+          displacement: () => displacementOf(component, assignment),
+        };
+      }
+      return;
+    }
+    for (let i = 0; i < component.length; i++) {
+      for (let j = i + 1; j < component.length; j++) {
+        yield swapTrial(component, i, j);
+      }
+    }
   };
 
   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-    const currentCrossings = strictCrossingCount();
+    const round = roundRoutes(visibleEdges);
+    const currentCrossings = round.routes.total;
     if (currentCrossings === 0) {
       return;
     }
 
-    let bestReplacements: EdgeReplacementMap | undefined;
+    let best: { plan: ComponentPlan; changed: Map<MaterializedEdge, RailDraft> } | undefined;
     let bestCrossings = currentCrossings;
-    let bestBends = totalBends();
+    let bestBends = round.totalBends;
     let bestDisplacement = Number.POSITIVE_INFINITY;
 
     for (const component of connectedComponents(collectExternalRails())) {
-      for (const assignment of coordinateAssignmentsFor(component)) {
-        const replacements = replacementsForAssignment(component, assignment);
-        if (!replacements || !candidateIsSafe(replacements)) {
+      const plan = planComponent(round, component);
+      for (const trial of railTrials(component)) {
+        const scored = scoreAssignment(round, plan, trial);
+        if (!scored || scored.crossings >= currentCrossings) {
           continue;
         }
-
-        const candidateCrossings = strictCrossingCount(replacements);
-        if (candidateCrossings >= currentCrossings) {
-          continue;
-        }
-        const candidateBends = totalBends(replacements);
-        const candidateDisplacement = component.reduce(
-          (sum, rail, index) => sum + Math.abs(assignment[index] - rail.coord),
-          0
-        );
-
+        const displacement = trial.displacement();
         if (
-          candidateCrossings > bestCrossings ||
-          (candidateCrossings === bestCrossings &&
-            (candidateBends > bestBends ||
-              (candidateBends === bestBends && candidateDisplacement >= bestDisplacement)))
+          scored.crossings > bestCrossings ||
+          (scored.crossings === bestCrossings &&
+            (scored.bends > bestBends ||
+              (scored.bends === bestBends && displacement >= bestDisplacement)))
         ) {
           continue;
         }
 
-        bestReplacements = replacements;
-        bestCrossings = candidateCrossings;
-        bestBends = candidateBends;
-        bestDisplacement = candidateDisplacement;
+        best = { plan, changed: scored.changed };
+        bestCrossings = scored.crossings;
+        bestBends = scored.bends;
+        bestDisplacement = displacement;
       }
     }
 
-    if (!bestReplacements) {
+    if (!best) {
       return;
     }
-
-    for (const [edge, points] of bestReplacements) {
-      (edge as { points: PointLite[] }).points = points;
-    }
+    applyAssignment(best.plan, best.changed);
   }
 }
 

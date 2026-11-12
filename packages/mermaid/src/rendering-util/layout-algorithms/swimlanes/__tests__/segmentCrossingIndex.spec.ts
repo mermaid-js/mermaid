@@ -246,6 +246,59 @@ describe('buildRouteCrossings', () => {
   });
 });
 
+describe('RouteCrossings.totalWith', () => {
+  /** The walk it replaces: every pair of routes, after the replacements. */
+  const recount = (routes: Map<number, SegmentEnds[]>): number => {
+    const all = [...routes.values()];
+    return all.reduce(
+      (sum, route, i) =>
+        sum +
+        all.slice(i + 1).reduce((pairs, other) => pairs + bruteForceCrossings(route, other), 0),
+      0
+    );
+  };
+
+  it('is the total when nothing is replaced, and counts a replaced pair once', () => {
+    const routes = buildRouteCrossings(
+      new Map([
+        [1, [segment(0, 0, 10, 0)]],
+        [2, [segment(5, -5, 5, 5)]],
+        [3, [segment(7, -5, 7, 5)]],
+      ]),
+      EPSILON
+    );
+    expect(routes.totalWith(new Map())).toBe(2);
+    // Route 1 moves clear of both verticals; route 2 turns horizontal and crosses route 3.
+    const replaced = new Map([
+      [1, [segment(0, 20, 10, 20)]],
+      [2, [segment(-5, 3, 20, 3)]],
+    ]);
+    expect(routes.totalWith(replaced)).toBe(1);
+    // Routes it does not hold are new: 4 crosses both verticals, 5 crosses route 1 and route 4.
+    const added = new Map([
+      [4, [segment(-5, 1, 20, 1)]],
+      [5, [segment(9, -9, 9, 9)]],
+    ]);
+    expect(routes.totalWith(added)).toBe(2 + 2 + 1 + 1);
+  });
+
+  it('agrees with a full recount when one, two or three routes are replaced', () => {
+    for (let seed = 1; seed <= RANDOM_CASES / 2; seed++) {
+      const random = seededRandom(seed);
+      const before = new Map(
+        Array.from({ length: 3 + random(9) }, (_, i) => [i, rawSegments(route(random))] as const)
+      );
+      const routes = buildRouteCrossings(before, EPSILON);
+      const replaced = new Map<number, SegmentEnds[]>();
+      for (let count = 1 + random(3); count > 0; count--) {
+        replaced.set(random(before.size), rawSegments(route(random)));
+      }
+      const after = new Map([...before, ...replaced]);
+      expect({ seed, total: routes.totalWith(replaced) }).toEqual({ seed, total: recount(after) });
+    }
+  });
+});
+
 describe('buildTrackIndex', () => {
   const flagged = (ax: number, ay: number, bx: number, by: number): OrthogonalSegment => ({
     index: 0,

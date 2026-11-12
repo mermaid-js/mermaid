@@ -29,6 +29,8 @@ export interface RouteCrossings<R> {
   of(route: R): number;
   /** Crossings of `segments` with every route except `route`. */
   withOthers(route: R, segments: readonly SegmentEnds[]): number;
+  /** `total` once each route in `replaced` runs along its segments there instead. */
+  totalWith(replaced: ReadonlyMap<R, readonly SegmentEnds[]>): number;
 }
 
 /** A segment and what it belongs to, kept by the line the segment runs along. */
@@ -252,12 +254,47 @@ export function buildRouteCrossings<R>(
     own.set(route, count);
     counted += count;
   }
+  // Every crossing between two routes was counted once from each side.
+  const total = counted / 2;
+  const of = (route: R): number => own.get(route) ?? 0;
   return {
-    // Every crossing between two routes was counted once from each side.
-    total: counted / 2,
-    of: (route) => own.get(route) ?? 0,
+    total,
+    of,
     withOthers,
+    totalWith: (replaced) => {
+      const changed = [...replaced];
+      let result = total;
+      changed.forEach(([route, segments], i) => {
+        result += withOthers(route, segments) - of(route);
+        for (const [other, otherSegments] of changed.slice(i + 1)) {
+          result += pairCorrection(
+            [routes.get(route) ?? [], segments],
+            [routes.get(other) ?? [], otherSegments],
+            epsilon
+          );
+        }
+      });
+      return result;
+    },
   };
+}
+
+/**
+ * What `withOthers` gets wrong for two routes replaced together, given each as `[old, new]`:
+ * each counted its new segments against the other's old ones, and both took their old
+ * crossing with each other off the total.
+ */
+function pairCorrection(
+  [firstOld, firstNew]: [readonly SegmentEnds[], readonly SegmentEnds[]],
+  [secondOld, secondNew]: [readonly SegmentEnds[], readonly SegmentEnds[]],
+  epsilon: number
+): number {
+  return (
+    crossingsBetween(firstOld, secondOld, epsilon) +
+    crossingsBetween(firstNew, secondNew, epsilon) -
+    crossingsBetween(firstNew, secondOld, epsilon) -
+    crossingsBetween(secondNew, firstOld, epsilon)
+  );
 }
 
 interface TrackLine<T> {
