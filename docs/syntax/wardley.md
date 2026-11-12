@@ -751,6 +751,46 @@ note "Migrate to cloud-native database" [0.60, 0.50]
 
 Wardley Maps support Mermaid's theme system. Use standard Mermaid configuration to customize appearance.
 
+### Theme Variables
+
+Theme variables for Wardley Maps reside inside the `wardley` attribute of `themeVariables`:
+
+```yaml
+---
+config:
+  themeVariables:
+    wardley:
+      pioneersFill: '#ffcc00'
+      ecosystemOuterFill: '#cccccc'
+---
+```
+
+| Parameter           | Description                                                          |
+| ------------------- | -------------------------------------------------------------------- |
+| backgroundColor     | Background color of the map                                          |
+| axisColor           | Color of the axes                                                    |
+| axisTextColor       | Color of the axis labels, stage labels, link labels and notes        |
+| gridColor           | Color of the grid lines                                              |
+| componentFill       | Fill color of component circles                                      |
+| componentStroke     | Outline color of components, pipeline boxes and the ecosystem symbol |
+| componentLabelColor | Color of component labels                                            |
+| linkStroke          | Color of links between components                                    |
+| evolutionStroke     | Color of evolution arrows                                            |
+| annotationStroke    | Outline color of annotations and the annotations box                 |
+| annotationTextColor | Color of annotation text                                             |
+| annotationFill      | Fill color of annotations and the annotations box                    |
+| pioneersStroke      | Outline and label color of `pioneers` zones                          |
+| pioneersFill        | Fill color of `pioneers` zones, drawn at 40% opacity                 |
+| settlersStroke      | Outline and label color of `settlers` zones                          |
+| settlersFill        | Fill color of `settlers` zones, drawn at 40% opacity                 |
+| townplannersStroke  | Outline and label color of `townplanners` zones                      |
+| townplannersFill    | Fill color of `townplanners` zones, drawn at 40% opacity             |
+| ecosystemOuterFill  | Fill color of the outer ring of the `(ecosystem)` symbol             |
+| ecosystemMiddleFill | Fill color of the hatched middle ring of the `(ecosystem)` symbol    |
+| ecosystemInnerFill  | Fill color of the inner circle of the `(ecosystem)` symbol           |
+
+`ecosystemMiddleFill` and `ecosystemInnerFill` default to `componentFill`, so the ecosystem symbol matches other components in every theme.
+
 ## Resources
 
 - [Wardley Mapping Book](https://medium.com/wardleymaps) by Simon Wardley
