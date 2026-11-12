@@ -583,6 +583,8 @@ linkStyleStatement
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate([$DEFAULT],$alphaNum);}
     | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
           {$$ = $LINKSTYLE;yy.updateLinkInterpolate($numList,$alphaNum);}
+    | LINKSTYLE SPACE STR SPACE stylesOpt
+          {$$ = $LINKSTYLE;yy.updateLinkByText($STR,$stylesOpt);}
     ;
 
 numList: NUM
