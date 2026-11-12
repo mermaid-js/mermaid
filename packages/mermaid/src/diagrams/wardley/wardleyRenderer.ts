@@ -811,9 +811,6 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       if (node.className === 'evolved') {
         return theme.evolutionStroke;
       }
-      if (node.className === 'anchor') {
-        return '#000';
-      }
       return theme.componentLabelColor;
     })
     .attr('font-size', configValues.labelFontSize)
@@ -859,7 +856,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('cx', coord.x)
           .attr('cy', coord.y)
           .attr('r', 10)
-          .attr('fill', 'white')
+          .attr('fill', theme.annotationFill)
           .attr('stroke', theme.axisColor)
           .attr('stroke-width', 1.5);
 
@@ -871,7 +868,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'central')
           .attr('font-size', 10)
-          .attr('fill', theme.axisTextColor)
+          .attr('fill', theme.annotationTextColor)
           .attr('font-weight', 'bold')
           .text(annotation.number);
       });
@@ -901,7 +898,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('x', boxX + padding)
           .attr('y', boxY + padding + (idx + 1) * lineHeight)
           .attr('font-size', fontSize)
-          .attr('fill', theme.axisTextColor)
+          .attr('fill', theme.annotationTextColor)
           .attr('text-anchor', 'start')
           .attr('dominant-baseline', 'middle')
           .text(`${annotation.number}. ${annotation.text}`);
@@ -946,7 +943,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('y', boxY)
           .attr('width', boxWidth)
           .attr('height', boxHeight)
-          .attr('fill', 'white')
+          .attr('fill', theme.annotationFill)
           .attr('stroke', theme.axisColor)
           .attr('stroke-width', 1.5)
           .attr('rx', 4)
