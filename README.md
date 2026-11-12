@@ -52,6 +52,7 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 <summary>Expand contents</summary>
 
 - [About](#about)
+- [中文快速开始](#中文快速开始)
 - [Examples](#examples)
 - [Release](#release)
 - [Related projects](#related-projects)
@@ -61,6 +62,18 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 - [Appreciation](#appreciation)
 
 </details>
+
+## 中文快速开始
+
+本项目使用 Node.js 24.16.0 和 pnpm 10.30.3。请先安装对应版本的 Node.js，然后在项目根目录运行：
+
+```bash
+corepack enable
+pnpm install
+pnpm dev
+```
+
+开发服务器启动后，打开终端中显示的本地地址即可预览。首次安装依赖时会自动执行构建，可能需要一些时间。
 
 ## About
 
