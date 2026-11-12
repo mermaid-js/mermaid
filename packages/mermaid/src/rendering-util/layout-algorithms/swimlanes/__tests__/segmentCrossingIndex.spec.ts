@@ -4,8 +4,12 @@ import {
   orthogonalSegmentsForPoints,
   orthogonalSegmentsStrictlyCross,
 } from '../direction/geometry.js';
-import type { Point } from '../direction/geometry.js';
-import { buildRouteCrossings, buildCrossingCounter } from '../direction/segmentCrossingIndex.js';
+import type { OrthogonalSegment, Point } from '../direction/geometry.js';
+import {
+  buildCrossingCounter,
+  buildRouteCrossings,
+  buildTrackIndex,
+} from '../direction/segmentCrossingIndex.js';
 import type { SegmentEnds } from '../direction/segmentCrossingIndex.js';
 
 /** The tolerance the crossing cleanup passes to the predicate and to the index. */
@@ -238,6 +242,62 @@ describe('buildRouteCrossings', () => {
         total += own;
       }
       expect({ seed, total: routes.total }).toEqual({ seed, total: total / 2 });
+    }
+  });
+});
+
+describe('buildTrackIndex', () => {
+  const flagged = (ax: number, ay: number, bx: number, by: number): OrthogonalSegment => ({
+    index: 0,
+    a: { x: ax, y: ay },
+    b: { x: bx, y: by },
+    horizontal: ay === by,
+    vertical: ax === bx,
+  });
+
+  it('finds the segments on the same axis within reach of the line, ends included', () => {
+    const entries = [
+      flagged(0, 0, 10, 0),
+      flagged(0, 1, 10, 1),
+      flagged(0, 1.5, 10, 1.5),
+      flagged(0, -1, 10, -1),
+      flagged(1, -5, 1, 5),
+    ].map((one, owner) => ({ segment: one, owner }));
+    const index = buildTrackIndex(entries);
+    const near = (one: OrthogonalSegment, reach: number): number[] =>
+      index
+        .alongside(one, reach)
+        .map(({ owner }) => owner)
+        .sort((a, b) => a - b);
+    expect(near(flagged(3, 0, 4, 0), 1)).toEqual([0, 1, 3]);
+    expect(near(flagged(3, 0, 4, 0), 0.5)).toEqual([0]);
+    expect(near(flagged(1, 0, 1, 2), 0)).toEqual([4]);
+    expect(near(flagged(30, 0, 30, 2), 1)).toEqual([]);
+  });
+
+  it('agrees with a filter over every entry on random segments', () => {
+    for (let seed = 1; seed <= RANDOM_CASES / 2; seed++) {
+      const random = seededRandom(seed);
+      const segments = Array.from({ length: 1 + random(20) }, () => {
+        const [line, from, to] = [coordinate(random), coordinate(random), coordinate(random)];
+        return random(2) === 0 ? flagged(from, line, to, line) : flagged(line, from, line, to);
+      });
+      const entries = segments.map((one, owner) => ({ segment: one, owner }));
+      const index = buildTrackIndex(entries);
+      const query = segments[random(segments.length)];
+      const reach = random(4) / 2;
+      const line = (one: OrthogonalSegment): number => (one.horizontal ? one.a.y : one.a.x);
+      const expected = entries
+        .filter(
+          ({ segment: one }) =>
+            one.horizontal === query.horizontal && Math.abs(line(one) - line(query)) <= reach
+        )
+        .map(({ owner }) => owner);
+      const found = index
+        .alongside(query, reach)
+        .map(({ owner }) => owner)
+        .sort((a, b) => a - b);
+      expect({ seed, found }).toEqual({ seed, found: expected });
     }
   });
 });

@@ -1,5 +1,5 @@
 import { orthogonalSegmentsStrictlyCross } from './geometry.js';
-import type { Point } from './geometry.js';
+import type { OrthogonalSegment, Point } from './geometry.js';
 
 /** The two ends of a route segment, as `orthogonalSegmentsForPoints` yields it. */
 export interface SegmentEnds {
@@ -29,6 +29,24 @@ export interface RouteCrossings<R> {
   of(route: R): number;
   /** Crossings of `segments` with every route except `route`. */
   withOthers(route: R, segments: readonly SegmentEnds[]): number;
+}
+
+/** A segment and what it belongs to, kept by the line the segment runs along. */
+export interface TrackEntry<T> {
+  segment: OrthogonalSegment;
+  owner: T;
+}
+
+/**
+ * Segments sorted by the line they run along, one list per axis, for the tests that only
+ * concern segments on (nearly) the same line: a shared track, a crowded parallel track.
+ */
+export interface TrackIndex<T> {
+  /**
+   * The entries on the axis of `segment` whose line is within `reach` of its line, both ends
+   * included. A caller then applies its own exact test to these few.
+   */
+  alongside(segment: OrthogonalSegment, reach: number): TrackEntry<T>[];
 }
 
 type Axis = 'horizontal' | 'vertical';
@@ -239,5 +257,35 @@ export function buildRouteCrossings<R>(
     total: counted / 2,
     of: (route) => own.get(route) ?? 0,
     withOthers,
+  };
+}
+
+interface TrackLine<T> {
+  lines: Float64Array;
+  entries: TrackEntry<T>[];
+}
+
+const lineOf = (segment: OrthogonalSegment): number =>
+  segment.horizontal ? segment.a.y : segment.a.x;
+
+function trackLine<T>(entries: TrackEntry<T>[]): TrackLine<T> {
+  // A segment on no number line is near nothing, and would break the order.
+  const sorted = entries
+    .filter((entry) => !Number.isNaN(lineOf(entry.segment)))
+    .sort((first, second) => lineOf(first.segment) - lineOf(second.segment));
+  return { lines: Float64Array.from(sorted, (entry) => lineOf(entry.segment)), entries: sorted };
+}
+
+/** Indexes `entries` by the line each segment runs along. */
+export function buildTrackIndex<T>(entries: Iterable<TrackEntry<T>>): TrackIndex<T> {
+  const all = [...entries];
+  const horizontal = trackLine(all.filter((entry) => entry.segment.horizontal));
+  const vertical = trackLine(all.filter((entry) => !entry.segment.horizontal));
+  return {
+    alongside(segment, reach) {
+      const { lines, entries: sorted } = segment.horizontal ? horizontal : vertical;
+      const line = lineOf(segment);
+      return sorted.slice(countLess(lines, line - reach), countLessOrEqual(lines, line + reach));
+    },
   };
 }
