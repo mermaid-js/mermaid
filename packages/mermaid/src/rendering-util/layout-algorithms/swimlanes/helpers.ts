@@ -63,7 +63,7 @@ const MIN_LANE_HEADER_MARGIN = 36;
 // Twice the 36px title band of an LR lane: the narrowest column an empty lane gets.
 const EMPTY_LANE_MIN_WIDTH = 72;
 // Average advance of a label character as a fraction of the font size, for titles not yet measured.
-const TITLE_CHAR_WIDTH_PER_FONT_SIZE = 0.55;
+export const TITLE_CHAR_WIDTH_PER_FONT_SIZE = 0.55;
 const DEFAULT_FONT_SIZE = 16;
 // A lane whose left edge is this close to a column boundary counts as starting there.
 const COLUMN_BOUNDARY_TOLERANCE = 0.5;
@@ -482,7 +482,7 @@ export function writeBackToLayoutData(
   placeEmptyTopLanes(g, topLevelGroups, new Set(groupBounds.keys()), opts?.direction);
 }
 
-function laneFontSize(layout: LayoutData): number {
+export function laneFontSize(layout: LayoutData): number {
   return (
     Number.parseFloat(String(layout.config?.fontSize ?? DEFAULT_FONT_SIZE)) || DEFAULT_FONT_SIZE
   );
@@ -543,7 +543,7 @@ function placeEmptyLane(
  * Gives each top-level lane without nodes a column of its own, in declared order: right of
  * the nearest placed lane declared before it, or else left of the nearest one declared after
  * it, shifting everything beyond. When no lane has nodes, the lanes stand side by side from 0.
- * Only TB and BT; LR and RL leave such a lane as it is.
+ * Only TB and BT; LR and RL size their lanes in the direction transform.
  */
 function placeEmptyTopLanes(
   g: Graph,

@@ -191,19 +191,6 @@ describe('Swimlanes: a lane with no nodes gets its own column in TB and BT', () 
     expectColumns(layout, ['L1', 'L3']);
   });
 
-  it('LR opens no column: the populated lanes keep the place they have without the empty lane', async () => {
-    const layout = await layoutFromSource(lanes('LR', EMPTY_LEGAL));
-    const control = await layoutFromSource(lanes('LR', EMPTY_LEGAL, false));
-    for (const id of ['L1', 'L3', 'A', 'B', 'C', 'D']) {
-      expect(node(layout, id)).toMatchObject({
-        x: node(control, id).x,
-        y: node(control, id).y,
-        width: node(control, id).width,
-        height: node(control, id).height,
-      });
-    }
-  });
-
   it('an empty lane shares the height of its neighbours, and the next lane takes its title strip along', async () => {
     const layout = await layoutFromSource(lanes('TB', EMPTY_LEGAL));
     const [sales, legal, warehouse] = ['L1', 'L2', 'L3'].map((id) => node(layout, id));
