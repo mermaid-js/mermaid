@@ -51,6 +51,20 @@ export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * Horizontal alignment for items within a grid cell.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridHorizontalAlign".
+ */
+export type GridHorizontalAlign = 'left' | 'center' | 'right';
+/**
+ * Vertical alignment for items or stacks within a grid cell.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridVerticalAlign".
+ */
+export type GridVerticalAlign = 'top' | 'center' | 'bottom';
+/**
  * The style of labels in the sankey diagram.
  *
  *
@@ -102,98 +116,6 @@ export interface MermaidConfig {
    *
    */
   layout?: string;
-  /**
-   * Configuration for the grid layout renderer.
-   */
-  grid?: {
-    /**
-     * Draws grid edge crossings as arcs or visible gaps. Set to `false` for
-     * plain crossings. Corner radii and arrowhead offsets are preserved.
-     * Smoothing curves such as `basis` are left unchanged.
-     *
-     */
-    lineHops?: false | 'arc' | 'gap';
-    /**
-     * Explicit grid cells for nodes and groups, keyed by node or group id.
-     * Placement set on the node itself takes precedence over this map.
-     *
-     */
-    placements?: {
-      [k: string]: {
-        /**
-         * One-based row of the cell.
-         */
-        row?: number;
-        /**
-         * One-based column of the cell.
-         */
-        column?: number;
-        /**
-         * Horizontal alignment of the item inside its cell.
-         */
-        horizontalAlign?: 'left' | 'center' | 'right';
-        /**
-         * Vertical alignment of the item inside its cell.
-         */
-        verticalAlign?: 'top' | 'center' | 'bottom';
-      };
-    };
-    /**
-     * Number of columns used when placing items that have no explicit cell.
-     * `0` lets the layout choose.
-     *
-     */
-    columns?: number;
-    /**
-     * Minimum gap between rows, in pixels.
-     */
-    rowGap?: number;
-    /**
-     * Minimum gap between columns, in pixels.
-     */
-    columnGap?: number;
-    /**
-     * Gap between items stacked in the same cell, in pixels.
-     */
-    cellGap?: number;
-    /**
-     * Minimum padding between a group's border and its contents, in pixels.
-     */
-    containerPadding?: number;
-    /**
-     * Gap between a group's title and its contents, in pixels.
-     */
-    titleGap?: number;
-    /**
-     * Default horizontal alignment of items inside their cells.
-     */
-    horizontalAlign?: 'left' | 'center' | 'right';
-    /**
-     * Default vertical alignment of items inside their cells.
-     */
-    verticalAlign?: 'top' | 'center' | 'bottom';
-    /**
-     * Curve used to draw routed grid edges.
-     */
-    curve?:
-      | 'basis'
-      | 'bumpX'
-      | 'bumpY'
-      | 'cardinal'
-      | 'catmullRom'
-      | 'linear'
-      | 'monotoneX'
-      | 'monotoneY'
-      | 'natural'
-      | 'step'
-      | 'stepAfter'
-      | 'stepBefore'
-      | 'rounded';
-    /**
-     * Corner radius of `rounded` grid edges, in pixels.
-     */
-    edgeCornerRadius?: number;
-  };
   /**
    * The maximum allowed size of the users text diagram
    */
@@ -346,6 +268,7 @@ export interface MermaidConfig {
      */
     orientFeedbackEdges?: boolean;
   };
+  grid?: GridLayoutConfig;
   /**
    * Options for the `layered` layout (beta), used with `layout: layered`.
    *
@@ -479,6 +402,100 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridLayoutConfig".
+ */
+export interface GridLayoutConfig {
+  /**
+   * Draws grid edge crossings as arcs or visible gaps. Set to `false` for
+   * plain crossings. Corner radii and arrowhead offsets are preserved.
+   * Smoothing curves such as `basis` are left unchanged.
+   *
+   */
+  lineHops?: false | 'arc' | 'gap';
+  /**
+   * Placement map keyed by the authored placement ID when present; otherwise, by the emitted node ID. Non-empty arrays target repeated IDs in source order; a single object is equivalent to a one-item array.
+   */
+  placements?: {
+    [k: string]: GridPlacement | [GridPlacement, ...GridPlacement[]];
+  };
+  /**
+   * Non-negative integer candidate column count for auto-placed items; 0 means automatic.
+   */
+  columns?: number;
+  /**
+   * Pixel gap between occupied rows.
+   */
+  rowGap?: number;
+  /**
+   * Pixel gap between occupied columns.
+   */
+  columnGap?: number;
+  /**
+   * Pixel gap between stacked items that share an explicit cell.
+   */
+  cellGap?: number;
+  /**
+   * Minimum pixel padding inside groups on every side.
+   */
+  containerPadding?: number;
+  /**
+   * Clearance between a measured group title and its child grid.
+   */
+  titleGap?: number;
+  /**
+   * Default horizontal alignment within each grid cell.
+   */
+  horizontalAlign?: 'left' | 'center' | 'right';
+  /**
+   * Default vertical alignment for each grid cell stack.
+   */
+  verticalAlign?: 'top' | 'center' | 'bottom';
+  /**
+   * Curve style used to render grid edges.
+   */
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore'
+    | 'rounded';
+  /**
+   * Pixel radius used for grid edges when curve is rounded.
+   */
+  edgeCornerRadius?: number;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridPlacement".
+ */
+export interface GridPlacement {
+  /**
+   * Safe integer row number local to the item's direct parent grid, including zero and negative values.
+   */
+  row?: number;
+  /**
+   * Safe integer column number local to the item's direct parent grid, including zero and negative values.
+   */
+  column?: number;
+  /**
+   * Horizontal alignment within the resolved grid cell.
+   */
+  horizontalAlign?: 'left' | 'center' | 'right';
+  /**
+   * Vertical alignment for the resolved grid cell stack.
+   */
+  verticalAlign?: 'top' | 'center' | 'bottom';
 }
 /**
  * The object containing configurations specific for flowcharts

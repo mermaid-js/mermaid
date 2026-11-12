@@ -84,111 +84,6 @@ properties:
       Defaults to `elk`, which is bundled with mermaid. The `tiny` build omits
       ELK to stay small and falls back to `dagre`.
     default: 'elk'
-  grid:
-    description: Configuration for the grid layout renderer.
-    type: object
-    additionalProperties: false
-    properties:
-      lineHops:
-        description: |
-          Draws grid edge crossings as arcs or visible gaps. Set to `false` for
-          plain crossings. Corner radii and arrowhead offsets are preserved.
-          Smoothing curves such as `basis` are left unchanged.
-        type: [boolean, string]
-        enum: [false, 'arc', 'gap']
-        default: 'arc'
-      placements:
-        description: |
-          Explicit grid cells for nodes and groups, keyed by node or group id.
-          Placement set on the node itself takes precedence over this map.
-        type: object
-        additionalProperties:
-          type: object
-          additionalProperties: false
-          properties:
-            row:
-              description: One-based row of the cell.
-              type: integer
-              minimum: 1
-            column:
-              description: One-based column of the cell.
-              type: integer
-              minimum: 1
-            horizontalAlign:
-              description: Horizontal alignment of the item inside its cell.
-              type: string
-              enum: ['left', 'center', 'right']
-            verticalAlign:
-              description: Vertical alignment of the item inside its cell.
-              type: string
-              enum: ['top', 'center', 'bottom']
-        default: {}
-      columns:
-        description: |
-          Number of columns used when placing items that have no explicit cell.
-          `0` lets the layout choose.
-        type: integer
-        minimum: 0
-        default: 0
-      rowGap:
-        description: Minimum gap between rows, in pixels.
-        type: number
-        minimum: 0
-        default: 50
-      columnGap:
-        description: Minimum gap between columns, in pixels.
-        type: number
-        minimum: 0
-        default: 50
-      cellGap:
-        description: Gap between items stacked in the same cell, in pixels.
-        type: number
-        minimum: 0
-        default: 20
-      containerPadding:
-        description: Minimum padding between a group's border and its contents, in pixels.
-        type: number
-        minimum: 0
-        default: 20
-      titleGap:
-        description: Gap between a group's title and its contents, in pixels.
-        type: number
-        minimum: 0
-        default: 8
-      horizontalAlign:
-        description: Default horizontal alignment of items inside their cells.
-        type: string
-        enum: ['left', 'center', 'right']
-        default: 'center'
-      verticalAlign:
-        description: Default vertical alignment of items inside their cells.
-        type: string
-        enum: ['top', 'center', 'bottom']
-        default: 'center'
-      curve:
-        description: Curve used to draw routed grid edges.
-        type: string
-        enum:
-          - basis
-          - bumpX
-          - bumpY
-          - cardinal
-          - catmullRom
-          - linear
-          - monotoneX
-          - monotoneY
-          - natural
-          - step
-          - stepAfter
-          - stepBefore
-          - rounded
-        default: 'rounded'
-      edgeCornerRadius:
-        description: Corner radius of `rounded` grid edges, in pixels.
-        type: number
-        minimum: 0
-        default: 5
-    default: {}
   maxTextSize:
     description: The maximum allowed size of the users text diagram
     type: number
@@ -370,6 +265,9 @@ properties:
           When enabled, such edges are found before layout, on the graph with each subgraph collapsed, and handed to ELK in the other direction. The edge is drawn with its arrowhead at its real target. Cycles between plain nodes are left to `cycleBreakingStrategy`.
         type: boolean
         default: true
+  grid:
+    $ref: '#/$defs/GridLayoutConfig'
+    default: {}
   layered:
     description: |
       Options for the `layered` layout (beta), used with `layout: layered`.
@@ -649,6 +547,128 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Defines which layout algorithm to use for rendering the diagram.
         type: string
+  GridHorizontalAlign:
+    description: Horizontal alignment for items within a grid cell.
+    type: string
+    enum:
+      - left
+      - center
+      - right
+  GridVerticalAlign:
+    description: Vertical alignment for items or stacks within a grid cell.
+    type: string
+    enum:
+      - top
+      - center
+      - bottom
+  GridPlacement:
+    title: Grid Placement
+    type: object
+    additionalProperties: false
+    properties:
+      row:
+        description: Safe integer row number local to the item's direct parent grid, including zero and negative values.
+        type: integer
+        minimum: -9007199254740991
+        maximum: 9007199254740991
+      column:
+        description: Safe integer column number local to the item's direct parent grid, including zero and negative values.
+        type: integer
+        minimum: -9007199254740991
+        maximum: 9007199254740991
+      horizontalAlign:
+        description: Horizontal alignment within the resolved grid cell.
+        $ref: '#/$defs/GridHorizontalAlign'
+      verticalAlign:
+        description: Vertical alignment for the resolved grid cell stack.
+        $ref: '#/$defs/GridVerticalAlign'
+  GridLayoutConfig:
+    title: Grid Layout Config
+    type: object
+    additionalProperties: false
+    properties:
+      lineHops:
+        description: |
+          Draws grid edge crossings as arcs or visible gaps. Set to `false` for
+          plain crossings. Corner radii and arrowhead offsets are preserved.
+          Smoothing curves such as `basis` are left unchanged.
+        type: [boolean, string]
+        enum: [false, 'arc', 'gap']
+        default: 'arc'
+      placements:
+        description: Placement map keyed by the authored placement ID when present; otherwise, by the emitted node ID. Non-empty arrays target repeated IDs in source order; a single object is equivalent to a one-item array.
+        type: object
+        additionalProperties:
+          oneOf:
+            - $ref: '#/$defs/GridPlacement'
+            - type: array
+              minItems: 1
+              items:
+                $ref: '#/$defs/GridPlacement'
+        default: {}
+      columns:
+        description: Non-negative integer candidate column count for auto-placed items; 0 means automatic.
+        type: integer
+        minimum: 0
+        default: 0
+      rowGap:
+        description: Pixel gap between occupied rows.
+        type: number
+        minimum: 0
+        default: 50
+      columnGap:
+        description: Pixel gap between occupied columns.
+        type: number
+        minimum: 0
+        default: 50
+      cellGap:
+        description: Pixel gap between stacked items that share an explicit cell.
+        type: number
+        minimum: 0
+        default: 20
+      containerPadding:
+        description: Minimum pixel padding inside groups on every side.
+        type: number
+        minimum: 0
+        default: 20
+      titleGap:
+        description: Clearance between a measured group title and its child grid.
+        type: number
+        minimum: 0
+        default: 8
+      horizontalAlign:
+        description: Default horizontal alignment within each grid cell.
+        $ref: '#/$defs/GridHorizontalAlign'
+        default: center
+      verticalAlign:
+        description: Default vertical alignment for each grid cell stack.
+        $ref: '#/$defs/GridVerticalAlign'
+        default: center
+      curve:
+        description: Curve style used to render grid edges.
+        type: string
+        enum:
+          [
+            'basis',
+            'bumpX',
+            'bumpY',
+            'cardinal',
+            'catmullRom',
+            'linear',
+            'monotoneX',
+            'monotoneY',
+            'natural',
+            'step',
+            'stepAfter',
+            'stepBefore',
+            'rounded',
+          ]
+        default: rounded
+      edgeCornerRadius:
+        description: Pixel radius used for grid edges when curve is rounded.
+        type: number
+        minimum: 0
+        default: 5
   C4DiagramConfig:
     title: C4 Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]

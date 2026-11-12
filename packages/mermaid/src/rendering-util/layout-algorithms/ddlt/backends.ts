@@ -9,6 +9,8 @@ import { runLayeredLayoutCore } from '../layered/layoutData.js';
 import { createEdgeLabelNodes } from '../swimlanes/edgeLabelNodes.js';
 import { prepareLayoutForSwimlanes } from '../swimlanes/helpers.js';
 import { runSwimlaneLayoutCore } from '../swimlanes/layoutCore.js';
+import { prepareGridLayout } from '../grid/edgeLabels.js';
+import { runGridLayoutCore } from '../grid/layoutCore.js';
 import type { LayoutTestBackend, LayoutTestBackendId, OrthogonalTrace } from './types.js';
 import {
   applyFixtureContentSizesStrict,
@@ -95,6 +97,17 @@ export function runSwimlanesDdlt(layout: LayoutData, sizes: SizesFixture): void 
 }
 
 /**
+ * Mirrors the production grid prepare/measure/layout sequence while replacing DOM measurement
+ * with captured fixture sizes. Keep this adapter thin so DDLT exercises production layout code.
+ */
+export function runGridDdlt(layout: LayoutData, sizes: SizesFixture): void {
+  prepareGridLayout(layout);
+  applyFixtureContentSizesStrict(layout, sizes);
+  layout.layoutAlgorithm = 'grid';
+  runGridLayoutCore(layout);
+}
+
+/**
  * The size step shared by every backend that measures on the `LayoutData` itself (`layered`,
  * `dagre`): content sizes onto leaf nodes, centre-label sizes onto labelled edges and, where the
  * fixture has them, title sizes onto subgraphs. This stands in for `createGraphWithElements` /
@@ -156,8 +169,9 @@ export function runDagreDdlt(layout: LayoutData): void {
 
 /**
  * Parse `.mmd`, apply fixture sizes, then run the given backend (mutates returned `LayoutData`).
- * `layered` and `dagre` share one parse + size path so they see identical inputs;
- * `'domus-orthogonal'` throws.
+ * Backends that need fixture sizes between preparation and layout (`swimlanes`, `grid`) are
+ * dispatched here. `layered` and `dagre` share one parse + size path so they see identical
+ * inputs; `'domus-orthogonal'` throws rather than silently falling back to a different algorithm.
  */
 export async function parseApplySizesAndLayout(
   mmdPath: string,
@@ -177,6 +191,10 @@ export async function parseApplySizesAndLayout(
     runSwimlanesDdlt(layout, sizes);
     return layout;
   }
+  if (backendId === 'grid') {
+    runGridDdlt(layout, sizes);
+    return layout;
+  }
   applyMeasuredSizes(layout, sizes);
   if (backendId === 'layered') {
     runLayeredDdlt(layout);
@@ -193,6 +211,11 @@ export async function parseApplySizesAndLayout(
  */
 export function getLayoutTestBackend(id: LayoutTestBackendId): LayoutTestBackend {
   switch (id) {
+    case 'grid':
+      return (layout: LayoutData) => {
+        prepareGridLayout(layout);
+        runGridLayoutCore(layout);
+      };
     case 'layered':
       return runLayeredDdlt;
     case 'dagre':
@@ -202,9 +225,18 @@ export function getLayoutTestBackend(id: LayoutTestBackendId): LayoutTestBackend
   }
 }
 
+/**
+ * Selects the layout backend for a fixture profile.
+ * Legacy flowchart profiles retain DOMUS rather than silently switching to a newer backend.
+ */
 export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBackendId[] {
   if (profile === 'swimlanes') {
     return ['swimlanes'];
   }
+  if (profile === 'grid') {
+    return ['grid'];
+  }
+  // Legacy flowchart fixtures retain their historical DOMUS backend rather than changing meaning
+  // when new profiles are added.
   return ['domus-orthogonal'];
 }

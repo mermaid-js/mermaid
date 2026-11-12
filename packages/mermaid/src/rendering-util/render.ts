@@ -71,6 +71,10 @@ const elkLayoutLoaders = (): LayoutLoaderDefinition[] => {
 };
 
 // TODO: Should we load dagre without lazy loading?
+/**
+ * Registers built-in layout names without eagerly importing their implementations.
+ * Large-feature loaders are omitted from tiny builds.
+ */
 const registerDefaultLayoutLoaders = () => {
   registerLayoutLoaders([
     {
@@ -80,6 +84,12 @@ const registerDefaultLayoutLoaders = () => {
     {
       name: 'swimlane',
       loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
+    },
+    // Register the public name here, but keep the implementation behind the same lazy boundary as
+    // other optional layouts so importing Mermaid does not eagerly initialize grid internals.
+    {
+      name: 'grid',
+      loader: async () => await import('./layout-algorithms/grid/index.js'),
     },
     // Small and dependency-free, so it ships in the tiny build too.
     {
