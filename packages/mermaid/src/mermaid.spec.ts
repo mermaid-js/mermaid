@@ -53,14 +53,53 @@ describe('when using mermaid and ', () => {
   describe('when using #run', () => {
     it.each([
       {
+        // Generated with Highlight.js 11.11.1, using its JavaScript grammar.
+        name: 'real Highlight.js output with escaped HTML and entities',
+        html: 'graph <span class="hljs-variable constant_">TD</span>;\nA[<span class="hljs-string">&quot;&lt;b&gt;Bold&lt;/b&gt; &amp;amp; text&quot;</span>]--&gt;B;',
+        text: 'graph TD;\nA["<b>Bold</b> &amp; text"]-->B;',
+      },
+      {
+        name: 'Highlight.js class on the diagram element',
+        className: 'mermaid hljs',
+        html: 'graph TD;\nA--&gt;B;',
+        text: 'graph TD;\nA-->B;',
+      },
+      {
+        name: 'pre with a Highlight.js code wrapper',
+        tagName: 'pre',
+        html: '<code class="hljs">graph TD;\nA--&gt;B;</code>',
+        text: 'graph TD;\nA-->B;',
+      },
+      {
         name: 'nested Highlight.js spans',
         html: '<span class="hljs-keyword">graph</span> TD;\n<span class="hljs-title"><span class="hljs-variable">A</span></span>--&gt;B;',
         text: 'graph TD;\nA-->B;',
       },
       {
-        name: 'nested Prism tokens',
-        html: '<span class="token keyword">graph</span> TD;\n<span class="token"><span class="token variable">A</span></span>--&gt;B;',
+        name: 'Prism tokens and line numbers',
+        html: '<code class="language-mermaid"><span class="token keyword">graph</span> TD<span class="token punctuation">;</span>\nA<span class="token arrow operator">--&gt;</span>B;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code>',
         text: 'graph TD;\nA-->B;',
+      },
+      {
+        name: 'Prism tokens without a code wrapper',
+        html: '<span class="token keyword">graph</span> TD;\nA--&gt;B;',
+        text: 'graph TD;\nA-->B;',
+      },
+      {
+        name: 'language code with highlighter spans',
+        html: '<code class="extra language-mermaid"><span class="token">graph TD;</span>\nA--&gt;B;</code>',
+        text: 'graph TD;\nA-->B;',
+      },
+      {
+        name: 'Shiki line spans with inline styles',
+        html: '<code><span class="line"><span style="color:#CF222E">graph</span><span style="color:#24292F"> TD;</span></span>\n<span class="line"><span style="color:#24292F">A--&gt;B;</span></span></code>',
+        text: 'graph TD;\nA-->B;',
+      },
+      {
+        // Generated with Highlight.js 11.11.1, using its XML grammar.
+        name: 'Highlight.js sub-language spans',
+        html: 'graph TD;\n%% <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-keyword">const</span> x = <span class="hljs-number">1</span>;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>\nA--&gt;B;',
+        text: 'graph TD;\n%% <script>const x = 1;</script>\nA-->B;',
       },
       {
         name: 'HTML labels including ordinary spans',
@@ -68,8 +107,19 @@ describe('when using mermaid and ', () => {
         text: 'graph TD;\nA[<b>Bold</b> <span class="label">label</span>]-->B;',
       },
       {
-        name: 'highlighted text inside an HTML label',
-        html: 'graph TD;\nA[<b><span class="extra hljs-string">Bold</span></b>]-->B;',
+        name: 'HTML label using only the token class',
+        html: 'graph TD;\nA[<span class="token">label</span>]--&gt;B;',
+        text: 'graph TD;\nA[<span class="token">label</span>]-->B;',
+      },
+      {
+        name: 'HTML label using only the line class',
+        html: 'graph TD;\nA[<span class="line">label</span>]--&gt;B;',
+        text: 'graph TD;\nA[<span class="line">label</span>]-->B;',
+      },
+      {
+        name: 'language class without highlighter spans',
+        className: 'mermaid language-mermaid',
+        html: 'graph TD;\nA[<b>Bold</b>]--&gt;B;',
         text: 'graph TD;\nA[<b>Bold</b>]-->B;',
       },
       {
@@ -92,8 +142,9 @@ describe('when using mermaid and ', () => {
         html: '\n    ---\n    title: Test\n    ---\n    graph TD;\n      A--&gt;B;\n  ',
         text: '---\ntitle: Test\n---\ngraph TD;\n  A-->B;',
       },
-    ])('should preserve diagram text with $name', async ({ html, text }) => {
-      const node = document.createElement('div');
+    ])('should preserve diagram text with $name', async ({ html, text, className, tagName }) => {
+      const node = document.createElement(tagName ?? 'div');
+      node.className = className ?? 'mermaid';
       node.innerHTML = html;
 
       await mermaid.run({ nodes: [node] });

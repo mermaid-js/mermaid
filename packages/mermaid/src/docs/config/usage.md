@@ -76,7 +76,7 @@ Example:
 
 **Following these directions, mermaid starts at page load and (when the page has loaded) it will locate the graph definitions inside the `pre` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
 
-Diagram blocks may contain Highlight.js (`hljs-*`) or Prism (`token`) spans. Mermaid removes these highlighting wrappers before parsing and preserves other HTML, such as label formatting.
+Mermaid reads a diagram block's text content when it detects `hljs` or `hljs-*` classes, Prism `span.token.keyword` or `span.token.punctuation` elements, spans inside `code` elements with a `language-*` class, or Shiki-style `span.line` elements with styled child spans. This expects the highlighter to have escaped the original source, including any HTML labels. Other highlighting formats are not detected. Blocks without these markers keep their HTML labels; a `token` class alone does not trigger detection.
 
 ### Fonts
 

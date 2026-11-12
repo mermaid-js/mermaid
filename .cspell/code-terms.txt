@@ -70,6 +70,7 @@ GENERICTYPE
 grammr
 graphtype
 halign
+hljs
 iife
 instrumenter
 interp
@@ -124,6 +125,7 @@ roughjs
 RPAREN
 sankey
 sequencenumber
+Shiki
 shrc
 Siebenhaller
 signaltype

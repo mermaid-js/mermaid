@@ -169,18 +169,19 @@ const runThrowsErrors = async function (
 
     const id = `mermaid-${idGenerator.next()}`;
 
-    // Fetch the graph definition including tags
-    const source = element.cloneNode(true) as HTMLElement;
-    source
-      .querySelectorAll('span[class^="hljs-"], span[class*=" hljs-"], span.token')
-      .forEach((span) => {
-        // eslint-disable-next-line unicorn/prefer-spread
-        span.replaceWith(...Array.from(span.childNodes));
-      });
-    txt = source.innerHTML;
+    // Highlighters escape the source before adding their markup.
+    const highlightingSelector = [
+      '.hljs, [class^="hljs-"], [class*=" hljs-"]',
+      'span.token.keyword, span.token.punctuation',
+      'code[class^="language-"] span, code[class*=" language-"] span',
+      'span.line > span[style]',
+    ].join(', ');
+    const highlighted =
+      element.matches(highlightingSelector) || element.querySelector(highlightingSelector) !== null;
+    txt = highlighted ? (element.textContent ?? '') : utils.entityDecode(element.innerHTML);
 
     // transforms the html to pure text
-    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
+    txt = dedent(txt) // removes indentation, required for YAML parsing
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
