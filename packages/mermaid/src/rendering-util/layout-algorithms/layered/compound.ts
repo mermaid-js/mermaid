@@ -1,9 +1,4 @@
-// Ported from mermaid-v13 `packages/core/src/layout/layered/compound.ts`.
-// Changes from Pele: `const enum`s are `as const` objects, and index reads carry `!` for
-// noUncheckedIndexedAccess. `snapshot`/`restore` copy objects instead of packed arrays, and the
-// layout cache keys on `layoutInputs`. The algorithm is unchanged.
 // cspell:ignore lnode lnodes cnode
-//
 import {
   Kind,
   ease,

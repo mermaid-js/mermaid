@@ -1,7 +1,3 @@
-// Ported from mermaid-v13 `packages/core/src/layout/layered/layered.fixtures.ts`.
-// Hand-built LayoutGraph fixtures for the DDLT-style layout specs. They stand in for graphs
-// produced by the v13 flowchart parser and table measurer until those exist; sizes are what a
-// 16px Arial label in a padded box measures to. Test-only: excluded from the build.
 import type { Box, Dir, LayoutEdge, LayoutGraph, LayoutGroup, LayoutNode } from './types.js';
 
 export interface LayoutFixture {
@@ -54,7 +50,6 @@ function graph(
 
 const ids = (s: string): LayoutNode[] => s.split(' ').map((id) => node(id));
 
-// The bench fixture from mermaid#8635 / Pele: `n{floor((i-1)/3)} --> n{i}`.
 function tree(n: number): LayoutGraph {
   const nodes = Array.from({ length: n }, (_, i) => node(`n${i}`, `Node ${i}`));
   const edges = Array.from({ length: n - 1 }, (_, k) => edge(`n${Math.floor(k / 3)}`, `n${k + 1}`));

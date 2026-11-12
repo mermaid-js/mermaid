@@ -1,10 +1,4 @@
-// Ported from mermaid-v13 `packages/core/src/layout/layered/index.ts`.
-// The `layered` engine: LayoutGraph → LayoutModel over the compound layout ported from Pele.
-// The `availableWidth` handling follows Pele's src/diagrams/common/fit-width.ts (`tighten`,
-// then `turnToFit`), applied to the layout instead of to a whole render.
-// cspell:ignore kepano cnode cnodes cedges
-// Kept through minification (esbuild legal comment) so bundles carry the notice.
-/*! Pele (https://github.com/obsidianmd/pele) | Copyright (c) 2026 kepano | MIT License */
+// cspell:ignore cnode cnodes cedges
 import type {
   Dir,
   LayoutContext,
@@ -158,7 +152,6 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     c.seq = i;
     cnodes.push(c);
   });
-  // Pele places the title in the top padding: half of `padding.top` above it, half below.
   const padTops: number[] = [];
   graph.groups.forEach((g, j) => {
     index.set(g.id, nodeCount + j);
