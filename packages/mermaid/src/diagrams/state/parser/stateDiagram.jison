@@ -111,7 +111,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
-<INITIAL,struct>"state"\s+  { /* console.log('Starting STATE '); */ this.pushState('STATE'); }
+<INITIAL,struct>"state"((?!\n)\s)+(?=[^\s\-:])  { /* console.log('Starting STATE '); */ this.pushState('STATE'); }
 
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
