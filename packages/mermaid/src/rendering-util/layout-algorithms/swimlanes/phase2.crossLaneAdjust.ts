@@ -1,5 +1,6 @@
 import type { Graph, NodeId } from './helpers.js';
 import { createTopLaneResolver } from './phase2.options.js';
+import { compareIds } from './compareIds.js';
 
 /**
  * Heuristic to push nodes with only cross-lane outgoing edges downward so
@@ -9,7 +10,7 @@ export function adjustCrossLaneSources(g: Graph, rankOf: Record<NodeId, number>)
   const topLaneOf = createTopLaneResolver(g);
 
   const nodesByRank = [...g.nodes].sort(
-    (a, b) => (rankOf[a] ?? 0) - (rankOf[b] ?? 0) || a.localeCompare(b)
+    (a, b) => (rankOf[a] ?? 0) - (rankOf[b] ?? 0) || compareIds(a, b)
   );
   for (const v of nodesByRank) {
     const laneV = topLaneOf(v);

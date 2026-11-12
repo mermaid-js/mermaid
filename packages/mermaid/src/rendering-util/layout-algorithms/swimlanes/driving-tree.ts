@@ -4,6 +4,7 @@ import {
   normalizeGraph,
   topoSortIfAcyclic,
 } from './phase0.helpers.js';
+import { compareIds } from './compareIds.js';
 // cspell:ignore preorder postorder preds topo
 
 export interface DrivingTreeBlock {
@@ -38,10 +39,10 @@ export function buildDrivingTree(graph: Graph, opts?: DrivingTreeBuildOptions): 
 
   const { preds } = buildPredecessorSuccessorMaps(g);
   for (const arr of preds.values()) {
-    arr.sort((a, b) => a.localeCompare(b));
+    arr.sort(compareIds);
   }
 
-  const topoOrder = topoSortIfAcyclic(g) ?? [...g.nodes].sort((a, b) => a.localeCompare(b));
+  const topoOrder = topoSortIfAcyclic(g) ?? [...g.nodes].sort(compareIds);
   const topoIndex = new Map<NodeId, number>();
   for (const [idx, id] of topoOrder.entries()) {
     topoIndex.set(id, idx);
@@ -84,7 +85,7 @@ export function buildDrivingTree(graph: Graph, opts?: DrivingTreeBuildOptions): 
     const ta = topoIndex.get(a) ?? 0;
     const tb = topoIndex.get(b) ?? 0;
     if (ta === tb) {
-      return a.localeCompare(b);
+      return compareIds(a, b);
     }
     return ta - tb;
   });
@@ -92,10 +93,7 @@ export function buildDrivingTree(graph: Graph, opts?: DrivingTreeBuildOptions): 
   const adjacency = buildAdjacency(g);
   const adjacencyList = new Map<NodeId, NodeId[]>();
   for (const [node, set] of adjacency.entries()) {
-    adjacencyList.set(
-      node,
-      [...set].sort((a, b) => a.localeCompare(b))
-    );
+    adjacencyList.set(node, [...set].sort(compareIds));
   }
 
   const componentOf = assignComponents(adjacencyList);
@@ -181,7 +179,7 @@ function chooseParent(node: NodeId, candidates: NodeId[], ctx: ParentSelectionCo
       return idxA - idxB;
     }
 
-    return a.localeCompare(b);
+    return compareIds(a, b);
   });
   return sorted[0];
 }

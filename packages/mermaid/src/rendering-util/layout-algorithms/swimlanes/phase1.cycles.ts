@@ -1,5 +1,6 @@
 import type { Graph, Edge, EdgeRef, NodeId } from './helpers.js';
 import { buildInDegreeMap, normalizeGraph } from './phase0.helpers.js';
+import { compareIds } from './compareIds.js';
 // cspell:ignore Graphviz acyc Eades Gansner
 
 export interface CycleRemovalResult {
@@ -20,7 +21,7 @@ export function removeCycles_DFS(g: Graph): CycleRemovalResult {
     adj.get(e.src)!.push(e);
   }
   for (const arr of adj.values()) {
-    arr.sort((a, b) => (a.dst === b.dst ? a.id.localeCompare(b.id) : a.dst.localeCompare(b.dst)));
+    arr.sort((a, b) => (a.dst === b.dst ? compareIds(a.id, b.id) : compareIds(a.dst, b.dst)));
   }
 
   const color: Record<NodeId, 0 | 1 | 2> = Object.create(null);

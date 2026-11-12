@@ -7,6 +7,7 @@ import {
   emitNodesInTreeOrder,
   deduplicateLayers,
 } from './phase2.multitree.core.js';
+import { compareIds } from './compareIds.js';
 
 // cspell:ignore multitree Multitree
 
@@ -42,7 +43,7 @@ function createChildOrderer(
 
     future.sort((a, b) => {
       if (a.min === b.min) {
-        return a.child.localeCompare(b.child);
+        return compareIds(a.child, b.child);
       }
       return a.min - b.min;
     });
@@ -58,7 +59,7 @@ function createChildOrderer(
       if (ma !== mb) {
         return ma - mb;
       }
-      return a.localeCompare(b);
+      return compareIds(a, b);
     });
 
     return [...future.map((item) => item.child), ...present];

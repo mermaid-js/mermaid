@@ -1,5 +1,6 @@
 import type { Graph } from './helpers.js';
 import { buildTopLaneOrder, createTopLaneResolver } from './phase2.options.js';
+import { compareIds } from './compareIds.js';
 
 export const AUTOMATIC_LANE_ORDERING_RESTARTS = 8;
 
@@ -162,7 +163,7 @@ function seedForRestart(
   restartIndex: number
 ): number {
   const weightSignature = [...weights]
-    .sort((a, b) => (a.a === b.a ? a.b.localeCompare(b.b) : a.a.localeCompare(b.a)))
+    .sort((a, b) => (a.a === b.a ? compareIds(a.b, b.b) : compareIds(a.a, b.a)))
     .map(({ a, b, weight }) => `${a}:${b}:${weight}`)
     .join('|');
   return hashString(`${sourceOrder.join('|')}#${weightSignature}#${restartIndex}`);

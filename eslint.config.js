@@ -218,6 +218,20 @@ export default tseslint.config(
     },
   },
   {
+    files: ['packages/mermaid/src/rendering-util/layout-algorithms/swimlanes/**/*.ts'],
+    ignores: ['**/*.spec.ts'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        {
+          property: 'localeCompare',
+          message:
+            'Order ids with compareIds from ./compareIds.js: localeCompare follows the reader locale and changes the layout (#8759).',
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.{js,jsx,mjs,cjs}'],
     rules: {
       'jsdoc/check-indentation': 'off',
