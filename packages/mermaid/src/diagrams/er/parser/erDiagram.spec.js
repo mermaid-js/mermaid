@@ -1143,6 +1143,32 @@ describe('when parsing ER diagram it...', function () {
       expect(rels[0].roleA).toBe('places');
     });
 
+    it.each([
+      'to',
+      'To',
+      'one',
+      'many',
+      'end',
+      'class',
+      'subgraph',
+      'style',
+      'classDef',
+      '1',
+      '2.5',
+    ])('should allow the keyword or number %s as an unquoted label', function (label) {
+      erDiagram.parser.parse(
+        `erDiagram\nAIR_SAFETY_REPORT ||--o{ AIRPORT : ${label}\nAIRPORT ||--|{ RUNWAY : has`
+      );
+      const rels = erDb.getRelationships();
+      expect(rels.map((rel) => rel.roleA)).toEqual([label, 'has']);
+    });
+
+    it('should allow a keyword as the label of the last line without a newline', function () {
+      erDiagram.parser.parse('erDiagram\nAIR_SAFETY_REPORT ||--o{ AIRPORT : to');
+      const rels = erDb.getRelationships();
+      expect(rels[0].roleA).toBe('to');
+    });
+
     it('should represent parent-child relationship correctly', function () {
       erDiagram.parser.parse('erDiagram\nPROJECT u--o{ TEAM_MEMBER : "parent"');
       const rels = erDb.getRelationships();
