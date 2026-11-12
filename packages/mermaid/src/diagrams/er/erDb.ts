@@ -19,6 +19,7 @@ import type { ErSubGraph } from './erTypes.js';
 export class ErDB implements DiagramDB {
   private entities = new Map<string, EntityNode>();
   private relationships: Relationship[] = [];
+  private relationshipKeys = new Set<string>();
   private classes = new Map<string, EntityClass>();
   public subgraphDepth = 0; // Public because JISON yy actions access it dynamically.
   private subGraphs: ErSubGraph[] = [];
@@ -143,6 +144,30 @@ export class ErDB implements DiagramDB {
       }
       entityBId = entityB.id;
     }
+
+    // Treat equivalent relationships as undirected for duplicate detection while
+    // keeping the first declaration as the relationship rendered to users.
+    const forward = JSON.stringify([
+      entityAId,
+      entityBId,
+      rolA,
+      rSpec.cardA,
+      rSpec.cardB,
+      rSpec.relType,
+    ]);
+    const reverse = JSON.stringify([
+      entityBId,
+      entityAId,
+      rolA,
+      rSpec.cardB,
+      rSpec.cardA,
+      rSpec.relType,
+    ]);
+    const key = forward < reverse ? forward : reverse;
+    if (this.relationshipKeys.has(key)) {
+      return;
+    }
+    this.relationshipKeys.add(key);
 
     const rel = {
       entityA: entityAId,
@@ -369,6 +394,7 @@ export class ErDB implements DiagramDB {
     this.entities = new Map();
     this.classes = new Map();
     this.relationships = [];
+    this.relationshipKeys.clear();
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.subCount = 0;
