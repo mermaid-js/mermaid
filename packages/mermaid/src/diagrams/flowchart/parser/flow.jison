@@ -146,7 +146,7 @@ that id.
 [^\s\"\[\]\(\)\{\}\|]+\@(?=[^\{\"])   { return 'LINK_ID'; }
 [0-9]+                       return 'NUM';
 \#                           return 'BRKT';
-":::"                        return 'STYLE_SEPARATOR';
+[^\S\n\r]*":::"[^\S\n\r]*    return 'STYLE_SEPARATOR';
 ":"                          return 'COLON';
 "&"                          return 'AMP';
 ";"                          return 'SEMI';
