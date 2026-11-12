@@ -13,10 +13,10 @@
 %x point_y
 %x class_name
 %%
-\%\%(?!\{)[^\n]*                         /* skip comments */
-[^\}]\%\%[^\n]*                          /* skip comments */
+\%\%(?!\{)[^\r\n]*                       /* skip comments */
+[^\S\r\n]\%\%[^\r\n]*                  /* skip comments after horizontal whitespace */
 [\n\r]+                                  return 'NEWLINE';
-\%\%[^\n]*                               /* do nothing */
+\%\%[^\r\n]*                             /* do nothing */
 
 title                                    { this.begin("title");return 'title'; }
 <title>(?!\n|;|#)*[^\n]*                 { this.popState(); return "title_value"; }

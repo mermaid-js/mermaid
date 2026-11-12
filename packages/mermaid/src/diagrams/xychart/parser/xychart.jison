@@ -12,12 +12,12 @@
 %s data
 %s data_inner
 %%
-\%\%(?!\{)[^\n]*                          /* skip comments */
-[^\}]\%\%[^\n]*                           /* skip comments */
+\%\%(?!\{)[^\r\n]*                        /* skip comments */
+[^\S\r\n]\%\%[^\r\n]*                   /* skip comments after horizontal whitespace */
 <axis_data>(\r?\n)                        { this.popState(); return 'NEWLINE'; }
 <data>(\r?\n)                             { this.popState(); return 'NEWLINE'; }
 [\n\r]+                                   return 'NEWLINE';
-\%\%[^\n]*                                /* do nothing */
+\%\%[^\r\n]*                              /* do nothing */
 
 "title"                                   { return 'title'; }
 
