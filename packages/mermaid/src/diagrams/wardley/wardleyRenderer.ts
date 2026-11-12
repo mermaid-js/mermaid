@@ -42,13 +42,14 @@ interface WardleyTheme {
 
 const getTheme = (): WardleyTheme => {
   const { themeVariables } = getConfig();
+  const componentFill = themeVariables.wardley?.componentFill ?? '#fff';
   return {
     backgroundColor: themeVariables.wardley?.backgroundColor ?? themeVariables.background ?? '#fff',
     axisColor: themeVariables.wardley?.axisColor ?? '#000',
     axisTextColor:
       themeVariables.wardley?.axisTextColor ?? themeVariables.primaryTextColor ?? '#222',
     gridColor: themeVariables.wardley?.gridColor ?? 'rgba(100, 100, 100, 0.2)',
-    componentFill: themeVariables.wardley?.componentFill ?? '#fff',
+    componentFill,
     componentStroke: themeVariables.wardley?.componentStroke ?? '#000',
     componentLabelColor:
       themeVariables.wardley?.componentLabelColor ?? themeVariables.primaryTextColor ?? '#222',
@@ -65,8 +66,8 @@ const getTheme = (): WardleyTheme => {
     townplannersStroke: themeVariables.wardley?.townplannersStroke ?? '#4768c8',
     townplannersFill: themeVariables.wardley?.townplannersFill ?? '#936ff9',
     ecosystemOuterFill: themeVariables.wardley?.ecosystemOuterFill ?? '#d7d7d7',
-    ecosystemMiddleFill: themeVariables.wardley?.ecosystemMiddleFill ?? '#fff',
-    ecosystemInnerFill: themeVariables.wardley?.ecosystemInnerFill ?? '#fff',
+    ecosystemMiddleFill: themeVariables.wardley?.ecosystemMiddleFill ?? componentFill,
+    ecosystemInnerFill: themeVariables.wardley?.ecosystemInnerFill ?? componentFill,
   };
 };
 

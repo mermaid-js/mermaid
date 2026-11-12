@@ -12,6 +12,8 @@ Extends the `wardley-beta` diagram to match more of the OWM syntax:
   - `settlers` — medium blue
   - `townplanners` — purple
 - `explorers` is accepted as an alias for `pioneers`, `villagers` as an alias for `settlers`.
+- Strategy and attitude words are keywords only inside a decorator or at the start of an attitude line, so names such as `buyer`, `market research`, `ecosystem` or `settlers app` still parse.
+- Zone and ecosystem colours can be themed through `themeVariables.wardley`: `pioneersStroke`, `pioneersFill`, `settlersStroke`, `settlersFill`, `townplannersStroke`, `townplannersFill`, `ecosystemOuterFill`, `ecosystemMiddleFill` and `ecosystemInnerFill`.
 
 Example:
 
