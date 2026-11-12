@@ -67,9 +67,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \}o                             return 'ZERO_OR_MORE';
 "many(0)"                       return 'ZERO_OR_MORE';
 "many(1)"                       return 'ONE_OR_MORE';
-"many"                          return 'ZERO_OR_MORE';
+"many"                          return 'MANY_WORD';
 \}\|                            return 'ONE_OR_MORE';
-"one"                           return 'ONLY_ONE';
+"one"                           return 'ONE_WORD';
 "only one"                      return 'ONLY_ONE';
 [0-9]+\.[0-9]+                  return 'DECIMAL_NUM';
 "1"(?=\s+[A-Za-z_"'])           return 'ONLY_ONE';
@@ -84,7 +84,7 @@ o\{                             return 'ZERO_OR_MORE';
 u(?=[\.\-\|])                   return 'MD_PARENT';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
-"to"                            return 'IDENTIFYING';
+"to"                            return 'TO_WORD';
 "optionally to"                 return 'NON_IDENTIFYING';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
@@ -96,6 +96,8 @@ u(?=[\.\-\|])                   return 'MD_PARENT';
 
 /lex
 
+%left ENTITY_ONLY
+%left 'ONE_WORD' 'MANY_WORD'
 %left 'ONLY_ONE'
 %left 'ZERO_OR_ONE' 'ZERO_OR_MORE' 'ONE_OR_MORE' 'MD_PARENT'
 
@@ -166,8 +168,8 @@ statement
       }
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); $$ = [$1]; }
     | entityName STYLE_SEPARATOR idList BLOCK_START BLOCK_STOP { yy.addEntity($1); yy.setClass([$1], $3); $$ = [$1]; }
-    | entityName { yy.addEntity($1); $$ = [$1]; }
-    | entityName STYLE_SEPARATOR idList { yy.addEntity($1); yy.setClass([$1], $3); $$ = [$1]; }
+    | entityName %prec ENTITY_ONLY { yy.addEntity($1); $$ = [$1]; }
+    | entityName STYLE_SEPARATOR idList %prec ENTITY_ONLY { yy.addEntity($1); yy.setClass([$1], $3); $$ = [$1]; }
     | entityName SQS entityName SQE BLOCK_START attributes BLOCK_STOP
       {
           yy.addEntity($1, $3);
@@ -211,7 +213,7 @@ subgraphHeader
     ;
 
 subgraphTitle
-    : entityName               { $$ = $1; }
+    : entityName %prec ENTITY_ONLY { $$ = $1; }
     | subgraphTitle entityName { $$ = $1 + " " + $2; }
     ;
 
@@ -269,6 +271,9 @@ entityName
     | 'NUM' { $$ = $1; }
     | 'DECIMAL_NUM' { $$ = $1; }
     | 'ENTITY_ONE' { $$ = $1; }
+    | 'ONE_WORD' { $$ = $1; }
+    | 'MANY_WORD' { $$ = $1; }
+    | 'TO_WORD' { $$ = $1; }
     ;
 
 attributes
@@ -319,12 +324,15 @@ cardinality
     | 'ZERO_OR_MORE'                 { $$ = yy.Cardinality.ZERO_OR_MORE; }
     | 'ONE_OR_MORE'                  { $$ = yy.Cardinality.ONE_OR_MORE; }
     | 'ONLY_ONE'                     { $$ = yy.Cardinality.ONLY_ONE; }
+    | 'ONE_WORD'                     { $$ = yy.Cardinality.ONLY_ONE; }
+    | 'MANY_WORD'                    { $$ = yy.Cardinality.ZERO_OR_MORE; }
     | 'MD_PARENT'                     { $$ = yy.Cardinality.MD_PARENT; }
     ;
 
 relType
     : 'NON_IDENTIFYING'              { $$ = yy.Identification.NON_IDENTIFYING;  }
     | 'IDENTIFYING'                  { $$ = yy.Identification.IDENTIFYING; }
+    | 'TO_WORD'                      { $$ = yy.Identification.IDENTIFYING; }
     ;
 
 role
