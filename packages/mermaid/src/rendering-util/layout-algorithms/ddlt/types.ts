@@ -40,7 +40,7 @@ export interface DdltManifest {
   fixtures?: DdltManifestEntry[];
 }
 
-export type LayoutTestBackendId = 'domus-orthogonal' | 'swimlanes';
+export type LayoutTestBackendId = 'domus-orthogonal' | 'swimlanes' | 'layered' | 'dagre';
 
 /** Pure layout stage: mutates `layout` in place (DOM-free). */
 export type LayoutTestBackend = (layout: LayoutData) => void | Promise<void>;
