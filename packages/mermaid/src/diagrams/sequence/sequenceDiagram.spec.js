@@ -1616,6 +1616,20 @@ links ${id}: { "Repo": "https://example.com/repo" }
     expect(actors.get(id).description).toBe('Channel');
   });
 
+  it('should keep actor-menu labels without a destination', async () => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+participant A
+link A: IP: 192.168.1.100
+link A: Port @ #
+`);
+
+    expect(diagram.db.getActors().get('A').links).toMatchObject({
+      'IP: 192.168.1.100': '',
+      Port: '',
+    });
+  });
+
   it('should handle links', async () => {
     const diagram = await Diagram.fromText(`
 sequenceDiagram
