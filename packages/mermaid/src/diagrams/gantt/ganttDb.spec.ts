@@ -617,4 +617,43 @@ describe('when using the ganttDb', function () {
       warnSpy.mockRestore();
     });
   });
+
+  describe('when rendering several gantt diagrams with click links (issue #8494)', function () {
+    afterEach(function () {
+      document.body.innerHTML = '';
+      vi.restoreAllMocks();
+    });
+
+    // Mimics the parse -> draw sequence of one diagram and returns the bindFunctions
+    // that mermaidAPI.render() hands back for it.
+    const renderDiagram = (diagramId: string, taskId: string, url: string) => {
+      ganttDb.clear();
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addSection('s');
+      ganttDb.addTask('task', `${taskId},2013-01-01,2d`);
+      ganttDb.setLink(taskId, url);
+      ganttDb.setDiagramId(diagramId);
+      return ganttDb.bindFunctions;
+    };
+
+    it('should keep the click bindings of earlier diagrams after another diagram is rendered', function () {
+      const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+      document.body.innerHTML =
+        '<svg><rect id="d1-t1"></rect></svg><svg><rect id="d2-t1"></rect></svg>';
+
+      const bindFirst = renderDiagram('d1', 't1', '#first');
+      const bindSecond = renderDiagram('d2', 't1', '#second');
+
+      bindFirst(document.body);
+      bindSecond(document.body);
+
+      document.getElementById('d1-t1').dispatchEvent(new Event('click'));
+      expect(open).toHaveBeenCalledTimes(1);
+      expect(open).toHaveBeenLastCalledWith('#first', '_self');
+
+      document.getElementById('d2-t1').dispatchEvent(new Event('click'));
+      expect(open).toHaveBeenCalledTimes(2);
+      expect(open).toHaveBeenLastCalledWith('#second', '_self');
+    });
+  });
 });
