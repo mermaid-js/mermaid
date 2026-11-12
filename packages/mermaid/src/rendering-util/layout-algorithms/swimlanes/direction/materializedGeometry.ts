@@ -2198,6 +2198,10 @@ export function resolveRenderedOrthogonalCrossings(
     segments: SegmentLite[];
     /** Crossings with the round's routes of every edge except its own. */
     otherCrossings: number;
+    /**
+     * Other edges whose route conflicts with this one: all of them while there is at most one,
+     * and two or more otherwise. A pair only asks whether it conflicts with its partner alone.
+     */
     sharedTrackConflicts: Set<MaterializedEdge>;
     totalBends: number;
     length: number;
@@ -2816,8 +2820,10 @@ export function resolveRenderedOrthogonalCrossings(
     edge: MaterializedEdge,
     candidatePath: PointLite[]
   ): Set<MaterializedEdge> => {
-    const found = scanConflicts(round, conflictScanFor(round, candidatePath), () => false);
-    return new Set(found.filter((other) => other !== edge));
+    const others = (found: MaterializedEdge[]): MaterializedEdge[] =>
+      found.filter((other) => other !== edge);
+    const enough = (found: MaterializedEdge[]): boolean => others(found).length >= 2;
+    return new Set(others(scanConflicts(round, conflictScanFor(round, candidatePath), enough)));
   };
 
   const pairCandidatesFor = (edge: MaterializedEdge, round: RoundCrossings): PairCandidate[] => {
