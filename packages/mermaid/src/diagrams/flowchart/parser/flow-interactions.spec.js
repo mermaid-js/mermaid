@@ -1,6 +1,7 @@
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
-import { setConfig } from '../../../config.js';
+import { setConfig, setSiteConfig } from '../../../config.js';
+import { log } from '../../../logger.js';
 import { vi } from 'vitest';
 const spyOn = vi.spyOn;
 
@@ -156,5 +157,46 @@ describe('[Interactions] when parsing', () => {
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
+  });
+});
+
+describe('[Interactions] click callbacks with securityLevel other than "loose"', () => {
+  let flowDb;
+  let warnSpy;
+  beforeEach(function () {
+    flowDb = new FlowDB();
+    flow.parser.yy = flowDb;
+    flow.parser.yy.clear();
+    warnSpy = spyOn(log, 'warn').mockImplementation(() => undefined);
+  });
+
+  afterEach(function () {
+    warnSpy.mockRestore();
+    // Restore the default site config (securityLevel 'strict'). Note that
+    // `setConfig` cannot be used here: securityLevel is a secure key and is
+    // stripped from diagram-level config updates.
+    setSiteConfig({});
+  });
+
+  it('warns that the callback is ignored when securityLevel is not "loose"', function () {
+    flow.parser.parse('graph TD\nA-->B\nclick A call callback()');
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith(
+      'Click event callback calls are ignored because securityLevel is not "loose" in Mermaid config'
+    );
+  });
+
+  it('warns once per click statement, not once per id', function () {
+    flow.parser.parse('graph TD\nA-->B\nclick A,B call callback()');
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not warn when securityLevel is "loose"', function () {
+    setSiteConfig({ securityLevel: 'loose' });
+    flow.parser.parse('graph TD\nA-->B\nclick A call callback()');
+
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 });
