@@ -80,6 +80,7 @@ describe('styles', () => {
       const styles = getStyles(diagramType, '', getConfig().themeVariables, '');
 
       checkValidStylisCSSStyleSheet(styles);
+      expect(styles).toContain('transition-property: none !important');
     });
 
     /**
