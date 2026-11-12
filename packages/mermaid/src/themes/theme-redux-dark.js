@@ -319,6 +319,13 @@ class Theme {
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
+    /* treeView */
+    this.treeView = {
+      ...this.treeView,
+      labelColor: this.treeView?.labelColor || this.textColor,
+      lineColor: this.treeView?.lineColor || this.lineColor,
+    };
+
     /* xychart */
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
