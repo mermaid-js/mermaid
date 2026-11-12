@@ -1,4 +1,5 @@
 import type { Graph, NodeId } from './helpers.js';
+import { compareStrings } from './compare.js';
 import { buildDrivingTree } from './driving-tree.js';
 import { computeSubtreeCrossCounts } from './phase2.crossCounts.js';
 import {
@@ -42,7 +43,7 @@ function createChildOrderer(
 
     future.sort((a, b) => {
       if (a.min === b.min) {
-        return a.child.localeCompare(b.child);
+        return compareStrings(a.child, b.child);
       }
       return a.min - b.min;
     });
@@ -58,7 +59,7 @@ function createChildOrderer(
       if (ma !== mb) {
         return ma - mb;
       }
-      return a.localeCompare(b);
+      return compareStrings(a, b);
     });
 
     return [...future.map((item) => item.child), ...present];

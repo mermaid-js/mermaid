@@ -1,4 +1,5 @@
 import type { NodeId } from './helpers.js';
+import { compareStrings } from './compare.js';
 
 // cspell:ignore multitree
 /**
@@ -36,7 +37,7 @@ export function compareByRankThenId(rankOf: Record<NodeId, number>) {
   return (a: NodeId, b: NodeId) => {
     const ra = rankOf[a] ?? 0;
     const rb = rankOf[b] ?? 0;
-    return ra === rb ? a.localeCompare(b) : ra - rb;
+    return ra === rb ? compareStrings(a, b) : ra - rb;
   };
 }
 
