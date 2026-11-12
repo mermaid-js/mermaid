@@ -1,0 +1,27 @@
+---
+description:
+  A state diagram under the layered layout, with start and end states, a
+  composite state, a choice, a fork and join, transition labels and a note.
+config:
+  layout: layered
+---
+stateDiagram-v2
+  state Checking <<choice>>
+  state Split <<fork>>
+  state Merge <<join>>
+  [*] --> Idle
+  Idle --> Running : start
+  state Running {
+    [*] --> Working
+    Working --> Paused : pause
+    Paused --> Working : resume
+  }
+  Running --> Checking : finish
+  Checking --> Split : ok
+  Checking --> Idle : retry
+  Split --> Archive
+  Split --> Notify
+  Archive --> Merge
+  Notify --> Merge
+  Merge --> [*]
+  note right of Idle : waiting for input
