@@ -10,11 +10,12 @@ export interface PlausibleSettings {
 const DEFAULT_ENDPOINT = 'https://p.mermaid.live/api/event';
 
 /**
- * Where the docs report analytics: the Plausible site is the docs hostname (`mermaid.js.org`,
- * or `mermaid.ai` for `DOCS_SITE_URL=https://mermaid.ai/open-source/`), sent to
- * `DOCS_PLAUSIBLE_ENDPOINT` (default: the self-hosted Plausible at p.mermaid.live).
+ * Where the docs report analytics: the Plausible site is `DOCS_PLAUSIBLE_DOMAIN`, falling back
+ * to the docs hostname (`mermaid.js.org`, or `mermaid.ai` for
+ * `DOCS_SITE_URL=https://mermaid.ai/open-source/`), sent to `DOCS_PLAUSIBLE_ENDPOINT`
+ * (default: the self-hosted Plausible at p.mermaid.live). Empty values count as unset.
  */
 export const getPlausibleSettings = (env: Env = process.env): PlausibleSettings => ({
-  domain: getDocsHostname(env),
+  domain: env.DOCS_PLAUSIBLE_DOMAIN?.length ? env.DOCS_PLAUSIBLE_DOMAIN : getDocsHostname(env),
   endpoint: env.DOCS_PLAUSIBLE_ENDPOINT?.length ? env.DOCS_PLAUSIBLE_ENDPOINT : DEFAULT_ENDPOINT,
 });
