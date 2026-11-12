@@ -162,6 +162,11 @@ export interface PathElem {
   strokeFill: string;
 }
 
+export interface CircleElem extends Point {
+  radius: number;
+  fill: string;
+}
+
 export type DrawableElem =
   | {
       groupTexts: string[];
@@ -177,4 +182,9 @@ export type DrawableElem =
       groupTexts: string[];
       type: 'path';
       data: PathElem[];
+    }
+  | {
+      groupTexts: string[];
+      type: 'circle';
+      data: CircleElem[];
     };
