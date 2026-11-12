@@ -23,7 +23,7 @@
 [ \t]+             /* skip */
 <<EOF>>            return 'EOF';
 
-"title"\s[^#\n;]+  { return 'TITLE'; }
+"title"[ \t][^#\n;]+  { return 'TITLE'; }
 "venn-beta"        { return 'VENN'; }
 "set"              { return 'SET'; }
 "union"            { return 'UNION'; }
