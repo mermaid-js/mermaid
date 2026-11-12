@@ -1,11 +1,7 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
-import common, {
-  calculateMathMLDimensions,
-  hasKatex,
-  renderKatexSanitized,
-} from '../common/common.js';
+import common, { hasKatex, renderKatexSanitized } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { GLYPH_BAND_HEIGHT, actorLabelHeight, footerBands, headerBands } from './actorBands.js';
 
@@ -154,8 +150,18 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
   const divElem = textElem
     .append('xhtml:div')
     .attr('style', 'width: fit-content;')
-    .attr('xmlns', 'http://www.w3.org/1999/xhtml')
-    .html(linesSanitized);
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  // Match the font of the equivalent plain-text label instead of inheriting the root font.
+  if (textData.fontSize !== undefined) {
+    divElem.style('font-size', parseFontSize(textData.fontSize)[1]);
+  }
+  if (textData.fontFamily) {
+    divElem.style('font-family', textData.fontFamily);
+  }
+  if (textData.fontWeight) {
+    divElem.style('font-weight', textData.fontWeight);
+  }
+  divElem.html(linesSanitized);
   const dim = divElem.node().getBoundingClientRect();
 
   textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
@@ -179,7 +185,7 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
 
     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
-    if (textData.class === 'loopText') {
+    if (textData.class === 'loopText' || textData.class === 'sectionTitle') {
       textElem.attr('y', Math.round(starty));
     } else {
       textElem.attr('y', Math.round(starty - dim.height));
@@ -1581,7 +1587,13 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
   txt.fontWeight = fontWeight;
   txt.wrap = true;
 
-  let textElem = hasKatex(txt.text) ? await drawKatex(g, txt, loopModel) : drawText(g, txt);
+  let textElem = hasKatex(txt.text)
+    ? await drawKatex(g, txt, {
+        ...loopModel,
+        startx: loopModel.startx + labelBoxWidth,
+        starty: loopModel.starty + boxMargin,
+      })
+    : drawText(g, txt);
 
   if (loopModel.sectionTitles !== undefined) {
     for (const [idx, item] of Object.entries(loopModel.sectionTitles)) {
@@ -1599,8 +1611,12 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
         txt.wrap = loopModel.wrap;
 
         if (hasKatex(txt.text)) {
-          loopModel.starty = loopModel.sections[idx].y;
-          await drawKatex(g, txt, loopModel);
+          // Position against this section without mutating loopModel.starty, which is still
+          // needed below to compute the loop height.
+          await drawKatex(g, txt, {
+            ...loopModel,
+            starty: loopModel.sections[idx].y + boxMargin,
+          });
         } else {
           drawText(g, txt);
         }
@@ -1917,24 +1933,33 @@ const _drawTextCandidateFunc = (function () {
    * @param conf
    */
   async function byKatex(content, g, x, y, width, height, textAttrs, conf) {
-    // TODO duplicate render calls, optimize
+    const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
+    const [, _actorFontSizePx] = parseFontSize(actorFontSize);
 
-    const dim = await calculateMathMLDimensions(content, configApi.getConfig());
     const s = g.append('switch');
-    const f = s
-      .append('foreignObject')
-      .attr('x', x + width / 2 - dim.width / 2)
-      .attr('y', y + height / 2 - dim.height / 2)
-      .attr('width', dim.width)
-      .attr('height', dim.height);
+    const f = s.append('foreignObject');
 
     const text = f.append('xhtml:div').style('height', '100%').style('width', '100%');
 
-    text
+    // Use the same font as plain-text actor labels, so math labels do not fall back to the
+    // diagram's root font and look smaller or different from other actors.
+    const label = text
       .append('div')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
+      .style('width', 'fit-content')
+      .style('white-space', 'nowrap')
+      .style('font-size', _actorFontSizePx)
+      .style('font-weight', actorFontWeight)
+      .style('font-family', actorFontFamily)
       .html(await renderKatexSanitized(content, configApi.getConfig()));
+
+    // Measure the label as it is actually rendered (with the actor font) to size and centre it.
+    const dim = label.node().getBoundingClientRect();
+    f.attr('x', x + width / 2 - dim.width / 2)
+      .attr('y', y + height / 2 - dim.height / 2)
+      .attr('width', Math.ceil(dim.width))
+      .attr('height', Math.ceil(dim.height));
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);

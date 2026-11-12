@@ -913,18 +913,24 @@ const activationBounds = function (actor, actors) {
   return [left, right];
 };
 
-function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
+async function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
   bounds.bumpVerticalPos(preMargin);
   let heightAdjust = postMargin;
   if (msg.id && msg.message && loopWidths[msg.id]) {
     const loopWidth = loopWidths[msg.id].width;
     const textConf = messageFont(conf);
-    msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
+    const isKatexMsg = hasKatex(msg.message);
+    // Wrapping inserts <br/> tags, which would split a $$...$$ expression into
+    // fragments that KaTeX can no longer parse, so math labels are kept intact.
+    msg.message = isKatexMsg
+      ? `[${msg.message}]`
+      : utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
     msg.width = loopWidth;
     msg.wrap = true;
 
-    // const lines = common.splitBreaks(msg.message).length;
-    const textDims = utils.calculateTextDimensions(msg.message, textConf);
+    const textDims = isKatexMsg
+      ? await calculateMathMLDimensions(msg.message, getConfig())
+      : utils.calculateTextDimensions(msg.message, textConf);
     const totalOffset = common.getMax(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
     log.debug(`${totalOffset} - ${msg.message}`);
@@ -1165,7 +1171,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         activeEnd(msg, bounds.getVerticalPos());
         break;
       case diagObj.db.LINETYPE.LOOP_START:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin,
@@ -1180,20 +1186,26 @@ export const draw = async function (_text: string, id: string, _version: string,
         bounds.models.addLoop(loopModel);
         break;
       case diagObj.db.LINETYPE.RECT_START:
-        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, (message) => {
-          let fill = message.message;
-          if (!fill) {
-            // Apply a theme-aware default fill.
-            // Because the rect is rendered behind actors and text, it does not obscure them.
-            // Use theme background when no explicit color is given; the rect renders
-            // behind all content so any semi-transparent theme color is safe.
-            fill =
-              themeVariables?.rectBkgColor ||
-              themeVariables?.actorBkg ||
-              'rgba(128, 128, 128, 0.5)';
+        await adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin,
+          conf.boxMargin,
+          (message) => {
+            let fill = message.message;
+            if (!fill) {
+              // Apply a theme-aware default fill.
+              // Because the rect is rendered behind actors and text, it does not obscure them.
+              // Use theme background when no explicit color is given; the rect renders
+              // behind all content so any semi-transparent theme color is safe.
+              fill =
+                themeVariables?.rectBkgColor ||
+                themeVariables?.actorBkg ||
+                'rgba(128, 128, 128, 0.5)';
+            }
+            bounds.newLoop(undefined, fill);
           }
-          bounds.newLoop(undefined, fill);
-        });
+        );
         break;
       case diagObj.db.LINETYPE.RECT_END:
         loopModel = bounds.endLoop();
@@ -1202,7 +1214,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         break;
       case diagObj.db.LINETYPE.OPT_START:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin,
@@ -1217,7 +1229,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         bounds.models.addLoop(loopModel);
         break;
       case diagObj.db.LINETYPE.ALT_START:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin,
@@ -1226,7 +1238,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         );
         break;
       case diagObj.db.LINETYPE.ALT_ELSE:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin + conf.boxTextMargin,
@@ -1242,7 +1254,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         break;
       case diagObj.db.LINETYPE.PAR_START:
       case diagObj.db.LINETYPE.PAR_OVER_START:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin,
@@ -1252,7 +1264,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         bounds.saveVerticalPos();
         break;
       case diagObj.db.LINETYPE.PAR_AND:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin + conf.boxTextMargin,
@@ -1276,7 +1288,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         }
         break;
       case diagObj.db.LINETYPE.CRITICAL_START:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin,
@@ -1285,7 +1297,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         );
         break;
       case diagObj.db.LINETYPE.CRITICAL_OPTION:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin + conf.boxTextMargin,
@@ -1300,7 +1312,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         bounds.models.addLoop(loopModel);
         break;
       case diagObj.db.LINETYPE.BREAK_START:
-        adjustLoopHeightForWrap(
+        await adjustLoopHeightForWrap(
           loopWidths,
           msg,
           conf.boxMargin,
