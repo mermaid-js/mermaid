@@ -113,6 +113,86 @@ export interface MermaidConfig {
      *
      */
     lineHops?: false | 'arc' | 'gap';
+    /**
+     * Explicit grid cells for nodes and groups, keyed by node or group id.
+     * Placement set on the node itself takes precedence over this map.
+     *
+     */
+    placements?: {
+      [k: string]: {
+        /**
+         * One-based row of the cell.
+         */
+        row?: number;
+        /**
+         * One-based column of the cell.
+         */
+        column?: number;
+        /**
+         * Horizontal alignment of the item inside its cell.
+         */
+        horizontalAlign?: 'left' | 'center' | 'right';
+        /**
+         * Vertical alignment of the item inside its cell.
+         */
+        verticalAlign?: 'top' | 'center' | 'bottom';
+      };
+    };
+    /**
+     * Number of columns used when placing items that have no explicit cell.
+     * `0` lets the layout choose.
+     *
+     */
+    columns?: number;
+    /**
+     * Minimum gap between rows, in pixels.
+     */
+    rowGap?: number;
+    /**
+     * Minimum gap between columns, in pixels.
+     */
+    columnGap?: number;
+    /**
+     * Gap between items stacked in the same cell, in pixels.
+     */
+    cellGap?: number;
+    /**
+     * Minimum padding between a group's border and its contents, in pixels.
+     */
+    containerPadding?: number;
+    /**
+     * Gap between a group's title and its contents, in pixels.
+     */
+    titleGap?: number;
+    /**
+     * Default horizontal alignment of items inside their cells.
+     */
+    horizontalAlign?: 'left' | 'center' | 'right';
+    /**
+     * Default vertical alignment of items inside their cells.
+     */
+    verticalAlign?: 'top' | 'center' | 'bottom';
+    /**
+     * Curve used to draw routed grid edges.
+     */
+    curve?:
+      | 'basis'
+      | 'bumpX'
+      | 'bumpY'
+      | 'cardinal'
+      | 'catmullRom'
+      | 'linear'
+      | 'monotoneX'
+      | 'monotoneY'
+      | 'natural'
+      | 'step'
+      | 'stepAfter'
+      | 'stepBefore'
+      | 'rounded';
+    /**
+     * Corner radius of `rounded` grid edges, in pixels.
+     */
+    edgeCornerRadius?: number;
   };
   /**
    * The maximum allowed size of the users text diagram
