@@ -30,6 +30,49 @@ const sanitizeDictionaryConfig = (dict: Record<string, unknown>, valuePattern: R
   }
 };
 
+const GRID_PLACEMENT_ALIGNMENTS: Record<string, ReadonlySet<unknown>> = {
+  horizontalAlign: new Set(['left', 'center', 'right']),
+  verticalAlign: new Set(['top', 'center', 'bottom']),
+};
+
+/**
+ * `grid.placements` is keyed by node or group id, so its keys cannot be
+ * checked against configKeys. Any id is allowed (apart from suspicious ones),
+ * and each entry keeps only the placement fields declared in the config
+ * schema. Coordinates only need to be numbers here; the grid layout reports
+ * out-of-range values itself.
+ */
+const sanitizeGridPlacements = (placements: Record<string, unknown>): void => {
+  for (const id of Object.keys(placements)) {
+    const placement = placements[id];
+    if (
+      Array.isArray(placements) ||
+      id.startsWith('__') ||
+      id.includes('proto') ||
+      id.includes('constr') ||
+      typeof placement !== 'object' ||
+      placement === null ||
+      Array.isArray(placement)
+    ) {
+      log.debug('sanitize deleting grid placement:', id);
+      delete placements[id];
+      continue;
+    }
+    const fields = placement as Record<string, unknown>;
+    for (const field of Object.keys(fields)) {
+      const value = fields[field];
+      const isValid =
+        field === 'row' || field === 'column'
+          ? typeof value === 'number' && Number.isFinite(value)
+          : (GRID_PLACEMENT_ALIGNMENTS[field]?.has(value) ?? false);
+      if (!isValid) {
+        log.debug('sanitize deleting grid placement field:', id, field);
+        delete fields[field];
+      }
+    }
+  }
+};
+
 /**
  * Sanitizes directive objects
  *
@@ -70,6 +113,8 @@ export const sanitizeDirective = (args: any): void => {
       const valuePattern = DICTIONARY_CONFIG_PATTERNS[key];
       if (valuePattern) {
         sanitizeDictionaryConfig(args[key], valuePattern);
+      } else if (key === 'placements') {
+        sanitizeGridPlacements(args[key]);
       } else {
         log.debug('sanitizing object', key);
         sanitizeDirective(args[key]);
