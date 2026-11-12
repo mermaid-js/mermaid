@@ -77,6 +77,13 @@ export interface LineJumpConfig {
   jumpStyle: 'arc' | 'gap';
 }
 
+export function normalizeLineHops(value: unknown): false | 'arc' | 'gap' {
+  if (value === false) {
+    return false;
+  }
+  return value === 'gap' ? 'gap' : 'arc';
+}
+
 export interface Crossing {
   jumpEdgeId: string;
   otherEdgeId: string;

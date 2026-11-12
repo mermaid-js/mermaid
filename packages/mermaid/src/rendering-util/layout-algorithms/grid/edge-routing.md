@@ -17,6 +17,8 @@ The calculated route is an orthogonal polyline made from horizontal and vertical
 - may use unused space within a grid cell
 - crosses group boundaries when connecting nodes in different groups
 - chooses attachment sides and coordinates automatically
+- keeps an edge aligned with a shared endpoint on its straight port; other incident edges share
+  that side only when their port can sit at least 24px away, and otherwise prefer an unreserved side
 - produces the same route for the same diagram and configuration
 
 Grid cells are placement regions, not obstacles. An edge can cross an unused part of a cell as long as it does not cross protected node or group geometry.
@@ -96,7 +98,17 @@ If the router cannot find a valid path around node or group geometry, Mermaid re
 
 Parallel and reverse edges use separate endpoint ports and lanes when the available geometry permits it. Self-loops use separate ports on the same node.
 
-Unrelated edges in the same container are also kept off each other's corridors. A route that would run parallel to an earlier edge closer than 24px is re-routed through other ports or corridors, so edges that must cross do so at a single perpendicular point; crossing itself is allowed. When a diagram has more than 64 eligible same-container edges across all containers, the router keeps the faster corridor routes, so overlaps can remain. Self-loops and edges that cross container boundaries do not count toward this threshold.
+Unrelated edges in the same container are also kept off each other's corridors. A route that would run parallel to an earlier edge closer than 24px is re-routed through other ports or corridors, so edges that must cross do so at a single perpendicular point; crossing itself is allowed.
+
+Known caveat: overlap-driven switching from corridor routes to sparse routing is limited to diagrams
+with at most 64 edge-routing plans. The same cutoff applies to the extra occupied-corridor avoidance
+pass for a sparse hierarchy route's segment in its least common ancestor container. Both use the
+total plan count across the whole diagram, including self-loops, parallel and reverse edges, and
+edges that cross group boundaries. Above 64 plans, the router skips these steps and can retain
+overlapping routes even after bounded separation attempts. Adding unrelated edges in another group
+can therefore cause previously separated edges to overlap. This temporary performance guard does
+not disable normal sparse routing, geometry validation, parallel and reverse edge separation, or
+resource limits; local overlap repair remains deferred.
 
 Dense nested diagrams can require a hierarchy edge to share part of an internal corridor with a parallel or reverse edge. Endpoint ports remain distinct, but part of the rendered paths can overlap.
 

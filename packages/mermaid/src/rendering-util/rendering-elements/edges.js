@@ -34,6 +34,7 @@ import { resolveEdgeCornerRadius } from '../edgeCornerRadius.js';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { clipOrthogonalEndpointsToNodeOutlines } from './orthogonalEdgeClipping.js';
+import { curveKind, isAxisTaggedRoute, markerTrim, routePath } from './routePath.ts';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
 
 /**
@@ -732,11 +733,16 @@ export const insertEdge = function (
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
 
+  // A layout that hands over axis-tagged route points has placed the ends itself, so the
+  // route is drawn as given by `routePath` and is not clipped at all. This is chosen by the
+  // data, not the layout name.
+  const axisRoute = isAxisTaggedRoute(points);
+
   // Specialized clipping is selected by edge metadata rather than layout name so any orthogonal
   // router can preserve its bends. Exactly one policy runs; clipping twice destroys owned ports.
-  if (edge.portClipping === 'outline-orthogonal' && !skipIntersect) {
+  if (!axisRoute && edge.portClipping === 'outline-orthogonal' && !skipIntersect) {
     points = clipOrthogonalEndpointsToNodeOutlines(points, tail, head);
-  } else if (layout === 'swimlane') {
+  } else if (!axisRoute && layout === 'swimlane') {
     // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
     // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
     // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
@@ -788,21 +794,21 @@ export const insertEdge = function (
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipIntersect) {
+  } else if (!axisRoute && head.intersect && tail.intersect && !skipIntersect) {
     // Original clipping for layouts that do not own their final boundary ports.
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
   const pointsStr = btoa(JSON.stringify(points));
-  if (edge.toCluster) {
+  if (edge.toCluster && !axisRoute) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
     points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
 
     pointsHasChanged = true;
   }
 
-  if (edge.fromCluster) {
+  if (edge.fromCluster && !axisRoute) {
     log.debug(
       'from cluster abc88',
       clusterDb.get(edge.fromCluster),
@@ -816,8 +822,9 @@ export const insertEdge = function (
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
-  // Routers can opt out when their points already encode every terminal and corner invariant.
-  if (edgeCurveType !== 'rounded' && !edge.skipCornerFix) {
+  // Routers can opt out when their points already encode every terminal and corner invariant;
+  // an axis-tagged route always does.
+  if (edgeCurveType !== 'rounded' && !axisRoute && !edge.skipCornerFix) {
     lineData = fixCorners(lineData);
   }
   let curve = curveLinear;
@@ -896,8 +903,14 @@ export const insertEdge = function (
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
-  let linePath =
-    edgeCurveType === 'rounded'
+  let linePath = axisRoute
+    ? routePath(
+        lineData,
+        curveKind(edgeCurveType),
+        markerTrim(edge.arrowTypeStart),
+        markerTrim(edge.arrowTypeEnd)
+      ).d
+    : edgeCurveType === 'rounded'
       ? generateRoundedPath(
           applyMarkerOffsetsToPoints(lineData, edge, {
             coincidentTerminals: layout === 'swimlane',

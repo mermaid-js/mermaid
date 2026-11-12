@@ -1,0 +1,15 @@
+---
+config:
+  layout: grid
+  grid:
+    cellGap: 18
+    rowGap: 55
+    columnGap: 80
+---
+flowchart TB
+  A@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: center }
+  B@{ row: 1, column: 1, horizontalAlign: center, verticalAlign: center }
+  D@{ row: 1, column: 2 }
+
+  A --> B
+  A --> D
