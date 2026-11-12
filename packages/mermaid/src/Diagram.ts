@@ -7,6 +7,7 @@ import { log } from './logger.js';
 import type { LineJoin } from './diagram-api/sourceLines.js';
 import { remapParseErrorLines } from './diagram-api/sourceLines.js';
 import { encodeColumns, encodeEntities } from './utils.js';
+import { validateGridPlacementCoordinates } from './utils/gridPlacement.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramCode, DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 import type { MermaidConfig } from './config.type.js';
@@ -145,6 +146,12 @@ export class Diagram {
       remapParseErrorLines(error, source.sourceLines, encodedJoins(source.text, source.joins));
       throw error;
     }
+    // Validate configured placements for every diagram type without loading the layout renderer.
+    // Diagram DBs validate their own inline placement metadata through the hook below.
+    if (config.layout === 'grid') {
+      validateGridPlacementCoordinates(config.grid?.placements, []);
+    }
+    db.validate?.();
     return new Diagram(type, textToParse, db, parser, renderer);
   }
 

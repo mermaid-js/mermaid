@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "Checking",
+      "width": 28,
+      "height": 28
+    },
+    {
+      "id": "Split",
+      "width": 70,
+      "height": 10
+    },
+    {
+      "id": "Merge",
+      "width": 70,
+      "height": 10
+    },
+    {
+      "id": "root_start",
+      "width": 14,
+      "height": 14
+    },
+    {
+      "id": "Idle",
+      "width": 136,
+      "height": 37
+    },
+    {
+      "id": "Running_start",
+      "width": 14,
+      "height": 14
+    },
+    {
+      "id": "Working",
+      "width": 136,
+      "height": 37
+    },
+    {
+      "id": "Paused",
+      "width": 136,
+      "height": 37
+    },
+    {
+      "id": "Archive",
+      "width": 136,
+      "height": 37
+    },
+    {
+      "id": "Notify",
+      "width": 136,
+      "height": 37
+    },
+    {
+      "id": "root_end",
+      "width": 14.013293266296387,
+      "height": 14
+    },
+    {
+      "id": "Idle----note-13",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "edge-label-Idle-Running-edge1",
+      "width": 27.234375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-Working-Paused-edge3",
+      "width": 38.15625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-Paused-Working-edge4",
+      "width": 46.6875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-Running-Checking-edge5",
+      "width": 32.6875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-Checking-Split-edge6",
+      "width": 14.796875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-Checking-Idle-edge7",
+      "width": 28,
+      "height": 21
+    },
+    {
+      "id": "group-title-Running",
+      "width": 52.15625,
+      "height": 21
+    },
+    {
+      "id": "group-title-Idle----parent",
+      "width": 98.0625,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "34ed9a9a4b0e9aaac0e817e71f514be41605a15374aa69bf7f60e45ba01f7d89",
+    "capturedAt": "2026-11-03T13:59:17.550Z",
+    "capturedFrom": "browser-dev layout-tests/layered/state.mmd layout=layered theme=default look=classic"
+  }
+}
