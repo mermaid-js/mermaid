@@ -142,6 +142,17 @@ describe('state parser can parse...', () => {
       expect(relationships[1].id2).toEqual('bigState2');
     });
 
+    it('should throw when "as" is not followed by a state id', () => {
+      const diagramText = `stateDiagram-v2
+        state "c g" as {
+          state cg
+          state "m" as mux
+        }
+        cg --> mux`;
+
+      expect(() => stateDiagram.parser.parse(diagramText)).toThrow();
+    });
+
     it('group has a state with stateID AS "state name" and state2ID: "another state name"', () => {
       const diagramText = `stateDiagram-v2
         state "Big State 1" as bigState1 {
