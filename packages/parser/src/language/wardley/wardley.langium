@@ -13,7 +13,7 @@ entry Wardley:
 
 fragment Statement:
     size=Size
-    | evolution=Evolution
+    | evolutions+=Evolution
     | anchors+=Anchor
     | components+=Component
     | links+=Link
@@ -124,11 +124,14 @@ terminal KW_WARDLEY: 'wardley-beta';
 // - for a statement keyword, starts its line: `(?<![^ \t\r\n][ \t]*)` rejects anything but
 //   spaces or tabs before it on the line. (Chevrotain does not allow `^` in a pattern.);
 // - where the statement has a fixed shape, is followed by it, so a link line that starts
-//   with a name such as `size guide -> Shop` is not read as a statement. `evolution` has no
-//   such shape, since `evolution A -> B` and a link from `evolution A` look the same.
+//   with a name such as `size guide -> Shop` is not read as a statement. `evolution` must be
+//   followed by a stage name, and its line must hold nothing a link has but an evolution
+//   cannot: `+`, `;`, `-->`, `-.->` or a bare `>`, outside quotes and before any `%%`.
+//   A line such as `evolution A -> B` still lexes as an evolution; the diagram reads it as a
+//   link when a node named `evolution A` exists.
 // `label` and `inertia` are matched only after the `]`, `(` or `)` that precedes them.
 terminal KW_SIZE: /(?<![^ \t\r\n][ \t]*)size(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]*\[)/;
-terminal KW_EVOLUTION: /(?<![^ \t\r\n][ \t]*)evolution(?![A-Za-z0-9_&(]|-(?!>))/;
+terminal KW_EVOLUTION: /(?<![^ \t\r\n][ \t]*)evolution(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]+[\w"'])(?!(?:[^\r\n"'%+;>-]|%(?!%)|-(?![->.])|->|"[^"\r\n]*"|'[^'\r\n]*')*(?:[+;>]|-->|-\.->))/;
 terminal KW_ANCHOR: /(?<![^ \t\r\n][ \t]*)anchor(?![A-Za-z0-9_&(]|-(?!>))(?=[^\r\n;]*\[)/;
 terminal KW_COMPONENT: /(?<![^ \t\r\n][ \t]*)component(?![A-Za-z0-9_&(]|-(?!>))(?=[^\r\n;]*\[)/;
 terminal KW_LABEL: /(?<=\][ \t]*)label(?![A-Za-z0-9_&(]|-(?!>))/;

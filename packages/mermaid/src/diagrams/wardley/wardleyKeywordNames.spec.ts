@@ -36,6 +36,7 @@ const keywordNames = [
   'anchor point',
   'component library',
   'evolve service',
+  'evolution tracker',
   'annotation service',
   'accelerator board',
   // a keyword on its own
@@ -47,6 +48,7 @@ const keywordNames = [
   'anchor',
   'component',
   'evolve',
+  'evolution',
   'annotation',
   'annotations',
   'accelerator',
@@ -112,29 +114,127 @@ describe('wardley names that contain statement keywords', () => {
     expect(data.nodes.find((n) => n.id === `${name}_${name}`)?.label).toBe(name);
   });
 
-  // `evolution Genesis -> Custom` and a link from a node named `evolution tracker` look
-  // the same, so a line that starts with the word `evolution` stays an evolution statement,
-  // and a link from such a node needs the name quoted.
-  it.each(['evolution tracker', 'evolution', 'evolutions'])(
-    'parses %s as a name, quoted at the start of a link line',
-    async (name) => {
+  // A line such as `evolution tracker -> Shop` reads either as a link or as a two-stage
+  // evolution statement. It is a link when a node of that name exists.
+  describe('evolution lines and links from nodes named evolution', () => {
+    it('reads a two-stage evolution line as the axis when no node has that name', async () => {
+      const data = await parse(['evolution Custom -> Product', 'component API [0.5, 0.5]']);
+
+      expect(data.axes.stages).toEqual(['Custom', 'Product']);
+      expect(data.links).toEqual([]);
+    });
+
+    it.each([
+      [
+        'before',
+        ['evolution Genesis -> Custom -> Product -> Commodity', 'evolution tracker -> Shop'],
+      ],
+      [
+        'after',
+        ['evolution tracker -> Shop', 'evolution Genesis -> Custom -> Product -> Commodity'],
+      ],
+    ])('keeps the axis when the link comes %s the evolution line', async (_order, lines) => {
       const data = await parse([
-        `component ${name} [0.5, 0.5]`,
-        'anchor User [0.9, 0.5]',
-        'component Hub [0.3, 0.3]',
-        `User -> ${name}`,
-        `"${name}" -> Hub`,
-        `evolve ${name} 0.8`,
+        'component evolution tracker [0.5, 0.5]',
+        'component Shop [0.4, 0.4]',
+        ...lines,
       ]);
 
-      expect(data.nodes.find((n) => n.id === name)?.label).toBe(name);
-      expect(data.links.map((l) => [l.source, l.target])).toEqual([
-        ['User', name],
-        [name, 'Hub'],
+      expect(data.axes.stages).toEqual(['Genesis', 'Custom', 'Product', 'Commodity']);
+      expect(data.links.map((l) => [l.source, l.target])).toEqual([['evolution tracker', 'Shop']]);
+    });
+
+    it('keeps links in the order they are written', async () => {
+      const data = await parse([
+        'component evolution tracker [0.5, 0.5]',
+        'component Shop [0.4, 0.4]',
+        'component Store [0.3, 0.3]',
+        'Shop -> Store',
+        'evolution tracker -> Shop',
+        'Store -> evolution tracker',
       ]);
-      expect(data.trends.map((t) => t.nodeId)).toEqual([name]);
-    }
-  );
+
+      expect(data.links.map((l) => [l.source, l.target])).toEqual([
+        ['Shop', 'Store'],
+        ['evolution tracker', 'Shop'],
+        ['Store', 'evolution tracker'],
+      ]);
+    });
+
+    it('links from a pipeline component named evolution', async () => {
+      const data = await parse([
+        'component Platform [0.5, 0.5]',
+        'component Shop [0.4, 0.4]',
+        'pipeline Platform {',
+        '  component evolution tracker [0.6]',
+        '}',
+        'evolution tracker -> Shop',
+      ]);
+
+      expect(data.links.map((l) => [l.source, l.target])).toEqual([
+        ['Platform_evolution tracker', 'Shop'],
+      ]);
+    });
+
+    it.each([
+      ['a dashed link', 'evolution tracker -.-> Shop', { dashed: true }],
+      ['a link label', 'evolution tracker -> Shop; weekly sync', { label: 'weekly sync' }],
+      ['a forward flow', 'evolution tracker +> Shop', { flow: 'forward' }],
+      ['a two-way flow', 'evolution tracker +<> Shop', { flow: 'bidirectional' }],
+      [
+        'a labelled flow',
+        "evolution tracker +'orders'> Shop",
+        { flow: 'forward', label: 'orders' },
+      ],
+      ['a flow on the arrow', 'evolution tracker --> Shop', {}],
+    ])('reads a line with %s as a link', async (_kind, line, expected) => {
+      const data = await parse([
+        'component evolution tracker [0.5, 0.5]',
+        'component Shop [0.4, 0.4]',
+        line,
+      ]);
+
+      expect(data.links).toHaveLength(1);
+      expect(data.links[0]).toMatchObject({
+        source: 'evolution tracker',
+        target: 'Shop',
+        ...expected,
+      });
+    });
+
+    it.each([
+      [
+        'quoted stages with link characters',
+        `evolution "R&D; labs" -> "Product (+rental)" -> 'A > B'`,
+        ['R&D; labs', 'Product (+rental)', 'A > B'],
+      ],
+      [
+        'a trailing comment',
+        'evolution Custom -> Product %% Custom > Product',
+        ['Custom', 'Product'],
+      ],
+      [
+        'second names',
+        'evolution Genesis / Concept -> Custom / Emerging -> Product / Converging',
+        ['Genesis / Concept', 'Custom / Emerging', 'Product / Converging'],
+      ],
+      [
+        'boundaries',
+        'evolution Genesis@0.2 -> Custom@0.4 -> Product@0.75',
+        ['Genesis', 'Custom', 'Product'],
+      ],
+      [
+        'hyphenated stages',
+        'evolution real-time -> near-real-time',
+        ['real-time', 'near-real-time'],
+      ],
+    ])('still reads an evolution line with %s', async (_kind, line, stages) => {
+      const data = await parse([line, 'component evolution tracker [0.5, 0.5]']);
+
+      expect(data.axes.stages).toEqual(stages);
+      expect(data.links).toEqual([]);
+    });
+  });
 
   it('keeps every statement working on indented lines and with CRLF line endings', async () => {
     const data = await parse(
