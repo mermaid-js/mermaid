@@ -448,6 +448,16 @@ describe('when parsing font sizes', function () {
     expect(utils.parseFontSize('14')).toEqual([14, '14px']);
   });
 
+  it('keeps the fractional part of decimal inputs', function () {
+    expect(utils.parseFontSize('12.5px')).toEqual([12.5, '12.5px']);
+    expect(utils.parseFontSize('1.5em')).toEqual([1.5, '1.5em']);
+  });
+
+  it('adds px units to decimal string inputs without units', function () {
+    expect(utils.parseFontSize('14.5')).toEqual([14.5, '14.5px']);
+    expect(utils.parseFontSize('14.0')).toEqual([14, '14px']);
+  });
+
   it('handles undefined input', function () {
     expect(utils.parseFontSize(undefined)).toEqual([undefined, undefined]);
   });

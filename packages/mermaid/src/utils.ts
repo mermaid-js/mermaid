@@ -846,13 +846,13 @@ export const parseFontSize = (fontSize: string | number | undefined): [number?, 
     return [fontSize, fontSize + 'px'];
   }
 
-  const fontSizeNumber = parseInt(fontSize ?? '', 10);
+  const fontSizeNumber = parseFloat(fontSize ?? '');
   if (Number.isNaN(fontSizeNumber)) {
     // if a number value can't be parsed, return null for both values
     return [undefined, undefined];
-  } else if (fontSize === String(fontSizeNumber)) {
+  } else if (Number(fontSize) === fontSizeNumber) {
     // if a string input doesn't contain any units, assume px units
-    return [fontSizeNumber, fontSize + 'px'];
+    return [fontSizeNumber, fontSizeNumber + 'px'];
   } else {
     return [fontSizeNumber, fontSize];
   }
