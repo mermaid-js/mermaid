@@ -1124,38 +1124,6 @@ export function swapDestinationTerminalTailsToReduceCrossings(
       replacements.get(edge) ?? (edge as { points?: PointLite[] }).points ?? []
     );
 
-  const crossingCount = (replacements: EdgeReplacementMap = new Map()): number => {
-    let count = 0;
-    for (let i = 0; i < visibleEdges.length; i++) {
-      const firstSegments = segmentsFor(replacementPointsFor(visibleEdges[i], replacements));
-      for (let j = i + 1; j < visibleEdges.length; j++) {
-        const secondSegments = segmentsFor(replacementPointsFor(visibleEdges[j], replacements));
-        for (const firstSegment of firstSegments) {
-          for (const secondSegment of secondSegments) {
-            if (
-              orthogonalSegmentsStrictlyCross(
-                firstSegment.a,
-                firstSegment.b,
-                secondSegment.a,
-                secondSegment.b,
-                EPS_LOCAL
-              )
-            ) {
-              count++;
-            }
-          }
-        }
-      }
-    }
-    return count;
-  };
-
-  const totalBends = (replacements: EdgeReplacementMap = new Map()): number =>
-    visibleEdges.reduce(
-      (sum, edge) => sum + countOrthogonalBends(replacementPointsFor(edge, replacements)),
-      0
-    );
-
   const terminalTailFor = (edge: MaterializedEdge): TerminalTail | undefined => {
     const points = replacementPointsFor(edge);
     if (points.length < 4) {
@@ -1210,31 +1178,46 @@ export function swapDestinationTerminalTailsToReduceCrossings(
     return false;
   };
 
+  /** `path` for `edge` shares a track with another route, `partnerPath` standing in for `partner`. */
   const pathHasSharedTrack = (
-    edge: MaterializedEdge,
-    path: PointLite[],
-    replacements: EdgeReplacementMap
+    round: RoundRoutes,
+    [edge, path]: [MaterializedEdge, PointLite[]],
+    [partner, partnerPath]: [MaterializedEdge, PointLite[]]
   ): boolean => {
-    for (const other of visibleEdges) {
-      if (other === edge) {
-        continue;
-      }
-      for (const candidateSegment of segmentsFor(path)) {
-        for (const otherSegment of segmentsFor(replacementPointsFor(other, replacements))) {
-          if (sameAxisSegmentOverlapLength(candidateSegment, otherSegment, 0.5) >= MIN_SHARED) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
+    const partnerSegments = segmentsFor(dedupeConsecutivePoints(partnerPath));
+    return segmentsFor(path).some(
+      (segment) =>
+        round.tracks
+          .alongside(segment, 1)
+          .some(
+            ({ owner, segment: other }) =>
+              owner !== edge && owner !== partner && sharesTrack(segment, other)
+          ) || partnerSegments.some((other) => sharesTrack(segment, other))
+    );
   };
 
   const candidateIsSafe = (
-    edge: MaterializedEdge,
-    path: PointLite[],
+    round: RoundRoutes,
+    replacement: [MaterializedEdge, PointLite[]],
+    partner: [MaterializedEdge, PointLite[]]
+  ): boolean =>
+    !pathHasNodeHit(replacement[0], replacement[1]) &&
+    !pathHasSharedTrack(round, replacement, partner);
+
+  /** The bends and the crossings of all routes once both edges take their candidates. */
+  const scoreSwap = (
+    round: RoundRoutes,
     replacements: EdgeReplacementMap
-  ): boolean => !pathHasNodeHit(edge, path) && !pathHasSharedTrack(edge, path, replacements);
+  ): { crossings: number; bends: number } => {
+    let bends = round.totalBends;
+    const segments = new Map<MaterializedEdge, SegmentLite[]>();
+    for (const [edge, points] of replacements) {
+      const deduped = dedupeConsecutivePoints(points);
+      bends += countOrthogonalBends(deduped) - (round.bendsByEdge.get(edge) ?? 0);
+      segments.set(edge, segmentsFor(deduped));
+    }
+    return { crossings: round.routes.totalWith(segments), bends };
+  };
 
   const edgesByDestination = (): Map<string, MaterializedEdge[]> => {
     const result = new Map<string, MaterializedEdge[]>();
@@ -1255,11 +1238,12 @@ export function swapDestinationTerminalTailsToReduceCrossings(
   };
 
   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-    const currentCrossings = crossingCount();
+    const round = roundRoutes(visibleEdges);
+    const currentCrossings = round.routes.total;
     if (currentCrossings === 0) {
       return;
     }
-    const currentBends = totalBends();
+    const currentBends = round.totalBends;
 
     let bestReplacements: EdgeReplacementMap | undefined;
     let bestCrossings = currentCrossings;
@@ -1287,14 +1271,16 @@ export function swapDestinationTerminalTailsToReduceCrossings(
             [second, secondCandidate],
           ]);
           if (
-            !candidateIsSafe(first, firstCandidate, replacements) ||
-            !candidateIsSafe(second, secondCandidate, replacements)
+            !candidateIsSafe(round, [first, firstCandidate], [second, secondCandidate]) ||
+            !candidateIsSafe(round, [second, secondCandidate], [first, firstCandidate])
           ) {
             continue;
           }
 
-          const candidateCrossings = crossingCount(replacements);
-          const candidateBends = totalBends(replacements);
+          const { crossings: candidateCrossings, bends: candidateBends } = scoreSwap(
+            round,
+            replacements
+          );
           if (candidateCrossings >= currentCrossings) {
             continue;
           }
