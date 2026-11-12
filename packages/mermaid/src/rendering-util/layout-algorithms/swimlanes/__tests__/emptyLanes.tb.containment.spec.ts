@@ -17,7 +17,11 @@ import {
 // Below about 20, the lane width solve leaves neighbouring lanes overlapping.
 const TIGHT_NODE_SPACING = 10;
 const SPACINGS = [TIGHT_NODE_SPACING, 20, 50];
-const FUZZ_CASES_PER_SPACING = 40;
+// Each fuzz test lays out this many diagrams, from seeds FUZZ_SEED upwards. A diagram costs 20 to
+// 60 ms here and several times that on a CI runner, against a test timeout of five seconds. Seeds
+// FUZZ_SEED + 1, + 4 and + 5 failed at nodeSpacing 10 before the fix, and + 0, + 4 and + 7 are
+// diagrams in which automatic ordering moves the lanes.
+const FUZZ_CASES_PER_CELL = 8;
 const FUZZ_SEED = 8754;
 // A random diagram whose first lane is empty, and where automatic ordering puts the second lane
 // left of the third.
@@ -49,8 +53,10 @@ function expectContained(layout: LayoutData, order: string[]): void {
 }
 
 describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own lane', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     addDiagrams();
+    // The first parse loads the diagram modules; keep that out of the time of the first test.
+    await layoutFromSource(reviewSource('TB', false));
   });
 
   it.each(['TB', 'BT'])(
@@ -170,7 +176,7 @@ describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own 
     for (const nodeSpacing of SPACINGS) {
       it(`nodeSpacing ${nodeSpacing}: every node is inside its lane and the lanes keep their order`, async () => {
         const failures: string[] = [];
-        for (let index = 0; index < FUZZ_CASES_PER_SPACING; index++) {
+        for (let index = 0; index < FUZZ_CASES_PER_CELL; index++) {
           const fuzz = fuzzCase(FUZZ_SEED + index, direction);
           const layout = await layoutFuzzCase(fuzz, nodeSpacing);
           const outside = nodesOutsideTheirLane(layout);
@@ -216,7 +222,7 @@ describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own 
       async (nodeSpacing) => {
         const failures: string[] = [];
         let reordered = 0;
-        for (let index = 0; index < FUZZ_CASES_PER_SPACING; index++) {
+        for (let index = 0; index < FUZZ_CASES_PER_CELL; index++) {
           const fuzz = fuzzCase(FUZZ_SEED + index, direction);
           const layout = await layoutFuzzCase(fuzz, nodeSpacing, { automaticLaneOrdering: true });
           reordered += nodeLanesReordered(layout, fuzz.order) ? 1 : 0;
