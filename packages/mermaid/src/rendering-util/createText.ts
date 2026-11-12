@@ -243,9 +243,9 @@ function updateTextContentAndStyles(
   wrappedLine.forEach((word, index) => {
     const innerTspan = tspan
       .append('tspan')
-      .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
+      .attr('font-style', word.type === 'em' || word.type === 'strongEm' ? 'italic' : 'normal')
       .attr('class', 'text-inner-tspan')
-      .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
+      .attr('font-weight', word.type === 'strong' || word.type === 'strongEm' ? 'bold' : 'normal');
     if (index === 0) {
       innerTspan.text(decodeHTMLEntities(word.content));
     } else {
