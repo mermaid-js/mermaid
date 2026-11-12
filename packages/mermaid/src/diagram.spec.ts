@@ -1,5 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { Diagram } from './Diagram.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import { jsdomIt } from './tests/util.js';
 import { addDetector } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import type { DiagramLoader } from './diagram-api/types.js';
@@ -98,4 +100,31 @@ describe('diagram detection', () => {
     expect(messages[0].message).toBe('I ﬂ°°9829¶ß you!');
     expect(messages[1].message).toBe('I ﬂ°°9829¶ß you ﬂ°infin¶ß times more!');
   });
+});
+
+describe('task database reads before rendering', () => {
+  for (const [type, text] of [
+    ['journey', 'journey\nsection Morning\nMake tea: 5: Me'],
+    ['timeline', 'timeline\n2026: Release'],
+    ['timeline TD', 'timeline TD\n2026: Release'],
+  ]) {
+    jsdomIt(
+      `should keep ${type} tasks unique when inspecting and rendering again`,
+      async ({ svg }) => {
+        const diagram = await mermaidAPI.getDiagramFromText(text);
+        // @ts-expect-error - journey and timeline databases are not typed yet
+        const getTasks = () => diagram.db.getTasks();
+        expect(getTasks()).toHaveLength(1);
+
+        await diagram.render('svg', 'test');
+        expect(svg.selectAll(type === 'journey' ? '.task-line' : '.taskWrapper').size()).toBe(1);
+        expect(getTasks()).toHaveLength(1);
+
+        svg.selectAll('*').remove();
+        await diagram.render('svg', 'test');
+        expect(svg.selectAll(type === 'journey' ? '.task-line' : '.taskWrapper').size()).toBe(1);
+        expect(getTasks()).toHaveLength(1);
+      }
+    );
+  }
 });
