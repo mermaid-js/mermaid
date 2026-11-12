@@ -1,4 +1,8 @@
-import { applyLineJumpsToSvg, type EdgeGeom } from '../../rendering-elements/lineJump.js';
+import {
+  applyLineJumpsToSvg,
+  normalizeLineHops,
+  type EdgeGeom,
+} from '../../rendering-elements/lineJump.js';
 import type { CommonLayoutPaintContext } from '../common/index.js';
 import type { LayoutData } from '../../types.js';
 /**
@@ -40,7 +44,7 @@ export function applyElkLineJumps(
   data4Layout: LayoutData,
   { measure }: CommonLayoutPaintContext<unknown, EdgePaintGroups>
 ): void {
-  const lineHops = (data4Layout.config as { elk?: { lineHops?: boolean | string } })?.elk?.lineHops;
+  const lineHops = normalizeLineHops(data4Layout.config?.elk?.lineHops);
   if (lineHops === false) {
     return;
   }
@@ -51,9 +55,11 @@ export function applyElkLineJumps(
         Array.isArray(edge.points) && edge.points.length >= 2
     )
     .map((edge) => ({
+      // Line-hop rewriting is generic rendering work, so carry the edge's complete path style.
       id: edge.id,
       points: edge.points,
       curve: edge.curve,
+      cornerRadius: edge.cornerRadius,
       arrowTypeStart: edge.arrowTypeStart,
       arrowTypeEnd: edge.arrowTypeEnd,
     }));
@@ -61,6 +67,6 @@ export function applyElkLineJumps(
   applyLineJumpsToSvg(measure.groups.edgePaths, edgeGeometries, {
     enabled: true,
     jumpRadius: JUMP_RADIUS,
-    jumpStyle: lineHops === 'gap' ? 'gap' : 'arc',
+    jumpStyle: lineHops,
   });
 }
