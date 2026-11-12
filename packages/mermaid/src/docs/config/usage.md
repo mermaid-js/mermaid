@@ -76,6 +76,8 @@ Example:
 
 **Following these directions, mermaid starts at page load and (when the page has loaded) it will locate the graph definitions inside the `pre` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
 
+Diagram blocks may contain Highlight.js (`hljs-*`) or Prism (`token`) spans. Mermaid removes these highlighting wrappers before parsing and preserves other HTML, such as label formatting.
+
 ### Fonts
 
 Mermaid currently uses a few different default `fontFamily` settings, based on

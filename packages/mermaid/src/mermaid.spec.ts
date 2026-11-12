@@ -51,6 +51,56 @@ describe('when using mermaid and ', () => {
   });
 
   describe('when using #run', () => {
+    it.each([
+      {
+        name: 'nested Highlight.js spans',
+        html: '<span class="hljs-keyword">graph</span> TD;\n<span class="hljs-title"><span class="hljs-variable">A</span></span>--&gt;B;',
+        text: 'graph TD;\nA-->B;',
+      },
+      {
+        name: 'nested Prism tokens',
+        html: '<span class="token keyword">graph</span> TD;\n<span class="token"><span class="token variable">A</span></span>--&gt;B;',
+        text: 'graph TD;\nA-->B;',
+      },
+      {
+        name: 'HTML labels including ordinary spans',
+        html: 'graph TD;\nA[<b>Bold</b> <span class="label">label</span>]-->B;',
+        text: 'graph TD;\nA[<b>Bold</b> <span class="label">label</span>]-->B;',
+      },
+      {
+        name: 'highlighted text inside an HTML label',
+        html: 'graph TD;\nA[<b><span class="extra hljs-string">Bold</span></b>]-->B;',
+        text: 'graph TD;\nA[<b>Bold</b>]-->B;',
+      },
+      {
+        name: 'encoded HTML labels',
+        html: 'graph TD;\nA[&lt;span class=&quot;label&quot;&gt;label&lt;/span&gt;]--&gt;B;',
+        text: 'graph TD;\nA[<span class="label">label</span>]-->B;',
+      },
+      {
+        name: 'entities',
+        html: 'graph TD;\nA[&quot;A &amp; B &lt; C &#35;1&quot;]--&gt;B;',
+        text: 'graph TD;\nA["A & B < C #1"]-->B;',
+      },
+      {
+        name: 'br normalization',
+        html: 'graph TD;\nA[one<br>two&lt;BR /&gt;three]--&gt;B;',
+        text: 'graph TD;\nA[one<br/>two<br/>three]-->B;',
+      },
+      {
+        name: 'indented frontmatter',
+        html: '\n    ---\n    title: Test\n    ---\n    graph TD;\n      A--&gt;B;\n  ',
+        text: '---\ntitle: Test\n---\ngraph TD;\n  A-->B;',
+      },
+    ])('should preserve diagram text with $name', async ({ html, text }) => {
+      const node = document.createElement('div');
+      node.innerHTML = html;
+
+      await mermaid.run({ nodes: [node] });
+
+      expect(mermaidAPI.render).toHaveBeenCalledExactlyOnceWith(expect.any(String), text, node);
+    });
+
     it('should accept single node', async () => {
       const node = document.createElement('div');
       node.appendChild(document.createTextNode('graph TD;\na;'));

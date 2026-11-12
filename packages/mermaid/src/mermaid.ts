@@ -170,7 +170,14 @@ const runThrowsErrors = async function (
     const id = `mermaid-${idGenerator.next()}`;
 
     // Fetch the graph definition including tags
-    txt = element.innerHTML;
+    const source = element.cloneNode(true) as HTMLElement;
+    source
+      .querySelectorAll('span[class^="hljs-"], span[class*=" hljs-"], span.token')
+      .forEach((span) => {
+        // eslint-disable-next-line unicorn/prefer-spread
+        span.replaceWith(...Array.from(span.childNodes));
+      });
+    txt = source.innerHTML;
 
     // transforms the html to pure text
     txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
