@@ -25,11 +25,13 @@ describe('mermaid', () => {
 
   it.each([
     { text: 'info', expected: 'info' },
+    { text: 'ishikawa', expected: 'ishikawa' },
+    { text: 'ishikawa-beta', expected: 'ishikawa' },
     { text: 'packet', expected: 'packet' },
     { text: 'packet-beta', expected: 'packet' },
     { text: 'pie', expected: 'pie' },
-    { text: 'radar-beta', expected: 'radar' },
     { text: 'pie title: "flowchart"\n flowchart: 1 "pie" pie: 2 "pie"', expected: 'pie' },
+    { text: 'radar-beta', expected: 'radar' },
     { text: 'sankey', expected: 'sankey' },
     { text: 'sankey-beta', expected: 'sankey' },
   ])('detects $text as $expected', ({ text, expected }) => {

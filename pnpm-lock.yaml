@@ -386,6 +386,15 @@ importers:
         specifier: workspace:^
         version: link:../parser
 
+  packages/diagram-ishikawa:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      roughjs:
+        specifier: ^4.6.6
+        version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
+
   packages/diagram-packet:
     dependencies:
       '@mermaid-js/core':
@@ -456,6 +465,9 @@ importers:
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info
+      '@mermaid-js/diagram-ishikawa':
+        specifier: workspace:^
+        version: link:../diagram-ishikawa
       '@mermaid-js/diagram-packet':
         specifier: workspace:^
         version: link:../diagram-packet
@@ -757,6 +769,9 @@ importers:
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info
+      '@mermaid-js/diagram-ishikawa':
+        specifier: workspace:^
+        version: link:../diagram-ishikawa
       '@mermaid-js/diagram-packet':
         specifier: workspace:^
         version: link:../diagram-packet

@@ -1,7 +1,7 @@
 // @ts-expect-error No types available for JISON
 import { parser as ishikawa } from './parser/ishikawa.jison';
 import { IshikawaDB } from './ishikawaDb.js';
-import { setLogLevel } from '../../diagram-api/diagramAPI.js';
+import { setLogLevel } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 
 describe('when parsing an Ishikawa diagram', function () {
   beforeEach(function () {

@@ -20,6 +20,7 @@
   "devDependencies": {
     "@mermaid-js/core": "workspace:^",
     "@mermaid-js/diagram-info": "workspace:^",
+    "@mermaid-js/diagram-ishikawa": "workspace:^",
     "@mermaid-js/diagram-packet": "workspace:^",
     "@mermaid-js/diagram-pie": "workspace:^",
     "@mermaid-js/diagram-radar": "workspace:^",

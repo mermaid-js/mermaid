@@ -1,6 +1,6 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
-import common from '../common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -9,7 +9,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { IshikawaNode } from './ishikawaTypes.js';
 
 interface StackEntry {
