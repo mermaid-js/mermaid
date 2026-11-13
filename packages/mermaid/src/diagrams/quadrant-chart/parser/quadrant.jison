@@ -49,10 +49,10 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 <class_name>^\w+                           {this.popState(); return 'class_name';}
 
 \s*\:\s*\[\s*                            {this.begin("point_start"); return 'point_start';}
-<point_start>(1)|(0(.\d+)?)              {this.begin('point_x'); return 'point_x';}
+<point_start>(1(\.0+)?)|(0(.\d+)?)      {this.begin('point_x'); return 'point_x';}
 <point_start>\s*\]" "*                       {this.popState();}
 <point_x>\s*\,\s*                        {this.popState(); this.begin('point_y');}
-<point_y>(1)|(0(.\d+)?)                  {this.popState(); return 'point_y';}
+<point_y>(1(\.0+)?)|(0(.\d+)?)          {this.popState(); return 'point_y';}
 
 " "*"quadrantChart"" "*		                   return 'QUADRANT';
 
