@@ -437,6 +437,25 @@ importers:
         specifier: ^7.4.3
         version: 7.4.3
 
+  packages/diagram-gantt:
+    dependencies:
+      '@braintree/sanitize-url':
+        specifier: ^7.1.2
+        version: 7.1.2
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dayjs:
+        specifier: ^1.11.21
+        version: 1.11.21
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-info:
     dependencies:
       '@mermaid-js/core':
@@ -681,6 +700,9 @@ importers:
       '@mermaid-js/diagram-eventmodeling':
         specifier: workspace:^
         version: link:../diagram-eventmodeling
+      '@mermaid-js/diagram-gantt':
+        specifier: workspace:^
+        version: link:../diagram-gantt
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info
@@ -1030,6 +1052,9 @@ importers:
       '@mermaid-js/diagram-eventmodeling':
         specifier: workspace:^
         version: link:../diagram-eventmodeling
+      '@mermaid-js/diagram-gantt':
+        specifier: workspace:^
+        version: link:../diagram-gantt
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info

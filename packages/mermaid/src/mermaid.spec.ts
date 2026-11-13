@@ -33,6 +33,7 @@ describe('mermaid', () => {
     { text: 'cynefin-beta', expected: 'cynefin' },
     { text: 'erDiagram', expected: 'er' },
     { text: 'eventmodeling', expected: 'eventmodeling' },
+    { text: 'gantt', expected: 'gantt' },
     { text: 'info', expected: 'info' },
     { text: 'ishikawa', expected: 'ishikawa' },
     { text: 'ishikawa-beta', expected: 'ishikawa' },

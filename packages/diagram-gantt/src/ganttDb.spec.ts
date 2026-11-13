@@ -1,8 +1,8 @@
 // @ts-nocheck TODO: Fix TS
 import dayjs from 'dayjs';
 import ganttDb from './ganttDb.js';
-import { convert } from '../../tests/util.js';
-import { log } from '../../logger.js';
+import { convert } from '@mermaid-js/core/tests/util.js';
+import { log } from '@mermaid-js/core/logger.js';
 
 describe('when using the ganttDb', function () {
   beforeEach(function () {

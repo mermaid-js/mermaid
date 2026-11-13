@@ -39,7 +39,6 @@
     "packages/diagram-*/**",
     "packages/core/src/diagrams/error/**",
     "packages/core/src/diagrams/flowchart/**",
-    "packages/core/src/diagrams/gantt/**",
     "packages/core/src/diagrams/git/**",
     "packages/core/src/diagrams/globalStyles.ts",
     "packages/core/src/diagrams/sequence/**",

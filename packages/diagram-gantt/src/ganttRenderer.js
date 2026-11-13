@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import dayjsDuration from 'dayjs/plugin/duration.js';
-import { log } from '../../logger.js';
+import { log } from '@mermaid-js/core/logger.js';
 import {
   select,
   scaleTime,
@@ -25,9 +25,9 @@ import {
   timeSunday,
   timeMonth,
 } from 'd3';
-import common from '../common/common.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 
 dayjs.extend(dayjsDuration);
 

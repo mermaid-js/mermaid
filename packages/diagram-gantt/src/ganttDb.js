@@ -3,9 +3,9 @@ import dayjs from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
-import { log } from '../../logger.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import utils from '../../utils.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import utils from '@mermaid-js/core/utils.js';
 
 import {
   setAccTitle,
@@ -15,7 +15,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);

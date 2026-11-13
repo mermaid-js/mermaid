@@ -4,6 +4,7 @@ import block from '@mermaid-js/diagram-block';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
 import er from '@mermaid-js/diagram-er';
 import eventmodeling from '@mermaid-js/diagram-eventmodeling';
+import gantt from '@mermaid-js/diagram-gantt';
 import { info } from '@mermaid-js/diagram-info';
 import { ishikawa } from '@mermaid-js/diagram-ishikawa';
 import journey from '@mermaid-js/diagram-journey';
@@ -26,6 +27,7 @@ void mermaid.registerExternalDiagrams([
   cynefin,
   er,
   eventmodeling,
+  gantt,
   info,
   ishikawa,
   journey,

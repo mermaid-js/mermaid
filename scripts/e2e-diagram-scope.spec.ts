@@ -81,7 +81,7 @@ describe('detectScope', () => {
 
   it('combines patterns from two different diagrams', () => {
     const result = detectScope([
-      'packages/core/src/diagrams/gantt/ganttDb.ts',
+      'packages/diagram-gantt/src/ganttDb.ts',
       'packages/diagram-pie/src/pieDb.ts',
     ]);
     expect(result.split(',')).toEqual(
@@ -149,7 +149,7 @@ describe('detectScope', () => {
 
   it('deduplicates when diagram source and its spec subfolder both change', () => {
     const result = detectScope([
-      'packages/core/src/diagrams/gantt/ganttDb.ts',
+      'packages/diagram-gantt/src/ganttDb.ts',
       `${SPEC_BASE_DIR}/gantt/gantt.spec.js`,
     ]);
     // Both point to the same subfolder — should deduplicate
