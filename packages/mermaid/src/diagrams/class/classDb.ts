@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import common from '../common/common.js';
+import common, { parseGenericTypes } from '../common/common.js';
 import utils, { getEdgeId } from '../../utils.js';
 import {
   setAccTitle,
@@ -82,10 +82,11 @@ export class ClassDB implements DiagramDB {
     let genericType = '';
     let className = id;
 
-    if (id.indexOf('~') > 0) {
-      const split = id.split('~');
-      className = sanitizeText(split[0]);
-      genericType = sanitizeText(split[1]);
+    const firstTilde = id.indexOf('~');
+    if (firstTilde > 0) {
+      const lastTilde = id.lastIndexOf('~');
+      className = sanitizeText(id.substring(0, firstTilde));
+      genericType = sanitizeText(id.substring(firstTilde + 1, lastTilde));
     }
 
     return { className: className, type: genericType };
@@ -99,8 +100,12 @@ export class ClassDB implements DiagramDB {
 
     const { className } = this.splitClassNameAndType(id);
     this.classes.get(className)!.label = label;
+    const type = this.classes.get(className)!.type;
+    const formattedType = type
+      ? parseGenericTypes(type).replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      : '';
     this.classes.get(className)!.text =
-      `${label}${this.classes.get(className)!.type ? `<${this.classes.get(className)!.type}>` : ''}`;
+      `${label}${formattedType ? `&lt;${formattedType}&gt;` : ''}`;
   }
 
   /**
@@ -119,11 +124,14 @@ export class ClassDB implements DiagramDB {
     // alert('Adding class: ' + className);
     const name = common.sanitizeText(className, getConfig());
     // alert('Adding class after: ' + name);
+    const formattedType = type
+      ? parseGenericTypes(type).replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      : '';
     this.classes.set(name, {
       id: name,
       type: type,
       label: name,
-      text: `${name}${type ? `&lt;${type}&gt;` : ''}`,
+      text: `${name}${formattedType ? `&lt;${formattedType}&gt;` : ''}`,
       shape: 'classBox',
       cssClasses: 'default',
       methods: [],
