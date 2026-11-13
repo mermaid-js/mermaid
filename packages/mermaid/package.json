@@ -80,6 +80,7 @@
     "@mermaid-js/diagram-radar": "workspace:^",
     "@mermaid-js/diagram-requirement": "workspace:^",
     "@mermaid-js/diagram-sankey": "workspace:^",
+    "@mermaid-js/diagram-treemap": "workspace:^",
     "@mermaid-js/diagram-treeview": "workspace:^",
     "@mermaid-js/diagram-venn": "workspace:^",
     "@mermaid-js/layout-cose-bilkent": "workspace:^",

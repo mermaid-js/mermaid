@@ -1,10 +1,10 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
-import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import type { DiagramStyleClassDef } from '@mermaid-js/core/diagram-api/types.js';
 import type { TreemapDiagramConfig, TreemapNode } from './types.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
-import { getConfig as commonGetConfig } from '../../config.js';
-import { cleanAndMerge } from '../../utils.js';
-import { isLabelStyle } from '../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
+import { getConfig as commonGetConfig } from '@mermaid-js/core/config.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
+import { isLabelStyle } from '@mermaid-js/core/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -13,7 +13,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 export class TreeMapDB implements DiagramDB {
   private nodes: TreemapNode[] = [];
   private levels: Map<TreemapNode, number> = new Map<TreemapNode, number>();

@@ -1,18 +1,18 @@
-import type { Diagram } from '../../Diagram.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
 import type {
   DiagramRenderer,
   DiagramStyleClassDef,
   DrawDefinition,
-} from '../../diagram-api/types.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+} from '@mermaid-js/core/diagram-api/types.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { setupViewPortForSVG } from '@mermaid-js/core/rendering-util/setupViewPortForSVG.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import type { TreemapDB, TreemapNode } from './types.js';
 import { scaleOrdinal, treemap, hierarchy, format, select } from 'd3';
-import { styles2String } from '../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
-import { getConfig } from '../../config.js';
-import { log } from '../../logger.js';
-import type { Node } from '../../rendering-util/types.js';
+import { styles2String } from '@mermaid-js/core/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import { getConfig } from '@mermaid-js/core/config.js';
+import { log } from '@mermaid-js/core/logger.js';
+import type { Node } from '@mermaid-js/core/rendering-util/types.js';
 
 const DEFAULT_INNER_PADDING = 10; // Default for inner padding between cells/sections
 const SECTION_INNER_PADDING = 10; // Default for inner padding between cells/sections

@@ -1,8 +1,8 @@
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { cleanAndMerge } from '../../utils.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
 import type { TreemapStyleOptions } from './types.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import { getConfig as getConfigAPI } from '../../config.js';
+import { getThemeVariables } from '@mermaid-js/core/themes/theme-default.js';
+import { getConfig as getConfigAPI } from '@mermaid-js/core/config.js';
 
 const defaultTreemapStyleOptions: TreemapStyleOptions = {
   sectionStrokeColor: 'black',

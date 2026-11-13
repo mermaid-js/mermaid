@@ -18,7 +18,6 @@ import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
-import { treemap } from '../diagrams/treemap/detector.js';
 import { usecase } from '../diagrams/usecase/usecaseDetector.js';
 import wardley from '../diagrams/wardley/wardleyDetector.js';
 import { railroad } from '../diagrams/railroad/railroadDetector.js';
@@ -89,7 +88,6 @@ export const addDiagrams = () => {
     quadrantChart,
     xychart,
     block,
-    treemap,
     railroad,
     railroadEbnf,
     railroadAbnf,

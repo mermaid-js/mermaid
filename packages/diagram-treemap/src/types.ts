@@ -1,5 +1,5 @@
-import type { DiagramDBBase, DiagramStyleClassDef } from '../../diagram-api/types.js';
-import type { BaseDiagramConfig } from '../../config.type.js';
+import type { DiagramDBBase, DiagramStyleClassDef } from '@mermaid-js/core/diagram-api/types.js';
+import type { BaseDiagramConfig } from '@mermaid-js/core/config.type.js';
 
 export interface TreemapNode {
   name: string;
