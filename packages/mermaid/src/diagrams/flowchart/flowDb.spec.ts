@@ -1,6 +1,7 @@
 import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph, FlowText } from './types.js';
 import flow from './parser/flowParser.js';
+import { isValidShape } from '../../rendering-util/rendering-elements/shapes.js';
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -164,6 +165,16 @@ describe('flow db getData', () => {
     expect(edges[1].curve).toBe('monotoneX');
     expect(edges[2].curve).toBe('catmullRom');
     expect(edges[3].curve).toBe('stepBefore');
+  });
+
+  it('should give ellipse vertices a shape that can be rendered', () => {
+    flow.parser.yy = flowDb;
+    flow.parser.parse('flowchart TD\nA(-this is an ellipse-)-->B');
+
+    const { nodes } = flowDb.getData();
+    const node = nodes.find((n) => n.id === 'A');
+    expect(node?.shape).toBe('usecaseEllipse');
+    expect(isValidShape(node!.shape!)).toBe(true);
   });
 });
 

@@ -1,0 +1,7 @@
+%% The `A(-text-)` ellipse renders as an oval instead of failing with "No such shape: ellipse" (#5976).
+flowchart LR
+  A(-Ellipse-) --> B[Rectangle] --> C(-A longer ellipse label that wraps-)
+  C --> D(-Styled-)
+  A --> D
+  classDef warm fill:#fde68a,stroke:#b45309
+  class D warm
