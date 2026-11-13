@@ -9,7 +9,7 @@ import { AgentFlowDB } from '../diagrams/agentflow/agentflowDb.js';
 import { insertEdge } from './rendering-elements/edges.js';
 
 function addFlowVertex(db: FlowDB, id: string) {
-  db.addVertex(id, { text: id, type: 'text' } as any, undefined as any, [], [], '', {}, undefined);
+  db.addVertex(id, { text: id, type: 'text' });
 }
 
 function addAgentflowVertex(db: AgentFlowDB, id: string) {

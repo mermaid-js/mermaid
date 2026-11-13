@@ -13,6 +13,25 @@ describe('parsing a flow chart', function () {
     flow.parser.yy.clear();
   });
 
+  it('preserves the latest explicit shape and label when a node is referenced again', () => {
+    flow.parser.parse('flowchart TD\nA[First]\nA(Second)\nA --> B\n');
+    expect(flow.parser.yy.getVertices().get('A')).toMatchObject({ type: 'round', text: 'Second' });
+  });
+
+  it('merges properties across repeated node definitions', () => {
+    flow.parser.parse(`flowchart TD
+A[|status:pending|First]
+A[|owner:team|Second]
+A[|status:done|Third]
+A --> B
+`);
+    expect(flow.parser.yy.getVertices().get('A')).toMatchObject({
+      type: 'rect',
+      text: 'Third',
+      props: { status: 'done', owner: 'team' },
+    });
+  });
+
   it('should handle a trailing whitespaces after statements', function () {
     const res = flow.parser.parse(cleanupComments('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;'));
 

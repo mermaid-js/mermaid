@@ -57,7 +57,9 @@ flowchart TD
     
     DBInit --> DBMethods{FlowDB Methods}
     
-    DBMethods --> addVertex["addVertex(id, textObj, type, style,<br/>classes, dir, props, metadata)"]
+    DBMethods --> addVertex["addVertex(id, labelText, type, props)"]
+    DBMethods --> addMetadataToVertex["addMetadataToVertex(id, shapeDataText)"]
+    DBMethods --> addStyleToVertex["addStyleToVertex(id, styles[])"]
     DBMethods --> addLink["addLink(_start[], _end[], linkData)"]
     DBMethods --> addSingleLink["addSingleLink(_start, _end, type, id)"]
     DBMethods --> setDirection["setDirection(dir)"]
@@ -71,9 +73,13 @@ flowchart TD
     %% Vertex Processing
     addVertex --> VertexProcess{Vertex Processing}
     VertexProcess --> CreateVertex["Create FlowVertex object<br/>- id, labelType, domId<br/>- styles[], classes[]"]
-    VertexProcess --> SanitizeText["sanitizeText(textObj.text)"]
-    VertexProcess --> ParseMetadata["Parse YAML metadata<br/>yaml.load(yamlData)"]
-    VertexProcess --> SetVertexProps["Set vertex properties<br/>- shape, label, icon, form<br/>- pos, img, constraint, w, h"]
+    VertexProcess --> SanitizeText["sanitizeText(labelText.text)"]
+
+    %% Metadata Processing
+    addMetadataToVertex --> MetadataProcess{Metadata Processing}
+    MetadataProcess --> ParseMetadata["Parse YAML metadata<br/>yaml.load(yamlData) ?? {}"]
+    MetadataProcess --> SubgraphMetadata["Existing subgraph id:<br/>merge into subgraph metadata"]
+    MetadataProcess --> SetVertexProps["Set vertex properties<br/>- shape, label, icon, form<br/>- pos, img, constraint, w, h"]
     
     %% Edge Processing  
     addSingleLink --> EdgeProcess{Edge Processing}

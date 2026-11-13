@@ -1,6 +1,32 @@
 import { FlowDB } from './flowDb.js';
-import type { FlowSubGraph, FlowText } from './types.js';
+import type { FlowSubGraph } from './types.js';
 import flow from './parser/flowParser.js';
+
+describe('flow db vertex updates', () => {
+  it('merges properties without changing the caller’s objects', () => {
+    const db = new FlowDB();
+    const first = { status: 'pending' };
+    const second = { status: 'done', owner: 'team' };
+    db.addVertex('A', undefined, undefined, first);
+    db.addVertex('A', undefined, undefined, second);
+
+    expect(db.getVertices().get('A')?.props).toEqual(second);
+    expect(first).toEqual({ status: 'pending' });
+    expect(db.getVertices().get('A')?.props).not.toBe(second);
+  });
+
+  it('creates a styled node and preserves its styles when a label is added', () => {
+    const db = new FlowDB();
+    db.addStyleToVertex('A', ['fill:#f00', 'stroke:#333']);
+    db.addVertex('A', { text: 'Label', type: 'text' }, 'square');
+
+    expect(db.getVertices().get('A')).toMatchObject({
+      text: 'Label',
+      type: 'square',
+      styles: ['fill:#f00', 'stroke:#333'],
+    });
+  });
+});
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -83,6 +109,8 @@ describe('flow db class', () => {
       'setAccTitle',
       'setAccDescription',
       'addVertex',
+      'addStyleToVertex',
+      'addMetadataToVertex',
       'addLink',
       'setClass',
       'destructLink',
@@ -107,8 +135,8 @@ describe('flow db getData', () => {
   });
 
   it('should use defaultInterpolate for edges without specific interpolate', () => {
-    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
-    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('A', { text: 'A', type: 'text' });
+    flowDb.addVertex('B', { text: 'B', type: 'text' });
     flowDb.addLink(['A'], ['B'], {});
     flowDb.updateLinkInterpolate(['default'], 'stepBefore');
 
@@ -117,8 +145,8 @@ describe('flow db getData', () => {
   });
 
   it('should prioritize edge-specific interpolate over defaultInterpolate', () => {
-    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
-    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('A', { text: 'A', type: 'text' });
+    flowDb.addVertex('B', { text: 'B', type: 'text' });
     flowDb.addLink(['A'], ['B'], {});
     flowDb.updateLinkInterpolate(['default'], 'stepBefore');
     flowDb.updateLinkInterpolate([0], 'basis');
@@ -128,36 +156,18 @@ describe('flow db getData', () => {
   });
 
   it('should support modifying interpolate using edge id syntax', () => {
-    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
-    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
-    flowDb.addVertex('C', { text: 'C', type: 'text' }, undefined, [], [], '', {}, undefined);
-    flowDb.addVertex('D', { text: 'D', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('A', { text: 'A', type: 'text' });
+    flowDb.addVertex('B', { text: 'B', type: 'text' });
+    flowDb.addVertex('C', { text: 'C', type: 'text' });
+    flowDb.addVertex('D', { text: 'D', type: 'text' });
     flowDb.addLink(['A'], ['B'], {});
     flowDb.addLink(['A'], ['C'], { id: 'e2' });
     flowDb.addLink(['B'], ['D'], { id: 'e3' });
     flowDb.addLink(['C'], ['D'], {});
     flowDb.updateLinkInterpolate(['default'], 'stepBefore');
     flowDb.updateLinkInterpolate([0], 'basis');
-    flowDb.addVertex(
-      'e2',
-      { text: 'Shouldnt be used', type: 'text' },
-      undefined,
-      [],
-      [],
-      '',
-      {},
-      ' curve: monotoneX '
-    );
-    flowDb.addVertex(
-      'e3',
-      { text: 'Shouldnt be used', type: 'text' },
-      undefined,
-      [],
-      [],
-      '',
-      {},
-      ' curve: catmullRom '
-    );
+    flowDb.addMetadataToVertex('e2', ' curve: monotoneX ');
+    flowDb.addMetadataToVertex('e3', ' curve: catmullRom ');
 
     const { edges } = flowDb.getData();
     expect(edges[0].curve).toBe('basis');
@@ -173,13 +183,11 @@ describe('flow db collapsible subgraphs', () => {
     flowDb = new FlowDB();
   });
 
-  const addVertex = (id: string) =>
-    flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+  const addVertex = (id: string) => flowDb.addVertex(id, { text: id, type: 'text' });
 
   // Attach `@{ view: ... }` metadata to an already-declared subgraph, mirroring
   // how the parser reduces a bare `sub1@{ view: collapsed }` statement.
-  const attachMeta = (id: string, meta: string) =>
-    flowDb.addVertex(id, undefined as unknown as FlowText, undefined, [], [], '', {}, meta);
+  const attachMeta = (id: string, meta: string) => flowDb.addMetadataToVertex(id, meta);
 
   it('renders a subgraph normally (as a group) when no collapse metadata is set', () => {
     addVertex('A');
@@ -367,11 +375,9 @@ describe('flow db subgraph colour slots', () => {
     flowDb = new FlowDB();
   });
 
-  const addVertex = (id: string) =>
-    flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+  const addVertex = (id: string) => flowDb.addVertex(id, { text: id, type: 'text' });
 
-  const attachMeta = (id: string, meta: string) =>
-    flowDb.addVertex(id, undefined as unknown as FlowText, undefined, [], [], '', {}, meta);
+  const attachMeta = (id: string, meta: string) => flowDb.addMetadataToVertex(id, meta);
 
   it('numbers flat subgraphs in source order', () => {
     for (const id of ['A', 'B', 'C']) {
@@ -553,24 +559,14 @@ describe('flow db repeated subgraph ids (issue #8326)', () => {
 describe('flow db keys only a diagram with pools may set', () => {
   const build = (meta?: string) => {
     const flowDb = new FlowDB();
-    const add = (id: string) =>
-      flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+    const add = (id: string) => flowDb.addVertex(id, { text: id, type: 'text' });
     ['A', 'B', 'C'].forEach(add);
     flowDb.addSubGraph({ text: 'P' }, ['L1', 'L2'], { text: 'Company', type: 'text' });
     flowDb.addSubGraph({ text: 'L1' }, ['A', 'B'], { text: 'Sales', type: 'text' });
     flowDb.addSubGraph({ text: 'L2' }, ['C'], { text: 'Ops', type: 'text' });
     if (meta) {
       const [id, ...rest] = meta.split('|');
-      flowDb.addVertex(
-        id,
-        undefined as unknown as FlowText,
-        undefined,
-        [],
-        [],
-        '',
-        {},
-        rest.join('|')
-      );
+      flowDb.addMetadataToVertex(id, rest.join('|'));
     }
     return flowDb.getData().nodes;
   };

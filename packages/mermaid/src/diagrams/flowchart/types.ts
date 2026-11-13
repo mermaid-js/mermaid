@@ -33,7 +33,7 @@ export interface FlowVertex {
   labelType: 'markdown' | 'string' | 'text';
   link?: string;
   linkTarget?: string;
-  props?: any;
+  props?: Record<string, unknown>;
   styles: string[];
   text?: string;
   type?: ShapeID | FlowVertexTypeParam;

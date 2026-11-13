@@ -121,6 +121,8 @@ export class FlowDB implements DiagramDB {
 
     // Needed for JISON since it only supports direct properties
     this.addVertex = this.addVertex.bind(this);
+    this.addMetadataToVertex = this.addMetadataToVertex.bind(this);
+    this.addStyleToVertex = this.addStyleToVertex.bind(this);
     this.firstGraph = this.firstGraph.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.addSubGraph = this.addSubGraph.bind(this);
@@ -183,42 +185,28 @@ export class FlowDB implements DiagramDB {
   }
 
   /**
-   * Function called by parser when a node definition has been found
+   * Function called by parser when `@{ ... }` metadata has been found for an id. The metadata is
+   * applied to the subgraph, edge, or existing vertex with that id.
    */
-  public addVertex(
-    id: string,
-    textObj: FlowText,
-    type: FlowVertexTypeParam,
-    style: string[],
-    classes: string[],
-    dir: string,
-    props = {},
-    metadata: any
-  ) {
+  public addMetadataToVertex(id: string, shapeDataText: string) {
     if (!id || id.trim().length === 0) {
       return;
     }
     // Extract the metadata from the shapeData, the syntax for adding metadata for nodes and edges is the same
     // so at this point we don't know if it's a node or an edge, but we can still extract the metadata
-    let doc;
-    if (metadata !== undefined) {
-      let yamlData;
-      // detect if shapeData contains a newline character
-      if (!metadata.includes('\n')) {
-        yamlData = '{\n' + metadata + '\n}';
-      } else {
-        yamlData = metadata + '\n';
-      }
-      doc = withoutInternalKeys(
-        stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData)
-      );
-    }
+    // detect if shapeData contains a newline character
+    const yamlData = shapeDataText.includes('\n')
+      ? shapeDataText + '\n'
+      : '{\n' + shapeDataText + '\n}';
+    const doc = withoutInternalKeys(
+      stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData)
+    );
 
     // Check if this is metadata for an already-declared subgraph
     // (e.g. `sub1@{ view: collapsed }`). The id refers to a subgraph, so
     // route the metadata onto the subgraph instead of creating a vertex.
     const subGraph = this.subGraphLookup.get(id);
-    if (subGraph && doc) {
+    if (subGraph) {
       if (Object.keys(doc).length > 0) {
         subGraph.metadata = { ...subGraph.metadata, ...doc };
       }
@@ -229,16 +217,16 @@ export class FlowDB implements DiagramDB {
     const edge = this.edges.find((e) => e.id === id);
     if (edge) {
       const edgeDoc = doc as EdgeMetaData;
-      if (edgeDoc?.animate !== undefined) {
+      if (edgeDoc.animate !== undefined) {
         edge.animate = edgeDoc.animate;
       }
-      if (edgeDoc?.animation !== undefined) {
+      if (edgeDoc.animation !== undefined) {
         edge.animation = edgeDoc.animation;
       }
-      if (edgeDoc?.curve !== undefined) {
+      if (edgeDoc.curve !== undefined) {
         edge.interpolate = edgeDoc.curve;
       }
-      if (edgeDoc?.step !== undefined) {
+      if (edgeDoc.step !== undefined) {
         if (isStepEdge(edgeDoc)) {
           edge.step = edgeDoc.step;
         } else {
@@ -248,15 +236,75 @@ export class FlowDB implements DiagramDB {
       return;
     }
 
-    let txt;
+    const vertex = this.vertices.get(id);
+    if (!vertex) {
+      return;
+    }
+    this.vertexCounter++;
+
+    vertex.metadata = { ...vertex.metadata, ...doc };
+    vertex.text ??= id;
+    if (doc.shape) {
+      if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
+        throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+      } else if (!isValidShape(doc.shape)) {
+        throw new Error(`No such shape: ${doc.shape}.`);
+      }
+      vertex.type = doc.shape;
+    }
+
+    if (doc.label) {
+      vertex.text = doc.label;
+      vertex.labelType = this.sanitizeNodeLabelType(doc.labelType);
+    }
+    if (doc.icon) {
+      vertex.icon = doc.icon;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc.form) {
+      vertex.form = doc.form;
+    }
+    if (doc.pos) {
+      vertex.pos = doc.pos;
+    }
+    if (doc.img) {
+      vertex.img = doc.img;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc.constraint) {
+      vertex.constraint = doc.constraint;
+    }
+    if (doc.w) {
+      vertex.assetWidth = Number(doc.w);
+    }
+    if (doc.h) {
+      vertex.assetHeight = Number(doc.h);
+    }
+  }
+
+  /**
+   * Function called by parser when a style declaration for a node is found
+   */
+  public addStyleToVertex(id: string, styles: string[]) {
+    if (id.trim().length === 0) {
+      return;
+    }
+
+    // Check if this is an edge
+    const edge = this.edges.find((e) => e.id === id);
+    if (edge) {
+      return;
+    }
 
     let vertex = this.vertices.get(id);
     if (vertex === undefined) {
-      if (textObj === undefined && type === undefined && style !== undefined && style !== null) {
-        log.warn(
-          `Style applied to unknown node "${id}". This may indicate a typo. The node will be created automatically.`
-        );
-      }
+      log.warn(
+        `Style applied to unknown node "${id}". This may indicate a typo. The node will be created automatically.`
+      );
       vertex = {
         id,
         labelType: 'text',
@@ -268,86 +316,62 @@ export class FlowDB implements DiagramDB {
     }
     this.vertexCounter++;
 
-    if (textObj !== undefined) {
+    vertex.text ??= id;
+    styles.forEach((s) => {
+      vertex.styles.push(s);
+    });
+  }
+
+  /**
+   * Function called by parser when a node definition has been found
+   */
+  public addVertex(
+    id: string,
+    labelText?: FlowText,
+    type?: FlowVertexTypeParam,
+    props: Record<string, unknown> = {}
+  ) {
+    if (!id || id.trim().length === 0) {
+      return;
+    }
+
+    // Check if this is an edge
+    const edge = this.edges.find((e) => e.id === id);
+    if (edge) {
+      return;
+    }
+
+    let txt;
+    let vertex = this.vertices.get(id);
+    if (vertex === undefined) {
+      vertex = {
+        id,
+        labelType: 'text',
+        domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.vertexCounter,
+        styles: [],
+        classes: [],
+      };
+      this.vertices.set(id, vertex);
+    }
+    this.vertexCounter++;
+
+    if (labelText !== undefined) {
       this.config = getConfig();
-      txt = this.sanitizeText(textObj.text.trim());
-      vertex.labelType = textObj.type;
+      txt = this.sanitizeText(labelText.text.trim());
+      vertex.labelType = labelText.type;
       // strip quotes if string starts and ends with a quote
       if (txt.startsWith('"') && txt.endsWith('"')) {
         txt = txt.substring(1, txt.length - 1);
       }
       vertex.text = txt;
     } else {
-      if (vertex.text === undefined) {
-        vertex.text = id;
-      }
+      vertex.text ??= id;
     }
     if (type !== undefined) {
       vertex.type = type;
     }
-    if (style !== undefined && style !== null) {
-      style.forEach((s) => {
-        vertex.styles.push(s);
-      });
-    }
-    if (classes !== undefined && classes !== null) {
-      classes.forEach((s) => {
-        vertex.classes.push(s);
-      });
-    }
-    if (dir !== undefined) {
-      vertex.dir = dir;
-    }
-    if (vertex.props === undefined) {
-      vertex.props = props;
-    } else if (props !== undefined) {
-      Object.assign(vertex.props, props);
-    }
-
-    if (doc !== undefined) {
-      vertex.metadata = { ...vertex.metadata, ...doc };
-
-      if (doc.shape) {
-        if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
-          throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
-        } else if (!isValidShape(doc.shape)) {
-          throw new Error(`No such shape: ${doc.shape}.`);
-        }
-        vertex.type = doc?.shape;
-      }
-
-      if (doc?.label) {
-        vertex.text = doc?.label;
-        vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
-      }
-      if (doc?.icon) {
-        vertex.icon = doc?.icon;
-        if (!doc.label?.trim() && vertex.text === id) {
-          vertex.text = '';
-        }
-      }
-      if (doc?.form) {
-        vertex.form = doc?.form;
-      }
-      if (doc?.pos) {
-        vertex.pos = doc?.pos;
-      }
-      if (doc?.img) {
-        vertex.img = doc?.img;
-        if (!doc.label?.trim() && vertex.text === id) {
-          vertex.text = '';
-        }
-      }
-      if (doc?.constraint) {
-        vertex.constraint = doc.constraint;
-      }
-      if (doc.w) {
-        vertex.assetWidth = Number(doc.w);
-      }
-      if (doc.h) {
-        vertex.assetHeight = Number(doc.h);
-      }
-    }
+    vertex.props ??= {};
+    Object.assign(vertex.props, props);
   }
 
   /**
