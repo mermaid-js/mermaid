@@ -306,6 +306,7 @@ that id.
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
+[^\S\n\r]+(?=\r?\n|$)  /* skip whitespace at the end of a line */
 \s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
