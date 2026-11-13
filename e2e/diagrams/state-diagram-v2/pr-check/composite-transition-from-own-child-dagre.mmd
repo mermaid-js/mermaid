@@ -1,0 +1,13 @@
+---
+description: >-
+  A transition inside composite state "Boot" from its child Running back
+  to Boot itself, under the dagre layout, verifying Boot is not filed as
+  its own child, which hangs the layout or throws.
+config:
+  layout: dagre
+---
+stateDiagram-v2
+  state Boot {
+    Running
+    Running --> Boot
+  }

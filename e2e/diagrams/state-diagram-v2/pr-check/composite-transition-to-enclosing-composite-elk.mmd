@@ -1,0 +1,15 @@
+---
+description: >-
+  A transition inside composite state "Inner" from the enclosing composite
+  "Outer" to Inner, under the ELK layout, verifying Outer is not filed as
+  a child of the state it contains, which hangs the layout or throws.
+config:
+  layout: elk
+---
+stateDiagram-v2
+  state Outer {
+    state Inner {
+      deep
+      Outer --> Inner
+    }
+  }
