@@ -1,0 +1,18 @@
+---
+description: >-
+  Inside Outer, a subgraph with no id is followed by Mid, which holds a
+  subgraph declared with the id subGraph0: the box without an id stays inside
+  Outer. It used to be drawn outside its parent.
+---
+flowchart LR
+  subgraph Outer
+    subgraph
+      a1 --> a2
+    end
+    subgraph Mid
+      subgraph subGraph0 [Explicit]
+        b1
+      end
+    end
+  end
+  a2 --> b1

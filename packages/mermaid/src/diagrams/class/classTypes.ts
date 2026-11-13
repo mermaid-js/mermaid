@@ -102,6 +102,10 @@ export class ClassMember {
             this.returnType = this.returnType.substring(0, this.returnType.length - 1);
           }
         }
+      } else {
+        throw new Error(
+          `Invalid class member "${input}": it contains ")" but is not written as name(parameters). Remove the ")" to make it an attribute.`
+        );
       }
     } else {
       const length = input.length;

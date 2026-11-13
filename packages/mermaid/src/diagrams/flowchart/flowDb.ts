@@ -104,6 +104,13 @@ export class FlowDB implements DiagramDB {
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
+  /** Ids given to subgraphs declared without one; an explicit declaration may claim them. */
+  private generatedSubGraphIds = new Set<string>();
+  /**
+   * Subgraphs moved off a generated id, keyed by each id they gave up. The id the parser was given
+   * for one stays in an open parent's member list until that parent closes.
+   */
+  private movedSubGraphs = new Map<string, FlowSubGraph>();
   private droppedSubGraphMembers: DroppedSubGraphMember[] = [];
   private tooltips = new Map<string, string>();
   private subCount = 0;
@@ -729,6 +736,8 @@ You have to call mermaid.initialize.`
     this.diagramId = '';
     this.subGraphs = [];
     this.subGraphLookup = new Map();
+    this.generatedSubGraphIds = new Set();
+    this.movedSubGraphs = new Map();
     this.droppedSubGraphMembers = [];
     this.subCount = 0;
     this.tooltips = new Map();
@@ -746,14 +755,47 @@ You have to call mermaid.initialize.`
     return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
   }
 
+  /**
+   * The first `subGraph<N>` id no subgraph or node has, so a subgraph without an id is never
+   * merged into another subgraph or given a node's id.
+   */
+  private nextGeneratedSubGraphId(): string {
+    const isTaken = (candidate: string) =>
+      this.subGraphs.some((subGraph) => subGraph.id === candidate) || this.vertices.has(candidate);
+    while (isTaken('subGraph' + this.subCount)) {
+      this.subCount = this.subCount + 1;
+    }
+    return 'subGraph' + this.subCount;
+  }
+
+  /**
+   * Replaces an id the parser was given for a subgraph that has since moved with the subgraph's
+   * current id, as long as no closed subgraph holds the moved one. The explicit subgraph that took
+   * the id over may be listed under the same id: if it already has a parent, the listed id is the
+   * moved subgraph; otherwise the moved one is listed only when the id appears twice.
+   */
+  private restoreMovedSubGraphIds(members: string[]): string[] {
+    const isPlaced = (id: string) => this.subGraphs.some((subGraph) => subGraph.nodes.includes(id));
+    for (const [given, moved] of this.movedSubGraphs) {
+      const at = members.indexOf(given);
+      if (at === -1 || isPlaced(moved.id)) {
+        continue;
+      }
+      if (isPlaced(given) || members.includes(given, at + 1)) {
+        members[at] = moved.id;
+      }
+    }
+    return members;
+  }
+
   public addSubGraph(
-    _id: { text: string },
+    _id: { text: string } | undefined,
     list: string[],
-    _title: { text: string; type: string }
+    _title: { text: string; type: string } | undefined
   ) {
-    let id: string | undefined = _id.text.trim();
-    let title = _title.text;
-    if (_id === _title && /\s/.exec(_title.text)) {
+    let id: string | undefined = _id?.text.trim();
+    let title = _title?.text;
+    if (_id !== undefined && _id === _title && /\s/.exec(_title.text)) {
       id = undefined;
     }
 
@@ -781,7 +823,7 @@ You have to call mermaid.initialize.`
       return { nodeList, dir };
     };
 
-    const result = uniq(list.flat());
+    const result = uniq(this.restoreMovedSubGraphIds(list.flat()));
     const nodeList = result.nodeList;
     let dir = result.dir;
     const flowchartConfig = getConfig().flowchart ?? {};
@@ -797,7 +839,32 @@ You have to call mermaid.initialize.`
       }
     }
 
-    id = id ?? 'subGraph' + this.subCount;
+    if (id !== undefined && this.generatedSubGraphIds.has(id)) {
+      // An explicit id wins over a generated one: the earlier subgraph without an id moves to a
+      // fresh generated id, and every subgraph listing it, this one included, follows it.
+      const renamed = this.nextGeneratedSubGraphId();
+      const subGraph = this.subGraphLookup.get(id);
+      if (subGraph) {
+        this.movedSubGraphs.set(id, subGraph);
+        subGraph.id = renamed;
+        this.subGraphLookup.delete(id);
+        this.subGraphLookup.set(renamed, subGraph);
+      }
+      for (const members of [nodeList, ...this.subGraphs.map((sg) => sg.nodes)]) {
+        members.forEach((member, index) => {
+          if (member === id) {
+            members[index] = renamed;
+          }
+        });
+      }
+      this.generatedSubGraphIds.delete(id);
+      this.generatedSubGraphIds.add(renamed);
+    }
+
+    if (id === undefined) {
+      id = this.nextGeneratedSubGraphId();
+      this.generatedSubGraphIds.add(id);
+    }
     title = title || '';
     title = this.sanitizeText(title);
     this.subCount = this.subCount + 1;

@@ -75,6 +75,16 @@ describe('when parsing a timeline ', function () {
       });
     });
 
+    it('should reject an event that has no time period before it', function () {
+      expect(() => timeline.parse('timeline\n    : event1')).to.throw(/time period/);
+    });
+
+    it('should reject an event that follows a section with no time period', function () {
+      expect(() => timeline.parse('timeline\n    section abc-123\n    : event1')).to.throw(
+        /time period/
+      );
+    });
+
     it('should handle a section, and task and its events', function () {
       let str = `timeline
     section abc-123
