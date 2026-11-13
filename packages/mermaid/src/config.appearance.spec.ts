@@ -84,15 +84,13 @@ describe('per-diagram appearance defaults', () => {
     it('hands the renderer the theme variables of the theme it resolved', async () => {
       const flowchart = await configFor(REDESIGNED_DIAGRAMS.flowchart);
       expect(flowchart.themeVariables.primaryColor).toBe(
-        theme['redux-color'].getThemeVariables({}).primaryColor
+        theme['redux-color'].getThemeVariables().primaryColor
       );
 
       resetConfig();
 
       const pie = await configFor(UNCHANGED_DIAGRAMS.pie);
-      expect(pie.themeVariables.primaryColor).toBe(
-        theme.default.getThemeVariables({}).primaryColor
-      );
+      expect(pie.themeVariables.primaryColor).toBe(theme.default.getThemeVariables().primaryColor);
     });
 
     it('leaves the layout on elk except where a diagram type names its own', async () => {
@@ -113,9 +111,7 @@ describe('per-diagram appearance defaults', () => {
       mermaidAPI.initialize({ theme: 'dark' });
       const config = await configFor(REDESIGNED_DIAGRAMS.sequence);
       expect(config.theme).toBe('dark');
-      expect(config.themeVariables.primaryColor).toBe(
-        theme.dark.getThemeVariables({}).primaryColor
-      );
+      expect(config.themeVariables.primaryColor).toBe(theme.dark.getThemeVariables().primaryColor);
     });
 
     it('a global theme the user set to the schema default still counts as set', async () => {
@@ -154,7 +150,7 @@ describe('per-diagram appearance defaults', () => {
       const config = await configFor('---\nconfig:\n  theme: forest\n---\nflowchart TD\n  A --> B');
       expect(config.theme).toBe('forest');
       expect(config.themeVariables.primaryColor).toBe(
-        theme.forest.getThemeVariables({}).primaryColor
+        theme.forest.getThemeVariables().primaryColor
       );
     });
 
@@ -199,9 +195,7 @@ describe('per-diagram appearance defaults', () => {
       mermaidAPI.initialize({ theme: 'dark', flowchart: { theme: 'totally-bogus' as never } });
       const config = await configFor(REDESIGNED_DIAGRAMS.flowchart);
       expect(config.theme).toBe('dark');
-      expect(config.themeVariables.primaryColor).toBe(
-        theme.dark.getThemeVariables({}).primaryColor
-      );
+      expect(config.themeVariables.primaryColor).toBe(theme.dark.getThemeVariables().primaryColor);
     });
 
     it('falls through an unknown diagram-scoped theme from frontmatter', async () => {
@@ -210,7 +204,7 @@ describe('per-diagram appearance defaults', () => {
       );
       expect(config.theme).toBe('redux-color');
       expect(config.themeVariables.primaryColor).toBe(
-        theme['redux-color'].getThemeVariables({}).primaryColor
+        theme['redux-color'].getThemeVariables().primaryColor
       );
     });
 
@@ -228,7 +222,7 @@ describe('per-diagram appearance defaults', () => {
         );
         expect(config.theme).toBe('redux-color');
         expect(config.themeVariables.primaryColor).toBe(
-          theme['redux-color'].getThemeVariables({}).primaryColor
+          theme['redux-color'].getThemeVariables().primaryColor
         );
       }
     );

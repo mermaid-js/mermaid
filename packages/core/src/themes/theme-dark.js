@@ -466,6 +466,7 @@ class Theme {
   }
 }
 
+/** @param {object} [userOverrides] */
 export const getThemeVariables = (userOverrides) => {
   const theme = new Theme();
   theme.calculate(userOverrides);
