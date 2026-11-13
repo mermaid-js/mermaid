@@ -12,6 +12,20 @@ describe('when parsing subgraphs', function () {
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
+  it('handles a subgraph without an ID or title', () => {
+    flow.parser.parse('graph TB\nsubgraph\nA-->B\nend');
+    expect(flow.parser.yy.getSubGraphs()).toEqual([
+      {
+        id: 'subGraph0',
+        title: '',
+        nodes: ['B', 'A'],
+        classes: [],
+        dir: undefined,
+        labelType: 'markdown',
+      },
+    ]);
+  });
+
   it('should handle subgraph with tab indentation', function () {
     const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
