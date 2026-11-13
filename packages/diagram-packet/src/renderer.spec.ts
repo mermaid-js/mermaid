@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { Diagram } from '../../Diagram.js';
-import * as configApi from '../../config.js';
-import type { PacketDiagramConfig } from '../../config.type.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import type { PacketDiagramConfig } from '@mermaid-js/core/config.type.js';
 import { PacketDB } from './db.js';
 import { parser } from './parser.js';
 import { renderer } from './renderer.js';

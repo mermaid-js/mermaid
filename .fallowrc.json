@@ -50,7 +50,6 @@
     "packages/core/src/diagrams/ishikawa/**",
     "packages/core/src/diagrams/kanban/**",
     "packages/core/src/diagrams/mindmap/**",
-    "packages/core/src/diagrams/packet/**",
     "packages/core/src/diagrams/pie/**",
     "packages/core/src/diagrams/quadrant-chart/**",
     "packages/core/src/diagrams/radar/**",

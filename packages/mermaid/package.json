@@ -70,6 +70,7 @@
   "dependencies": {
     "@mermaid-js/core": "workspace:^",
     "@mermaid-js/diagram-info": "workspace:^",
+    "@mermaid-js/diagram-packet": "workspace:^",
     "@mermaid-js/layout-cose-bilkent": "workspace:^",
     "@mermaid-js/layout-elk": "workspace:^",
     "@mermaid-js/plugin-katex": "workspace:^"

@@ -392,6 +392,15 @@ importers:
         specifier: workspace:^
         version: link:../parser
 
+  packages/diagram-packet:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+
   packages/examples:
     devDependencies:
       mermaid:
@@ -406,6 +415,9 @@ importers:
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info
+      '@mermaid-js/diagram-packet':
+        specifier: workspace:^
+        version: link:../diagram-packet
       '@mermaid-js/layout-cose-bilkent':
         specifier: workspace:^
         version: link:../mermaid-layout-cose-bilkent
@@ -695,6 +707,9 @@ importers:
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info
+      '@mermaid-js/diagram-packet':
+        specifier: workspace:^
+        version: link:../diagram-packet
 
   tests/release-verification:
     devDependencies:

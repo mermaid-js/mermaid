@@ -1,8 +1,8 @@
-import { getConfig as commonGetConfig } from '../../config.js';
-import type { PacketDiagramConfig } from '../../config.type.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
-import { cleanAndMerge } from '../../utils.js';
+import { getConfig as commonGetConfig } from '@mermaid-js/core/config.js';
+import type { PacketDiagramConfig } from '@mermaid-js/core/config.type.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -11,7 +11,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { PacketWord } from './types.js';
 const DEFAULT_PACKET_CONFIG: Required<PacketDiagramConfig> = DEFAULT_CONFIG.packet;
 

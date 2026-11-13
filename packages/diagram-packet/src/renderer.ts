@@ -1,8 +1,13 @@
-import type { Diagram } from '../../Diagram.js';
-import type { PacketDiagramConfig } from '../../config.type.js';
-import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import type { PacketDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type {
+  DiagramRenderer,
+  DrawDefinition,
+  SVG,
+  SVGGroup,
+} from '@mermaid-js/core/diagram-api/types.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import type { PacketDB, PacketWord } from './types.js';
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {

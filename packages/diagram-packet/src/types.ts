@@ -1,7 +1,7 @@
 import type { Packet, RecursiveAstOmit } from '@mermaid-js/parser';
-import type { PacketDiagramConfig } from '../../config.type.js';
-import type { DiagramDBBase } from '../../diagram-api/types.js';
-import type { ArrayElement } from '../../types.js';
+import type { PacketDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { DiagramDBBase } from '@mermaid-js/core/diagram-api/types.js';
+import type { ArrayElement } from '@mermaid-js/core/types.js';
 
 export type PacketBlock = RecursiveAstOmit<ArrayElement<Packet['blocks']>>;
 export type PacketWord = Required<PacketBlock>[];
