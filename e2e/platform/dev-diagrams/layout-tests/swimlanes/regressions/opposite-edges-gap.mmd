@@ -1,0 +1,16 @@
+---
+config:
+  layout: swimlane
+  flowchart:
+    htmlLabels: false
+---
+swimlane-beta TB
+  %% "Assess -> Send reply" runs straight down the middle of both boxes and the dotted
+  %% "Send reply -> Assess" runs beside it, 12 px away, so neither arrowhead touches the other line
+  subgraph support [Support]
+    triage["Triage"]
+    assess["Assess"]
+    reply["Send reply"]
+  end
+  triage --> assess --> reply
+  reply -.-> assess

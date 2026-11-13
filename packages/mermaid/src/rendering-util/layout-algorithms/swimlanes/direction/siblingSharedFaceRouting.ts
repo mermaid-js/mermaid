@@ -12,6 +12,12 @@ import {
 const EPS = 1e-6;
 const MIN_PORT_SPACING = 8;
 const PORT_SHIFT = MIN_PORT_SPACING / 2;
+/**
+ * Shift for a line rescued beside another edge between the same two nodes. One of the
+ * pair ends in an arrowhead next to the other's line, so it keeps the spacing
+ * `crowdsFaceNeighbour` asks of two ends on one face.
+ */
+const PAIR_SIBLING_SHIFT = EDGE_ROUTING.MIN_ARROWHEAD_SPACING;
 const LABEL_CLEARANCE_BUFFER = 3;
 
 interface PointLite {
@@ -51,7 +57,7 @@ function crowdsFaceNeighbour(
       attached.some(
         (p) =>
           Math.sign(p[across] - centre[across]) === faceSide &&
-          Math.abs(p[axis] - end[axis]) < EDGE_ROUTING.MIN_ARROWHEAD_SPACING
+          Math.abs(p[axis] - end[axis]) < EDGE_ROUTING.MIN_ARROWHEAD_SPACING - EPS
       )
     ) {
       return true;
@@ -70,7 +76,8 @@ function pairKey(a: string, b: string): string {
  * Fires only on the narrow "4-point U-detour around a collinear blocker
  * where the obvious straight line is geometrically clear" shape. For each
  * eligible edge, shifts the source and destination attach points by
- * MIN_PORT_SPACING/2 along the shared face and replaces the polyline
+ * PORT_SHIFT along the shared face (PAIR_SIBLING_SHIFT beside another edge
+ * between the same two nodes, more to clear a label) and replaces the polyline
  * with a 2-point straight line. The shift direction is chosen by trying
  * both +delta and -delta and picking whichever doesn't introduce a new
  * edge crossing or leave the node's face span.
@@ -100,48 +107,29 @@ export function straightenCollinearSiblingDetours(edges: Edge[], nodes: Node[]):
     }
   }
 
-  // For a given (this-edge, axis) pair, find the largest label half-extent
-  // among any edge sharing the same node pair (anti-parallel siblings) plus
-  // this edge's own label. Used to grow the rescue shift past the label so
-  // anchorLabelsToPolyline can place the label clear of the sibling.
-  const labelClearanceFor = (
-    thisEdge: Edge,
-    thisSrcId: string,
-    thisDstId: string,
-    axis: 'x' | 'y'
-  ): number => {
+  // The other edges joining the same two nodes as `thisEdge`, in either direction.
+  const pairSiblingsOf = (thisEdge: Edge, thisSrcId: string, thisDstId: string): Edge[] => {
     const targetPair = pairKey(thisSrcId, thisDstId);
+    return edges.filter(
+      (other) =>
+        other !== thisEdge &&
+        !other.isLayoutOnly &&
+        other.start &&
+        other.end &&
+        pairKey(other.start, other.end) === targetPair
+    );
+  };
+
+  // The largest label half-extent along `axis` among this edge and its pair
+  // siblings. Used to grow the rescue shift past the label so
+  // anchorLabelsToPolyline can place the label clear of the sibling.
+  const labelClearanceFor = (thisEdge: Edge, siblings: Edge[], axis: 'x' | 'y'): number => {
     let maxHalf = 0;
-    const consider = (labelId: string | undefined) => {
-      if (!labelId) {
-        return;
+    for (const { labelNodeId } of [thisEdge, ...siblings]) {
+      const dim = labelNodeId ? labelDimById.get(labelNodeId) : undefined;
+      if (dim) {
+        maxHalf = Math.max(maxHalf, axis === 'x' ? dim.w / 2 : dim.h / 2);
       }
-      const dim = labelDimById.get(labelId);
-      if (!dim) {
-        return;
-      }
-      const half = axis === 'x' ? dim.w / 2 : dim.h / 2;
-      if (half > maxHalf) {
-        maxHalf = half;
-      }
-    };
-    consider(thisEdge.labelNodeId);
-    for (const other of edges) {
-      if (other === thisEdge) {
-        continue;
-      }
-      if (other.isLayoutOnly) {
-        continue;
-      }
-      const oSrc = other.start;
-      const oDst = other.end;
-      if (!oSrc || !oDst) {
-        continue;
-      }
-      if (pairKey(oSrc, oDst) !== targetPair) {
-        continue;
-      }
-      consider(other.labelNodeId);
     }
     return maxHalf > 0 ? maxHalf + LABEL_CLEARANCE_BUFFER : 0;
   };
@@ -185,16 +173,20 @@ export function straightenCollinearSiblingDetours(edges: Edge[], nodes: Node[]):
     // clearance), a vertical one shifts in x (label WIDTH). collinearX
     // means the rescued line is vertical (nodes share a column).
     //
-    // When the edge (or an anti-parallel sibling) carries a label, the
-    // small PORT_SHIFT would leave the rescued straight inside the label's
-    // bbox — the label would visually overlap this line. We grow the
-    // shift to clear the label rect. If the wider shift won't fit on the
-    // node face, the bounds check below rejects it and we fall through
-    // without rescuing, which keeps the original 4-point detour — also
-    // correct, since the detour routes far away from the label.
+    // Beside another edge between the same two nodes, the shift is at least
+    // PAIR_SIBLING_SHIFT so the arrowhead of either clears the other's line.
+    // When the edge (or such a sibling) carries a label, the shift grows to
+    // clear the label rect too, or the label would overlap this line. If the
+    // wider shift won't fit on the node face, the bounds check below rejects
+    // it and we fall through without rescuing, which keeps the original
+    // 4-point detour, clear of both the sibling and its label.
     const shiftAxis: 'x' | 'y' = collinearX ? 'x' : 'y';
-    const labelShift = labelClearanceFor(edge, srcId, dstId, shiftAxis);
-    const effectiveShift = labelShift > PORT_SHIFT ? labelShift : PORT_SHIFT;
+    const siblings = pairSiblingsOf(edge, srcId, dstId);
+    const labelShift = labelClearanceFor(edge, siblings, shiftAxis);
+    const effectiveShift = Math.max(
+      labelShift,
+      siblings.length > 0 ? PAIR_SIBLING_SHIFT : PORT_SHIFT
+    );
     const deltas = [0, effectiveShift, -effectiveShift];
     // A line that would sit too close to a sibling's arrowhead is the last resort.
     let crowded: PointLite[] | undefined;

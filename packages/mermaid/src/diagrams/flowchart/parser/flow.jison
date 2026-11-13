@@ -114,11 +114,17 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"swimlane-beta"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"swimlane-beta"          {if(yy.lex.firstGraph()){this.begin("dir");} yy.lex.enablePhases(); return 'GRAPH';}
 "graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
+/*
+'phase' opens a declaration when an id follows it, starting with a word character or a letter
+outside ASCII. A link from a node named phase can start with an o or x marker (o--o, x==x,
+o-.-o) or an edge id (e1@-->), so those keep it a node id.
+*/
+"phase"(?=[^\S\n\r]+(?![xo](?:\-\-|\=\=|\-?\.))(?![^\s\"\[\]\(\)\{\}\|]+\@[^\{\"])(?:\w|[^\u0000-\u007F]))  { if (yy.lex.allowsPhases() && /(^|[\n\r;])[^\S\n\r]*$/.test(this.matched.slice(0, -yytext.length))) { return 'PHASE'; } return 'NODE_STRING'; }
 
 "_self"                  return 'LINK_TARGET';
 "_blank"                 return 'LINK_TARGET';
@@ -385,6 +391,14 @@ statement
     // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined);}
+    | PHASE SPACE idString SQS text SQE separator
+    {yy.addPhase($idString,$text);$$=[];}
+    | PHASE SPACE idString SQS text SQE spaceList separator
+    {yy.addPhase($idString,$text);$$=[];}
+    | PHASE SPACE idString separator
+    {yy.addPhase($idString);$$=[];}
+    | PHASE SPACE idString spaceList separator
+    {yy.addPhase($idString);$$=[];}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
