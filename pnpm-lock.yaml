@@ -364,9 +364,6 @@ importers:
       canvas:
         specifier: ^3.2.3
         version: 3.2.3
-      csstree-validator:
-        specifier: ^4.0.1
-        version: 4.0.1
       fastdom:
         specifier: 1.0.12
         version: 1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87)
@@ -428,12 +425,18 @@ importers:
       '@types/micromatch':
         specifier: ^4.0.10
         version: 4.0.10
+      '@types/stylis':
+        specifier: ^4.2.7
+        version: 4.2.7
       chokidar:
         specifier: 3.6.0
         version: 3.6.0
       concurrently:
         specifier: ^9.2.4
         version: 9.2.4
+      csstree-validator:
+        specifier: ^4.0.1
+        version: 4.0.1
       globby:
         specifier: ^14.1.0
         version: 14.1.0
@@ -470,6 +473,9 @@ importers:
       start-server-and-test:
         specifier: ^2.1.5
         version: 2.1.5
+      stylis:
+        specifier: ^4.3.6
+        version: 4.3.6
       typedoc:
         specifier: ^0.28.20
         version: 0.28.20(typescript@5.7.3)
@@ -5728,10 +5734,6 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
-  css-tree@3.1.0:
-    resolution: {integrity: sha512-0eW44TGN5SQXU1mWSkKwFstI/22X2bG1nYzZTYMAWjylYURhse752YgbE4Cx46AC+bAvI+/dYTPRk1LqSUnu6w==}
-    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
-
   css-tree@3.2.1:
     resolution: {integrity: sha512-X7sjQzceUhu1u7Y/ylrRZFU2FS6LRiFVp6rKLPg23y3x3c3DOKAwuXGDp+PAGjh6CSnCjYeAul8pcT8bAl+lSA==}
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
@@ -8051,9 +8053,6 @@ packages:
 
   mdast-util-to-string@4.0.0:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
-
-  mdn-data@2.12.2:
-    resolution: {integrity: sha512-IEn+pegP1aManZuckezWCO+XZQDplx1366JoVhTpMpBB1sPey/SbveZQUosKiKiGYjg1wH4pMlNgXbCiYgihQA==}
 
   mdn-data@2.27.1:
     resolution: {integrity: sha512-9Yubnt3e8A0OKwxYSXyhLymGW4sCufcLG6VdiDdUGVkPhpqLxlvP5vl1983gQjJl3tqbrM731mjaZaP68AgosQ==}
@@ -16373,11 +16372,6 @@ snapshots:
       semver: 7.7.3
       tinyglobby: 0.2.15
 
-  css-tree@3.1.0:
-    dependencies:
-      mdn-data: 2.12.2
-      source-map-js: 1.2.1
-
   css-tree@3.2.1:
     dependencies:
       mdn-data: 2.27.1
@@ -16393,7 +16387,7 @@ snapshots:
   csstree-validator@4.0.1:
     dependencies:
       clap: 3.1.1
-      css-tree: 3.1.0
+      css-tree: 3.2.1
       enhanced-resolve: 5.18.3
 
   csstype@3.2.3: {}
@@ -19225,8 +19219,6 @@ snapshots:
   mdast-util-to-string@4.0.0:
     dependencies:
       '@types/mdast': 4.0.4
-
-  mdn-data@2.12.2: {}
 
   mdn-data@2.27.1: {}
 

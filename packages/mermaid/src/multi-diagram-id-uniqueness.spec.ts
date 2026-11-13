@@ -9,10 +9,10 @@
  */
 import { JSDOM } from 'jsdom';
 import { describe, beforeAll, it, expect } from 'vitest';
-import mermaid from '../mermaid.js';
-import { mermaidAPI } from '../mermaidAPI.js';
-import { assertNoDuplicateIds } from '../tests/util.js';
-import { detectors } from '../diagram-api/detectType.js';
+import { detectors } from '@mermaid-js/core/diagram-api/detectType.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import { assertNoDuplicateIds } from '@mermaid-js/core/tests/util.js';
+import mermaid from './mermaid.js';
 
 const DIAGRAMS: Record<string, string> = {
   'flowchart-v2': `flowchart LR
@@ -273,8 +273,7 @@ async function renderTwoAndCheckIds(
 }
 
 describe('Multi-diagram ID uniqueness', () => {
-  beforeAll(async () => {
-    await mermaid.registerExternalDiagrams([]);
+  beforeAll(() => {
     mermaid.initialize({
       deterministicIds: true,
       deterministicIDSeed: '',
