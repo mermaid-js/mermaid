@@ -37,7 +37,6 @@
   "dependencies": {
     "@mermaid-js/core": "workspace:^",
     "d3": "^7.9.0",
-    "dagre-d3-es": "7.0.14",
     "dompurify": "^3.4.17",
     "khroma": "^2.1.0"
   },

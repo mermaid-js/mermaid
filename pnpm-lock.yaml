@@ -506,9 +506,6 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
-      dagre-d3-es:
-        specifier: 7.0.14
-        version: 7.0.14
       dompurify:
         specifier: 3.4.17
         version: 3.4.17

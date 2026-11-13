@@ -6,7 +6,6 @@ references:
   - "File: /packages/diagram-flowchart/src/flowRenderer-v3-unified.ts"
   - "File: /packages/diagram-flowchart/src/styles.ts"
   - "File: /packages/diagram-flowchart/src/types.ts"
-  - "File: /packages/diagram-flowchart/src/flowChartShapes.js"
   - "File: /packages/diagram-flowchart/src/parser/flowParser.ts"
   - "File: /packages/diagram-flowchart/src/elk/detector.ts"
 generationTime: 2025-07-23T10:31:53.266Z
@@ -110,7 +109,7 @@ flowchart TD
     SetupViewPort --> ProcessLinks["Process vertex links<br/>- create anchor elements<br/>- handle click events"]
     
     %% Shape Rendering
-    CallRender --> ShapeSystem["flowChartShapes.js<br/>Shape Functions"]
+    CallRender --> ShapeSystem["@mermaid-js/core rendering-elements/shapes<br/>Shape Functions"]
     
     ShapeSystem --> ShapeFunctions{Shape Functions}
     ShapeFunctions --> question["question(parent, bbox, node)"]
@@ -177,7 +176,6 @@ flowchart TD
     %% Testing Components
     FlowDBClass --> TestFiles["Test Files"]
     TestFiles --> flowDbSpec["flowDb.spec.ts"]
-    TestFiles --> flowChartShapesSpec["flowChartShapes.spec.js"]
     TestFiles --> ParserTests["parser/*.spec.js files<br/>- flow-text.spec.js<br/>- flow-edges.spec.js<br/>- flow-style.spec.js<br/>- subgraph.spec.js"]
     
     %% Configuration
