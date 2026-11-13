@@ -1,0 +1,12 @@
+---
+config:
+  c4:
+    messageFontSize: 16
+    messageFontFamily: serif
+---
+C4Context
+    title Relationship fonts from c4.messageFont*
+
+    Person(customer, "Customer")
+    System(cards, "Cards")
+    Rel(customer, cards, "Pays with", "HTTPS")
