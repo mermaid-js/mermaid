@@ -36,7 +36,7 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
-    "@zenuml/core": "^3.47.9"
+    "@zenuml/core": "^4.13.0"
   },
   "devDependencies": {
     "mermaid": "workspace:^"
