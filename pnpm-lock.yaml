@@ -623,6 +623,19 @@ importers:
         specifier: ^7.4.3
         version: 7.4.3
 
+  packages/diagram-wardley:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/examples:
     devDependencies:
       mermaid:
@@ -691,6 +704,9 @@ importers:
       '@mermaid-js/diagram-venn':
         specifier: workspace:^
         version: link:../diagram-venn
+      '@mermaid-js/diagram-wardley':
+        specifier: workspace:^
+        version: link:../diagram-wardley
       '@mermaid-js/layout-cose-bilkent':
         specifier: workspace:^
         version: link:../mermaid-layout-cose-bilkent
@@ -1031,6 +1047,9 @@ importers:
       '@mermaid-js/diagram-venn':
         specifier: workspace:^
         version: link:../diagram-venn
+      '@mermaid-js/diagram-wardley':
+        specifier: workspace:^
+        version: link:../diagram-wardley
 
   tests/release-verification:
     devDependencies:

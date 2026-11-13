@@ -1,4 +1,4 @@
-import { getConfig as getGlobalConfig } from '../../diagram-api/diagramAPI.js';
+import { getConfig as getGlobalConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -7,7 +7,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { WardleyAxesConfig } from './wardleyBuilder.js';
 import { WardleyBuilder } from './wardleyBuilder.js';
 

@@ -36,7 +36,8 @@
     "@mermaid-js/diagram-timeline": "workspace:^",
     "@mermaid-js/diagram-treemap": "workspace:^",
     "@mermaid-js/diagram-treeview": "workspace:^",
-    "@mermaid-js/diagram-venn": "workspace:^"
+    "@mermaid-js/diagram-venn": "workspace:^",
+    "@mermaid-js/diagram-wardley": "workspace:^"
   },
   "files": [
     "dist/",

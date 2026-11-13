@@ -1,9 +1,9 @@
 import type * as d3 from 'd3';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { Diagram } from '../../Diagram.js';
-import { log } from '../../logger.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import type { WardleyBuildResult, WardleyNode } from './wardleyBuilder.js';
 
 // Wardley DB does not sanitize text, so we can only use `.text()` for labels.

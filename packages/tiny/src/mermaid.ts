@@ -18,6 +18,7 @@ import timeline from '@mermaid-js/diagram-timeline';
 import { treemap } from '@mermaid-js/diagram-treemap';
 import treeView from '@mermaid-js/diagram-treeview';
 import venn from '@mermaid-js/diagram-venn';
+import wardley from '@mermaid-js/diagram-wardley';
 
 void mermaid.registerExternalDiagrams([
   cynefin,
@@ -41,6 +42,7 @@ void mermaid.registerExternalDiagrams([
   treeView,
   treemap,
   venn,
+  wardley,
 ]);
 
 export * from '@mermaid-js/core';

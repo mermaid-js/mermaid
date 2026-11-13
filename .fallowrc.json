@@ -47,7 +47,6 @@
     "packages/core/src/diagrams/sequence/**",
     "packages/core/src/diagrams/state/**",
     "packages/core/src/diagrams/swimlanes/**",
-    "packages/core/src/diagrams/wardley/**",
     "packages/core/src/diagrams/xychart/**",
     "packages/core/src/diagram-api/**",
     "packages/mermaid/src/docs/**",
