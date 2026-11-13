@@ -5,7 +5,6 @@ import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { drawRect } from './drawRect.js';
 import { getConfig } from '../../../config.js';
-import type { EntityNode } from '../../../diagrams/er/erTypes.js';
 import { createText } from '../../createText.js';
 import { evaluate, parseGenericTypes } from '../../../diagrams/common/common.js';
 import { select } from 'd3';
@@ -16,9 +15,16 @@ import type { D3Selection } from '../../../types.js';
 const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
 const REDUX_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);
 
+/** The parts of an ER diagram's entity that this shape draws. */
+export interface EntityBoxData {
+  alias?: string;
+  attributes: { type: string; name: string; keys: string[]; comment: string }[];
+  colorIndex?: number;
+}
+
 export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
-  const entityNode = node as unknown as EntityNode;
+  const entityNode = node as unknown as EntityBoxData;
   if (entityNode.alias) {
     node.label = entityNode.alias;
   }

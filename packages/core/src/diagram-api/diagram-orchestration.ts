@@ -2,7 +2,6 @@ import c4 from '../diagrams/c4/c4Detector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
 import agentflow from '../diagrams/agentflow/afDetector.js';
 import swimlanes from '../diagrams/swimlanes/detector.js';
-import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
@@ -77,7 +76,6 @@ export const addDiagrams = () => {
     agentflow,
     c4,
     classDiagramV2,
-    er,
     gantt,
     sequence,
     swimlanes,

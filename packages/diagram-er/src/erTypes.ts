@@ -1,4 +1,6 @@
-export interface EntityNode {
+import type { EntityBoxData } from '@mermaid-js/core/rendering-util/rendering-elements/shapes/erBox.js';
+
+export interface EntityNode extends EntityBoxData {
   id: string;
   /** Authored entity name used by placement maps; `id` remains the generated rendering identity. */
   placementId: string;
@@ -11,7 +13,6 @@ export interface EntityNode {
   cssStyles?: string[];
   cssCompiledStyles?: string[];
   labelType?: string;
-  colorIndex?: number;
 }
 
 export interface Attribute {

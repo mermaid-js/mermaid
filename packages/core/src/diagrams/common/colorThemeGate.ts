@@ -7,7 +7,7 @@
  *
  * Before this module the `COLOR_THEMES` list existed in five copies and the stamping
  * block was duplicated verbatim between `clusters.js` and `classBox.ts`. Two idioms for
- * the same gate had already appeared: `er/styles.ts` keys off the theme name while
+ * the same gate had already appeared: the ER stylesheet keys off the theme name while
  * the requirement stylesheet keys off the array being non-empty. Anything added here is
  * added once.
  */

@@ -23,7 +23,7 @@ export async function squareRect<T extends SVGGraphicsElement>(parent: D3Selecti
   // -- notes, JSON tables and `classDb`'s synthetic interface node all reach it -- so stamp
   // only where a diagram actually assigned a slot. Stamping unconditionally would hand all of
   // those `color-0`, inert only for as long as no stylesheet emitting `[data-color-id] ... rect`
-  // rules happens to render a bare rect; `er/styles.ts` already emits that selector shape.
+  // rules happens to render a bare rect; the ER stylesheet already emits that selector shape.
   if (node.colorIndex !== undefined) {
     const { theme, themeVariables } = getConfig();
     stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);

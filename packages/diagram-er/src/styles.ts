@@ -1,12 +1,12 @@
 import * as khroma from 'khroma';
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
 import {
   COLOR_THEMES,
   hasPalette,
   isColorTheme,
   paletteSlotCount,
   safeLook,
-} from '../common/colorThemeGate.js';
+} from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma

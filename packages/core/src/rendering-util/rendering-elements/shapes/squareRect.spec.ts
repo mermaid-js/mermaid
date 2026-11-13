@@ -66,7 +66,7 @@ describe('squareRect colour slot', () => {
    * `classDb`'s synthetic interface node all render through it. Stamping a slot on a node that
    * was never assigned one hands every one of them `color-0`, which is inert only for as long
    * as no stylesheet emitting `[data-color-id] … rect` rules happens to render a bare rect.
-   * `er/styles.ts` already emits exactly that selector shape, so keep the stamp keyed to a slot
+   * The ER stylesheet already emits exactly that selector shape, so keep the stamp keyed to a slot
    * the diagram actually assigned.
    */
   it('leaves a node with no assigned slot unstamped on a palette theme', async () => {

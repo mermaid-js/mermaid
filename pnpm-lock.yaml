@@ -383,6 +383,22 @@ importers:
         specifier: workspace:^
         version: link:../parser
 
+  packages/diagram-er:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-eventmodeling:
     dependencies:
       '@mermaid-js/core':
@@ -566,6 +582,9 @@ importers:
       '@mermaid-js/diagram-cynefin':
         specifier: workspace:^
         version: link:../diagram-cynefin
+      '@mermaid-js/diagram-er':
+        specifier: workspace:^
+        version: link:../diagram-er
       '@mermaid-js/diagram-eventmodeling':
         specifier: workspace:^
         version: link:../diagram-eventmodeling
@@ -894,6 +913,9 @@ importers:
       '@mermaid-js/diagram-cynefin':
         specifier: workspace:^
         version: link:../diagram-cynefin
+      '@mermaid-js/diagram-er':
+        specifier: workspace:^
+        version: link:../diagram-er
       '@mermaid-js/diagram-eventmodeling':
         specifier: workspace:^
         version: link:../diagram-eventmodeling

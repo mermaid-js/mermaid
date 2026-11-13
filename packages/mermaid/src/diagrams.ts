@@ -1,5 +1,6 @@
 import type { ExternalDiagramDefinition } from '@mermaid-js/core';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
+import er from '@mermaid-js/diagram-er';
 import eventmodeling from '@mermaid-js/diagram-eventmodeling';
 import { info } from '@mermaid-js/diagram-info';
 import { ishikawa } from '@mermaid-js/diagram-ishikawa';
@@ -17,6 +18,7 @@ import venn from '@mermaid-js/diagram-venn';
 /** The diagram packages that the `mermaid` entry registers. */
 export const diagrams: ExternalDiagramDefinition[] = [
   cynefin,
+  er,
   eventmodeling,
   info,
   ishikawa,

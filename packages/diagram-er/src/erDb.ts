@@ -1,8 +1,8 @@
-import { log } from '../../logger.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { Edge, Node } from '../../rendering-util/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { Edge, Node } from '@mermaid-js/core/rendering-util/types.js';
 import type { EntityNode, Attribute, Relationship, EntityClass, RelSpec } from './erTypes.js';
-import common from '../common/common.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -11,9 +11,9 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../common/commonDb.js';
-import { getEdgeId } from '../../utils.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
+import { getEdgeId } from '@mermaid-js/core/utils.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
 import type { ErSubGraph } from './erTypes.js';
 
 export class ErDB implements DiagramDB {

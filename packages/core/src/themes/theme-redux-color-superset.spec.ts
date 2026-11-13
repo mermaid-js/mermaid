@@ -70,7 +70,7 @@ const PAIRS = [
 
 /**
  * How many `bkgColorArray` entries each colour theme ships. The asymmetry is deliberate,
- * not leftover drift: `bkgColorArray` is what gates *fills* in `er/styles.ts`,
+ * not leftover drift: `bkgColorArray` is what gates *fills* in the ER stylesheet,
  * the requirement stylesheet and `sequence/svgDraw.js`, and the dark theme intentionally
  * colours only borders there, leaving box interiors on the dark canvas. Populating it
  * would silently repaint ER entities, requirement boxes and sequence actors.

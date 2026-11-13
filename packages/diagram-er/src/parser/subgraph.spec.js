@@ -1,4 +1,4 @@
-import { setConfig } from '../../../config.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 import { ErDB } from '../erDb.js';
 import erDiagram from './erDiagram.jison';
 

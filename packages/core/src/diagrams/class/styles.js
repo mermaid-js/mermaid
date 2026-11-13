@@ -2,7 +2,7 @@ import { getIconStyles } from '../globalStyles.js';
 import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 /**
- * Cycling per-class colour, mirroring `er/styles.ts`. A class box is the structural twin
+ * Cycling per-class colour, mirroring the ER stylesheet. A class box is the structural twin
  * of an ER entity -- a titled box with member rows, naming one distinct participant -- so
  * the same index-based palette applies.
  *

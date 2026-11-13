@@ -80,7 +80,7 @@ interface PaletteOptions {
 }
 
 /**
- * Drives both channels: `er/styles.ts` reads the theme and palette off its options
+ * Drives both channels: the ER stylesheet reads the theme and palette off its options
  * argument, while the requirement stylesheet reads them from `getConfig()`.
  */
 const render = (
