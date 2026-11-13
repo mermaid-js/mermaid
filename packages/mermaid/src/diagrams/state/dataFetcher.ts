@@ -372,6 +372,20 @@ export const dataFetcher = (
     if (parent && parent.id !== 'root') {
       log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
       nodeData.parentId = parent.id;
+
+      // A relation can reference its enclosing composite or an ancestor. Do not
+      // move that ancestor into its own subtree: keep its existing parent instead.
+      // Other references retain the existing cross-composite placement behavior.
+      const visited = new Set<string>();
+      let ancestorId: string | undefined = parent.id;
+      while (ancestorId && !visited.has(ancestorId)) {
+        if (ancestorId === itemId) {
+          nodeData.parentId = nodes.find((node) => node.id === itemId)?.parentId;
+          break;
+        }
+        visited.add(ancestorId);
+        ancestorId = nodes.find((node) => node.id === ancestorId)?.parentId;
+      }
     }
 
     nodeData.centerLabel = true;
