@@ -104,6 +104,16 @@ describe('[Flowchart] a class on an edge: A -->:::name B', function () {
     expect(vertices.get('B').classes).toEqual(['n2']);
   });
 
+  ['B@{ shape: rounded }', 'B @{ shape: rounded }'].forEach((target) => {
+    it(`keeps shape data on the destination: A -->:::hot ${target}`, function () {
+      flow.parser.parse(`flowchart TD;\nA -->:::hot ${target};`);
+      const [edge] = flow.parser.yy.getEdges();
+      expect(edge.end).toBe('B');
+      expect(edge.classes).toEqual(['hot']);
+      expect(flow.parser.yy.getVertices().get('B').type).toBe('rounded');
+    });
+  });
+
   it('adds to the classes a class statement gives the same edge', function () {
     flow.parser.parse('flowchart TD;\nA e1@-->:::hot B;\nclass e1 extra;');
     expect(flow.parser.yy.getEdges()[0].classes).toEqual(['hot', 'extra']);
