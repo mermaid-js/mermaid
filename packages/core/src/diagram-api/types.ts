@@ -3,7 +3,8 @@ import type * as d3 from 'd3';
 import type { SetOptional, SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
-import type { DiagramOrientation } from '../diagrams/git/gitGraphTypes.js';
+
+export type DiagramOrientation = 'LR' | 'TB' | 'BT';
 
 export interface DiagramMetadata {
   title?: string;

@@ -1,5 +1,5 @@
-import type { GitGraphDiagramConfig } from '../../config.type.js';
-import type { DiagramDBBase } from '../../diagram-api/types.js';
+import type { GitGraphDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { DiagramDBBase, DiagramOrientation } from '@mermaid-js/core/diagram-api/types.js';
 
 export const commitType = {
   NORMAL: 0,
@@ -130,5 +130,3 @@ export interface GitGraphDBRenderProvider extends Partial<GitGraphDB> {
   getHead: () => Commit | null;
   getDiagramTitle: () => string;
 }
-
-export type DiagramOrientation = 'LR' | 'TB' | 'BT';

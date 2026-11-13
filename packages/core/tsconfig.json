@@ -5,10 +5,5 @@
     "outDir": "./dist",
     "types": ["vitest/importMeta", "vitest/globals"]
   },
-  "include": [
-    "./src/**/*.ts",
-    "./package.json",
-    "src/diagrams/git/gitGraphRenderer.js",
-    "src/diagrams/class/classRenderer.js"
-  ]
+  "include": ["./src/**/*.ts", "./package.json", "src/diagrams/class/classRenderer.js"]
 }

@@ -108,7 +108,7 @@ const getStyles = (options) => {
    * tspan level outranks the inline style drawText puts on the parent text element from the
    * sequence.noteFontWeight config key -- so that documented key would never reach the glyphs.
    * The theme variable formerly emitted here is a different value from that config key, and
-   * git/styles.js reads it as its own bold-label weight under redux and neo, so it cannot be
+   * the git graph stylesheet reads it as its own bold-label weight under redux and neo, so it cannot be
    * lowered there either.
    */
   .noteText, .noteText > tspan {

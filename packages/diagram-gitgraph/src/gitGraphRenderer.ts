@@ -1,12 +1,12 @@
 import { select } from 'd3';
-import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
-import { log } from '../../logger.js';
-import utils from '../../utils.js';
-import type { DrawDefinition } from '../../diagram-api/types.js';
+import { getConfig, setupGraphViewbox } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
+import utils from '@mermaid-js/core/utils.js';
+import type { DiagramOrientation, DrawDefinition } from '@mermaid-js/core/diagram-api/types.js';
 import type d3 from 'd3';
-import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
+import type { Commit, GitGraphDBRenderProvider } from './gitGraphTypes.js';
 import { commitType } from './gitGraphTypes.js';
-import type { GitGraphDiagramConfig } from '../../config.type.js';
+import type { GitGraphDiagramConfig } from '@mermaid-js/core/config.type.js';
 
 interface BranchPosition {
   pos: number;

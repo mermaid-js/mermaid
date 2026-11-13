@@ -1,4 +1,4 @@
-import { log } from '../../logger.js';
+import { log } from '@mermaid-js/core/logger.js';
 import { db } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
 

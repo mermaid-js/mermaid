@@ -1,4 +1,4 @@
-import * as configApi from '../../config.js';
+import * as configApi from '@mermaid-js/core/config.js';
 const GIT_NAMED_COLOR_COUNT = 8;
 
 const REDUX_GEOMETRY_THEMES = new Set(['redux', 'redux-dark', 'redux-color', 'redux-dark-color']);

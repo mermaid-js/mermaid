@@ -1,7 +1,7 @@
-import { log } from '../../logger.js';
-import { cleanAndMerge, random } from '../../utils.js';
-import { getConfig as commonGetConfig } from '../../config.js';
-import common from '../common/common.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { cleanAndMerge, random } from '@mermaid-js/core/utils.js';
+import { getConfig as commonGetConfig } from '@mermaid-js/core/config.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -10,9 +10,9 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
+import type { DiagramOrientation } from '@mermaid-js/core/diagram-api/types.js';
 import type {
-  DiagramOrientation,
   Commit,
   GitGraphDB,
   CommitDB,
@@ -21,11 +21,11 @@ import type {
   CherryPickDB,
 } from './gitGraphTypes.js';
 import { commitType } from './gitGraphTypes.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
+import { ImperativeState } from '@mermaid-js/core/utils/imperativeState.js';
 
-import DEFAULT_CONFIG from '../../defaultConfig.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
 
-import type { GitGraphDiagramConfig } from '../../config.type.js';
+import type { GitGraphDiagramConfig } from '@mermaid-js/core/config.type.js';
 interface GitGraphState {
   commits: Map<string, Commit>;
   head: Commit | null;
