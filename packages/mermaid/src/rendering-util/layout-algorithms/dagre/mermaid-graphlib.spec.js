@@ -399,6 +399,54 @@ flowchart TB
     expect(aGraph.parent('c')).toBe('B');
     expect(aGraph.parent('B')).toBe(undefined);
   });
+
+  it('adjustClustersAndEdges keeps nesting when a subgraph id is numeric #7609', function () {
+    /*
+graph LR
+  subgraph outer
+    subgraph 1 ["inner"]
+      external
+      subgraph sub
+        internal
+      end
+      sub-->external
+    end
+  end
+    */
+
+    // Added parent-first, the way flowDb hands them over.
+    g.setNode('outer', { id: 'outer' });
+    g.setNode('1', { id: '1' });
+    g.setNode('sub', { id: 'sub' });
+    g.setNode('external', { id: 'external' });
+    g.setNode('internal', { id: 'internal' });
+    g.setParent('1', 'outer');
+    g.setParent('sub', '1');
+    g.setParent('external', '1');
+    g.setParent('internal', 'sub');
+    g.setEdge('sub', 'external', {});
+
+    // The detail the bug rode in on. `nodes()` is Object.keys() over a plain
+    // object, and an integer-like key is enumerated before every string key
+    // whatever order they were inserted in, so "1" arrives first despite
+    // being added second. Asserted here because it is the whole reason a
+    // numeric id behaved differently from a letter, and a future graphlib
+    // that returns insertion order should retire this test rather than
+    // silently keep passing it.
+    expect(g.nodes()).toEqual(['1', 'outer', 'sub', 'external', 'internal']);
+
+    adjustClustersAndEdges(g);
+
+    const outerGraph = g.node('outer').graph;
+    const innerGraph = outerGraph.node('1').graph;
+
+    // `sub` keeps a cluster graph of its own. Extracting the inner cluster
+    // before its parent used to flatten it, hoisting `internal` up beside
+    // `sub` and leaving a node the layout then looked for and did not find:
+    // "Cannot set properties of undefined (setting 'rank')".
+    expect(innerGraph.nodes().sort()).toEqual(['external', 'sub']);
+    expect(innerGraph.node('sub').graph.nodes()).toEqual(['internal']);
+  });
 });
 describe('extractDescendants', function () {
   let g;

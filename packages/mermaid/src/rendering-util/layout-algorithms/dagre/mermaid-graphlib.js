@@ -315,7 +315,13 @@ export const extractor = (graph, depth) => {
     log.error('Bailing out');
     return;
   }
-  let nodes = graph.nodes();
+  // Parents before children. `graph.nodes()` is Object.keys() over a plain
+  // object, so an integer-like id such as "1" is enumerated ahead of every
+  // string id whatever order they were inserted in. That put an inner
+  // cluster before its own parent here, and extracting it first flattened
+  // the cluster below it, leaving the layout reaching for a node that was
+  // no longer there (#7609). index.js already walks nodes in this order.
+  let nodes = sortNodesByHierarchy(graph);
   let hasChildren = false;
   for (const node of nodes) {
     const children = graph.children(node);
