@@ -3,6 +3,7 @@ import type { LayoutData } from '../../../types.js';
 import type { Graph, NodeId, OrderedLayers, Coordinates } from '../helpers.js';
 import { writeBackToLayoutData } from '../helpers.js';
 import { postProcessSwimlaneLayout as applySwimlaneDirectionTransform } from '../postProcessing.js';
+import { compareStrings } from '../compare.js';
 
 function makeTestLayout(): LayoutData {
   // Minimal layout with two nodes in the same lane but different layers (vertical positions)
@@ -136,7 +137,7 @@ describe('applySwimlaneDirectionTransform', () => {
 
     // Capture initial lane positions in canonical TB orientation.
     const lanesBefore = [...(lanes as any[])].sort((a, b) =>
-      String(a.id).localeCompare(String(b.id))
+      compareStrings(String(a.id), String(b.id))
     );
     const lane1Before: any = lanesBefore[0];
     const lane2Before: any = lanesBefore[1];
@@ -149,7 +150,7 @@ describe('applySwimlaneDirectionTransform', () => {
     applySwimlaneDirectionTransform(layout, 'LR');
 
     const lanesAfter = (layout.nodes ?? []).filter((n: any) => n.isGroup);
-    lanesAfter.sort((a: any, b: any) => String(a.id).localeCompare(String(b.id)));
+    lanesAfter.sort((a: any, b: any) => compareStrings(String(a.id), String(b.id)));
     const lane1After: any = lanesAfter[0];
     const lane2After: any = lanesAfter[1];
 

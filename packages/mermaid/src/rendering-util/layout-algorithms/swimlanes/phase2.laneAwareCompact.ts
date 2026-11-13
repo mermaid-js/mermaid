@@ -1,4 +1,5 @@
 import type { Graph, Layering, NodeId } from './helpers.js';
+import { compareStrings } from './compare.js';
 import {
   buildInDegreeMap,
   buildLayersFromRanks,
@@ -30,7 +31,7 @@ function topoSortByGenerationIfAcyclic(g: Graph): NodeId[] | null {
         }
       }
     }
-    frontier = nextFrontier.sort((a, b) => a.localeCompare(b));
+    frontier = nextFrontier.sort((a, b) => compareStrings(a, b));
   }
 
   return order.length === g.nodes.length ? order : null;
