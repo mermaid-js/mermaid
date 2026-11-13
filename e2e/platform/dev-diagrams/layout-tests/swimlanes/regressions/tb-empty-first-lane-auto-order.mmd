@@ -1,0 +1,24 @@
+---
+config:
+  flowchart:
+    nodeSpacing: 10
+  swimlane:
+    automaticLaneOrdering: true
+---
+%% An empty first lane, with automatic ordering putting "Left" left of "Hub" and a node spacing
+%% so tight that the two already overlap: the empty lane starts at the right edge of "Left",
+%% not under it.
+swimlane-beta TB
+  subgraph L0[Empty]
+  end
+  subgraph L1[Hub]
+    a
+  end
+  subgraph L2[Left]
+    b
+  end
+  subgraph L3[Right]
+    c
+  end
+  b --> a
+  a --> c
