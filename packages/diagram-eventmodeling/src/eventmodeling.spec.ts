@@ -2,7 +2,7 @@ import { afterAll, beforeAll, it, describe, expect } from 'vitest';
 
 import { db } from './db.js';
 import { parser } from './parser.js';
-import { mermaidAPI } from '../../mermaidAPI.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
 
 const { clear } = db;
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');

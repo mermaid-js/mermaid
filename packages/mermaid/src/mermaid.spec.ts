@@ -26,6 +26,7 @@ describe('mermaid', () => {
 
   it.each([
     { text: 'cynefin-beta', expected: 'cynefin' },
+    { text: 'eventmodeling', expected: 'eventmodeling' },
     { text: 'info', expected: 'info' },
     { text: 'ishikawa', expected: 'ishikawa' },
     { text: 'ishikawa-beta', expected: 'ishikawa' },

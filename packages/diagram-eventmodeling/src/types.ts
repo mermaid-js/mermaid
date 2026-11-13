@@ -1,5 +1,5 @@
-import type { EventModelingDiagramConfig } from '../../config.type.js';
-import type { DiagramDBBase } from '../../diagram-api/types.js';
+import type { EventModelingDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { DiagramDBBase } from '@mermaid-js/core/diagram-api/types.js';
 
 import type { EmFrame, EventModel } from '@mermaid-js/parser';
 

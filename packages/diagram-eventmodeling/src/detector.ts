@@ -1,5 +1,5 @@
-import type { DiagramDetector, DiagramLoader } from '../../diagram-api/types.js';
-import type { ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDetector, DiagramLoader } from '@mermaid-js/core/diagram-api/types.js';
+import type { ExternalDiagramDefinition } from '@mermaid-js/core/diagram-api/types.js';
 
 const id = 'eventmodeling';
 

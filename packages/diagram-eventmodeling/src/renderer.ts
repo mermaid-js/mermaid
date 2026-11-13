@@ -1,8 +1,8 @@
 import type { BaseType, Selection } from 'd3';
 import { select } from 'd3';
-import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
-import { log } from '../../logger.js';
-import type { DrawDefinition } from '../../diagram-api/types.js';
+import { getConfig, setupGraphViewbox } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
+import type { DrawDefinition } from '@mermaid-js/core/diagram-api/types.js';
 
 import type { EventModelingDB, Box, Relation, Swimlane, DiagramProps } from './types.js';
 

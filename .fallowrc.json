@@ -41,7 +41,6 @@
     "packages/diagram-*/**",
     "packages/core/src/diagrams/er/**",
     "packages/core/src/diagrams/error/**",
-    "packages/core/src/diagrams/eventmodeling/**",
     "packages/core/src/diagrams/flowchart/**",
     "packages/core/src/diagrams/gantt/**",
     "packages/core/src/diagrams/git/**",

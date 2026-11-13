@@ -70,6 +70,7 @@
   "dependencies": {
     "@mermaid-js/core": "workspace:^",
     "@mermaid-js/diagram-cynefin": "workspace:^",
+    "@mermaid-js/diagram-eventmodeling": "workspace:^",
     "@mermaid-js/diagram-info": "workspace:^",
     "@mermaid-js/diagram-ishikawa": "workspace:^",
     "@mermaid-js/diagram-kanban": "workspace:^",

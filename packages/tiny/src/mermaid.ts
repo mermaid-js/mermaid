@@ -1,6 +1,7 @@
 // The `mermaid` entry, minus its large layouts, diagrams and KaTeX.
 import mermaid from '@mermaid-js/core';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
+import eventmodeling from '@mermaid-js/diagram-eventmodeling';
 import { info } from '@mermaid-js/diagram-info';
 import { ishikawa } from '@mermaid-js/diagram-ishikawa';
 import kanban from '@mermaid-js/diagram-kanban';
@@ -13,6 +14,7 @@ import treeView from '@mermaid-js/diagram-treeview';
 
 void mermaid.registerExternalDiagrams([
   cynefin,
+  eventmodeling,
   info,
   ishikawa,
   kanban,

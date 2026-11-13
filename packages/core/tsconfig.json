@@ -10,7 +10,6 @@
     "./package.json",
     "src/diagrams/gantt/ganttDb.js",
     "src/diagrams/git/gitGraphRenderer.js",
-    "src/diagrams/class/classRenderer.js",
-    "src/diagrams/eventmodeling/renderer.js"
+    "src/diagrams/class/classRenderer.js"
   ]
 }
