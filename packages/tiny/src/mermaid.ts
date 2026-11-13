@@ -7,8 +7,18 @@ import { packet } from '@mermaid-js/diagram-packet';
 import { pie } from '@mermaid-js/diagram-pie';
 import { radar } from '@mermaid-js/diagram-radar';
 import sankey from '@mermaid-js/diagram-sankey';
+import treeView from '@mermaid-js/diagram-treeview';
 
-void mermaid.registerExternalDiagrams([info, ishikawa, kanban, packet, pie, radar, sankey]);
+void mermaid.registerExternalDiagrams([
+  info,
+  ishikawa,
+  kanban,
+  packet,
+  pie,
+  radar,
+  sankey,
+  treeView,
+]);
 
 export * from '@mermaid-js/core';
 export default mermaid;

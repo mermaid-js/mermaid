@@ -460,6 +460,19 @@ importers:
         specifier: ^0.12.5
         version: 0.12.5
 
+  packages/diagram-treeview:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+    devDependencies:
+      '@iconify/types':
+        specifier: ^2.0.0
+        version: 2.0.0
+
   packages/examples:
     devDependencies:
       mermaid:
@@ -492,6 +505,9 @@ importers:
       '@mermaid-js/diagram-sankey':
         specifier: workspace:^
         version: link:../diagram-sankey
+      '@mermaid-js/diagram-treeview':
+        specifier: workspace:^
+        version: link:../diagram-treeview
       '@mermaid-js/layout-cose-bilkent':
         specifier: workspace:^
         version: link:../mermaid-layout-cose-bilkent
@@ -799,6 +815,9 @@ importers:
       '@mermaid-js/diagram-sankey':
         specifier: workspace:^
         version: link:../diagram-sankey
+      '@mermaid-js/diagram-treeview':
+        specifier: workspace:^
+        version: link:../diagram-treeview
 
   tests/release-verification:
     devDependencies:

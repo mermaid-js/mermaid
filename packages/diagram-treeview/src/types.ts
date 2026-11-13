@@ -1,6 +1,5 @@
-import type { Selection } from 'd3-selection';
-import type { TreeViewDiagramConfig } from '../../config.type.js';
-import type { DiagramDBBase } from '../../diagram-api/types.js';
+import type { TreeViewDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { DiagramDBBase } from '@mermaid-js/core/diagram-api/types.js';
 
 interface BBox {
   x: number;
@@ -46,5 +45,3 @@ export interface TreeViewDiagramStyles {
   highlightBg?: string;
   highlightStroke?: string;
 }
-
-export type D3SVGElement<T extends SVGElement> = Selection<T, unknown, Element | null, unknown>;

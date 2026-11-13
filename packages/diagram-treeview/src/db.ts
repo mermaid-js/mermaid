@@ -1,8 +1,8 @@
-import { getConfig as getCommonConfig } from '../../config.js';
-import type { TreeViewDiagramConfig } from '../../config.type.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
-import { cleanAndMerge } from '../../utils.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
+import { getConfig as getCommonConfig } from '@mermaid-js/core/config.js';
+import type { TreeViewDiagramConfig } from '@mermaid-js/core/config.type.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
+import { ImperativeState } from '@mermaid-js/core/utils/imperativeState.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -11,7 +11,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { Node, NodeType, TreeViewDB } from './types.js';
 
 interface TreeViewState {

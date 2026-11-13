@@ -25,7 +25,8 @@
     "@mermaid-js/diagram-packet": "workspace:^",
     "@mermaid-js/diagram-pie": "workspace:^",
     "@mermaid-js/diagram-radar": "workspace:^",
-    "@mermaid-js/diagram-sankey": "workspace:^"
+    "@mermaid-js/diagram-sankey": "workspace:^",
+    "@mermaid-js/diagram-treeview": "workspace:^"
   },
   "files": [
     "dist/",

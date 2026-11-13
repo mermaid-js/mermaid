@@ -1,5 +1,5 @@
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { cleanAndMerge } from '../../utils.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
 import type { TreeViewDiagramStyles } from './types.js';
 
 const defaultTreeViewDiagramStyles: Required<TreeViewDiagramStyles> = {

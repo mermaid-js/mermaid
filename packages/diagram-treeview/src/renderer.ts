@@ -1,11 +1,15 @@
-import type { TreeViewDiagramConfig } from '../../config.type.js';
-import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { getIconSVG, registerIconPacks } from '../../rendering-util/icons.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { TreeViewDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type {
+  DiagramRenderer,
+  DrawDefinition,
+  SVGGroup,
+} from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getIconSVG, registerIconPacks } from '@mermaid-js/core/rendering-util/icons.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import { getNodeIcon, treeViewIcons } from './icons.js';
-import type { D3SVGElement, Node, TreeViewDB } from './types.js';
+import type { Node, TreeViewDB } from './types.js';
 
 registerIconPacks([
   {
@@ -20,7 +24,7 @@ const DESC_GAP = 16;
 
 interface RenderInfo {
   node: Node;
-  nodeGroup: D3SVGElement<SVGGElement>;
+  nodeGroup: SVGGroup;
   labelRightEdge: number;
   centerY: number;
 }
@@ -53,7 +57,7 @@ const positionLabel = (
   x: number,
   y: number,
   node: Node,
-  domElem: D3SVGElement<SVGGElement>,
+  domElem: SVGGroup,
   config: Required<TreeViewDiagramConfig>,
   iconSVGs: Map<number, string>
 ): RenderInfo => {
@@ -110,7 +114,7 @@ const positionLabel = (
 };
 
 const positionLine = (
-  domElem: D3SVGElement<SVGGElement>,
+  domElem: SVGGroup,
   x1: number,
   y1: number,
   x2: number,
@@ -128,7 +132,7 @@ const positionLine = (
 };
 
 const drawTree = (
-  elem: D3SVGElement<SVGGElement>,
+  elem: SVGGroup,
   root: Node,
   config: Required<TreeViewDiagramConfig>,
   iconSVGs: Map<number, string>
@@ -138,7 +142,7 @@ const drawTree = (
   const renderInfos: RenderInfo[] = [];
 
   const drawNode = (
-    elem: D3SVGElement<SVGGElement>,
+    elem: SVGGroup,
     node: Node,
     config: Required<TreeViewDiagramConfig>,
     depth: number

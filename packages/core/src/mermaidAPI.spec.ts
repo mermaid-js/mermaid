@@ -1123,27 +1123,6 @@ ${diagram}`,
 
     // render(id, text, cb?, svgContainingElement?)
 
-    jsdomIt('preserves treeView icons after strict security sanitization', async () => {
-      mermaidAPI.initialize({ securityLevel: 'strict' });
-
-      const { svg } = await mermaidAPI.render(
-        'tree-view-strict-icons',
-        `---
-config:
-  treeView:
-    showIcons: true
----
-treeView-beta
-  src/
-    index.js`
-      );
-
-      const dom = new JSDOM(svg);
-      const iconNode = ensureNodeFromSelector('.treeView-node-icon', dom.window.document);
-      ensureNodeFromSelector('path', iconNode);
-      expect(dom.window.document.querySelector('use')).toBeNull();
-    });
-
     jsdomIt('shows the actual parse error message in the error diagram', async () => {
       const edges = Array.from({ length: 501 }, (_, index) => `N${index} --> N${index + 1}`).join(
         '\n'

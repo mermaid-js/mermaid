@@ -17,7 +17,6 @@ import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import block from '../diagrams/block/blockDetector.js';
-import treeView from '../diagrams/treeView/detector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import eventmodeling from '../diagrams/eventmodeling/detector.js';
 import venn from '../diagrams/venn/vennDetector.js';
@@ -98,7 +97,6 @@ export const addDiagrams = () => {
     xychart,
     block,
     eventmodeling,
-    treeView,
     treemap,
     railroad,
     railroadEbnf,

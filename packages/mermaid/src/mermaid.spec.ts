@@ -35,6 +35,7 @@ describe('mermaid', () => {
     { text: 'radar-beta', expected: 'radar' },
     { text: 'sankey', expected: 'sankey' },
     { text: 'sankey-beta', expected: 'sankey' },
+    { text: 'treeView-beta', expected: 'treeView' },
   ])('detects $text as $expected', ({ text, expected }) => {
     expect(mermaid.detectType(text)).toBe(expected);
   });

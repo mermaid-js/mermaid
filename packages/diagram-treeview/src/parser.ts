@@ -1,9 +1,9 @@
 import { parse, type TreeView } from '@mermaid-js/parser';
-import { getConfig } from '../../config.js';
-import type { ParserDefinition } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { sanitizeText } from '../common/common.js';
-import { populateCommonDb } from '../common/populateCommonDb.js';
+import { getConfig } from '@mermaid-js/core/config.js';
+import type { ParserDefinition } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
+import { populateCommonDb } from '@mermaid-js/core/diagrams/common/populateCommonDb.js';
 import { preprocessBoxDrawing, remapErrorLines } from './boxDrawingPreprocessor.js';
 import db from './db.js';
 import type { NodeType } from './types.js';
