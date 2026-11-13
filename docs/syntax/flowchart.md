@@ -1690,6 +1690,28 @@ flowchart TB
     end
 ```
 
+If a subgraph title contains emoji or symbols such as `★`, enclose the title in double quotes. With an explicit ID, put the quoted title inside the brackets.
+
+```mermaid
+flowchart TB
+    subgraph "🚀 Launch"
+        A --> B
+    end
+    subgraph status ["✅ Ready"]
+        C --> D
+    end
+```
+
+```mermaid-example
+flowchart TB
+    subgraph "🚀 Launch"
+        A --> B
+    end
+    subgraph status ["✅ Ready"]
+        C --> D
+    end
+```
+
 ### flowcharts
 
 With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
