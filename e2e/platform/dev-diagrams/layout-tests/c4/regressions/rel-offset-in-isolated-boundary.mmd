@@ -1,0 +1,15 @@
+---
+config:
+  layout: dagre
+---
+C4Container
+    title UpdateRelStyle offset inside a boundary no relationship crosses
+
+    Person(customer, "Customer")
+
+    System_Boundary(shop, "Web shop") {
+        Container(cart, "Cart", "Python")
+        Container(orders, "Orders", "Go")
+        Rel(cart, orders, "Places order")
+        UpdateRelStyle(cart, orders, $offsetX="60", $offsetY="-20")
+    }
