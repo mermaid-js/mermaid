@@ -28,6 +28,21 @@ describe('parsing a flow chart', function () {
     expect(edges[0].text).toBe('');
   });
 
+  it.each([
+    ['spaces', '  '],
+    ['a tab', '\t'],
+  ])('should handle %s at the end of class and click statements', function (_, ws) {
+    flow.parser.parse(
+      `flowchart LR\n  A-->B\n  class A foo${ws}\n  click B href "https://example.com" _blank${ws}\n  class B bar${ws}`
+    );
+
+    const vert = flow.parser.yy.getVertices();
+    expect(vert.get('A').classes).toEqual(['foo']);
+    expect(vert.get('B').classes).toContain('bar');
+    expect(vert.get('B').link).toBe('https://example.com/');
+    expect(vert.get('B').linkTarget).toBe('_blank');
+  });
+
   it('should accept swimlane-beta as a graph keyword', function () {
     flow.parser.parse('swimlane-beta LR;A-->B;');
 
