@@ -1,9 +1,9 @@
 import { select } from 'd3';
 import DOMPurify from 'dompurify';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { log } from '../../logger.js';
-import { generateId } from '../../utils.js';
-import common from '../common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { generateId } from '@mermaid-js/core/utils.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -12,8 +12,8 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
-import { createTooltip } from '../common/svgDrawCommon.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
+import { createTooltip } from '@mermaid-js/core/diagrams/common/svgDrawCommon.js';
 import { dataFetcher, reset as resetDataFetcher } from './dataFetcher.js';
 import { getDir } from './stateRenderer-v3-unified.js';
 import {
@@ -28,7 +28,7 @@ import {
   STMT_STATE,
   STMT_STYLEDEF,
 } from './stateCommon.js';
-import type { MermaidConfig } from '../../config.type.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
 
 const CONSTANTS = {
   START_NODE: '[*]',

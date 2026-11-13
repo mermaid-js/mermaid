@@ -37,6 +37,7 @@
     "@mermaid-js/diagram-requirement": "workspace:^",
     "@mermaid-js/diagram-sankey": "workspace:^",
     "@mermaid-js/diagram-sequence": "workspace:^",
+    "@mermaid-js/diagram-state": "workspace:^",
     "@mermaid-js/diagram-timeline": "workspace:^",
     "@mermaid-js/diagram-treemap": "workspace:^",
     "@mermaid-js/diagram-treeview": "workspace:^",

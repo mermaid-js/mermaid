@@ -645,6 +645,25 @@ importers:
         specifier: ^7.4.3
         version: 7.4.3
 
+  packages/diagram-state:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dagre-d3-es:
+        specifier: 7.0.14
+        version: 7.0.14
+      dompurify:
+        specifier: 3.4.17
+        version: 3.4.17
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-timeline:
     dependencies:
       '@mermaid-js/core':
@@ -825,6 +844,9 @@ importers:
       '@mermaid-js/diagram-sequence':
         specifier: workspace:^
         version: link:../diagram-sequence
+      '@mermaid-js/diagram-state':
+        specifier: workspace:^
+        version: link:../diagram-state
       '@mermaid-js/diagram-timeline':
         specifier: workspace:^
         version: link:../diagram-timeline
@@ -1186,6 +1208,9 @@ importers:
       '@mermaid-js/diagram-sequence':
         specifier: workspace:^
         version: link:../diagram-sequence
+      '@mermaid-js/diagram-state':
+        specifier: workspace:^
+        version: link:../diagram-state
       '@mermaid-js/diagram-timeline':
         specifier: workspace:^
         version: link:../diagram-timeline

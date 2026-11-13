@@ -15,11 +15,11 @@ vi.mock('./shapes.js', () => ({
   drawEdge: vi.fn(),
 }));
 
-vi.mock('../../setupGraphViewbox.js', () => ({
+vi.mock('@mermaid-js/core/setupGraphViewbox.js', () => ({
   configureSvgSize: vi.fn(),
 }));
 
-vi.mock('../../diagram-api/diagramAPI.js', () => ({
+vi.mock('@mermaid-js/core/diagram-api/diagramAPI.js', () => ({
   getConfig: vi.fn(() => ({
     securityLevel: 'loose',
     state: {

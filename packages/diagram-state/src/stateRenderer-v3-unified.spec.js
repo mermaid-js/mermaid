@@ -4,7 +4,7 @@ const renderState = vi.hoisted(() => ({
   nodeClass: 'node',
 }));
 
-vi.mock('../../diagram-api/diagramAPI.js', () => ({
+vi.mock('@mermaid-js/core/diagram-api/diagramAPI.js', () => ({
   getConfig: vi.fn(() => ({
     securityLevel: 'loose',
     state: {
@@ -18,7 +18,7 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
-vi.mock('../../rendering-util/render.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/render.js', () => ({
   getRegisteredLayoutAlgorithm: vi.fn((algorithm) => algorithm),
   render: vi.fn((data, svg) => {
     const layoutNode = data.nodes.find((node) => node.id === 'A') ?? data.nodes[0];
@@ -39,7 +39,7 @@ vi.mock('../../rendering-util/render.js', () => ({
   }),
 }));
 
-vi.mock('../../rendering-util/setupViewPortForSVG.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/setupViewPortForSVG.js', () => ({
   setupViewPortForSVG: vi.fn(),
 }));
 

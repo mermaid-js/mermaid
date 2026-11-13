@@ -1,7 +1,7 @@
-import type { MermaidConfig } from '../../config.type.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { log } from '../../logger.js';
-import common from '../common/common.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import {
   CSS_DIAGRAM_CLUSTER,
   CSS_DIAGRAM_CLUSTER_ALT,

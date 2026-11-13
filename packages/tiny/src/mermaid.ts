@@ -18,6 +18,7 @@ import { railroad, railroadAbnf, railroadEbnf, railroadPeg } from '@mermaid-js/d
 import requirement from '@mermaid-js/diagram-requirement';
 import sankey from '@mermaid-js/diagram-sankey';
 import sequence from '@mermaid-js/diagram-sequence';
+import stateV2 from '@mermaid-js/diagram-state';
 import timeline from '@mermaid-js/diagram-timeline';
 import { treemap } from '@mermaid-js/diagram-treemap';
 import treeView from '@mermaid-js/diagram-treeview';
@@ -48,6 +49,7 @@ void mermaid.registerExternalDiagrams([
   requirement,
   sankey,
   sequence,
+  stateV2,
   timeline,
   treeView,
   treemap,

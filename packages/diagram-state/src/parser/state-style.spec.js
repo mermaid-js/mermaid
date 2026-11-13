@@ -1,4 +1,4 @@
-import { setConfig } from '../../../config.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 import { StateDB } from '../stateDb.js';
 import stateDiagram from './stateDiagram.jison';
 

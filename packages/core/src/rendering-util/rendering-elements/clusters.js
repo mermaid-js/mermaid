@@ -192,7 +192,7 @@ const roundedWithTitle = async (parent, node) => {
     .attr('data-id', node.id)
     .attr('data-look', node.look);
 
-  // Per-composite colour slot, painted by the `[data-color-id]` rules in `state/styles.js`.
+  // Per-composite colour slot, painted by the `[data-color-id]` rules in the state stylesheet.
   // A no-op unless the active theme carries a palette.
   stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
@@ -460,7 +460,7 @@ const divider = (parent, node) => {
       // Solid rather than roughjs's default hachure. A hachure fill is drawn as *stroked*
       // lines, so both of the group's paths come out with `fill="none"` and a stylesheet
       // cannot tell the fill from the outline -- which is the same trap documented on
-      // `roundedWithTitle`'s inner shape in `state/styles.js`. Solid splits them the way
+      // `roundedWithTitle`'s inner shape in the state stylesheet. Solid splits them the way
       // the composite's outer shape already does, so a region can take the palette's tint
       // and border without its hatching being repainted. `roundedWithTitle` fills solid
       // too, except for its deliberately hatched alt variant.

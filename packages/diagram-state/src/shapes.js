@@ -1,9 +1,9 @@
 import { line, curveBasis } from 'd3';
 import { StateDB } from './stateDb.js';
-import utils from '../../utils.js';
-import common, { getUrl } from '../common/common.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { log } from '../../logger.js';
+import utils from '@mermaid-js/core/utils.js';
+import common, { getUrl } from '@mermaid-js/core/diagrams/common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
 
 /**
  * Draws a start state as a black circle

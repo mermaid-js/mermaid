@@ -1,4 +1,9 @@
-import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
+import {
+  hasPalette,
+  isColorTheme,
+  paletteSlotCount,
+  safeLook,
+} from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
 
 /**
  * Cycling per-container colour for composite states and concurrency regions.
