@@ -210,7 +210,9 @@ export class FlowDB implements DiagramDB {
         yamlData = metadata + '\n';
       }
       doc = withoutInternalKeys(
-        stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData)
+        stripPrototypeKeys(
+          (yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) ?? {}) as NodeMetaData
+        )
       );
     }
 

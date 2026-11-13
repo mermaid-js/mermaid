@@ -13,6 +13,36 @@ describe('when parsing directions', function () {
     flow.parser.yy.setGen('gen-2');
   });
 
+  it.each(['', ' shape: rounded ', '\n  shape: rounded\n'])(
+    'emits both metadata delimiters without adding them to the YAML: %j',
+    (metadata) => {
+      const lexer = Object.create(flow.parser.lexer);
+      lexer.setInput(`@{${metadata}};`, flow.parser.yy);
+
+      expect(lexer.lex()).toBe(flow.parser.symbols_.SHAPE_DATA);
+      expect(lexer.yytext).toBe('');
+      if (metadata) {
+        expect(lexer.lex()).toBe(flow.parser.symbols_.SHAPE_DATA);
+        expect(lexer.yytext).toBe(metadata);
+      }
+      expect(lexer.lex()).toBe(flow.parser.symbols_.SHAPE_DATA);
+      expect(lexer.yytext).toBe('');
+      expect(lexer.lex()).toBe(flow.parser.symbols_.SEMI);
+    }
+  );
+
+  it.each(['\n', ' \n ', ' # comment\n', '\n# comment\n'])(
+    'should treat blank or comment-only multi-line shape data as empty: %j',
+    (metadata) => {
+      flow.parser.parse(`flowchart TB\nA@{${metadata}}`);
+
+      const data4Layout = flow.parser.yy.getData();
+      expect(data4Layout.nodes.length).toBe(1);
+      expect(data4Layout.nodes[0].id).toEqual('A');
+      expect(data4Layout.nodes[0].label).toEqual('A');
+    }
+  );
+
   it('should handle basic shape data statements', function () {
     const res = flow.parser.parse(`flowchart TB
       D@{ shape: rounded}`);

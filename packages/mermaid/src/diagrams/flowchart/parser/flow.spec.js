@@ -13,6 +13,22 @@ describe('parsing a flow chart', function () {
     flow.parser.yy.clear();
   });
 
+  it.each(['\n', '\r\n'])('applies multiline metadata with %j newlines', (newline) => {
+    flow.parser.parse(
+      [
+        'flowchart TD',
+        'A[First]',
+        'A@{',
+        '  shape: circle',
+        '  label: "Second"',
+        '}',
+        'A --> B',
+      ].join(newline)
+    );
+    expect(flow.parser.yy.getVertices().get('A')).toMatchObject({ type: 'circle', text: 'Second' });
+    expect(flow.parser.yy.getEdges()[0]).toMatchObject({ start: 'A', end: 'B' });
+  });
+
   it('should handle a trailing whitespaces after statements', function () {
     const res = flow.parser.parse(cleanupComments('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;'));
 

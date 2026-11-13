@@ -61,6 +61,8 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <shapeData>"}"                                    {
                                                     // console.log('<== root', yytext)
                                                     this.popState();
+                                                    yytext = "";
+                                                    return 'SHAPE_DATA';
                                                 }
 
 /*
