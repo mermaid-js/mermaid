@@ -14,7 +14,11 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const db = diagObj.db as typeof XYChartDB;
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
-  const labelData = db.getXYChartData().plots[0].data.map((data) => data[1]);
+  const { plots } = db.getXYChartData();
+  if (plots.length === 0) {
+    throw new Error('xychart-beta needs at least one bar or line series.');
+  }
+  const labelData = plots[0].data.map((data) => data[1]);
   function getDominantBaseLine(horizontalPos: TextVerticalPos) {
     return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
