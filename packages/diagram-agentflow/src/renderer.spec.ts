@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 
-vi.mock('../../rendering-util/render.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/render.js', () => ({
   getRegisteredLayoutAlgorithm: vi.fn().mockReturnValue('dagre'),
   render: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock('../../rendering-util/insertElementsForSize.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/insertElementsForSize.js', () => ({
   getDiagramElement: vi.fn().mockReturnValue({
     attr: vi.fn().mockReturnThis(),
     select: vi.fn().mockReturnThis(),
@@ -13,11 +13,11 @@ vi.mock('../../rendering-util/insertElementsForSize.js', () => ({
   }),
 }));
 
-vi.mock('../../rendering-util/setupViewPortForSVG.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/setupViewPortForSVG.js', () => ({
   setupViewPortForSVG: vi.fn(),
 }));
 
-vi.mock('../../utils.js', () => ({
+vi.mock('@mermaid-js/core/utils.js', () => ({
   default: {
     insertTitle: vi.fn(),
   },

@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import * as configApi from '../../config.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { LayoutData } from '../../rendering-util/types.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
 import getStyles from './styles.js';
 import {
   KIND_COUNT,

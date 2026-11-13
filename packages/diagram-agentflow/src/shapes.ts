@@ -6,7 +6,7 @@
  * `addVertex` time) and `transformData.ts` (validation at render time), and the
  * two copies had already drifted.
  */
-import { log } from '../../logger.js';
+import { log } from '@mermaid-js/core/logger.js';
 
 /**
  * v0.8.1 shape aliases (§4.3.2). Author-friendly names map to canonical Mermaid

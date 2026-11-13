@@ -1,3 +1,4 @@
+/// <reference types="node" />
 /**
  * Agentflow conformance suite — part 1 of issue #13.
  *

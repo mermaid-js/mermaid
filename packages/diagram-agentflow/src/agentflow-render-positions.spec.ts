@@ -9,11 +9,11 @@
 // because `getDiagramFromText()` did pass the object, `parse()` and `render()`
 // handed the parser different strings for the same input.
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
-import { mermaidAPI } from '../../mermaidAPI.js';
-import { jsdomIt } from '../../tests/util.js';
-import { getDiagram } from '../../diagram-api/diagramAPI.js';
-import { detectors } from '../../diagram-api/detectType.js';
+import { addDiagrams } from '@mermaid-js/core/diagram-api/diagram-orchestration.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import { jsdomIt } from '@mermaid-js/core/tests/util.js';
+import { getDiagram } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { detectors } from '@mermaid-js/core/diagram-api/detectType.js';
 import { AgentFlowDB } from './agentflowDb.js';
 
 /** Capture every AgentFlowDB the render pipeline instantiates. */

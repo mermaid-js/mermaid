@@ -33,6 +33,7 @@ describe('mermaid', () => {
   });
 
   it.each([
+    { text: 'agentflow-beta', expected: 'agentflow' },
     { text: 'architecture-beta', expected: 'architecture' },
     { text: 'block', expected: 'block' },
     { text: 'block-beta', expected: 'block' },
@@ -79,6 +80,7 @@ describe('mermaid', () => {
     { text: 'xychart', expected: 'xychart' },
     { text: 'xychart-beta', expected: 'xychart' },
     // C4's detector matches its keywords anywhere, so only the diagrams before it win.
+    { text: 'agentflow-beta\n  C4Container', expected: 'agentflow' },
     { text: 'mindmap\n  C4Container', expected: 'mindmap' },
     { text: 'flowchart\n  C4Container', expected: 'c4' },
   ])('detects $text as $expected', ({ text, expected }) => {

@@ -1,5 +1,6 @@
 // The `mermaid` entry, minus its large layouts, diagrams and KaTeX.
 import mermaid from '@mermaid-js/core';
+import agentflow from '@mermaid-js/diagram-agentflow';
 import block from '@mermaid-js/diagram-block';
 import c4 from '@mermaid-js/diagram-c4';
 import classDiagramV2 from '@mermaid-js/diagram-class';
@@ -32,6 +33,7 @@ import xychart from '@mermaid-js/diagram-xychart';
 
 // `diagrams.ts`'s list, in the same order, minus the large diagrams.
 void mermaid.registerExternalDiagrams([
+  agentflow,
   c4,
   block,
   classDiagramV2,

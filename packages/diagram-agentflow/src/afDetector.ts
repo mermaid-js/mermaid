@@ -2,7 +2,7 @@ import type {
   DiagramDetector,
   DiagramLoader,
   ExternalDiagramDefinition,
-} from '../../diagram-api/types.js';
+} from '@mermaid-js/core/diagram-api/types.js';
 
 const id = 'agentflow';
 

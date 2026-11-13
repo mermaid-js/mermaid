@@ -27,7 +27,7 @@ Reproduce the comparison with:
 
 ```bash
 diff <(sed -n '/%lex/,/\/lex/p' packages/diagram-flowchart/src/parser/flow.jison) \
-     <(sed -n '/%lex/,/\/lex/p' packages/core/src/diagrams/agentflow/parser/agentflow.jison)
+     <(sed -n '/%lex/,/\/lex/p' packages/diagram-agentflow/src/parser/agentflow.jison)
 ```
 
 | Divergence                                                                                                                                  | Why                                                                                                                                                                                                                                      |

@@ -11,7 +11,7 @@
 
 import { AgentFlowDB } from '../agentflowDb.js';
 import agentflow from './agentflowParser.js';
-import { setConfig } from '../../../config.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 
 setConfig({
   securityLevel: 'strict',

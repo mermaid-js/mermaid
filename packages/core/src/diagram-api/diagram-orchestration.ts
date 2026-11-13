@@ -1,8 +1,5 @@
-import agentflow from '../diagrams/agentflow/afDetector.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
-import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
-import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -45,7 +42,4 @@ export const addDiagrams = () => {
       return text.toLowerCase().trimStart().startsWith('---');
     }
   );
-
-  // Ordering of detectors is important. The first one to return true will be used.
-  registerLazyLoadedDiagrams(agentflow);
 };

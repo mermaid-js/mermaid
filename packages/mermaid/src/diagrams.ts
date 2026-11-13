@@ -1,4 +1,5 @@
 import type { ExternalDiagramDefinition } from '@mermaid-js/core';
+import agentflow from '@mermaid-js/diagram-agentflow';
 import architecture from '@mermaid-js/diagram-architecture';
 import block from '@mermaid-js/diagram-block';
 import c4 from '@mermaid-js/diagram-c4';
@@ -39,6 +40,7 @@ export const diagrams: ExternalDiagramDefinition[] = [
   flowchartElk,
   mindmap,
   architecture,
+  agentflow,
   c4,
   // The rest don't overlap.
   block,

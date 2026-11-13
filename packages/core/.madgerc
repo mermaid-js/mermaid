@@ -12,8 +12,7 @@
     "ts"
   ],
   "excludeRegExp": [
-    "node_modules",
-    "Detector"
+    "node_modules"
   ],
   "tsConfig": "./tsconfig.json"
 }

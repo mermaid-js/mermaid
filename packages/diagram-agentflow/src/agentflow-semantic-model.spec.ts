@@ -10,7 +10,7 @@
  */
 
 import { AgentFlowDB } from './agentflowDb.js';
-import { setConfig } from '../../config.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 import agentflow from './parser/agentflowParser.js';
 
 setConfig({

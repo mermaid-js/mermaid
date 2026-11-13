@@ -4,9 +4,9 @@ import { addDiagrams } from './diagram-orchestration.js';
 
 describe('diagram-orchestration', () => {
   it('should register diagrams', () => {
-    expect(() => detectType('agentflow-beta')).toThrow();
+    expect(() => detectType('error')).toThrow();
     addDiagrams();
-    expect(detectType('agentflow-beta')).toBe('agentflow');
+    expect(detectType('error')).toBe('error');
   });
 
   describe('proper diagram types should be detected', () => {

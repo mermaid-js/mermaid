@@ -1,15 +1,18 @@
 import { select } from 'd3';
-import * as yaml from 'js-yaml';
-import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
-import type { ClusterShapeID } from '../../rendering-util/rendering-elements/clusters.js';
-import type { Edge, Node } from '../../rendering-util/types.js';
-import type { EdgeMetaData, NodeMetaData } from '../../types.js';
-import utils, { getEdgeId } from '../../utils.js';
-import { validateGridPlacementCoordinates } from '../../utils/gridPlacement.js';
-import common from '../common/common.js';
+import * as yaml from '@mermaid-js/core/utils/yaml.js';
+import { getConfig, defaultConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import {
+  isValidShape,
+  type ShapeID,
+} from '@mermaid-js/core/rendering-util/rendering-elements/shapes.js';
+import type { ClusterShapeID } from '@mermaid-js/core/rendering-util/rendering-elements/clusters.js';
+import type { Edge, Node } from '@mermaid-js/core/rendering-util/types.js';
+import type { EdgeMetaData, NodeMetaData } from '@mermaid-js/core/types.js';
+import utils, { getEdgeId } from '@mermaid-js/core/utils.js';
+import { validateGridPlacementCoordinates } from '@mermaid-js/core/utils/gridPlacement.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -18,9 +21,9 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../common/commonDb.js';
-import { stripPrototypeKeys } from '../common/sanitizeMetadata.js';
-import { createTooltip } from '../common/svgDrawCommon.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
+import { stripPrototypeKeys } from '@mermaid-js/core/diagrams/common/sanitizeMetadata.js';
+import { createTooltip } from '@mermaid-js/core/diagrams/common/svgDrawCommon.js';
 import type {
   AgentflowElementMapping,
   AgentflowSemanticModel,

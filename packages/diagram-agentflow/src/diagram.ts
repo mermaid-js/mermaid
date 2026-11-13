@@ -1,5 +1,5 @@
-import type { MermaidConfig } from '../../config.type.js';
-import { setConfig } from '../../diagram-api/diagramAPI.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
+import { setConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import { AgentFlowDB } from './agentflowDb.js';
 import renderer from './renderer.js';
 // @ts-ignore: JISON doesn't support types

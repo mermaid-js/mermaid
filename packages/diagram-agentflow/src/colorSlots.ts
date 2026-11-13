@@ -19,8 +19,8 @@
  * one-to-one with kind — a `connector` and a `task` are both `roundedRect` — so inverting
  * the shape map would silently paint every connector as a task.
  */
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { Node } from '../../rendering-util/types.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { Node } from '@mermaid-js/core/rendering-util/types.js';
 
 /**
  * Fixed slot per kind. Declaration order of this map is the palette order, so `tool` is

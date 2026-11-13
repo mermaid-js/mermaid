@@ -12,10 +12,10 @@
  * the comment-stripped text it would have used before.
  */
 import { beforeAll, describe, expect, vi } from 'vitest';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
-import { log } from '../../logger.js';
-import { mermaidAPI } from '../../mermaidAPI.js';
-import { jsdomIt } from '../../tests/util.js';
+import { addDiagrams } from '@mermaid-js/core/diagram-api/diagram-orchestration.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import { jsdomIt } from '@mermaid-js/core/tests/util.js';
 import { AgentFlowDB } from './agentflowDb.js';
 
 /** Capture every AgentFlowDB the render pipeline instantiates. */

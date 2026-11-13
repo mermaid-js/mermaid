@@ -1,4 +1,4 @@
-import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import type { ShapeID } from '@mermaid-js/core/rendering-util/rendering-elements/shapes.js';
 import type { AgentflowDiagnostic } from './diagnostics.js';
 
 /**

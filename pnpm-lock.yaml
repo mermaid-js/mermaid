@@ -362,6 +362,25 @@ importers:
         specifier: ~5.7.3
         version: 5.7.3
 
+  packages/diagram-agentflow:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dompurify:
+        specifier: 3.4.17
+        version: 3.4.17
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-architecture:
     dependencies:
       '@mermaid-js/core':
@@ -841,6 +860,9 @@ importers:
       '@mermaid-js/core':
         specifier: workspace:^
         version: link:../core
+      '@mermaid-js/diagram-agentflow':
+        specifier: workspace:^
+        version: link:../diagram-agentflow
       '@mermaid-js/diagram-architecture':
         specifier: workspace:^
         version: link:../diagram-architecture
@@ -1223,6 +1245,9 @@ importers:
       '@mermaid-js/core':
         specifier: workspace:^
         version: link:../core
+      '@mermaid-js/diagram-agentflow':
+        specifier: workspace:^
+        version: link:../diagram-agentflow
       '@mermaid-js/diagram-block':
         specifier: workspace:^
         version: link:../diagram-block

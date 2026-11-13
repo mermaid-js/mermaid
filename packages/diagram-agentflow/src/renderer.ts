@@ -1,11 +1,11 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
-import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
-import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
-import type { LayoutData } from '../../rendering-util/types.js';
-import utils from '../../utils.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DiagramStyleClassDef } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getDiagramElement } from '@mermaid-js/core/rendering-util/insertElementsForSize.js';
+import { getRegisteredLayoutAlgorithm, render } from '@mermaid-js/core/rendering-util/render.js';
+import { setupViewPortForSVG } from '@mermaid-js/core/rendering-util/setupViewPortForSVG.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
+import utils from '@mermaid-js/core/utils.js';
 
 export const getClasses = function (
   text: string,

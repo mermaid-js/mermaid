@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import * as configApi from '../../config.js';
-import { Diagram } from '../../Diagram.js';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
-import { setLogLevel } from '../../logger.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import { Diagram } from '@mermaid-js/core/Diagram.js';
+import { addDiagrams } from '@mermaid-js/core/diagram-api/diagram-orchestration.js';
+import { setLogLevel } from '@mermaid-js/core/logger.js';
 import { KIND_COUNT } from './colorSlots.js';
 
 /**

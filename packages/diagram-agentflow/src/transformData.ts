@@ -1,4 +1,4 @@
-import type { LayoutData } from '../../rendering-util/types.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
 import type { AgentFlowDB } from './agentflowDb.js';
 import { normaliseNodeShapes } from './shapes.js';
 

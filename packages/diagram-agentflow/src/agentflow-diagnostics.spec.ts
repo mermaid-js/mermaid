@@ -12,11 +12,11 @@
 
 import { AgentFlowDB } from './agentflowDb.js';
 import { AgentflowWarning } from './diagnostics.js';
-import { log } from '../../logger.js';
-import { setConfig } from '../../config.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 import { transformData } from './transformData.js';
 import agentflow from './parser/agentflowParser.js';
-import type { LayoutData } from '../../rendering-util/types.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
 
 setConfig({
   securityLevel: 'strict',
