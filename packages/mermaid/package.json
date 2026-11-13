@@ -81,6 +81,7 @@
     "@mermaid-js/diagram-pie": "workspace:^",
     "@mermaid-js/diagram-quadrant": "workspace:^",
     "@mermaid-js/diagram-radar": "workspace:^",
+    "@mermaid-js/diagram-railroad": "workspace:^",
     "@mermaid-js/diagram-requirement": "workspace:^",
     "@mermaid-js/diagram-sankey": "workspace:^",
     "@mermaid-js/diagram-timeline": "workspace:^",

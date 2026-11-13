@@ -1,4 +1,4 @@
-import type { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '@mermaid-js/core/diagram-api/types.js';
 import { parser } from './parser/railroadParser.js';
 import { db } from './railroadDb.js';
 import { renderer } from './railroadRenderer.js';

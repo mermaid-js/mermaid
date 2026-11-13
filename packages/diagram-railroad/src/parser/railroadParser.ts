@@ -15,9 +15,9 @@ import {
   type RailroadZeroOrMoreExpr,
 } from '@mermaid-js/parser';
 
-import type { ParserDefinition } from '../../../diagram-api/types.js';
-import { log } from '../../../logger.js';
-import { populateCommonDb } from '../../common/populateCommonDb.js';
+import type { ParserDefinition } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { populateCommonDb } from '@mermaid-js/core/diagrams/common/populateCommonDb.js';
 import { db } from '../railroadDb.js';
 import type { ASTNode, RailroadRule } from '../railroadTypes.js';
 

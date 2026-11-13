@@ -11,6 +11,7 @@ import { packet } from '@mermaid-js/diagram-packet';
 import { pie } from '@mermaid-js/diagram-pie';
 import quadrantChart from '@mermaid-js/diagram-quadrant';
 import { radar } from '@mermaid-js/diagram-radar';
+import { railroad, railroadAbnf, railroadEbnf, railroadPeg } from '@mermaid-js/diagram-railroad';
 import requirement from '@mermaid-js/diagram-requirement';
 import sankey from '@mermaid-js/diagram-sankey';
 import timeline from '@mermaid-js/diagram-timeline';
@@ -30,6 +31,10 @@ void mermaid.registerExternalDiagrams([
   pie,
   quadrantChart,
   radar,
+  railroad,
+  railroadAbnf,
+  railroadEbnf,
+  railroadPeg,
   requirement,
   sankey,
   timeline,

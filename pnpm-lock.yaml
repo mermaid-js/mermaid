@@ -518,6 +518,19 @@ importers:
         specifier: workspace:^
         version: link:../parser
 
+  packages/diagram-railroad:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-requirement:
     dependencies:
       '@mermaid-js/core':
@@ -657,6 +670,9 @@ importers:
       '@mermaid-js/diagram-radar':
         specifier: workspace:^
         version: link:../diagram-radar
+      '@mermaid-js/diagram-railroad':
+        specifier: workspace:^
+        version: link:../diagram-railroad
       '@mermaid-js/diagram-requirement':
         specifier: workspace:^
         version: link:../diagram-requirement
@@ -994,6 +1010,9 @@ importers:
       '@mermaid-js/diagram-radar':
         specifier: workspace:^
         version: link:../diagram-radar
+      '@mermaid-js/diagram-railroad':
+        specifier: workspace:^
+        version: link:../diagram-railroad
       '@mermaid-js/diagram-requirement':
         specifier: workspace:^
         version: link:../diagram-requirement

@@ -1,6 +1,6 @@
 import { beforeEach, describe, it, expect } from 'vitest';
-import * as configApi from '../../config.js';
-import themes from '../../themes/index.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import themes from '@mermaid-js/core/themes/index.js';
 import { getStyles } from './styles.js';
 
 describe('Railroad Styles', () => {

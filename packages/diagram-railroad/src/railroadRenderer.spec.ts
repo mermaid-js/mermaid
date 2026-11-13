@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { Diagram } from '../../Diagram.js';
-import { reset } from '../../config.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import { reset } from '@mermaid-js/core/config.js';
 import { db } from './railroadDb.js';
 import { renderer } from './railroadRenderer.js';
 import { parser } from './parser/railroadParser.js';

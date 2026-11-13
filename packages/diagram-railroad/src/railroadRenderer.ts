@@ -1,11 +1,11 @@
 // cspell:ignore nonterminal
 import type d3 from 'd3';
-import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
+import type { DrawDefinition, SVG } from '@mermaid-js/core/diagram-api/types.js';
 import type { ASTNode, RailroadRule, RenderResult } from './railroadTypes.js';
-import { log } from '../../logger.js';
-import { getConfig as getConfigAPI } from '../../config.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getConfig as getConfigAPI } from '@mermaid-js/core/config.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import { db } from './railroadDb.js';
 import { buildRailroadStyleOptions } from './styles.js';
 

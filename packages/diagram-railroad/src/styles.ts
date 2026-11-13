@@ -1,7 +1,7 @@
 // cspell:ignore nonterminal
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { getConfig as getConfigAPI } from '../../config.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
+import { getConfig as getConfigAPI } from '@mermaid-js/core/config.js';
+import { getThemeVariables } from '@mermaid-js/core/themes/theme-default.js';
 import { DEFAULT_RAILROAD_CONFIG, type RailroadStyleOptions } from './railroadTypes.js';
 
 type ThemeVariables = ReturnType<typeof getThemeVariables>;

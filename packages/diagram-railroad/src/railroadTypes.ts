@@ -1,5 +1,5 @@
 // cspell:ignore nonterminal
-import type { DiagramDB } from '../../diagram-api/types.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
 
 /**
  * AST Node types for Railroad diagram expressions

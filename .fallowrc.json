@@ -44,7 +44,6 @@
     "packages/core/src/diagrams/gantt/**",
     "packages/core/src/diagrams/git/**",
     "packages/core/src/diagrams/globalStyles.ts",
-    "packages/core/src/diagrams/railroad/**",
     "packages/core/src/diagrams/sequence/**",
     "packages/core/src/diagrams/state/**",
     "packages/core/src/diagrams/swimlanes/**",
