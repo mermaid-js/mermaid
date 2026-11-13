@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import { updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
@@ -339,7 +340,19 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   return shapeSvg;
 }
 
-// Helper function to add label text g with translate position and style
+/**
+ * Add a translated ER label, preserving generic type notation in its text.
+ * Size HTML labels in SVG user units before returning their layout dimensions.
+ *
+ * @param shapeSvg - Shape group receiving the label.
+ * @param labelText - Label content, which may include generic type notation.
+ * @param config - Label rendering configuration.
+ * @param translateX - Horizontal label translation in SVG user units.
+ * @param translateY - Vertical label translation in SVG user units.
+ * @param classes - Additional CSS classes for the label group.
+ * @param style - Inline label styles.
+ * @returns The measured label box used for layout.
+ */
 async function addText<T extends SVGGraphicsElement>(
   shapeSvg: D3Selection<T>,
   labelText: string,
@@ -390,7 +403,7 @@ async function addText<T extends SVGGraphicsElement>(
     const div = text.children[0] as HTMLDivElement;
     div.style.textAlign = 'start';
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }

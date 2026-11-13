@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import type { Node } from '../../types.js';
 import { select } from 'd3';
 import { updateNodeBounds } from './util.js';
@@ -11,6 +12,14 @@ import { log } from '../../../logger.js';
 import type { D3Selection } from '../../../types.js';
 import { getEffectiveHtmlLabels } from '../../../config.js';
 
+/**
+ * Render a rectangular node with separate title and description sections.
+ * Size the outline and divider from the label geometry and update node intersections.
+ *
+ * @param parent - SVG container receiving the node.
+ * @param node - Node title, description, padding and visual styles.
+ * @returns The SVG group containing the rendered node.
+ */
 export async function rectWithTitle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -45,7 +54,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
@@ -63,7 +72,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   //if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
   const div = descr.children[0];
   const dv = select(descr);
-  bbox = div.getBoundingClientRect();
+  bbox = measureHtmlLabel(div);
   dv.attr('width', bbox.width);
   dv.attr('height', bbox.height);
   // }
