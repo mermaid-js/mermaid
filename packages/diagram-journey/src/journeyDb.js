@@ -1,4 +1,4 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -7,7 +7,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 
 let currentSection = '';
 

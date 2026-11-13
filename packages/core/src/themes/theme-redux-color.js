@@ -301,7 +301,7 @@ class Theme {
 
     /* user-journey */
     // Journey task labels resolve to the theme's `textColor` (#28253D here), so these
-    // fills have to stay light. user-journey/styles.js also carries a hardcoded
+    // fills have to stay light. The journey stylesheet also carries a hardcoded
     // `.label text { fill: #333 }` rule, but it does not win -- confirmed against the
     // rendered DOM, not read off the stylesheet. The pale background array keeps the
     // fills hue-distinct where the old tints of `primaryColor` were eight shades of the

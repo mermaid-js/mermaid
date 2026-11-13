@@ -10,7 +10,6 @@ import xychart from '../diagrams/xychart/xychartDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
 import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
 import stateV2 from '../diagrams/state/stateDetector-V2.js';
-import journey from '../diagrams/user-journey/journeyDetector.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
@@ -88,7 +87,6 @@ export const addDiagrams = () => {
     timeline,
     git,
     stateV2,
-    journey,
     quadrantChart,
     xychart,
     block,

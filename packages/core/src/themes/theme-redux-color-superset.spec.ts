@@ -172,7 +172,7 @@ describe.each(['redux-color', 'redux-dark-color'] as const)('%s chart palettes',
 
   /**
    * User-journey paints task labels with the theme's `textColor` (verified against the
-   * rendered DOM, not the stylesheet -- `user-journey/styles.js` also carries a
+   * rendered DOM, not the stylesheet -- the journey stylesheet also carries a
    * hardcoded `.label text { fill: #333 }` rule that does not win). So a light theme
    * needs light fills and a dark theme needs dark ones. Picking fills off the shared
    * categorical scale gets this wrong in the dark theme: the labels end up light ink on

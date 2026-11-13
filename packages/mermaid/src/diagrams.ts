@@ -3,6 +3,7 @@ import { cynefin } from '@mermaid-js/diagram-cynefin';
 import eventmodeling from '@mermaid-js/diagram-eventmodeling';
 import { info } from '@mermaid-js/diagram-info';
 import { ishikawa } from '@mermaid-js/diagram-ishikawa';
+import journey from '@mermaid-js/diagram-journey';
 import kanban from '@mermaid-js/diagram-kanban';
 import { packet } from '@mermaid-js/diagram-packet';
 import { pie } from '@mermaid-js/diagram-pie';
@@ -17,6 +18,7 @@ export const diagrams: ExternalDiagramDefinition[] = [
   eventmodeling,
   info,
   ishikawa,
+  journey,
   kanban,
   packet,
   pie,

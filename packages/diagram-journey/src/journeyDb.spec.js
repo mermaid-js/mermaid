@@ -1,5 +1,5 @@
 import journeyDb from './journeyDb.js';
-import { convert } from '../../tests/util.js';
+import { convert } from '@mermaid-js/core/tests/util.js';
 
 describe('when using the journeyDb', function () {
   beforeEach(function () {

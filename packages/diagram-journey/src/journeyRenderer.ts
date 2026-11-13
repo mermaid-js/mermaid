@@ -1,8 +1,8 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw from './svgDraw.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);

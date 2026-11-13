@@ -1,4 +1,4 @@
-import { getIconStyles } from '../globalStyles.js';
+import { getIconStyles } from '@mermaid-js/core/diagrams/globalStyles.js';
 
 const getStyles = (options) =>
   `.label {

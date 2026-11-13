@@ -53,7 +53,6 @@
     "packages/core/src/diagrams/swimlanes/**",
     "packages/core/src/diagrams/timeline/**",
     "packages/core/src/diagrams/treemap/**",
-    "packages/core/src/diagrams/user-journey/**",
     "packages/core/src/diagrams/venn/**",
     "packages/core/src/diagrams/wardley/**",
     "packages/core/src/diagrams/xychart/**",

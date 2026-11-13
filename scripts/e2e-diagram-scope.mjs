@@ -149,6 +149,9 @@ const SHARED_PREFIXES = [
 // packages/core/src/diagrams/<name>/... or packages/diagram-<name>/...
 const DIAGRAM_PATH_RE = /^packages\/(?:core\/src\/diagrams\/|diagram-)([^/]+)\//;
 
+// Diagram packages named differently from their e2e folders.
+const PACKAGE_E2E_NAMES = { journey: 'user-journey' };
+
 // ---------------------------------------------------------------------------
 // Core detection function
 // ---------------------------------------------------------------------------
@@ -199,7 +202,7 @@ export function detectScope(files, options = {}) {
     // File inside a diagram folder
     const diagramMatch = DIAGRAM_PATH_RE.exec(trimmed);
     if (diagramMatch) {
-      const name = diagramMatch[1];
+      const name = PACKAGE_E2E_NAMES[diagramMatch[1]] ?? diagramMatch[1];
       // 'common' and 'globalStyles' are shared — already caught above,
       // but guard here for safety
       if (name === 'common' || name === 'globalStyles') {

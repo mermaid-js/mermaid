@@ -67,6 +67,12 @@ describe('detectScope', () => {
     expect(detectScope(['package.json'])).toBe('');
   });
 
+  it('maps a diagram package to its differently named spec folder', () => {
+    expect(detectScope(['packages/diagram-journey/src/journeyDb.js']).split(',')).toContain(
+      `${SPEC_BASE_DIR}/user-journey/`
+    );
+  });
+
   it('combines patterns from two different diagrams', () => {
     const result = detectScope([
       'packages/core/src/diagrams/gantt/ganttDb.ts',

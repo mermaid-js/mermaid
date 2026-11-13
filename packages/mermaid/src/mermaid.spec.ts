@@ -30,6 +30,7 @@ describe('mermaid', () => {
     { text: 'info', expected: 'info' },
     { text: 'ishikawa', expected: 'ishikawa' },
     { text: 'ishikawa-beta', expected: 'ishikawa' },
+    { text: 'journey', expected: 'journey' },
     { text: 'kanban', expected: 'kanban' },
     { text: 'packet', expected: 'packet' },
     { text: 'packet-beta', expected: 'packet' },

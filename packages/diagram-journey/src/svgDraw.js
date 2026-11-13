@@ -1,5 +1,5 @@
 import { arc as d3arc } from 'd3';
-import * as svgDrawCommon from '../common/svgDrawCommon.js';
+import * as svgDrawCommon from '@mermaid-js/core/diagrams/common/svgDrawCommon.js';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
