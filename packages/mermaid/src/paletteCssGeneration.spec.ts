@@ -19,25 +19,19 @@
  *
  * These assertions are about the shape of the generated CSS rather than the colours, so
  * they keep holding when the palettes are retuned.
- *
- * Deliberately a sibling of the diagram folders rather than inside `common/`: it imports
- * two diagram stylesheets, and `common/` is imported by every diagram type, so a
- * cross-diagram spec in there would imply a dependency that does not exist.
  */
 import { describe, expect, it, afterEach } from 'vitest';
-import * as configApi from '../config.js';
-import type { MermaidConfig } from '../config.type.js';
-import themes from '../themes/index.js';
-import erStyles from './er/styles.js';
-import requirementStyles from './requirement/styles.js';
-import timelineStyles from './timeline/styles.js';
-import usecaseStyles from './usecase/styles.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
+import themes from '@mermaid-js/core/themes/index.js';
+import './mermaid.js';
+import { stylesOf } from './tests/stylesOf.js';
 
 const STYLESHEETS = {
-  er: erStyles,
-  requirement: requirementStyles,
-  timeline: timelineStyles,
-  usecase: usecaseStyles,
+  er: await stylesOf('er'),
+  requirement: await stylesOf('requirement'),
+  timeline: await stylesOf('timeline'),
+  usecase: await stylesOf('usecase'),
 } as const;
 
 type Stylesheet = keyof typeof STYLESHEETS;
