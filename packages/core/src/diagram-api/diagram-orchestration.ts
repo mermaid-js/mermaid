@@ -4,7 +4,6 @@ import agentflow from '../diagrams/agentflow/afDetector.js';
 import swimlanes from '../diagrams/swimlanes/detector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
-import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import xychart from '../diagrams/xychart/xychartDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
 import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
@@ -82,7 +81,6 @@ export const addDiagrams = () => {
     timeline,
     git,
     stateV2,
-    quadrantChart,
     xychart,
     block,
     railroad,

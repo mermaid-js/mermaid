@@ -496,6 +496,19 @@ importers:
         specifier: ^4.41.0
         version: 4.41.0
 
+  packages/diagram-quadrant:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-radar:
     dependencies:
       '@mermaid-js/core':
@@ -622,6 +635,9 @@ importers:
       '@mermaid-js/diagram-pie':
         specifier: workspace:^
         version: link:../diagram-pie
+      '@mermaid-js/diagram-quadrant':
+        specifier: workspace:^
+        version: link:../diagram-quadrant
       '@mermaid-js/diagram-radar':
         specifier: workspace:^
         version: link:../diagram-radar
@@ -953,6 +969,9 @@ importers:
       '@mermaid-js/diagram-pie':
         specifier: workspace:^
         version: link:../diagram-pie
+      '@mermaid-js/diagram-quadrant':
+        specifier: workspace:^
+        version: link:../diagram-quadrant
       '@mermaid-js/diagram-radar':
         specifier: workspace:^
         version: link:../diagram-radar

@@ -1,9 +1,9 @@
 import { scaleLinear } from 'd3';
-import type { BaseDiagramConfig, QuadrantChartConfig } from '../../config.type.js';
-import defaultConfig from '../../defaultConfig.js';
-import { log } from '../../logger.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import type { Point } from '../../types.js';
+import type { BaseDiagramConfig, QuadrantChartConfig } from '@mermaid-js/core/config.type.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getThemeVariables } from '@mermaid-js/core/themes/theme-default.js';
+import type { Point } from '@mermaid-js/core/types.js';
 
 const defaultThemeVariables = getThemeVariables();
 

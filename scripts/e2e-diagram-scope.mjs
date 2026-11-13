@@ -33,7 +33,7 @@ export const SPEC_BASE_DIR = 'e2e/rendering';
 // Where the global mmd snapshot runner's fixtures live.
 export const DIAGRAMS_DIR = 'e2e/diagrams';
 
-// Source diagram folders mix kebab- and camelCase (quadrant-chart, treeView)
+// Source diagram folders mix kebab- and camelCase (e.g. treeView)
 // while the fixture folders are kebab (tree-view); compare on a canonical
 // lowercased, hyphen-stripped name.
 const canonicalName = (name) => name.toLowerCase().replace(/-/g, '');
@@ -150,7 +150,7 @@ const SHARED_PREFIXES = [
 const DIAGRAM_PATH_RE = /^packages\/(?:core\/src\/diagrams\/|diagram-)([^/]+)\//;
 
 // Diagram packages named differently from their e2e folders.
-const PACKAGE_E2E_NAMES = { journey: 'user-journey' };
+const PACKAGE_E2E_NAMES = { journey: 'user-journey', quadrant: 'quadrant-chart' };
 
 // ---------------------------------------------------------------------------
 // Core detection function

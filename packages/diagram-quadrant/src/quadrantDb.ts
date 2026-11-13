@@ -1,5 +1,5 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { sanitizeText } from '../common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -8,7 +8,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { StylesObject } from './quadrantBuilder.js';
 import { QuadrantBuilder } from './quadrantBuilder.js';
 import {

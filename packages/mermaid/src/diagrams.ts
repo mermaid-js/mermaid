@@ -9,6 +9,7 @@ import kanban from '@mermaid-js/diagram-kanban';
 import mindmap from '@mermaid-js/diagram-mindmap';
 import { packet } from '@mermaid-js/diagram-packet';
 import { pie } from '@mermaid-js/diagram-pie';
+import quadrantChart from '@mermaid-js/diagram-quadrant';
 import { radar } from '@mermaid-js/diagram-radar';
 import requirement from '@mermaid-js/diagram-requirement';
 import sankey from '@mermaid-js/diagram-sankey';
@@ -28,6 +29,7 @@ export const diagrams: ExternalDiagramDefinition[] = [
   mindmap,
   packet,
   pie,
+  quadrantChart,
   radar,
   requirement,
   sankey,

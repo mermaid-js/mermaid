@@ -1,9 +1,9 @@
 // @ts-nocheck - don't check until handle it
 import { select } from 'd3';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { log } from '../../logger.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { Diagram } from '../../Diagram.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
 import type {
   QuadrantBuildType,
   QuadrantLineType,
