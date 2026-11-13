@@ -76,6 +76,31 @@ describe('nudgeSharedInteriorSubpaths', () => {
     expect(Math.abs(detouredX! - 52)).toBeGreaterThanOrEqual(7);
   });
 
+  describe.each([
+    { axis: 'vertical', at: (along: number, across: number) => ({ x: across, y: along }) },
+    { axis: 'horizontal', at: (along: number, across: number) => ({ x: along, y: across }) },
+  ])('with $axis rails', ({ at }) => {
+    const acrossOfLongRail = (points: PointLite[]): number =>
+      points[1].x === points[2].x ? points[1].x : points[1].y;
+
+    const nudgedRailAcross = (overlapStart: number): number => {
+      const edges = [
+        edge('detoured', [at(0, 0), at(0, 50), at(100, 50), at(100, 80)]),
+        edge('nearby', [at(overlapStart, 52), at(100, 52)]),
+      ];
+      nudgeSharedInteriorSubpaths(edges, new Map());
+      return acrossOfLongRail(edges[0].points);
+    };
+
+    it('nudges a rail whose overlap with a close rail is exactly the shared length', () => {
+      expect(nudgedRailAcross(92)).not.toBe(50);
+    });
+
+    it('leaves a rail alone when the overlap is just under the shared length', () => {
+      expect(nudgedRailAcross(92.5)).toBe(50);
+    });
+  });
+
   it('separates the close B/I exit rails from fixture 12', () => {
     const edges = [
       {
