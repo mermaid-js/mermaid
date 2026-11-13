@@ -312,9 +312,6 @@ importers:
       es-toolkit:
         specifier: ^1.45.1
         version: 1.45.1
-      katex:
-        specifier: ^0.18.0
-        version: 0.18.11
       khroma:
         specifier: ^2.1.0
         version: 2.1.0
@@ -358,9 +355,6 @@ importers:
       '@types/jsdom':
         specifier: ^21.1.7
         version: 21.1.7
-      '@types/katex':
-        specifier: ^0.16.8
-        version: 0.16.8
       '@types/stylis':
         specifier: ^4.2.7
         version: 4.2.7
@@ -409,6 +403,9 @@ importers:
       '@mermaid-js/layout-elk':
         specifier: workspace:^
         version: link:../mermaid-layout-elk
+      '@mermaid-js/plugin-katex':
+        specifier: workspace:^
+        version: link:../plugin-katex
     devDependencies:
       '@adobe/jsonschema2md':
         specifier: ^8.0.11
@@ -662,6 +659,15 @@ importers:
       langium:
         specifier: ~4.4.0
         version: 4.4.0
+
+  packages/plugin-katex:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      katex:
+        specifier: ^0.18.0
+        version: 0.18.11
 
   packages/tiny:
     devDependencies:
@@ -4117,9 +4123,6 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
-
-  '@types/katex@0.16.8':
-    resolution: {integrity: sha512-trgaNyfU+Xh2Tc+ABIb44a5AYUpicB3uwirOioeOkNPPbmgRNtcWyDeeFRzjPZENO9Vq8gvVqfhaaXWLlevVwg==}
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
@@ -14480,8 +14483,6 @@ snapshots:
       parse5: 7.3.0
 
   '@types/json-schema@7.0.15': {}
-
-  '@types/katex@0.16.8': {}
 
   '@types/keyv@3.1.4':
     dependencies:

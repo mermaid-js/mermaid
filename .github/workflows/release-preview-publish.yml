@@ -36,8 +36,8 @@ jobs:
       - name: Install Json
         run: npm i json@11.0.0 --global
 
-      # Shared by every publish step below, so all three packages carry the same
-      # preview version and can be installed as a matching set.
+      # Shared by every publish step below, so every package carries the same
+      # preview version and they can be installed as a matching set.
       - name: Compute preview version
         id: preview
         run: |
@@ -68,18 +68,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
 
-      # The layouts and `@mermaid-js/tiny` are already scoped to the org, so
-      # unlike `mermaid` they need no rename. Publishing them alongside lets a
-      # preview be exercised the way users combine them: layouts bundled in
+      # The layouts, plugins and `@mermaid-js/tiny` are already scoped to the
+      # org, so unlike `mermaid` they need no rename. Publishing them alongside
+      # lets a preview be exercised the way users combine them: bundled in
       # mermaid, and registered onto the tiny build, which omits them.
-      - name: Publish layouts and tiny
+      - name: Publish layouts, plugins and tiny
         run: |
           # Every package is attempted even after one fails, and the step fails
           # at the end. Under `bash -e` a failing subshell aborted the loop, so
           # `tiny` was never attempted while `layout-elk` was being refused —
           # its own publishability stayed unknown across every failed run.
           failed=''
-          for pkg in mermaid-layout-cose-bilkent mermaid-layout-elk tiny; do
+          for pkg in mermaid-layout-cose-bilkent mermaid-layout-elk plugin-katex tiny; do
             (
               cd "packages/$pkg"
               npm version --no-git-tag-version --allow-same-version "$VERSION"
@@ -102,8 +102,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
 
-      # After the layouts, so that `pnpm pack` pins mermaid's dependencies on
-      # them to this preview version.
+      # After the layouts and plugins, so that `pnpm pack` pins mermaid's
+      # dependencies on them to this preview version.
       - name: Publish mermaid
         working-directory: ./packages/mermaid
         run: |

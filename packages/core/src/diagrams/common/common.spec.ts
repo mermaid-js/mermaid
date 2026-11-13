@@ -5,6 +5,8 @@ import {
   countOccurrence,
   hasBreaks,
   splitBreaks,
+  registerKatex,
+  renderKatexSanitized,
 } from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
@@ -157,5 +159,20 @@ describe('line breaks', () => {
       hasBreaks('a<br>b'),
       hasBreaks('<br>'),
     ]).toEqual([true, true, true, true]);
+  });
+});
+
+describe('renderKatexSanitized', () => {
+  const config = { legacyMathML: true };
+
+  it('says KaTeX is unsupported until a loader is registered', async () => {
+    expect(await renderKatexSanitized('$$x$$', config)).toContain('Katex is not supported');
+  });
+
+  it('renders math with the registered KaTeX', async () => {
+    registerKatex(() =>
+      Promise.resolve({ renderToString: (tex, { output }) => `<math>${tex} ${output}</math>` })
+    );
+    expect(await renderKatexSanitized('$$x$$', config)).toContain('x htmlAndMathml');
   });
 });

@@ -131,6 +131,7 @@ const SHARED_PREFIXES = [
   'packages/mermaid-layout-elk/',
   'packages/mermaid-layout-tidy-tree/',
   // Plugin packages (separate bundles but tested in main suite)
+  'packages/plugin-katex/',
   'packages/mermaid-zenuml/',
   'packages/mermaid-example-diagram/',
   // Playwright: config and cross-cutting test utilities

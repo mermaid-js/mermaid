@@ -16,6 +16,7 @@
     "packages/mermaid-zenuml/**",
     "packages/mermaid-example-diagram/**",
     "packages/examples/**",
+    "packages/plugin-katex/**",
     "packages/tiny/**",
     "cypress/**",
     "demos/**",

@@ -40,6 +40,11 @@ export const packageOptions = {
     packageName: 'mermaid-layout-cose-bilkent',
     file: 'plugin.ts',
   },
+  'plugin-katex': {
+    name: 'mermaid-plugin-katex',
+    packageName: 'plugin-katex',
+    file: 'index.ts',
+  },
   mermaid: {
     name: 'mermaid',
     packageName: 'mermaid',

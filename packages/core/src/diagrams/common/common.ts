@@ -323,6 +323,24 @@ export const calculateMathMLDimensions = async (text: string, config: MermaidCon
   return dim;
 };
 
+/** The part of KaTeX's API that mermaid uses. */
+export interface Katex {
+  renderToString(
+    tex: string,
+    options: { throwOnError: boolean; displayMode: boolean; output: 'mathml' | 'htmlAndMathml' }
+  ): string;
+}
+
+let loadKatex: (() => Promise<Katex>) | undefined;
+
+/**
+ * Registers how to load KaTeX, e.g. from `@mermaid-js/plugin-katex`.
+ * Without it, math isn't rendered.
+ */
+export const registerKatex = (loader: () => Promise<Katex>) => {
+  loadKatex = loader;
+};
+
 const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Promise<string> => {
   if (!hasKatex(text)) {
     return text;
@@ -332,8 +350,8 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
-  if (injected.includeLargeFeatures) {
-    const { default: katex } = await import('katex');
+  if (loadKatex) {
+    const katex = await loadKatex();
     const outputMode =
       config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)
         ? 'htmlAndMathml'
@@ -358,6 +376,7 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
       );
   }
 
+  // No KaTeX loader registered, which is always the case in tiny.
   return text.replace(
     katexRegex,
     'Katex is not supported in @mermaid-js/tiny. Please use the full mermaid library.'

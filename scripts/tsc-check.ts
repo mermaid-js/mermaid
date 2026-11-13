@@ -62,6 +62,7 @@ const PACKAGES = {
   '@mermaid-js/layout-cose-bilkent': 'mermaid-layout-cose-bilkent',
   '@mermaid-js/layout-elk': 'mermaid-layout-elk',
   '@mermaid-js/parser': 'parser',
+  '@mermaid-js/plugin-katex': 'plugin-katex',
   // TODO: these don't import cleanly yet due to exotic tsconfig.json requirements
   // '@mermaid-js/mermaid-zenuml': 'mermaid-zenuml',
 };
