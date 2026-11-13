@@ -43,9 +43,8 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
       // tiny's mermaid.tiny.js (renamed by buildTinyMermaid)
       {
         ...iifeOptions,
-        options: { name: 'mermaid', packageName: 'tiny', file: 'mermaid.ts' },
+        options: { name: 'mermaid.tiny', packageName: 'tiny', file: 'mermaid.ts' },
         minify: true,
-        includeLargeFeatures: false,
         metafile: shouldVisualize,
         sourcemap: false,
       }

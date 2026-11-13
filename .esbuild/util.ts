@@ -21,7 +21,6 @@ export interface MermaidBuildOptions extends BuildOptions {
   metafile: boolean;
   format: 'esm' | 'iife';
   options: PackageOptions;
-  includeLargeFeatures: boolean;
   /** Compile the render profiler into the bundle (dev/profiling builds only). */
   profiling: boolean;
 }
@@ -31,7 +30,6 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   metafile: false,
   core: false,
   format: 'esm',
-  includeLargeFeatures: true,
   profiling: false,
 } as const;
 
@@ -53,17 +51,11 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
   };
 };
 
-const getFileName = (
-  fileName: string,
-  { core, format, minify, includeLargeFeatures }: MermaidBuildOptions
-) => {
+const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOptions) => {
   if (core) {
     fileName += '.core';
   } else if (format === 'esm') {
     fileName += '.esm';
-  }
-  if (!includeLargeFeatures) {
-    fileName += '.tiny';
   }
   if (minify) {
     fileName += '.min';
@@ -77,7 +69,6 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     format,
     options: { name, file, packageName, allModules },
     globalName = 'mermaid',
-    includeLargeFeatures,
     profiling,
     ...rest
   } = options;
@@ -105,7 +96,6 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
       // This needs to be stringified for esbuild
-      'injected.includeLargeFeatures': `${includeLargeFeatures}`,
       'injected.profiling': `${profiling}`,
       'injected.version': `'${version}'`,
       'import.meta.vitest': 'undefined',

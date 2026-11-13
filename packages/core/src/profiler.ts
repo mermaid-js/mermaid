@@ -307,7 +307,7 @@ class Profiler {
 
 type GlobalWithProfiler = typeof globalThis & {
   __mermaidProfiler?: Profiler;
-  injected?: { includeLargeFeatures: boolean; profiling: boolean; version: string };
+  injected?: { profiling: boolean; version: string };
 };
 
 // `injected.*` are build-time constants that esbuild's `define` replaces with
@@ -317,7 +317,6 @@ type GlobalWithProfiler = typeof globalThis & {
 // production-equivalent default. Bundled builds replace `injected.profiling` with a
 // literal and never read this object, so it has no effect there.
 (globalThis as GlobalWithProfiler).injected ??= {
-  includeLargeFeatures: true,
   profiling: false,
   version: '0.0.0',
 };
