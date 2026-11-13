@@ -1,5 +1,11 @@
 # @mermaid-js/examples
 
+## 2.1.0
+
+### Minor Changes
+
+- [#8779](https://github.com/mermaid-js/mermaid/pull/8779) [`eb56a54`](https://github.com/mermaid-js/mermaid/commit/eb56a54997c60079a6a6e9894d91ed2f5b566883) Thanks [@sidharthv96](https://github.com/sidharthv96)! - feat: add swimlane diagram examples, so editors such as the Live Editor list the diagram
+
 ## 2.0.0
 
 ### Major Changes
