@@ -135,3 +135,44 @@ describe('actor-menu statements still parse', () => {
     expect(db.getActor('A').properties).toEqual({ color: 'red' });
   });
 });
+
+describe('both as a participant id', () => {
+  it.each(['both', 'Both', 'BOTH', 'Bothell', 'bothways', 'both sides'])(
+    'accepts %s as a message sender and recipient',
+    (name) => {
+      const messages = messagesOf(`sequenceDiagram
+    autonumber
+    ${name}->>Alice: hello
+    Alice->>${name}: hi`);
+
+      expect(messages[1]).toMatchObject({ from: name, to: 'Alice' });
+      expect(messages[2]).toMatchObject({ from: 'Alice', to: name });
+    }
+  );
+
+  it('accepts both as a participant after autonumber both', () => {
+    const messages = messagesOf(`sequenceDiagram
+    autonumber both
+    both->>Alice: hello`);
+
+    expect(messages[0].message).toMatchObject({ both: true });
+    expect(messages[1]).toMatchObject({ from: 'both', to: 'Alice' });
+  });
+
+  it('does not read both as a keyword after a statement separator', () => {
+    const messages = messagesOf(`sequenceDiagram
+    autonumber; both->>Alice: hello`);
+
+    expect(messages[0].message).not.toMatchObject({ both: true });
+    expect(messages[1]).toMatchObject({ from: 'both', to: 'Alice' });
+  });
+
+  it('declares both as a participant', () => {
+    const db = parse(`sequenceDiagram
+    autonumber both
+    participant both
+    both->>both: hello`);
+
+    expect([...db.getActors().keys()]).toEqual(['both']);
+  });
+});

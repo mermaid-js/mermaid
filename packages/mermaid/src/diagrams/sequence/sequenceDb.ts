@@ -553,6 +553,11 @@ export class SequenceDB implements DiagramDB {
     return undefined;
   }
 
+  /**
+   * Applies what the parser found to the diagram, which is one statement or a list of them.
+   *
+   * @param param - The statement, or the list of statements, to apply
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
   public apply(param: any | AddMessageParams | AddMessageParams[]) {
     if (Array.isArray(param)) {
@@ -570,6 +575,7 @@ export class SequenceDB implements DiagramDB {
               start: param.sequenceIndex,
               step: param.sequenceIndexStep,
               visible: param.sequenceVisible,
+              both: param.sequenceBoth,
             },
             wrap: false,
             type: param.signalType,

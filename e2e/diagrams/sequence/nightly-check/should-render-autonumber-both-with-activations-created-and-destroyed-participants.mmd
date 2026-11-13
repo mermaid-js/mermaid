@@ -1,0 +1,31 @@
+---
+description: >-
+  `autonumber both` on arrows that don't end on a plain lifeline: activation
+  boxes, and the boxes of created and destroyed participants on either side of
+  the sender, where the number goes next to the box.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber both
+  create participant Bob
+  Alice->>Bob: Created on the left
+  Alice->>+Bob: Activates Bob
+  Bob-->>-Alice: Deactivates Bob
+  activate Alice
+  Alice->>Bob: From an active participant
+  Bob->>Alice: Into an active participant
+  deactivate Alice
+  create participant Carl
+  Alice->>Carl: Created on the right
+  create actor Dan
+  Carl-xDan: Created actor
+  destroy Carl
+  Carl->>Alice: Sender destroyed
+  destroy Dan
+  Alice-xDan: Receiver destroyed
+  destroy Bob
+  Alice-xBob: Destroyed on the left
