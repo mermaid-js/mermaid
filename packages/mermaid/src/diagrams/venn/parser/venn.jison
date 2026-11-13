@@ -5,7 +5,6 @@
 
 %%
 \%\%(?!\{)[^\n]*   /* skip comments */
-[^\}]\%\%[^\n]*    /* skip comments */
 
 <bol>[ \t]+(?=[\n\r])  /* ignore whitespace-only lines */
 <bol>[ \t]+(?=text\b)  {

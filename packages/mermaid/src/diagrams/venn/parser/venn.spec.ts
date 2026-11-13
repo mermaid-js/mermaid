@@ -239,6 +239,34 @@ describe('Venn diagram', function () {
     expect(() => venn.parse(str)).toThrow('unknown set identifier');
   });
 
+  test('%% comment directly after a single-character identifier does not swallow it', () => {
+    const str = `venn-beta
+set A%% note
+set B
+union A,B
+`;
+    venn.parse(str);
+    expect(db.getSubsetData()).toEqual([
+      expect.objectContaining({ sets: ['A'], size: 10 }),
+      expect.objectContaining({ sets: ['B'], size: 10 }),
+      expect.objectContaining({ sets: ['A', 'B'], size: 2.5 }),
+    ]);
+  });
+
+  test('%% comment directly after a size value does not swallow the colon', () => {
+    const str = `venn-beta
+set A:5%% note
+set B
+union A,B
+`;
+    venn.parse(str);
+    expect(db.getSubsetData()).toEqual([
+      expect.objectContaining({ sets: ['A'], size: 5 }),
+      expect.objectContaining({ sets: ['B'], size: 10 }),
+      expect.objectContaining({ sets: ['A', 'B'], size: 2.5 }),
+    ]);
+  });
+
   test('quoted identifiers', () => {
     const str = `venn-beta
         set "Foo Bar"
