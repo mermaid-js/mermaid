@@ -4,7 +4,12 @@ import { getIconSVG } from '../../icons.js';
 import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import {
+  keepBoundsUnpainted,
+  keepIconArtworkPaint,
+  labelHelper,
+  updateNodeBounds,
+} from './util.js';
 import type { D3Selection } from '../../../types.js';
 
 export async function iconCircle<T extends SVGGraphicsElement>(
@@ -19,7 +24,11 @@ export async function iconCircle<T extends SVGGraphicsElement>(
   const iconSize = Math.max(assetHeight, assetWidth);
   const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'icon-shape default');
+  const { shapeSvg, bbox, label } = await labelHelper(
+    parent,
+    node,
+    `${node.cssClasses ?? ''} icon-shape default`
+  );
 
   const padding = 20;
   const labelPadding = node.label ? 8 : 0;
@@ -48,6 +57,7 @@ export async function iconCircle<T extends SVGGraphicsElement>(
         fallbackPrefix: '',
       })}</g>`
     );
+    keepIconArtworkPaint(iconElem);
   }
   const iconBBox = iconElem.node()!.getBBox();
   const iconWidth = iconBBox.width;
@@ -69,6 +79,7 @@ export async function iconCircle<T extends SVGGraphicsElement>(
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   const outerShape = shapeSvg.insert(() => outerNode);
+  keepBoundsUnpainted(outerShape);
   iconElem.attr(
     'transform',
     `translate(${-iconWidth / 2 - iconX},${

@@ -1,0 +1,18 @@
+---
+config:
+  htmlLabels: false
+---
+flowchart LR
+  %% A class on an icon node with SVG labels paints the shape around the icon and
+  %% leaves the icon's own artwork alone: the bell stays drawn in the node's stroke
+  %% colour instead of vanishing into the orange fill, and the placeholder for an
+  %% unregistered icon keeps its blue square
+  A@{ icon: "fa:bell", label: "icon" }
+  B@{ icon: "fa:bell", form: "circle", label: "circle" }
+  C@{ icon: "fa:bell", form: "rounded", label: "rounded" }
+  D@{ icon: "fa:bell", form: "square", label: "square" }
+  E@{ icon: "unregistered:bell", form: "circle", label: "placeholder" }
+  F@{ icon: "fa:bell", form: "circle", label: "no class" }
+  A --> B --> C --> D --> E --> F
+  classDef hot fill:#f96,stroke:#333
+  class A,B,C,D,E hot
