@@ -1063,3 +1063,19 @@ describe('setTerminalWidth', () => {
     expect(fo.style.width).toBe('9px');
   });
 });
+
+describe('insertEdge diagramId guard', () => {
+  it('insertEdge throws when diagramId is missing', () => {
+    const edge = { id: 'test-edge', arrowTypeStart: '', arrowTypeEnd: '' };
+    expect(() => {
+      insertEdge(null, edge, null, 'flowchart', null, null, undefined);
+    }).toThrow('insertEdge: missing diagramId');
+  });
+
+  it('insertEdge throws when diagramId is empty string', () => {
+    const edge = { id: 'test-edge', arrowTypeStart: '', arrowTypeEnd: '' };
+    expect(() => {
+      insertEdge(null, edge, null, 'flowchart', null, null, '');
+    }).toThrow('insertEdge: missing diagramId');
+  });
+});

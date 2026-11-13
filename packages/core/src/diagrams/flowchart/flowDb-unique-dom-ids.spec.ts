@@ -2,9 +2,8 @@
  * Tests that internal SVG element IDs are unique when multiple diagrams
  * share a page, preventing url(#...) cross-references and WCAG 4.1.1 failures.
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { FlowDB } from '../diagrams/flowchart/flowDb.js';
-import { insertEdge } from './rendering-elements/edges.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { FlowDB } from './flowDb.js';
 
 function addFlowVertex(db: FlowDB, id: string) {
   db.addVertex(id, { text: id, type: 'text' } as any, undefined as any, [], [], '', {}, undefined);
@@ -67,22 +66,6 @@ describe('Unique DOM element IDs', () => {
       expect(db1.lookUpDomId('subgraph1')).toBe('mermaid-0-subgraph1');
       expect(db2.lookUpDomId('subgraph1')).toBe('mermaid-1-subgraph1');
       expect(db1.lookUpDomId('subgraph1')).not.toBe(db2.lookUpDomId('subgraph1'));
-    });
-  });
-
-  describe('Defensive guards', () => {
-    it('insertEdge throws when diagramId is missing', () => {
-      const edge = { id: 'test-edge', arrowTypeStart: '', arrowTypeEnd: '' };
-      expect(() => {
-        insertEdge(null, edge, null, 'flowchart', null, null, undefined);
-      }).toThrow('insertEdge: missing diagramId');
-    });
-
-    it('insertEdge throws when diagramId is empty string', () => {
-      const edge = { id: 'test-edge', arrowTypeStart: '', arrowTypeEnd: '' };
-      expect(() => {
-        insertEdge(null, edge, null, 'flowchart', null, null, '');
-      }).toThrow('insertEdge: missing diagramId');
     });
   });
 
