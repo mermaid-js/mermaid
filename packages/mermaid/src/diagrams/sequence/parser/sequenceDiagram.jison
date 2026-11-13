@@ -21,13 +21,13 @@
 %x acc_descr_multiline
 %%
 
-[\n]+                                                           return 'NEWLINE';
+[^\S\n]*[\n]+                                                   return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
 <INITIAL,ID,ALIAS,LINE>\#[^\n]*   															/* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
-([0-9]+(\.[0-9]{1,2})?|\.[0-9]{1,2})(?=[ \n]+)    				return 'NUM';
+([0-9]+(\.[0-9]{1,2})?|\.[0-9]{1,2})(?=\s+)    				return 'NUM';
 <ID>\@\{                                                        { this.begin('CONFIG'); return 'CONFIG_START'; }
 <CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
 <CONFIG>\}(?=\s+as\s)                                           { this.popState(); this.begin('ALIAS'); return 'CONFIG_END'; }
