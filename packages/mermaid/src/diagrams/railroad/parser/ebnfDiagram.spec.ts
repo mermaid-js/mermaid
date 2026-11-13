@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { parse } from '@mermaid-js/parser';
 import { parser } from './ebnfParser.js';
 import { db } from '../railroadDb.js';
 
@@ -173,6 +174,179 @@ describe('EBNF Parser', () => {
 
     it('should throw on missing semicolon', () => {
       expect(() => parser.parse('railroad-ebnf-beta\nrule = "a"')).toThrow();
+    });
+  });
+});
+
+describe('EBNF standard line', () => {
+  beforeEach(() => {
+    db.clear();
+  });
+
+  const types = (): string[] => {
+    const definition = db.getRules()[0].definition;
+    return definition.type === 'sequence'
+      ? definition.elements.map((e) => e.type)
+      : [definition.type];
+  };
+
+  describe('without a standard line (unchanged)', () => {
+    it('keeps reading `? ... ?` as a special sequence before a postfix `?`', () => {
+      void parser.parse('railroad-ebnf-beta\nfoo = bar " "? baz " "? qux ;');
+      expect(types()).toEqual(['nonterminal', 'terminal', 'special', 'nonterminal']);
+    });
+
+    it('keeps accepting whitespace concatenation without a standard line', () => {
+      void parser.parse('railroad-ebnf-beta\nfoo = a b ( c d ) ;');
+      expect(types()).toEqual(['nonterminal', 'nonterminal', 'sequence']);
+    });
+
+    it('keeps accepting both "," and whitespace, and the postfix operators', () => {
+      void parser.parse('railroad-ebnf-beta\nfoo = bar , baz qux* ;');
+      expect(types()).toEqual(['nonterminal', 'nonterminal', 'repetition']);
+    });
+
+    it('keeps `standard` usable as a rule name and as a reference', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard = other ;\nother = standard "x" ;');
+      expect(db.getRules().map((r) => r.name)).toEqual(['standard', 'other']);
+    });
+
+    it.each([
+      ['a comment', 'standard (* note *) = "x" ;'],
+      ['a line break', 'standard \n= "x" ;'],
+      ['a block comment and ::=', 'standard /* note */ ::= "x" ;'],
+      ['a %% comment and a line break', 'standard %% note\n= "x" ;'],
+    ])(
+      'keeps a first rule named `standard` a rule when %s comes before its assignment',
+      async (_between, rule) => {
+        const input = `railroad-ebnf-beta\n${rule}`;
+        void parser.parse(input);
+        expect(db.getRules().map((r) => r.name)).toEqual(['standard']);
+        const ast = await parse('railroadEbnf', input);
+        expect(ast.standards).toEqual([]);
+        expect(ast.rules.map((r) => r.name)).toEqual(['standard']);
+      }
+    );
+
+    it('keeps `standard` usable as a reference in the first rule', () => {
+      void parser.parse('railroad-ebnf-beta\nfoo = standard bar ;');
+      expect(types()).toEqual(['nonterminal', 'nonterminal']);
+    });
+  });
+
+  describe('standard w3c', () => {
+    it('reads `?` as a postfix operator, not as a special sequence', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard w3c\nfoo = bar " "? baz " "? qux ;');
+      expect(types()).toEqual([
+        'nonterminal',
+        'optional',
+        'nonterminal',
+        'optional',
+        'nonterminal',
+      ]);
+    });
+
+    it('refuses the "," separator and names its position', () => {
+      expect(() => parser.parse('railroad-ebnf-beta\nstandard w3c\nfoo = bar , baz ;')).toThrow(
+        /line 3, column 11: the "," separator is not W3C notation/
+      );
+    });
+
+    it('refuses the "," inside a group too', () => {
+      expect(() => parser.parse('railroad-ebnf-beta\nstandard w3c\nfoo = ( a , b ) ;')).toThrow(
+        /line 3, column 11/
+      );
+    });
+
+    it.each([
+      [
+        '[ ... ]',
+        'foo = [ a ] ;',
+        /line 3, column 7: the \[ \.{3} ] optional is not W3C notation, use the postfix \?/,
+      ],
+      [
+        '{ ... }',
+        'foo = { a } ;',
+        /line 3, column 7: the { \.{3} } repetition is not W3C notation, use the postfix \*/,
+      ],
+      ['a nested [ ... ]', 'foo = ( b [ a ] ) ;', /line 3, column 11: the \[ \.{3} ] optional/],
+    ])('refuses %s and names the postfix that replaces it', (_construct, rule, message) => {
+      expect(() => parser.parse(`railroad-ebnf-beta\nstandard w3c\n${rule}`)).toThrow(message);
+    });
+
+    it('still accepts *, +, - and groups', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard w3c\nfoo = a* b+ ( c | d ) - e ;');
+      expect(db.getRules()).toHaveLength(1);
+    });
+  });
+
+  describe('standard iso', () => {
+    it('reads `? ... ?` as a special sequence', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard iso\nfoo = bar, ? any char ?, baz ;');
+      expect(types()).toEqual(['nonterminal', 'special', 'nonterminal']);
+    });
+
+    it.each([
+      ['?', 'foo = a? ;', /line 3, column 8: the postfix operator \?: use \[ \.{3} ]/],
+      ['*', 'foo = a* ;', /line 3, column 8: the postfix operator \*: use { \.{3} }/],
+      ['+', 'foo = a+ ;', /line 3, column 8: the postfix operator \+/],
+    ])('refuses the postfix %s', (_op, rule, message) => {
+      expect(() => parser.parse(`railroad-ebnf-beta\nstandard iso\n${rule}`)).toThrow(message);
+    });
+
+    it('refuses a postfix nested in a group', () => {
+      expect(() => parser.parse('railroad-ebnf-beta\nstandard iso\nfoo = ( a* ) ;')).toThrow(
+        /line 3, column 10/
+      );
+    });
+
+    it.each([
+      ['a missing comma', 'foo = a b ;', /line 3, column 7: ISO 14977 notation separates/],
+      ['one comma of three missing', 'foo = a, b c ;', /line 3, column 7/],
+      ['a missing comma after a group', 'foo = ( a | b ) c ;', /line 3, column 7/],
+      ['a missing comma around an optional', 'foo = a [ b ] ;', /line 3, column 7/],
+      ['a missing comma around a repetition', 'foo = { a } b ;', /line 3, column 7/],
+      ['a missing comma in a nested sequence', 'foo = a, ( b c ) ;', /line 3, column 12/],
+      ['a trailing comma', 'foo = a, ;', /Parse error/],
+      ['a doubled comma', 'foo = a,, b ;', /Parse error/],
+    ])('refuses %s', (_name, rule, message) => {
+      expect(() => parser.parse(`railroad-ebnf-beta\nstandard iso\n${rule}`)).toThrow(message);
+    });
+
+    it('accepts commas between groups, optionals and repetitions', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard iso\nfoo = ( a | b ), [ c ], { d }, e ;');
+      expect(types()).toEqual(['choice', 'optional', 'repetition', 'nonterminal']);
+    });
+
+    it('accepts [ ], { } and ","', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard iso\nfoo = [ a ], { b }, c ;');
+      expect(types()).toEqual(['optional', 'repetition', 'nonterminal']);
+    });
+  });
+
+  describe('the line itself', () => {
+    it('is found after front matter, comments and a title, and before the accessibility lines', () => {
+      void parser.parse(
+        '---\ntitle: x\n---\nrailroad-ebnf-beta\n%% a comment\ntitle My grammar\nstandard w3c %% trailing\naccTitle: t\nfoo = a? b? ;'
+      );
+      expect(types()).toEqual(['optional', 'optional']);
+    });
+
+    it('is found before the title', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard w3c\ntitle T\nfoo = a? b? ;');
+      expect(types()).toEqual(['optional', 'optional']);
+    });
+
+    it('refuses an unknown value and lists the valid ones', () => {
+      expect(() => parser.parse('railroad-ebnf-beta\nstandard w4c\nfoo = a ;')).toThrow(
+        /line 2, column 1: unknown standard "w4c", expected one of: w3c, iso/
+      );
+    });
+
+    it('refuses a second standard line', () => {
+      expect(
+        () => void parser.parse('railroad-ebnf-beta\nstandard w3c\nstandard iso\nfoo = a ;')
+      ).toThrow(/line 3, column 1: only one `standard` line is allowed/);
     });
   });
 });

@@ -1,6 +1,5 @@
 import {
-  MermaidParseError,
-  createRailroadEbnfServices,
+  parseRailroadEbnf,
   type RailroadEbnf,
   type EbnfChoice,
   type EbnfExceptionPostfix,
@@ -22,8 +21,6 @@ import { log } from '../../../logger.js';
 import { populateCommonDb } from '../../common/populateCommonDb.js';
 import { db } from '../railroadDb.js';
 import type { ASTNode, RailroadRule } from '../railroadTypes.js';
-
-const langiumParser = createRailroadEbnfServices().RailroadEbnf.parser.LangiumParser;
 
 const transformChoice = (choice: EbnfChoice): ASTNode => {
   const alternatives = choice.alternatives.map(transformSequence);
@@ -150,12 +147,7 @@ export const parser: ParserDefinition = {
     db.clear();
     log.debug('[EBNF Parser] Starting Langium parse');
 
-    const result = langiumParser.parse<RailroadEbnf>(input);
-    if (result.lexerErrors.length > 0 || result.parserErrors.length > 0) {
-      throw new MermaidParseError(result);
-    }
-
-    const ast = result.value;
+    const ast = parseRailroadEbnf(input);
     log.debug('[EBNF Parser] Parsed rules:', ast.rules.length);
 
     populateDb(ast);

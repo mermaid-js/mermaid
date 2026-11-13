@@ -36,6 +36,8 @@ export type DiagramAST =
   | Cynefin;
 
 const parsers: Record<string, LangiumParser> = {};
+/** Diagram types that parse through their own entry point instead of a single Langium parser. */
+const entryPoints: Record<string, (text: string) => DiagramAST> = {};
 const initializers = {
   info: async () => {
     const { createInfoServices } = await import('./language/info/index.js');
@@ -83,9 +85,8 @@ const initializers = {
     parsers.railroad = parser;
   },
   railroadEbnf: async () => {
-    const { createRailroadEbnfServices } = await import('./language/railroad-ebnf/index.js');
-    const parser = createRailroadEbnfServices().RailroadEbnf.parser.LangiumParser;
-    parsers.railroadEbnf = parser;
+    const { parseRailroadEbnf } = await import('./language/railroad-ebnf/index.js');
+    entryPoints.railroadEbnf = parseRailroadEbnf;
   },
   railroadAbnf: async () => {
     const { createRailroadAbnfServices } = await import('./language/railroad-abnf/index.js');
@@ -130,19 +131,23 @@ export async function parse(diagramType: 'treemap', text: string): Promise<Treem
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
 export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
 
-export async function parse<T extends DiagramAST>(
+export async function parse(
   diagramType: keyof typeof initializers,
   text: string
-): Promise<T> {
+): Promise<DiagramAST> {
   const initializer = initializers[diagramType];
   if (!initializer) {
     throw new Error(`Unknown diagram type: ${diagramType}`);
   }
-  if (!parsers[diagramType]) {
+  if (!parsers[diagramType] && !entryPoints[diagramType]) {
     await initializer();
   }
+  const entryPoint = entryPoints[diagramType];
+  if (entryPoint) {
+    return entryPoint(text);
+  }
   const parser: LangiumParser = parsers[diagramType];
-  const result: ParseResult<T> = parser.parse<T>(text);
+  const result: ParseResult<DiagramAST> = parser.parse<DiagramAST>(text);
   if (result.lexerErrors.length > 0 || result.parserErrors.length > 0) {
     throw new MermaidParseError(result);
   }
