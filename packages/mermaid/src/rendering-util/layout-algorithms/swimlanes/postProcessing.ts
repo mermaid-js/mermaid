@@ -48,11 +48,7 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // TB is the canonical orientation. LR/RL rotate rank progression onto X;
   // BT mirrors the canonical Y progression. Cleanup passes below operate in
   // whichever coordinate system this step leaves behind.
-  if (
-    (direction === 'LR' || direction === 'RL') &&
-    contentNodes.length > 0 &&
-    !applyLrDirectionTransform(layout, direction)
-  ) {
+  if ((direction === 'LR' || direction === 'RL') && !applyLrDirectionTransform(layout, direction)) {
     return;
   }
 

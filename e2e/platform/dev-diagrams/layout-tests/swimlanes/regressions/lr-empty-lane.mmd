@@ -1,0 +1,12 @@
+%% An empty lane in LR and RL gets a band of its own, in declared order, as wide as the others (#8760).
+%% "Legal" holds no node; the edge from "Check stock" to "Pick" crosses its band.
+swimlane-beta LR
+  subgraph L1[Sales]
+    A[Receive order] --> B[Check stock]
+  end
+  subgraph L2[Legal]
+  end
+  subgraph L3[Warehouse]
+    C[Pick] --> D[Ship]
+  end
+  B --> C
