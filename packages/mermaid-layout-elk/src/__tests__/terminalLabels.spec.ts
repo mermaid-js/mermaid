@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { followMovedEndpoints, runElkLayoutCore, slideTerminalLabelsOffFrames } from '../render.js';
-import { terminalLabelTranslate } from '../../common/index.js';
-import type { TerminalLabelKey, TerminalLabelSize } from '../../../types.js';
+import { terminalLabelTranslate } from '@mermaid-js/core/rendering-util/layout-algorithms/common/index.js';
+import type { TerminalLabelKey, TerminalLabelSize } from '@mermaid-js/core/rendering-util/types.js';
 
 const log = {
   debug: () => undefined,

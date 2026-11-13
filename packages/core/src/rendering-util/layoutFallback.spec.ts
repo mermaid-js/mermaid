@@ -1,6 +1,6 @@
 /**
- * A diagram type may name a layout as its default, but `elk` and `cose-bilkent` ship only
- * in large-feature builds (the tiny build omits them), so the resolution every renderer
+ * A diagram type may name a layout as its default, but `elk` and `cose-bilkent` aren't
+ * always registered (the tiny build omits them), so the resolution every renderer
  * runs before `render()` has to terminate at something always registered.
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
@@ -20,8 +20,6 @@ describe('layout fallback', () => {
     expect(getRegisteredLayoutAlgorithm('dagre')).toBe('dagre');
     expect(getRegisteredLayoutAlgorithm('swimlane')).toBe('swimlane');
     expect(getRegisteredLayoutAlgorithm('grid')).toBe('grid');
-    // Bundled by default now; only the tiny build omits it.
-    expect(getRegisteredLayoutAlgorithm('elk')).toBe('elk');
   });
 
   it('loads the built-in grid renderer through its registered loader', async () => {

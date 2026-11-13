@@ -18,7 +18,7 @@ import {
   straightenEdgeTerminals,
 } from '../render.js';
 import { onBorder, type P } from '../geometry.js';
-import intersect from '../../../rendering-elements/intersect/index.js';
+import intersect from '@mermaid-js/core/rendering-util/rendering-elements/intersect/index.js';
 
 const log = {
   debug: () => undefined,

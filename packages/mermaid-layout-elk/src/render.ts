@@ -2,9 +2,9 @@ import {
   createCommonLayoutRenderer,
   defaultMeasureLayout,
   type CommonLayoutRenderContext,
-} from '../common/index.js';
-import type { LayoutData, TerminalLabelKey } from '../../types.js';
-import { setConfig } from '../../../diagram-api/diagramAPI.js';
+} from '@mermaid-js/core/rendering-util/layout-algorithms/common/index.js';
+import type { LayoutData, TerminalLabelKey } from '@mermaid-js/core/rendering-util/types.js';
+import { setConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 // @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
@@ -12,8 +12,8 @@ import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
 import { orderNestedEdgeEnds } from './nestedEdgeOrder.js';
 import { applyElkLineJumps } from './lineHops.js';
-import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
-import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
+import { clusterPaintsTitle } from '@mermaid-js/core/rendering-util/rendering-elements/clusters.js';
+import { markerOffsets, markerOffsets2 } from '@mermaid-js/core/utils/lineWithOffset.js';
 import {
   EDGE_ROUTING_OPTIONS,
   PLACEMENT_OPTIONS,

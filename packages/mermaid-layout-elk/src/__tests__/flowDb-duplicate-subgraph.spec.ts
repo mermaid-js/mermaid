@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { runElkLayoutCore } from '../../rendering-util/layout-algorithms/elk/render.js';
-import { FlowDB } from './flowDb.js';
-import flow from './parser/flowParser.js';
+import { runElkLayoutCore } from '../render.js';
+import { FlowDB } from '@mermaid-js/core/diagrams/flowchart/flowDb.js';
+import flow from '@mermaid-js/core/diagrams/flowchart/parser/flowParser.js';
 
 const log = {
   debug: () => undefined,

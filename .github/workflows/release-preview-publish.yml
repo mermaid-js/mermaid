@@ -68,20 +68,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
 
-      - name: Publish mermaid
-        working-directory: ./packages/mermaid
-        run: |
-          npm version --no-git-tag-version --allow-same-version "$VERSION"
-          json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
-          json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
-          pnpm pack
-          npm publish --tag preview *.tgz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.preview.outputs.version }}
-          # Prevent `npm publish` from failing if the docs verification fails.
-          ONLY_WARN_ON_VERIFY_ERROR: 'true'
-
       # `@mermaid-js/layout-elk` and `@mermaid-js/tiny` are already scoped to the
       # org, so unlike `mermaid` they need no rename. Publishing them alongside
       # lets a preview be exercised the way users combine them: ELK bundled in
@@ -98,11 +84,6 @@ jobs:
               cd "packages/$pkg"
               npm version --no-git-tag-version --allow-same-version "$VERSION"
               json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
-              # The preview `mermaid` is published under a different name
-              # (`@mermaid-js/mermaid`), so a `mermaid` peer range can never be
-              # satisfied by a preview install. Drop it rather than emit an
-              # unmet-peer warning on every install.
-              json -I -f package.json -e 'delete this.peerDependencies'
               pnpm pack
               # Both packages must stay *public* in the org's GitHub Packages
               # settings. While they were `internal`, this step failed with
@@ -120,3 +101,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
+
+      # After layout-elk, so that `pnpm pack` pins mermaid's dependency on it
+      # to this preview version.
+      - name: Publish mermaid
+        working-directory: ./packages/mermaid
+        run: |
+          npm version --no-git-tag-version --allow-same-version "$VERSION"
+          json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
+          json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
+          pnpm pack
+          npm publish --tag preview *.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.preview.outputs.version }}
+          # Prevent `npm publish` from failing if the docs verification fails.
+          ONLY_WARN_ON_VERIFY_ERROR: 'true'

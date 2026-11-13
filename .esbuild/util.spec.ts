@@ -21,22 +21,23 @@ describe('getBuildConfig externals', () => {
     // its own module-level singletons, inside the plugin. The plugin then
     // renders against its own stale copy instead of the host's, so mermaid
     // fixes silently fail to reach it until the plugin is republished.
-    const external = buildFor('mermaid-layout-elk', true).external ?? [];
+    const external = buildFor('mermaid-layout-tidy-tree', true).external ?? [];
     expect(external).toContain('mermaid');
   });
 
   it('externalizes dependencies in the core build', () => {
     const external = buildFor('mermaid-layout-elk', true).external ?? [];
+    expect(external).toContain('@mermaid-js/core');
     expect(external).toContain('elkjs');
     expect(external).toContain('d3');
   });
 
   it('bundles everything in the non-core build', () => {
     // The esm entry is the self-contained one (standalone + dev server), so it
-    // must keep inlining mermaid rather than emitting a bare import. Only the
+    // must keep inlining core rather than emitting a bare import. Only the
     // node built-ins stay external there.
     const external = buildFor('mermaid-layout-elk', false).external ?? [];
-    expect(external).not.toContain('mermaid');
+    expect(external).not.toContain('@mermaid-js/core');
     expect(external).not.toContain('elkjs');
   });
 

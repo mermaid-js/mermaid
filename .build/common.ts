@@ -30,6 +30,11 @@ export const packageOptions = {
     file: 'mermaid.ts',
     allModules: true,
   },
+  'mermaid-layout-elk': {
+    name: 'mermaid-layout-elk',
+    packageName: 'mermaid-layout-elk',
+    file: 'plugin.ts',
+  },
   mermaid: {
     name: 'mermaid',
     packageName: 'mermaid',
@@ -44,13 +49,6 @@ export const packageOptions = {
     name: 'mermaid-zenuml',
     packageName: 'mermaid-zenuml',
     file: 'detector.ts',
-  },
-  'mermaid-layout-elk': {
-    name: 'mermaid-layout-elk',
-    packageName: 'mermaid-layout-elk',
-    // Built from core's ELK source (path is relative to the package's
-    // `src`) so the plugin and the bundled layout are the same implementation.
-    file: '../../core/src/rendering-util/layout-algorithms/elk/plugin.ts',
   },
   'mermaid-layout-tidy-tree': {
     name: 'mermaid-layout-tidy-tree',

@@ -1,14 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import type * as DiagramApi from '../../../../diagram-api/diagramAPI.js';
+import type * as DiagramApi from '@mermaid-js/core/diagram-api/diagramAPI.js';
 
 // Mocked so the assertion is about the CALL, not the resulting value. Compiled
 // into mermaid, the host's config module and this one are the same module, so a
 // value-level assertion would pass whether or not the sync runs — the whole
-// point of `syncHostConfig` is the standalone `@mermaid-js/layout-elk` bundle,
-// where they are two copies, and that duplication cannot be reproduced
+// point of `syncHostConfig` is the self-contained `@mermaid-js/layout-elk` esm
+// bundle, where they are two copies, and that duplication cannot be reproduced
 // in-process. Asserting the call is what actually pins the behaviour.
 const setConfigMock = vi.hoisted(() => vi.fn());
-vi.mock('../../../../diagram-api/diagramAPI.js', async (importOriginal) => ({
+vi.mock('@mermaid-js/core/diagram-api/diagramAPI.js', async (importOriginal) => ({
   ...(await importOriginal<typeof DiagramApi>()),
   setConfig: setConfigMock,
 }));

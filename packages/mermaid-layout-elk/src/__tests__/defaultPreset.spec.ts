@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import mermaidAPI from '../../../../mermaidAPI.js';
-import { getConfig } from '../../../../config.js';
-import type { MermaidConfig } from '../../../../config.type.js';
+import mermaidAPI from '@mermaid-js/core/mermaidAPI.js';
+import { getConfig } from '@mermaid-js/core/config.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
 import { buildElkGraphFromLayoutData, runElkLayoutCore } from '../render.js';
 
 const log = {

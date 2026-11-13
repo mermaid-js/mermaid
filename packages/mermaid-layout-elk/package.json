@@ -1,14 +1,17 @@
 {
   "name": "@mermaid-js/layout-elk",
   "version": "1.0.2",
-  "description": "ELK layout engine for mermaid builds that do not bundle it (e.g. mermaid.tiny.js)",
+  "description": "ELK layout engine for mermaid",
   "module": "dist/mermaid-layout-elk.core.mjs",
-  "types": "./types.d.ts",
+  "types": "./dist/plugin.d.ts",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
+      "mermaid-source": "./src/plugin.ts",
+      "types": "./dist/plugin.d.ts",
       "import": "./dist/mermaid-layout-elk.core.mjs",
-      "types": "./types.d.ts"
+      "default": "./dist/mermaid-layout-elk.core.mjs"
     },
     "./*": "./*"
   },
@@ -37,22 +40,14 @@
     "node": ">=22.12.0"
   },
   "devDependencies": {
-    "@types/d3": "^7.4.3",
-    "mermaid": "workspace:^"
-  },
-  "peerDependencies": {
-    "mermaid": "^12.0.0"
+    "@types/d3": "^7.4.3"
   },
   "files": [
-    "dist",
-    "types.d.ts"
+    "dist"
   ],
   "dependencies": {
+    "@mermaid-js/core": "workspace:^",
     "d3": "^7.9.0",
-    "dagre-d3-es": "7.0.14",
-    "dayjs": "^1.11.21",
-    "dompurify": "^3.4.17",
-    "elkjs": "^0.12.0",
-    "katex": "^0.18.0"
+    "elkjs": "^0.12.0"
   }
 }

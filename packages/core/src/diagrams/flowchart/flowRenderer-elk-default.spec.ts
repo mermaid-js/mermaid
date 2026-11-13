@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 import * as configApi from '../../config.js';
 import type * as RenderModule from '../../rendering-util/render.js';
+import { registerLayoutLoaders } from '../../rendering-util/render.js';
 import type * as UtilsModule from '../../utils.js';
 
 // Deliberately does NOT mock `getRegisteredLayoutAlgorithm`: the point of this
@@ -51,6 +52,11 @@ const drawFlowchart = async () => {
 };
 
 describe('flowchart default layout', () => {
+  beforeAll(() => {
+    // Stand-ins for the ELK layouts that the mermaid entry registers.
+    registerLayoutLoaders(['elk', 'elk.mrtree'].map((name) => ({ name, loader: vi.fn() })));
+  });
+
   beforeEach(() => {
     renderMock.mockClear();
     configApi.reset();

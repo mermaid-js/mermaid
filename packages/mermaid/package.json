@@ -68,7 +68,8 @@
     ]
   },
   "dependencies": {
-    "@mermaid-js/core": "workspace:^"
+    "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/layout-elk": "workspace:^"
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^8.0.11",

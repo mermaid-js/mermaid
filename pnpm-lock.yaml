@@ -312,9 +312,6 @@ importers:
       dompurify:
         specifier: 3.4.17
         version: 3.4.17
-      elkjs:
-        specifier: ^0.12.0
-        version: 0.12.0
       es-toolkit:
         specifier: ^1.45.1
         version: 1.45.1
@@ -409,6 +406,9 @@ importers:
       '@mermaid-js/core':
         specifier: workspace:^
         version: link:../core
+      '@mermaid-js/layout-elk':
+        specifier: workspace:^
+        version: link:../mermaid-layout-elk
     devDependencies:
       '@adobe/jsonschema2md':
         specifier: ^8.0.11
@@ -507,31 +507,19 @@ importers:
 
   packages/mermaid-layout-elk:
     dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
       d3:
         specifier: ^7.9.0
         version: 7.9.0
-      dagre-d3-es:
-        specifier: 7.0.14
-        version: 7.0.14
-      dayjs:
-        specifier: ^1.11.21
-        version: 1.11.21
-      dompurify:
-        specifier: 3.4.17
-        version: 3.4.17
       elkjs:
         specifier: ^0.12.0
         version: 0.12.0
-      katex:
-        specifier: ^0.18.0
-        version: 0.18.11
     devDependencies:
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
-      mermaid:
-        specifier: workspace:^
-        version: link:../mermaid
 
   packages/mermaid-layout-tidy-tree:
     dependencies:

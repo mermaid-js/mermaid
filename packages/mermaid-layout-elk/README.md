@@ -27,8 +27,8 @@ If you are on a normal build, delete the dependency and the registration call:
 - mermaid.registerLayoutLoaders(elkLayouts);
 ```
 
-Registering it anyway is harmless — it re-registers the same layouts — but it
-loads a second copy of the layout code for no benefit.
+Registering it anyway is harmless — it re-registers the same layouts — but with
+a CDN build it loads a second copy of the layout code for no benefit.
 
 ## Usage
 

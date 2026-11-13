@@ -1,16 +1,12 @@
-import type { LayoutLoaderDefinition } from '../../render.js';
+import type { LayoutLoaderDefinition } from '@mermaid-js/core';
 import { ELK_ALGORITHMS } from './algorithms.js';
 
-// Type-only import above, so nothing from core's render module is pulled into
-// the plugin bundle.
+// Every ELK entry shares one loader, so elkjs is fetched at most once.
 const loader = async () => await import('./index.js');
 
 /**
- * Entry point for the standalone `@mermaid-js/layout-elk` package, which is
- * built from this file so there is exactly one ELK implementation.
- *
- * mermaid registers these layouts itself, so the package is only needed for
- * builds that ship without ELK — notably `mermaid.tiny.js`.
+ * ELK layouts, to pass to `mermaid.registerLayoutLoaders`. mermaid registers
+ * them itself, so this is only needed for builds without ELK, e.g. tiny.
  */
 const layouts: LayoutLoaderDefinition[] = [
   { name: 'elk', loader, algorithm: 'elk.layered' },
