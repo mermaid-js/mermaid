@@ -88,7 +88,6 @@ describe('flow db class', () => {
       'destructLink',
       'addClass',
       'setClickEvent',
-      'setTooltip',
       'setLink',
       'updateLink',
       'updateLinkInterpolate',

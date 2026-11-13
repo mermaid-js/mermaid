@@ -12,6 +12,14 @@ describe('[Text] when parsing', () => {
     flow.parser.yy.clear();
   });
 
+  it('parses quoted node, edge, and subgraph labels with closing delimiters', () => {
+    flow.parser.parse('graph TD\nA["Node"] -->|"Edge"| B\nsubgraph S["Group"]\nC\nend');
+    const db = flow.parser.yy;
+    expect(db.getVertices().get('A').text).toBe('Node');
+    expect(db.getEdges()[0].text).toBe('Edge');
+    expect(db.getSubGraphs()[0].title).toBe('Group');
+  });
+
   describe('it should handle text on edges', function () {
     it('should handle text without space', function () {
       const res = flow.parser.parse('graph TD;A--x|textNoSpace|B;');

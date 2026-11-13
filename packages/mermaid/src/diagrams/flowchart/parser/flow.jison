@@ -72,18 +72,17 @@ arguments to the node that was specified by 'click'.
 Function arguments are optional: 'call <callbackname>()' simply executes 'callbackname' without any arguments.
 */
 "call"[\s]+             this.begin("callbackname");
-<callbackname>\([\s]*\) this.popState();
-<callbackname>\(        this.popState(); this.begin("callbackargs");
+<callbackname>\(        { this.popState(); this.begin("callbackargs"); return 'CALLBACK_START'; }
 <callbackname>[^(]*     return 'CALLBACKNAME';
-<callbackargs>\)        this.popState();
-<callbackargs>[^)]*     return 'CALLBACKARGS';
+<callbackargs>\)        { this.popState(); return 'CALLBACK_END'; }
+<callbackargs>[^)]+     return 'CALLBACKARGS';
 
 
 <md_string>[^`"]+       { return "MD_STR";}
 <md_string>[`]["]       { this.popState();}
 <*>["][`]               { this.begin("md_string");}
 <string>[^"]+           { return "STR"; }
-<string>["]             this.popState();
+<string>["]             { this.popState(); return 'STR_END'; }
 <*>["]                  this.pushState("string");
 "style"                 return 'STYLE';
 "default"               return 'DEFAULT';
@@ -109,9 +108,18 @@ line was introduced with 'click'.
 that id.
 'click <id>' can be followed by href or call commands in any desired order
 */
-"click"[\s]+             this.begin("click");
-<click>[\s\n]            this.popState();
-<click>[^\s\n]*          return 'CLICK';
+"click"(?=\s)           {
+                            // Only a 'click' that starts a statement introduces a click statement, whose target
+                            // may follow on the next line. Elsewhere (e.g. a subgraph title) it is a plain keyword.
+                            const before = this.matched.slice(0, -yytext.length);
+                            const statementStart = Math.max(before.lastIndexOf('\n'), before.lastIndexOf(';')) + 1;
+                            if (before.slice(statementStart).trim() === '') {
+                              this.begin("click");
+                            }
+                            return 'CLICK';
+                          }
+<click>\s+              return 'SPACE';
+<click>[^\s\n]+         { this.popState(); return 'CLICK_IDS'; }
 
 "flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "swimlane-beta"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
@@ -506,7 +514,7 @@ edgeText: edgeTextToken
     {$$={text:$edgeTextToken, type:'text'};}
     | edgeText edgeTextToken
     {$$={text:$edgeText.text+''+$edgeTextToken, type:$edgeText.type};}
-    |STR
+    | STR STR_END
     {$$={text: $STR, type: 'string'};}
     | MD_STR
     {$$={text:$MD_STR, type:'markdown'};}
@@ -528,7 +536,7 @@ text: textToken
     { $$={text:$textToken, type: 'text'};}
     | text textToken
     { $$={text:$text.text+''+$textToken, type: $text.type};}
-    | STR
+    | STR STR_END
     { $$ = {text: $STR, type: 'string'};}
     | MD_STR
     { $$={text: $MD_STR, type: 'markdown'};}
@@ -544,7 +552,7 @@ textNoTags: textNoTagsToken
     {$$={text:$textNoTagsToken, type: 'text'};}
     | textNoTags textNoTagsToken
     {$$={text:$textNoTags.text+''+$textNoTagsToken, type: $textNoTags.type};}
-    | STR
+    | STR STR_END
     { $$={text: $STR, type: 'text'};}
     | MD_STR
     { $$={text: $MD_STR, type: 'markdown'};}
@@ -560,21 +568,44 @@ classStatement:CLASS SPACE idString\[vertex] SPACE idString\[class]
     ;
 
 clickStatement
-    : CLICK CALLBACKNAME                                    {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME);}
-    | CLICK CALLBACKNAME SPACE STR                          {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME);yy.setTooltip($CLICK, $STR);}
-    | CLICK CALLBACKNAME CALLBACKARGS                       {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);}
-    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR             {$$ = $CLICK;yy.setClickEvent($CLICK, $CALLBACKNAME, $CALLBACKARGS);yy.setTooltip($CLICK, $STR);}
-    | CLICK HREF STR                                        {$$ = $CLICK;yy.setLink($CLICK, $STR);}
-    | CLICK HREF STR SPACE STR                              {$$ = $CLICK;yy.setLink($CLICK, $STR1);yy.setTooltip($CLICK, $STR2);}
-    | CLICK HREF STR SPACE LINK_TARGET                      {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
-    | CLICK HREF STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET      {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
-    | CLICK alphaNum                                        {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);}
-    | CLICK alphaNum SPACE STR                              {$$ = $CLICK;yy.setClickEvent($CLICK, $alphaNum);yy.setTooltip($CLICK, $STR);}
-    | CLICK STR                                             {$$ = $CLICK;yy.setLink($CLICK, $STR);}
-    | CLICK STR\[link] SPACE STR\[tooltip]                  {$$ = $CLICK;yy.setLink($CLICK, $link);yy.setTooltip($CLICK, $tooltip);}
-    | CLICK STR SPACE LINK_TARGET                           {$$ = $CLICK;yy.setLink($CLICK, $STR, $LINK_TARGET);}
-    | CLICK STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET    {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
+    : CLICK SPACE clickIdsToken clickSeparator CALLBACKNAME callbackArgs
+          {$$ = $CLICK;yy.setClickEvent($clickIdsToken, $CALLBACKNAME, $callbackArgs);}
+    | CLICK SPACE clickIdsToken clickSeparator CALLBACKNAME callbackArgs SPACE STR\[tooltip] STR_END
+          {$$ = $CLICK;yy.setClickEvent($clickIdsToken, $CALLBACKNAME, $callbackArgs, $tooltip);}
+    | CLICK SPACE clickIdsToken clickSeparator HREF STR STR_END
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $STR);}
+    | CLICK SPACE clickIdsToken clickSeparator HREF STR STR_END SPACE STR\[tooltip] STR_END
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $STR, undefined, $tooltip);}
+    | CLICK SPACE clickIdsToken clickSeparator HREF STR STR_END SPACE LINK_TARGET
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $STR, $LINK_TARGET);}
+    | CLICK SPACE clickIdsToken clickSeparator HREF STR\[link] STR_END SPACE STR\[tooltip] STR_END SPACE LINK_TARGET
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $link, $LINK_TARGET, $tooltip);}
+    | CLICK SPACE clickIdsToken clickSeparator alphaNum
+          {$$ = $CLICK;yy.setClickEvent($clickIdsToken, $alphaNum);}
+    | CLICK SPACE clickIdsToken clickSeparator alphaNum SPACE STR\[tooltip] STR_END
+          {$$ = $CLICK;yy.setClickEvent($clickIdsToken, $alphaNum, undefined, $tooltip);}
+    | CLICK SPACE clickIdsToken clickSeparator STR STR_END
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $STR);}
+    | CLICK SPACE clickIdsToken clickSeparator STR\[link] STR_END SPACE STR\[tooltip] STR_END
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $link, undefined, $tooltip);}
+    | CLICK SPACE clickIdsToken clickSeparator STR STR_END SPACE LINK_TARGET
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $STR, $LINK_TARGET);}
+    | CLICK SPACE clickIdsToken clickSeparator STR\[link] STR_END SPACE STR\[tooltip] STR_END SPACE LINK_TARGET
+          {$$ = $CLICK;yy.setLink($clickIdsToken, $link, $LINK_TARGET, $tooltip);}
     ;
+
+callbackArgs
+    : CALLBACK_START CALLBACK_END
+          {$$ = undefined;}
+    | CALLBACK_START CALLBACKARGS CALLBACK_END
+          {$$ = $CALLBACKARGS.trim() ? $CALLBACKARGS : undefined;}
+    ;
+
+clickSeparator: SPACE | NEWLINE;
+
+clickIdsToken: CLICK_IDS
+  {$$ = $CLICK_IDS}
+  ;
 
 styleStatement:STYLE SPACE idString SPACE stylesOpt
     {$$ = $STYLE;yy.addVertex($idString,undefined,undefined,$stylesOpt);}
@@ -619,7 +650,7 @@ idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | A
 
 textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
 
-textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK ;
+textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | CLICK_IDS | START_LINK ;
 
 edgeTextToken  :  EDGE_TEXT | UNICODE_TEXT ;
 

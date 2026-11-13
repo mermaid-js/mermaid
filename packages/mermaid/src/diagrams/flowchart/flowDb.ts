@@ -131,9 +131,7 @@ export class FlowDB implements DiagramDB {
     this.setClass = this.setClass.bind(this);
     this.destructLink = this.destructLink.bind(this);
     this.setClickEvent = this.setClickEvent.bind(this);
-    this.setTooltip = this.setTooltip.bind(this);
     this.updateLinkInterpolate = this.updateLinkInterpolate.bind(this);
-    this.setClickFun = this.setClickFun.bind(this);
     this.bindFunctions = this.bindFunctions.bind(this);
 
     this.lex = {
@@ -559,17 +557,15 @@ You have to call mermaid.initialize.`
     }
   }
 
-  public setTooltip(ids: string, tooltip: string) {
-    if (tooltip === undefined) {
-      return;
-    }
-    tooltip = this.sanitizeText(tooltip);
+  private setTooltip(ids: string, tooltip: string) {
+    const displayText = this.sanitizeText(tooltip);
     for (const id of ids.split(',')) {
-      this.tooltips.set(this.version === 'gen-1' ? this.lookUpDomId(id) : id, tooltip);
+      this.tooltips.set(this.version === 'gen-1' ? this.lookUpDomId(id) : id, displayText);
     }
   }
 
-  private setClickFun(id: string, functionName: string, functionArgs: string) {
+  private setClickFun(id: string, functionName: string, functionArgs?: string) {
+    const vertex = this.vertices.get(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
       return;
@@ -578,7 +574,7 @@ You have to call mermaid.initialize.`
       return;
     }
     let argList: string[] = [];
-    if (typeof functionArgs === 'string') {
+    if (functionArgs != null) {
       /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
       argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
       for (let i = 0; i < argList.length; i++) {
@@ -597,7 +593,6 @@ You have to call mermaid.initialize.`
       argList.push(id);
     }
 
-    const vertex = this.vertices.get(id);
     if (vertex) {
       vertex.haveCallback = true;
       this.funs.push(() => {
@@ -624,7 +619,10 @@ You have to call mermaid.initialize.`
    * @param linkStr - URL to create a link for
    * @param target - Target attribute for the link
    */
-  public setLink(ids: string, linkStr: string, target: string) {
+  public setLink(ids: string, linkStr: string, target?: string, tooltip?: string) {
+    if (tooltip != null) {
+      this.setTooltip(ids, tooltip);
+    }
     ids.split(',').forEach((id) => {
       const vertex = this.vertices.get(id);
       if (vertex !== undefined) {
@@ -646,7 +644,10 @@ You have to call mermaid.initialize.`
    * @param functionName - Function to be called on click
    * @param functionArgs - Arguments to be passed to the function
    */
-  public setClickEvent(ids: string, functionName: string, functionArgs: string) {
+  public setClickEvent(ids: string, functionName: string, functionArgs?: string, tooltip?: string) {
+    if (tooltip != null) {
+      this.setTooltip(ids, tooltip);
+    }
     ids.split(',').forEach((id) => {
       this.setClickFun(id, functionName, functionArgs);
     });
@@ -658,6 +659,7 @@ You have to call mermaid.initialize.`
       fun(element);
     });
   }
+
   public getDirection() {
     return this.direction?.trim();
   }

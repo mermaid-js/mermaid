@@ -12,6 +12,25 @@ describe('when parsing subgraphs', function () {
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
+  it('retains click in an unquoted subgraph title', () => {
+    flow.parser.parse('graph TD\nsubgraph click callback\nA\nend');
+    expect(flow.parser.yy.getSubGraphs()[0]).toMatchObject({
+      title: 'click callback',
+      nodes: ['A'],
+    });
+  });
+
+  it.each(['\n', '\r\n'])(
+    'does not pull the next line into a subgraph titled click: %j',
+    (newline) => {
+      flow.parser.parse(`graph TD${newline}subgraph click${newline}A${newline}end`);
+      expect(flow.parser.yy.getSubGraphs()[0]).toMatchObject({
+        title: 'click',
+        nodes: ['A'],
+      });
+    }
+  );
+
   it('should handle subgraph with tab indentation', function () {
     const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
