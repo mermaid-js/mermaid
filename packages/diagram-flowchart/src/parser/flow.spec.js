@@ -1,7 +1,7 @@
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
-import { cleanupComments } from '../../../diagram-api/comments.js';
-import { setConfig } from '../../../config.js';
+import { cleanupComments } from '@mermaid-js/core/diagram-api/comments.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 
 setConfig({
   securityLevel: 'strict',

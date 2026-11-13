@@ -3,7 +3,7 @@ import type { AgentflowDiagnostic } from './diagnostics.js';
 
 /**
  * Valid `type` args to `yy.addVertex` taken from
- * `packages/core/src/diagrams/flowchart/parser/flow.jison`.
+ * `packages/diagram-flowchart/src/parser/flow.jison`.
  *
  * v0.8.1: shapes the spec calls "removed" still appear here because the
  * grammar continues to accept the inline syntax (e.g. `id((text))` for

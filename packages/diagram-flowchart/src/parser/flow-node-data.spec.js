@@ -1,6 +1,6 @@
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
-import { getConfig, setConfig } from '../../../config.js';
+import { getConfig, setConfig } from '@mermaid-js/core/config.js';
 
 setConfig({
   securityLevel: 'strict',

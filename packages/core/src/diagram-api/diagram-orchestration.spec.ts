@@ -4,9 +4,9 @@ import { addDiagrams } from './diagram-orchestration.js';
 
 describe('diagram-orchestration', () => {
   it('should register diagrams', () => {
-    expect(() => detectType('graph TD; A-->B')).toThrow();
+    expect(() => detectType('C4Context')).toThrow();
     addDiagrams();
-    expect(detectType('graph TD; A-->B')).toBe('flowchart-v2');
+    expect(detectType('C4Context')).toBe('c4');
   });
 
   describe('proper diagram types should be detected', () => {

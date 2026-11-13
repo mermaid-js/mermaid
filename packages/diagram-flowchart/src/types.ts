@@ -1,9 +1,9 @@
-import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
-import type { NodeMetaData } from '../../types.js';
+import type { ShapeID } from '@mermaid-js/core/rendering-util/rendering-elements/shapes.js';
+import type { NodeMetaData } from '@mermaid-js/core/types.js';
 
 /**
  * Valid `type` args to `yy.addVertex` taken from
- * `packages/core/src/diagrams/flowchart/parser/flow.jison`
+ * `packages/diagram-flowchart/src/parser/flow.jison`
  */
 export type FlowVertexTypeParam =
   | undefined

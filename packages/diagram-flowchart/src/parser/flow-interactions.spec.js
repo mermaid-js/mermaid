@@ -1,6 +1,6 @@
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
-import { setConfig } from '../../../config.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 import { vi } from 'vitest';
 const spyOn = vi.spyOn;
 

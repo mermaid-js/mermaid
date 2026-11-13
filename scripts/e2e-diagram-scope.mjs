@@ -19,7 +19,7 @@
  *
  * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
- *   const spec = detectScope(['packages/core/src/diagrams/flowchart/flowchart.ts']);
+ *   const spec = detectScope(['packages/diagram-flowchart/src/flowchart.ts']);
  *   // => 'e2e/rendering/flowchart/'
  */
 
@@ -147,9 +147,9 @@ const SHARED_PREFIXES = [
 
 // Regex: extract diagram name from paths like
 // packages/core/src/diagrams/<name>/... or packages/diagram-<name>/...
-// Swimlanes lives inside the flowchart folder but has its own e2e tests.
+// Swimlanes lives in the flowchart package but has its own e2e tests.
 const DIAGRAM_PATH_RE =
-  /^packages\/(?:core\/src\/diagrams\/|diagram-)(?:flowchart\/(?:src\/)?(?=swimlanes\/))?([^/]+)\//;
+  /^packages\/(?:core\/src\/diagrams\/|diagram-)(?:flowchart\/src\/(?=swimlanes\/))?([^/]+)\//;
 
 // Diagram packages named differently from their e2e folders.
 const PACKAGE_E2E_NAMES = { journey: 'user-journey', quadrant: 'quadrant-chart' };

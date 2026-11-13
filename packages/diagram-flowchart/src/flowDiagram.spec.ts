@@ -5,13 +5,13 @@
  * `swimlanes/swimlanesDiagram.spec.ts`.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { setConfig } from '../../diagram-api/diagramAPI.js';
+import { setConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import { createFlowDiagram } from './flowDiagram.js';
 
 // Spy setConfig while keeping every other export real, so the renderer/parser
 // imports that flowDiagram.ts pulls in still resolve.
 // (vitest hoists vi.mock above the imports above.)
-vi.mock('../../diagram-api/diagramAPI.js', async (importOriginal) => {
+vi.mock('@mermaid-js/core/diagram-api/diagramAPI.js', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return { ...actual, setConfig: vi.fn() };
 });

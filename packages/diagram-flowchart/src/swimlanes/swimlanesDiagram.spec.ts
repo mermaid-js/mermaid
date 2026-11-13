@@ -9,11 +9,11 @@ import {
   saveConfigFromInitialize,
   setDiagramConfigScope,
   setSiteConfig,
-} from '../../../config.js';
-import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
-import { log } from '../../../logger.js';
-import { mermaidAPI } from '../../../mermaidAPI.js';
-import { prepareLayoutForSwimlanes } from '../../../rendering-util/layout-algorithms/swimlanes/helpers.js';
+} from '@mermaid-js/core/config.js';
+import { addDiagrams } from '@mermaid-js/core/diagram-api/diagram-orchestration.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import { prepareLayoutForSwimlanes } from '@mermaid-js/core/rendering-util/layout-algorithms/swimlanes/helpers.js';
 import { FlowDB } from '../flowDb.js';
 import flow from '../parser/flowParser.js';
 

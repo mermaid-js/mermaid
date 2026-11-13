@@ -75,6 +75,7 @@
     "@mermaid-js/diagram-cynefin": "workspace:^",
     "@mermaid-js/diagram-er": "workspace:^",
     "@mermaid-js/diagram-eventmodeling": "workspace:^",
+    "@mermaid-js/diagram-flowchart": "workspace:^",
     "@mermaid-js/diagram-gantt": "workspace:^",
     "@mermaid-js/diagram-gitgraph": "workspace:^",
     "@mermaid-js/diagram-info": "workspace:^",

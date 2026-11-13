@@ -5,6 +5,7 @@ import classDiagramV2 from '@mermaid-js/diagram-class';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
 import er from '@mermaid-js/diagram-er';
 import eventmodeling from '@mermaid-js/diagram-eventmodeling';
+import { flowchart, swimlanes } from '@mermaid-js/diagram-flowchart';
 import gantt from '@mermaid-js/diagram-gantt';
 import git from '@mermaid-js/diagram-gitgraph';
 import { info } from '@mermaid-js/diagram-info';
@@ -34,6 +35,7 @@ void mermaid.registerExternalDiagrams([
   cynefin,
   er,
   eventmodeling,
+  flowchart,
   gantt,
   git,
   info,
@@ -52,6 +54,7 @@ void mermaid.registerExternalDiagrams([
   sankey,
   sequence,
   stateV2,
+  swimlanes,
   timeline,
   treeView,
   treemap,

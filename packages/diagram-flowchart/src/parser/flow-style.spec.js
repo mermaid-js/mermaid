@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
-import { setConfig } from '../../../config.js';
-import { log } from '../../../logger.js';
+import { setConfig } from '@mermaid-js/core/config.js';
+import { log } from '@mermaid-js/core/logger.js';
 
 setConfig({
   securityLevel: 'strict',

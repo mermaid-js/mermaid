@@ -40,6 +40,7 @@
     "node": ">=22.12.0"
   },
   "devDependencies": {
+    "@mermaid-js/diagram-flowchart": "workspace:^",
     "@types/d3": "^7.4.3"
   },
   "files": [

@@ -26,7 +26,7 @@ anything _not_ below is drift and should be reconciled.
 Reproduce the comparison with:
 
 ```bash
-diff <(sed -n '/%lex/,/\/lex/p' packages/core/src/diagrams/flowchart/parser/flow.jison) \
+diff <(sed -n '/%lex/,/\/lex/p' packages/diagram-flowchart/src/parser/flow.jison) \
      <(sed -n '/%lex/,/\/lex/p' packages/core/src/diagrams/agentflow/parser/agentflow.jison)
 ```
 

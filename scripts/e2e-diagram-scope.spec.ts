@@ -15,8 +15,8 @@ describe('detectScope', () => {
 
   it('scopes to a single diagram when only that diagram changed', () => {
     const result = detectScope([
-      'packages/core/src/diagrams/flowchart/flowchartDb.ts',
-      'packages/core/src/diagrams/flowchart/flowchartRenderer.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartRenderer.ts',
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
@@ -37,7 +37,7 @@ describe('detectScope', () => {
   it('falls back to full suite when rendering-util is touched', () => {
     expect(
       detectScope([
-        'packages/core/src/diagrams/flowchart/flowchartDb.ts',
+        'packages/diagram-flowchart/src/flowchartDb.ts',
         'packages/core/src/rendering-util/edgeDetails.ts',
       ])
     ).toBe('');
@@ -73,9 +73,9 @@ describe('detectScope', () => {
     );
   });
 
-  it('maps swimlanes inside the flowchart folder to swimlanes', () => {
+  it('maps swimlanes inside the flowchart package to swimlanes', () => {
     expect(
-      detectScope(['packages/core/src/diagrams/flowchart/swimlanes/styles.ts']).split(',')
+      detectScope(['packages/diagram-flowchart/src/swimlanes/styles.ts']).split(',')
     ).toContain(`${SPEC_BASE_DIR}/swimlanes/`);
   });
 
@@ -106,7 +106,7 @@ describe('detectScope', () => {
 
   it('includes the mmd runner when a fixture changes alongside a diagram source', () => {
     const result = detectScope([
-      'packages/core/src/diagrams/flowchart/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
       'e2e/diagrams/flowchart/new-case.mmd',
     ]);
     expect(result.split(',')).toEqual(
@@ -201,7 +201,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
 
   it('scopes to diagram when diagram source + file in demo folder changed', () => {
     const result = detectScope([
-      'packages/core/src/diagrams/flowchart/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
       'demos/sequence.html',
     ]);
     expect(result.split(',')).toEqual(
@@ -214,7 +214,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
 
   it('scopes to diagram when diagram source + docs both change', () => {
     const result = detectScope([
-      'packages/core/src/diagrams/flowchart/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
       'packages/mermaid/src/docs/syntax/flowchart.md',
     ]);
     expect(result.split(',')).toEqual(

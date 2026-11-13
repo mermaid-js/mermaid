@@ -1,20 +1,20 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
-import * as configApi from '../../config.js';
-import type * as RenderModule from '../../rendering-util/render.js';
-import { registerLayoutLoaders } from '../../rendering-util/render.js';
-import type * as UtilsModule from '../../utils.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import type * as RenderModule from '@mermaid-js/core/rendering-util/render.js';
+import { registerLayoutLoaders } from '@mermaid-js/core/rendering-util/render.js';
+import type * as UtilsModule from '@mermaid-js/core/utils.js';
 
 // Deliberately does NOT mock `getRegisteredLayoutAlgorithm`: the point of this
 // spec is the real resolution of the default `layout` config through the real
 // loader registry, so it would be meaningless against a stub.
 const renderMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 
-vi.mock('../../rendering-util/render.js', async (importOriginal) => ({
+vi.mock('@mermaid-js/core/rendering-util/render.js', async (importOriginal) => ({
   ...(await importOriginal<typeof RenderModule>()),
   render: renderMock,
 }));
 
-vi.mock('../../rendering-util/insertElementsForSize.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/insertElementsForSize.js', () => ({
   getDiagramElement: vi.fn().mockReturnValue({
     attr: vi.fn().mockReturnThis(),
     select: vi.fn().mockReturnThis(),
@@ -22,13 +22,13 @@ vi.mock('../../rendering-util/insertElementsForSize.js', () => ({
   }),
 }));
 
-vi.mock('../../rendering-util/setupViewPortForSVG.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/setupViewPortForSVG.js', () => ({
   setupViewPortForSVG: vi.fn(),
 }));
 
 // Partial: the real `render.js` pulls in `internals.ts`, which needs the rest of
 // utils; only `insertTitle` is stubbed because it would touch the fake svg.
-vi.mock('../../utils.js', async (importOriginal) => {
+vi.mock('@mermaid-js/core/utils.js', async (importOriginal) => {
   const actual = await importOriginal<typeof UtilsModule>();
   return {
     ...actual,

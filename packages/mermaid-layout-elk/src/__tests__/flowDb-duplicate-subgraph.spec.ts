@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { runElkLayoutCore } from '../render.js';
-import { FlowDB } from '@mermaid-js/core/diagrams/flowchart/flowDb.js';
-import flow from '@mermaid-js/core/diagrams/flowchart/parser/flowParser.js';
+import { flowchart } from '@mermaid-js/diagram-flowchart';
 
 const log = {
   debug: () => undefined,
@@ -30,12 +29,13 @@ const collectIds = (node: any, into: string[] = []): string[] => {
 
 describe('ELK layout of a flowchart with a repeated subgraph id (issue #8326)', () => {
   it('lays out a single compound node with finite coordinates', async () => {
-    const flowDb = new FlowDB();
+    const { diagram } = await flowchart.loader();
+    const flowDb = diagram.db as any;
     flowDb.setGen('gen-2');
-    flow.parser.yy = flowDb;
-    flow.parser.parse('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend');
+    diagram.parser.parser!.yy = flowDb;
+    await diagram.parser.parse('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend');
 
-    const data = flowDb.getData() as any;
+    const data = flowDb.getData();
     data.config = { elk: {} };
     for (const node of data.nodes) {
       // Stand in for the DOM measurement pass.

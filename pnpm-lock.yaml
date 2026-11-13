@@ -478,6 +478,28 @@ importers:
         specifier: ^7.4.3
         version: 7.4.3
 
+  packages/diagram-flowchart:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dagre-d3-es:
+        specifier: 7.0.14
+        version: 7.0.14
+      dompurify:
+        specifier: 3.4.17
+        version: 3.4.17
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-gantt:
     dependencies:
       '@braintree/sanitize-url':
@@ -827,6 +849,9 @@ importers:
       '@mermaid-js/diagram-eventmodeling':
         specifier: workspace:^
         version: link:../diagram-eventmodeling
+      '@mermaid-js/diagram-flowchart':
+        specifier: workspace:^
+        version: link:../diagram-flowchart
       '@mermaid-js/diagram-gantt':
         specifier: workspace:^
         version: link:../diagram-gantt
@@ -1041,6 +1066,9 @@ importers:
         specifier: ^0.12.0
         version: 0.12.0
     devDependencies:
+      '@mermaid-js/diagram-flowchart':
+        specifier: workspace:^
+        version: link:../diagram-flowchart
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -1197,6 +1225,9 @@ importers:
       '@mermaid-js/diagram-eventmodeling':
         specifier: workspace:^
         version: link:../diagram-eventmodeling
+      '@mermaid-js/diagram-flowchart':
+        specifier: workspace:^
+        version: link:../diagram-flowchart
       '@mermaid-js/diagram-gantt':
         specifier: workspace:^
         version: link:../diagram-gantt
