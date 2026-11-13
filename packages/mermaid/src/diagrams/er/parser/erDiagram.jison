@@ -46,7 +46,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "]"                             return 'SQE';
 
 "style"                         { this.begin("style"); return 'STYLE'; }
-<style>[\n]+                    { this.popState(); return 'NEWLINE'; }
+<style>[^\S\n]*[\n]+            { this.popState(); return 'NEWLINE'; }
 <style>\s+                      /* skip whitespace in block */
 <style>":"                      return 'COLON';
 <style>","                      return 'COMMA';
