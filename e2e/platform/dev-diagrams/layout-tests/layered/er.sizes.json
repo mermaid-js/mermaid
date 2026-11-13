@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "entity-CUSTOMER-0",
+      "width": 162.953125,
+      "height": 119.25
+    },
+    {
+      "id": "entity-ORDER-1",
+      "width": 162.203125,
+      "height": 119.25
+    },
+    {
+      "id": "entity-LINE-ITEM-2",
+      "width": 109.234375,
+      "height": 81
+    },
+    {
+      "id": "entity-PRODUCT-3",
+      "width": 158.28125,
+      "height": 119.25
+    },
+    {
+      "id": "entity-DELIVERY-ADDRESS-4",
+      "width": 160,
+      "height": 102
+    },
+    {
+      "id": "edge-label-entity-CUSTOMER-0-entity-ORDER-1-id_entity-CUSTOMER-0_entity-ORDER-1_0",
+      "width": 40.46875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-entity-ORDER-1-entity-LINE-ITEM-2-id_entity-ORDER-1_entity-LINE-ITEM-2_1",
+      "width": 52.15625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-entity-PRODUCT-3-entity-LINE-ITEM-2-id_entity-PRODUCT-3_entity-LINE-ITEM-2_2",
+      "width": 63.046875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-entity-CUSTOMER-0-entity-DELIVERY-ADDRESS-4-id_entity-CUSTOMER-0_entity-DELIVERY-ADDRESS-4_3",
+      "width": 29.578125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "282233c4549b9dea97a624a550a8e15c137a642b216b5c5d5182a522052e1816",
+    "capturedAt": "2026-11-03T13:59:17.572Z",
+    "capturedFrom": "browser-dev layout-tests/layered/er.mmd layout=layered theme=default look=classic"
+  }
+}

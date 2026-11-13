@@ -13,6 +13,11 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
 interface BaseNode {
   id: string;
+  /**
+   * Stable authored identifier used to resolve placement maps when `id` is generated for rendering.
+   * Edges and DOM lookup continue to use `id`; layouts use this field only as a configuration key.
+   */
+  placementId?: string;
   label?: string;
   description?: string[];
   /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */
