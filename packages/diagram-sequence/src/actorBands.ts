@@ -35,7 +35,7 @@
  * The `classic` look does not use this module; its per-shape legacy values are pinned in
  * `lifelineStart.spec.ts` and must not move.
  */
-import utils from '../../utils.js';
+import utils from '@mermaid-js/core/utils.js';
 
 /** Height of the glyph band. The round icons set it: a 22 unit circle plus its underline. */
 export const GLYPH_BAND_HEIGHT = 44;

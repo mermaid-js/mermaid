@@ -1,16 +1,19 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw, { drawKatex, ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
-import { log } from '../../logger.js';
-import common, { calculateMathMLDimensions, hasKatex } from '../common/common.js';
-import { getUrl } from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
+import common, {
+  calculateMathMLDimensions,
+  hasKatex,
+} from '@mermaid-js/core/diagrams/common/common.js';
+import { getUrl } from '@mermaid-js/core/diagrams/common/common.js';
+import * as svgDrawCommon from '@mermaid-js/core/diagrams/common/svgDrawCommon.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import { actorStackHeight } from './actorBands.js';
-import assignWithDepth from '../../assignWithDepth.js';
-import utils from '../../utils.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { Diagram } from '../../Diagram.js';
+import assignWithDepth from '@mermaid-js/core/assignWithDepth.js';
+import utils from '@mermaid-js/core/utils.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
 import { PARTICIPANT_TYPE } from './sequenceDb.js';
 
 let conf = {};

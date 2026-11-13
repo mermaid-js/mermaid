@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-vi.mock('../../config.js', async (importOriginal) => {
+vi.mock('@mermaid-js/core/config.js', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
@@ -8,7 +8,7 @@ vi.mock('../../config.js', async (importOriginal) => {
   };
 });
 
-import * as configApi from '../../config.js';
+import * as configApi from '@mermaid-js/core/config.js';
 import svgDraw from './svgDraw.js';
 
 // This is the only place that uses this mock

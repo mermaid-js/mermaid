@@ -1,4 +1,4 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 
 const getStyles = (options) => {
   const dropShadow = options.dropShadow ?? 'none';

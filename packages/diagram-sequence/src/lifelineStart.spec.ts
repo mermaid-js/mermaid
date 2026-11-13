@@ -17,8 +17,8 @@
  */
 import { select } from 'd3';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import defaultConfig from '../../defaultConfig.js';
-import themes from '../../themes/index.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
+import themes from '@mermaid-js/core/themes/index.js';
 import svgDraw from './svgDraw.js';
 
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');

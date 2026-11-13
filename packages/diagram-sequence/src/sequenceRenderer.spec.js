@@ -9,7 +9,7 @@ vi.mock('./svgDraw.js', async (importOriginal) => {
   };
 });
 
-vi.mock('../../utils.js', async (importOriginal) => {
+vi.mock('@mermaid-js/core/utils.js', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,

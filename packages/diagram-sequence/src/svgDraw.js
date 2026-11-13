@@ -1,12 +1,12 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import * as configApi from '../../config.js';
-import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import { ZERO_WIDTH_SPACE, parseFontSize } from '@mermaid-js/core/utils.js';
 import common, {
   calculateMathMLDimensions,
   hasKatex,
   renderKatexSanitized,
-} from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon.js';
+} from '@mermaid-js/core/diagrams/common/common.js';
+import * as svgDrawCommon from '@mermaid-js/core/diagrams/common/svgDrawCommon.js';
 import { GLYPH_BAND_HEIGHT, actorLabelHeight, footerBands, headerBands } from './actorBands.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;

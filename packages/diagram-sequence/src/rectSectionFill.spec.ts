@@ -12,7 +12,7 @@
  * that lands with the same collision fails here rather than shipping an invisible section.
  */
 import { describe, expect, it } from 'vitest';
-import themes from '../../themes/index.js';
+import themes from '@mermaid-js/core/themes/index.js';
 
 const themeNames = Object.keys(themes) as (keyof typeof themes)[];
 

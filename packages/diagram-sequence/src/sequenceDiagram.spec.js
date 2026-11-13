@@ -1,8 +1,7 @@
 import { vi } from 'vitest';
-import { setSiteConfig } from '../../diagram-api/diagramAPI.js';
-import mermaidAPI from '../../mermaidAPI.js';
-import { Diagram } from '../../Diagram.js';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import { setSiteConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import mermaidAPI from '@mermaid-js/core/mermaidAPI.js';
+import { Diagram } from '@mermaid-js/core/Diagram.js';
 import { SequenceDB } from './sequenceDb.js';
 
 beforeAll(async () => {
@@ -12,7 +11,7 @@ beforeAll(async () => {
 
 /**
  * Sequence diagrams require their own very special version of a mocked d3 module
- * diagrams/sequence/svgDraw uses statements like this with d3 nodes: (note the [0][0])
+ * svgDraw.js uses statements like this with d3 nodes: (note the [0][0])
  *
  *   // in drawText(...)
  *   textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
@@ -30,7 +29,7 @@ vi.mock('d3', () => {
       attr: returnThis,
       style: returnThis,
       text: returnThis,
-      // [0][0] (below) is required by drawText() in packages/core/src/diagrams/sequence/svgDraw.js
+      // [0][0] (below) is required by drawText() in ./svgDraw.js
       0: {
         0: {
           getBBox: function () {
@@ -77,8 +76,6 @@ vi.mock('d3', () => {
   };
 });
 // -------------------------------
-
-addDiagrams();
 
 /**
  * @param conf

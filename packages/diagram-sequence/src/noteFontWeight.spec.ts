@@ -15,7 +15,7 @@
  * into its stylesheet, and the documented config key governs note weight on every theme.
  */
 import { describe, expect, it } from 'vitest';
-import themes from '../../themes/index.js';
+import themes from '@mermaid-js/core/themes/index.js';
 import getStyles from './styles.js';
 
 const themeNames = Object.keys(themes) as (keyof typeof themes)[];

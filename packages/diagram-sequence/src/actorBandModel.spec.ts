@@ -10,7 +10,7 @@
  * feedback paths run for real.
  */
 import { beforeAll, describe, expect, it } from 'vitest';
-import mermaid from '../../mermaid.js';
+import mermaid from '@mermaid-js/core/mermaid.js';
 
 const TEXT_LINE_HEIGHT = 19;
 

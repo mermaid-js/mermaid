@@ -14,10 +14,10 @@
  * assertions pin both halves.
  */
 import { describe, expect, it } from 'vitest';
-import themes from '../../themes/index.js';
+import themes from '@mermaid-js/core/themes/index.js';
 import { paletteColor } from './svgDraw.js';
 // Vite's `?raw` gives the module's own source, so the guard below reads the real file
-// without depending on the working directory. Declared in `src/type.d.ts`.
+// without depending on the working directory.
 import svgDrawSource from './svgDraw.js?raw';
 
 describe('paletteColor', () => {

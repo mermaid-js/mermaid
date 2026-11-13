@@ -629,6 +629,22 @@ importers:
         specifier: ^0.12.5
         version: 0.12.5
 
+  packages/diagram-sequence:
+    dependencies:
+      '@braintree/sanitize-url':
+        specifier: ^7.1.2
+        version: 7.1.2
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-timeline:
     dependencies:
       '@mermaid-js/core':
@@ -806,6 +822,9 @@ importers:
       '@mermaid-js/diagram-sankey':
         specifier: workspace:^
         version: link:../diagram-sankey
+      '@mermaid-js/diagram-sequence':
+        specifier: workspace:^
+        version: link:../diagram-sequence
       '@mermaid-js/diagram-timeline':
         specifier: workspace:^
         version: link:../diagram-timeline
@@ -1164,6 +1183,9 @@ importers:
       '@mermaid-js/diagram-sankey':
         specifier: workspace:^
         version: link:../diagram-sankey
+      '@mermaid-js/diagram-sequence':
+        specifier: workspace:^
+        version: link:../diagram-sequence
       '@mermaid-js/diagram-timeline':
         specifier: workspace:^
         version: link:../diagram-timeline

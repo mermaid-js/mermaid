@@ -1,9 +1,9 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import * as yaml from 'js-yaml';
-import type { DiagramDB } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
-import { sanitizeText } from '../common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import * as yaml from '@mermaid-js/core/utils/yaml.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { ImperativeState } from '@mermaid-js/core/utils/imperativeState.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -12,9 +12,9 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
-import type { ParticipantMetaData } from '../../types.js';
+import type { ParticipantMetaData } from '@mermaid-js/core/types.js';
 
 interface SequenceState {
   prevActor?: string;

@@ -54,6 +54,7 @@ describe('mermaid', () => {
     { text: 'railroad-peg-beta', expected: 'railroadPeg' },
     { text: 'requirementDiagram', expected: 'requirement' },
     { text: 'sankey', expected: 'sankey' },
+    { text: 'sequenceDiagram', expected: 'sequence' },
     { text: 'sankey-beta', expected: 'sankey' },
     { text: 'timeline', expected: 'timeline' },
     { text: 'treeView-beta', expected: 'treeView' },

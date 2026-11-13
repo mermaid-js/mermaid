@@ -27,7 +27,7 @@ describe('detectScope', () => {
   });
 
   it('returns patterns that Playwright can compile as regular expressions', () => {
-    const result = detectScope(['packages/core/src/diagrams/sequence/sequenceRenderer.ts']);
+    const result = detectScope(['packages/diagram-sequence/src/sequenceRenderer.ts']);
 
     for (const pattern of result.split(',')) {
       expect(() => new RegExp(pattern, 'gi')).not.toThrow();

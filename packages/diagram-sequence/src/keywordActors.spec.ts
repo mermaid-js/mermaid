@@ -5,7 +5,7 @@
  * fall through to the ACTOR rule instead of colliding with the directive.
  */
 import { describe, expect, it } from 'vitest';
-import { jsdomIt } from '../../tests/util.js';
+import { jsdomIt } from '@mermaid-js/core/tests/util.js';
 // @ts-ignore: JISON doesn't support types
 import parser from './parser/sequenceDiagram.jison';
 import { SequenceDB } from './sequenceDb.js';
