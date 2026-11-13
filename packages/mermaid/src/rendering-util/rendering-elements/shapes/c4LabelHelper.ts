@@ -5,9 +5,18 @@ import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection } from '../../../types.js';
+import type { MermaidConfig } from '../../../config.type.js';
 
 const SECTION_GAP = 3;
 const MIN_WRAP_WIDTH = 32;
+
+/**
+ * Whether C4 labels wrap: the root `wrap` when it is set, otherwise `c4.wrap`
+ * (schema default true). Root `wrap` has no schema default, so it only takes
+ * part when a user sets it.
+ */
+export const isC4WrapEnabled = (config: MermaidConfig): boolean =>
+  config.wrap ?? config.c4?.wrap ?? true;
 
 /**
  * Renders a stacked multi-section node label (name, stereotype, description
@@ -46,11 +55,7 @@ export const c4LabelHelper = async <T extends SVGGraphicsElement>(
   const wrapWidth = node.width
     ? Math.max(node.width - 2 * (node.padding ?? 0), MIN_WRAP_WIDTH)
     : (getConfig().flowchart?.wrappingWidth ?? 200);
-  // `c4.wrap` (schema default true) is this diagram's own auto-wrap flag, and is what
-  // the legacy renderer gated on. The root-level `wrap` has no schema default, so
-  // reading it here left every C4 label unwrapped.
-  const shouldWrap = config.c4?.wrap ?? true;
-  const width = shouldWrap ? wrapWidth : Number.POSITIVE_INFINITY;
+  const width = isC4WrapEnabled(config) ? wrapWidth : Number.POSITIVE_INFINITY;
 
   const rendered = await Promise.all(
     sections.map(async (section) => {

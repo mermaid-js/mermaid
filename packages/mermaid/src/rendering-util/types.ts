@@ -201,6 +201,8 @@ export interface Edge {
   /** Preserves router-owned terminal and bend invariants during shared rendering. */
   skipCornerFix?: boolean;
   labelpos?: string;
+  /** Wrap width for the edge label; `Number.POSITIVE_INFINITY` disables wrapping. */
+  labelWrapWidth?: number;
   labelStyle?: string[];
   minlen?: number;
   pattern?: string;
