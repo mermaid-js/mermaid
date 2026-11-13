@@ -1,0 +1,13 @@
+---
+description: >-
+  C4Dynamic with two relationships between the same pair of systems. Both
+  interactions are drawn and numbered ("1: Interaction 1", "2: Interaction 2");
+  they share one grid position, so the two labels overlap on the arrow. Before
+  the fix the second statement replaced the first and only one line was left.
+---
+C4Dynamic
+title Repeated interactions between the same pair
+System(a, "A")
+System(b, "B")
+Rel(a, b, "Interaction 1")
+Rel(a, b, "Interaction 2")
