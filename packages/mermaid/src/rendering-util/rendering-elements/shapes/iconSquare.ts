@@ -1,10 +1,10 @@
 import rough from 'roughjs';
 import { log } from '../../../logger.js';
-import { getIconSVG } from '../../icons.js';
 import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { setIconContent } from './iconContent.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
 
@@ -65,13 +65,7 @@ export async function iconSquare<T extends SVGGraphicsElement>(
 
   if (node.icon) {
     const iconElem = shapeSvg.append('g');
-    iconElem.html(
-      `<g>${await getIconSVG(node.icon, {
-        height: iconSize,
-        width: iconSize,
-        fallbackPrefix: '',
-      })}</g>`
-    );
+    await setIconContent(iconElem, node, iconSize);
     const iconBBox = iconElem.node()!.getBBox();
     const iconWidth = iconBBox.width;
     const iconHeight = iconBBox.height;
