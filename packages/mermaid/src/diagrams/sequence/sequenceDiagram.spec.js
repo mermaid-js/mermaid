@@ -1779,6 +1779,110 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(createdActors.get('c')).toEqual(1);
     expect(destroyedActors.get('c')).toEqual(3);
   });
+  it('should keep the declared order of an actor that is created later', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant Carl
+  participant Bob
+  participant Alice
+  Alice->>Bob: Hello Bob, how are you ?
+  create participant Carl
+  Alice->>Carl: Hi Carl!
+  `);
+    const actors = diagram.db.getActors();
+    expect(diagram.db.getActorKeys()).toEqual(['Carl', 'Bob', 'Alice']);
+    expect(diagram.db.getCreatedActors().get('Carl')).toEqual(1);
+    expect(actors.get('Carl').nextActor).toEqual('Bob');
+    expect(actors.get('Alice').prevActor).toEqual('Bob');
+    expect(actors.get('Alice').nextActor).toBeUndefined();
+  });
+  it('should use the alias of a create directive for an actor declared earlier', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant D
+  participant Alice
+  Alice->>Alice: Thinking
+  create actor D as Donald
+  Alice->>D: Hi Donald!
+  `);
+    const actors = diagram.db.getActors();
+    expect(diagram.db.getActorKeys()).toEqual(['D', 'Alice']);
+    expect(actors.get('D').description).toEqual('Donald');
+    expect(actors.get('D').type).toEqual('actor');
+    expect(actors.get('D').prevActor).toBeUndefined();
+    expect(actors.get('D').nextActor).toEqual('Alice');
+    expect(actors.get('Alice').prevActor).toEqual('D');
+    expect(actors.get('Alice').nextActor).toBeUndefined();
+  });
+  it('should use the type of a create directive for an actor declared earlier', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant Carl
+  participant D as Donald
+  participant Alice
+  Alice->>Alice: Thinking
+  create actor Carl
+  Alice->>Carl: Hi Carl!
+  create actor D
+  Alice->>D: Hi Donald!
+  `);
+    const actors = diagram.db.getActors();
+    expect(diagram.db.getActorKeys()).toEqual(['Carl', 'D', 'Alice']);
+    expect(actors.get('Carl').type).toEqual('actor');
+    expect(actors.get('Carl').description).toEqual('Carl');
+    expect(actors.get('D').type).toEqual('actor');
+    expect(actors.get('D').description).toEqual('Donald');
+  });
+  it('should use the configuration of a create directive for an actor declared earlier', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant DB
+  participant Alice
+  Alice->>Alice: Thinking
+  create participant DB@{ "type" : "database" }
+  Alice->>DB: Store this
+  `);
+    expect(diagram.db.getActorKeys()).toEqual(['DB', 'Alice']);
+    expect(diagram.db.getActors().get('DB').type).toEqual('database');
+  });
+  it('should not create an actor that was already used in a message', async () => {
+    await expect(
+      Diagram.fromText(`
+  sequenceDiagram
+  participant Carl
+  participant Alice
+  Alice->>Carl: Hi Carl!
+  create participant Carl
+  Alice->>Carl: Hi again!
+  `)
+    ).rejects.toThrow('It is not possible to have actors with the same id');
+  });
+  it('should not create an actor that was already used in a note', async () => {
+    await expect(
+      Diagram.fromText(`
+  sequenceDiagram
+  participant Carl
+  participant Alice
+  Note over Carl: Not created yet
+  create participant Carl
+  Alice->>Carl: Hi Carl!
+  `)
+    ).rejects.toThrow('It is not possible to have actors with the same id');
+  });
+  it('should not create an actor again after it was destroyed', async () => {
+    await expect(
+      Diagram.fromText(`
+  sequenceDiagram
+  participant Alice
+  create participant Carl
+  Alice->>Carl: Hi Carl!
+  destroy Carl
+  Alice-xCarl: Bye Carl!
+  create participant Carl
+  Alice->>Carl: Hi again!
+  `)
+    ).rejects.toThrow('It is not possible to have actors with the same id');
+  });
 });
 describe('when checking the bounds in a sequenceDiagram', function () {
   beforeAll(() => {

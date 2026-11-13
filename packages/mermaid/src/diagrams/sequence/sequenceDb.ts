@@ -210,24 +210,42 @@ export class SequenceDB implements DiagramDB {
       name: name,
       description: description.text,
       wrap: description.wrap ?? this.autoWrap(),
-      prevActor: this.state.records.prevActor,
+      // An actor that is declared again keeps its place among the other actors
+      prevActor: old ? old.prevActor : this.state.records.prevActor,
+      nextActor: old?.nextActor,
       links: {},
       properties: {},
       actorCnt: null,
       rectData: null,
       type: type ?? 'participant',
     });
+
+    if (this.state.records.currentBox) {
+      this.state.records.currentBox.actorKeys.push(id);
+    }
+    if (old) {
+      return;
+    }
+
     if (this.state.records.prevActor) {
       const prevActorInRecords = this.state.records.actors.get(this.state.records.prevActor);
       if (prevActorInRecords) {
         prevActorInRecords.nextActor = id;
       }
     }
-
-    if (this.state.records.currentBox) {
-      this.state.records.currentBox.actorKeys.push(id);
-    }
     this.state.records.prevActor = id;
+  }
+
+  /**
+   * Whether the actor has been declared but not yet created, destroyed or used in a message or note.
+   */
+  private isOnlyDeclared(id: string) {
+    const { createdActors, destroyedActors, messages } = this.state.records;
+    return (
+      !createdActors.has(id) &&
+      !destroyedActors.has(id) &&
+      !messages.some((message) => message.from === id || message.to === id)
+    );
   }
 
   private activationCount(part: string) {
@@ -578,16 +596,28 @@ export class SequenceDB implements DiagramDB {
         case 'addParticipant':
           this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           break;
-        case 'createParticipant':
-          if (this.state.records.actors.has(param.actor)) {
+        case 'createParticipant': {
+          // An actor that has only been declared so far can be created later on,
+          // so that its declaration sets its position among the other actors.
+          const declaredActor = this.state.records.actors.get(param.actor);
+          if (declaredActor && !this.isOnlyDeclared(param.actor)) {
             throw new Error(
               "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
             );
           }
           this.state.records.lastCreated = param.actor;
-          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
+          // The create directive sets the type, and the declared alias is kept if it has none
+          const description =
+            param.description ??
+            (declaredActor && {
+              text: declaredActor.description,
+              wrap: declaredActor.wrap,
+              type: param.draw,
+            });
+          this.addActor(param.actor, param.actor, description, param.draw, param.config);
           this.state.records.createdActors.set(param.actor, this.state.records.messages.length);
           break;
+        }
         case 'destroyParticipant':
           this.state.records.lastDestroyed = param.actor;
           this.state.records.destroyedActors.set(param.actor, this.state.records.messages.length);
