@@ -282,9 +282,6 @@ importers:
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
-      '@upsetjs/venn.js':
-        specifier: ^2.0.0
-        version: 2.0.0
       chevrotain:
         specifier: ~13.2.0
         version: 13.2.0
@@ -517,6 +514,28 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
 
+  packages/diagram-venn:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@upsetjs/venn.js':
+        specifier: ^2.0.0
+        version: 2.0.0
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+      roughjs:
+        specifier: ^4.6.6
+        version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/examples:
     devDependencies:
       mermaid:
@@ -564,6 +583,9 @@ importers:
       '@mermaid-js/diagram-treeview':
         specifier: workspace:^
         version: link:../diagram-treeview
+      '@mermaid-js/diagram-venn':
+        specifier: workspace:^
+        version: link:../diagram-venn
       '@mermaid-js/layout-cose-bilkent':
         specifier: workspace:^
         version: link:../mermaid-layout-cose-bilkent
@@ -886,6 +908,9 @@ importers:
       '@mermaid-js/diagram-treeview':
         specifier: workspace:^
         version: link:../diagram-treeview
+      '@mermaid-js/diagram-venn':
+        specifier: workspace:^
+        version: link:../diagram-venn
 
   tests/release-verification:
     devDependencies:

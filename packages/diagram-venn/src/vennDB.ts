@@ -1,7 +1,7 @@
 import type { VennDB, VennData, VennTextData, VennStyleData } from './vennTypes.js';
-import type { VennDiagramConfig } from '../../config.type.js';
-import { cleanAndMerge } from '../../utils.js';
-import { getConfig as commonGetConfig } from '../../config.js';
+import type { VennDiagramConfig } from '@mermaid-js/core/config.type.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
+import { getConfig as commonGetConfig } from '@mermaid-js/core/config.js';
 import {
   clear,
   getAccDescription,
@@ -10,8 +10,8 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
 
 const subsets: VennData[] = [];
 const textNodes: VennTextData[] = [];

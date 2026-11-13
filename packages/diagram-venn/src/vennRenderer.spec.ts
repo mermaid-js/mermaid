@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { draw, ensurePairwiseSubsets } from './vennRenderer.js';
-import type { Diagram } from '../../Diagram.js';
-import * as configModule from '../../config.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import * as configModule from '@mermaid-js/core/config.js';
 
 const createDiagram = (overrides: Partial<Record<string, unknown>> = {}) => {
   const defaultDb = {

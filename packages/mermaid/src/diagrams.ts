@@ -11,6 +11,7 @@ import { radar } from '@mermaid-js/diagram-radar';
 import requirement from '@mermaid-js/diagram-requirement';
 import sankey from '@mermaid-js/diagram-sankey';
 import treeView from '@mermaid-js/diagram-treeview';
+import venn from '@mermaid-js/diagram-venn';
 
 /** The diagram packages that the `mermaid` entry registers. */
 export const diagrams: ExternalDiagramDefinition[] = [
@@ -26,4 +27,5 @@ export const diagrams: ExternalDiagramDefinition[] = [
   requirement,
   sankey,
   treeView,
+  venn,
 ];

@@ -81,6 +81,7 @@
     "@mermaid-js/diagram-requirement": "workspace:^",
     "@mermaid-js/diagram-sankey": "workspace:^",
     "@mermaid-js/diagram-treeview": "workspace:^",
+    "@mermaid-js/diagram-venn": "workspace:^",
     "@mermaid-js/layout-cose-bilkent": "workspace:^",
     "@mermaid-js/layout-elk": "workspace:^",
     "@mermaid-js/plugin-katex": "workspace:^"

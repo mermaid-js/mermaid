@@ -12,6 +12,7 @@ import { radar } from '@mermaid-js/diagram-radar';
 import requirement from '@mermaid-js/diagram-requirement';
 import sankey from '@mermaid-js/diagram-sankey';
 import treeView from '@mermaid-js/diagram-treeview';
+import venn from '@mermaid-js/diagram-venn';
 
 void mermaid.registerExternalDiagrams([
   cynefin,
@@ -26,6 +27,7 @@ void mermaid.registerExternalDiagrams([
   requirement,
   sankey,
   treeView,
+  venn,
 ]);
 
 export * from '@mermaid-js/core';

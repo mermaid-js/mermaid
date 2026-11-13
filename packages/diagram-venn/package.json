@@ -1,0 +1,50 @@
+{
+  "name": "@mermaid-js/diagram-venn",
+  "version": "12.3.0",
+  "description": "The venn diagram for mermaid",
+  "module": "dist/mermaid-diagram-venn.core.mjs",
+  "types": "./dist/vennDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/vennDetector.ts",
+      "types": "./dist/vennDetector.d.ts",
+      "import": "./dist/mermaid-diagram-venn.core.mjs",
+      "default": "./dist/mermaid-diagram-venn.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-venn"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "@upsetjs/venn.js": "^2.0.0",
+    "d3": "^7.9.0",
+    "khroma": "^2.1.0",
+    "roughjs": "^4.6.6"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

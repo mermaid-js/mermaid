@@ -16,7 +16,6 @@ import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
-import venn from '../diagrams/venn/vennDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
@@ -95,7 +94,6 @@ export const addDiagrams = () => {
     railroadEbnf,
     railroadAbnf,
     railroadPeg,
-    venn,
     wardley,
     usecase
   );

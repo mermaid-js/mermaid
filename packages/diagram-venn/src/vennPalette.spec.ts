@@ -3,9 +3,9 @@
  * what the redux colour themes shipped -- silently, since the fallback is a valid colour.
  */
 import { describe, expect, it, vi } from 'vitest';
-import * as configModule from '../../config.js';
-import themes from '../../themes/index.js';
-import type { Diagram } from '../../Diagram.js';
+import * as configModule from '@mermaid-js/core/config.js';
+import themes from '@mermaid-js/core/themes/index.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
 import { draw } from './vennRenderer.js';
 
 /** How many the renderer reads. */

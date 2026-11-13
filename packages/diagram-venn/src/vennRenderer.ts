@@ -1,15 +1,15 @@
-import type { Diagram } from '../../Diagram.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
 import type { VennData, VennDB, VennTextData, VennStyleData } from './vennTypes.js';
-import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
-import type { VennDiagramConfig } from '../../config.type.js';
+import type { DiagramRenderer, DrawDefinition } from '@mermaid-js/core/diagram-api/types.js';
+import type { VennDiagramConfig } from '@mermaid-js/core/config.type.js';
 import type { Selection } from 'd3';
 import { select as d3select } from 'd3';
 // @ts-expect-error Incorrect khroma types
 import { isDark, lighten, darken, transparentize } from 'khroma';
-import { getConfig } from '../../config.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { getConfig } from '@mermaid-js/core/config.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
 import * as venn from '@upsetjs/venn.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import rough from 'roughjs';
 
 type DummyD3Root = Selection<HTMLDivElement, unknown, null, undefined>;

@@ -1,5 +1,5 @@
-import type { DiagramDBBase } from '../../diagram-api/types.js';
-import type { VennDiagramConfig } from '../../config.type.js';
+import type { DiagramDBBase } from '@mermaid-js/core/diagram-api/types.js';
+import type { VennDiagramConfig } from '@mermaid-js/core/config.type.js';
 
 export interface VennData {
   sets: string[];
