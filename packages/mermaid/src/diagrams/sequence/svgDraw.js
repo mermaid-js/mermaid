@@ -394,7 +394,14 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
+const drawActorTypeParticipant = async function (
+  elem,
+  actor,
+  conf,
+  isFooter,
+  diagramId,
+  actorIndexMap
+) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
@@ -488,7 +495,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramI
     // — per-actor filter definitions are redundant and have been removed.
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     g,
     rect.x,
@@ -519,7 +526,14 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramI
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
+const drawActorTypeCollections = async function (
+  elem,
+  actor,
+  conf,
+  isFooter,
+  diagramId,
+  actorIndexMap
+) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
@@ -615,7 +629,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
     }
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     g,
     rect.x - offset,
@@ -644,7 +658,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
   return height;
 };
 
-const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
+const drawActorTypeQueue = async function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
@@ -754,7 +768,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
     }
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     g,
     rect.x,
@@ -784,7 +798,14 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
   return height;
 };
 
-const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
+const drawActorTypeControl = async function (
+  elem,
+  actor,
+  conf,
+  isFooter,
+  diagramId,
+  actorIndexMap
+) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const bands = neoBands(actor, conf, isFooter, actorY);
@@ -874,7 +895,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     actElem,
     rect.x,
@@ -894,7 +915,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   return actor.height;
 };
 
-const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
+const drawActorTypeEntity = async function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const bands = neoBands(actor, conf, isFooter, actorY);
@@ -976,7 +997,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     actor.actorCnt = actorCnt;
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     actElem,
     rect.x,
@@ -1002,7 +1023,14 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
   return actor.height;
 };
 
-const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
+const drawActorTypeDatabase = async function (
+  elem,
+  actor,
+  conf,
+  isFooter,
+  diagramId,
+  actorIndexMap
+) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const bands = neoBands(actor, conf, isFooter, actorY);
@@ -1105,7 +1133,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
   // Both branches were identical — simplified to a single unconditional statement
   cylinderGroup.attr('transform', `translate(${w}, ${ry})`);
   actor.rectData = rect;
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     g,
     rect.x,
@@ -1133,7 +1161,14 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
   return actor.height;
 };
 
-const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
+const drawActorTypeBoundary = async function (
+  elem,
+  actor,
+  conf,
+  isFooter,
+  diagramId,
+  actorIndexMap
+) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const bands = neoBands(actor, conf, isFooter, actorY);
@@ -1218,7 +1253,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
     actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     actElem,
     rect.x,
@@ -1243,7 +1278,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
   return actor.height;
 };
 
-const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeActor = async function (elem, actor, conf, isFooter, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const bands = neoBands(actor, conf, isFooter, actorY);
@@ -1350,7 +1385,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actElem.style('stroke', actorBorder);
   }
 
-  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  await drawActorLabel(
     actor.description,
     actElem,
     rect.x,
@@ -1984,6 +2019,25 @@ const _drawTextCandidateFunc = (function () {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
+
+/**
+ * Draws an actor label. KaTeX labels render asynchronously, so callers must await this; otherwise
+ * the label can still be empty and unsized when the SVG is serialized (e.g. the footer actors).
+ *
+ * @param {any} content
+ * @param {any} g
+ * @param {any} x
+ * @param {any} y
+ * @param {any} width
+ * @param {any} height
+ * @param {any} textAttrs
+ * @param {any} conf
+ */
+const drawActorLabel = async (content, g, x, y, width, height, textAttrs, conf) => {
+  // Only the KaTeX candidate returns a promise; Promise.resolve lets both cases be awaited.
+  const draw = _drawTextCandidateFunc(conf, hasKatex(content));
+  await Promise.resolve(draw(content, g, x, y, width, height, textAttrs, conf));
+};
 
 const _drawMenuItemTextCandidateFunc = (function () {
   /**

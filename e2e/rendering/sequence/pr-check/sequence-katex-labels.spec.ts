@@ -49,6 +49,10 @@ test.describe('sequence diagram KaTeX labels (#7681)', () => {
         const top = (fo: Element | undefined) => fo?.getBoundingClientRect().top;
 
         return {
+          // Header and footer copies of the math actor, as [width, height] of their foreignObject.
+          mathActorBoxes: foreignObjects
+            .filter((fo) => (fo.textContent ?? '').includes('lex'))
+            .map((fo) => [Number(fo.getAttribute('width')), Number(fo.getAttribute('height'))]),
           leakedMarkup: foreignObjects
             .map((fo) => fo.textContent ?? '')
             .filter((text) => text.includes('</div>') || text.includes('$$')),
@@ -64,6 +68,13 @@ test.describe('sequence diagram KaTeX labels (#7681)', () => {
       // The formula reaches KaTeX in one piece, so nothing is left as raw markup or source.
       expect(layout.leakedMarkup).toEqual([]);
       expect(layout.loopTitleMath).toBe(1);
+
+      // Both the header and the footer math actor labels are rendered and sized.
+      expect(layout.mathActorBoxes).toHaveLength(2);
+      for (const [width, height] of layout.mathActorBoxes) {
+        expect(width).toBeGreaterThan(0);
+        expect(height).toBeGreaterThan(0);
+      }
 
       // A math actor label uses the same font size as a plain-text actor label.
       expect(layout.mathActorFontSize).toBeDefined();
