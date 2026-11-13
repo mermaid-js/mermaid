@@ -355,7 +355,8 @@ export function separateSharedRenderedTerminalLanes(
               (exactTerminalLaneConflict(nextLane, other) ||
                 (near && nearTerminalLaneConflict(nextLane, other)))
           );
-        // The distance from a lane to the closest other track along the same stretch of its face.
+        // The distance from a lane to the closest other track along the same stretch of its face:
+        // Infinity, on purpose, when no other track shares that stretch.
         const closestTrackGap = (lane: TerminalLane, at: TerminalLane): number =>
           Math.min(
             ...lanes
@@ -368,6 +369,9 @@ export function separateSharedRenderedTerminalLanes(
               )
               .map((other) => Math.abs(at.coord - other.coord))
           );
+        // Applies `candidate` to the lane's edge, in place, when it brings no conflict and, with
+        // `keepClosestGap`, no track closer than before; says whether it did. Callers run it
+        // inside `.some`, so the first accepted shift is the one applied and no later one is tried.
         const accept = (
           lane: TerminalLane,
           candidate: PointLite[] | undefined,
