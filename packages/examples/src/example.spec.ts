@@ -38,28 +38,32 @@ describe('examples', () => {
   });
 
   it('should have examples for each diagrams', () => {
+    // Diagrams that are never offered as a starting point.
     const skippedDiagrams = [
-      // These diagrams have no examples
       'error',
       'info',
       '---',
-      // These diagrams have v2 versions, with examples
-      'class',
-      'graph',
-      'flowchart-elk',
-      'flowchart',
-      'state',
-      'swimlane', // reuses flowchart parser/db/renderer; examples covered by flowchart
       // Beta, and deliberately not announced: no entry in the examples registry
       // and no sidebar link until the syntax is declared stable.
       'agentflow',
     ];
+    // Legacy ids whose examples live under their v2 id. Every other diagram,
+    // including ones that reuse another diagram's parser or renderer, needs
+    // its own entry: editors list examples per diagram id.
+    const coveredBy: Record<string, string> = {
+      class: 'classDiagram',
+      graph: 'flowchart-v2',
+      'flowchart-elk': 'flowchart-v2',
+      flowchart: 'flowchart-v2',
+      state: 'stateDiagram',
+    };
     const diagrams = mermaid
       .getRegisteredDiagramsMetadata()
       .filter((d) => !skippedDiagrams.includes(d.id));
     expect(diagrams.length).toBeGreaterThan(0);
     for (const diagram of diagrams) {
-      const data = diagramData.find((d) => d.id === diagram.id)!;
+      const id = coveredBy[diagram.id] ?? diagram.id;
+      const data = diagramData.find((d) => d.id === id)!;
       expect(data, `Example for ${diagram.id} is not defined`).toBeDefined();
       expect(data.examples.length).toBeGreaterThan(0);
       expect(data.examples.filter((e) => e.isDefault).length).toBe(1);
