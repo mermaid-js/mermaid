@@ -85,16 +85,19 @@ vi.mock('../../rendering-elements/edges.js', () => ({
     let y = edge.y;
     if (paths?.updatedPath) {
       const updatedMid = mocks.calcLabelPosition(paths.updatedPath);
-      if (paths.originalPath) {
+      if (paths.originalPath && Number.isFinite(edge.x) && Number.isFinite(edge.y)) {
         const originalMid = mocks.calcLabelPosition(paths.originalPath);
         x = edge.x! + (updatedMid.x - originalMid.x);
         y = edge.y! + (updatedMid.y - originalMid.y);
-      } else {
+      } else if (!paths.originalPath) {
         x = updatedMid.x;
         y = updatedMid.y;
       }
     }
-    return { x, y };
+    return {
+      x: Number.isFinite(x) ? x : 0,
+      y: Number.isFinite(y) ? y : 0,
+    };
   },
 }));
 
@@ -459,6 +462,25 @@ describe('paintLayoutData', () => {
 
     expect(mocks.insertEdgeLabel).toHaveBeenCalledWith(measured.groups.edgeLabels, labelledEdge);
     expect(mocks.labelElement.attr).toHaveBeenCalledWith('transform', 'translate(10, 22)');
+  });
+
+  it('writes a finite transform when a labelled edge has no layout coordinates (#6086)', async () => {
+    const { paintLayoutData } = await import('./index.js');
+    const labelledEdge = edge('empty-html', { label: '<p></p>' } as Partial<Edge>);
+    const data = layout({ edges: [labelledEdge] });
+    const measured = measure();
+    mocks.insertEdge.mockReturnValueOnce({
+      originalPath: [
+        { x: 0, y: 0 },
+        { x: 40, y: 0 },
+      ],
+    });
+
+    await paintLayoutData(data, { measure: measured } as never);
+
+    // Margin is 4, so a missing label coordinate falls back to 0 and the
+    // painter still emits a number (`0 + 4 / 2`) rather than NaN.
+    expect(mocks.labelElement.attr).toHaveBeenCalledWith('transform', 'translate(0, 2)');
   });
 
   it('inserts and positions terminal labels without a center edge label', async () => {
