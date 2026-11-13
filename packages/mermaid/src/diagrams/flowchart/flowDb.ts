@@ -462,7 +462,8 @@ You have to call mermaid.initialize.`
    * Updates a link with a style
    *
    */
-  public updateLink(positions: ('default' | number)[], style: string[]) {
+  public updateLink(positions: ('default' | number)[], styles: string[]) {
+    // Copy styles for each target so updates cannot leak between edges.
     positions.forEach((pos) => {
       if (typeof pos === 'number' && pos >= this.edges.length) {
         throw new Error(
@@ -472,9 +473,9 @@ You have to call mermaid.initialize.`
         );
       }
       if (pos === 'default') {
-        this.edges.defaultStyle = style;
+        this.edges.defaultStyle = [...styles];
       } else {
-        this.edges[pos].style = style;
+        this.edges[pos].style = [...styles];
         // if edges[pos].style does have fill not set, set it to none
         if (
           (this.edges[pos]?.style?.length ?? 0) > 0 &&
@@ -486,29 +487,20 @@ You have to call mermaid.initialize.`
     });
   }
 
-  public addClass(ids: string, _style: string[]) {
-    const style = _style
-      .join()
-      .replace(/\\,/g, '§§§')
-      .replace(/,/g, ';')
-      .replace(/§§§/g, ',')
-      .split(';');
+  public addClass(ids: string, styles: string[]) {
     ids.split(',').forEach((id) => {
       let classNode = this.classes.get(id);
       if (classNode === undefined) {
         classNode = { id, styles: [], textStyles: [] };
         this.classes.set(id, classNode);
       }
-
-      if (style !== undefined && style !== null) {
-        style.forEach((s) => {
-          if (/color/.exec(s)) {
-            const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
-            classNode.textStyles.push(newStyle);
-          }
-          classNode.styles.push(s);
-        });
-      }
+      styles.forEach((style) => {
+        if (/color/.exec(style)) {
+          const newStyle = style.replace('fill', 'bgFill');
+          classNode.textStyles.push(newStyle);
+        }
+        classNode.styles.push(style);
+      });
     });
   }
 
