@@ -261,7 +261,7 @@ statement
     | note notePosition ID NOTE_TEXT
     {
         /* console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);*/
-        $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim(), text: $4.trim()}};
+        $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim().toLowerCase(), text: $4.trim()}};
     }
     | note NOTE_TEXT AS ID
     | direction
