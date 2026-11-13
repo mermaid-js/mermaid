@@ -2,7 +2,7 @@ import type {
   ExternalDiagramDefinition,
   DiagramDetector,
   DiagramLoader,
-} from '../../diagram-api/types.js';
+} from '@mermaid-js/core/diagram-api/types.js';
 
 const id = 'cynefin';
 

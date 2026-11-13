@@ -1,4 +1,4 @@
-import type { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '@mermaid-js/core/diagram-api/types.js';
 import { parser } from './cynefinParser.js';
 import { db } from './cynefinDb.js';
 import { renderer } from './cynefinRenderer.js';

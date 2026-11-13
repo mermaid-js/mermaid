@@ -1,11 +1,11 @@
-import type { Diagram } from '../../Diagram.js';
-import type { DiagramRenderer, DrawDefinition, SVG } from '../../diagram-api/types.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { log } from '../../logger.js';
-import { getConfig as getConfigAPI } from '../../config.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import { cleanAndMerge } from '../../utils.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import type { DiagramRenderer, DrawDefinition, SVG } from '@mermaid-js/core/diagram-api/types.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getConfig as getConfigAPI } from '@mermaid-js/core/config.js';
+import { getThemeVariables } from '@mermaid-js/core/themes/theme-default.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
 import type { CynefinDB, CynefinDomain, CynefinTransition, DomainName } from './types.js';
 import {
   generateFoldPath,

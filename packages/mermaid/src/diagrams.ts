@@ -1,4 +1,5 @@
 import type { ExternalDiagramDefinition } from '@mermaid-js/core';
+import { cynefin } from '@mermaid-js/diagram-cynefin';
 import { info } from '@mermaid-js/diagram-info';
 import { ishikawa } from '@mermaid-js/diagram-ishikawa';
 import kanban from '@mermaid-js/diagram-kanban';
@@ -11,6 +12,7 @@ import treeView from '@mermaid-js/diagram-treeview';
 
 /** The diagram packages that the `mermaid` entry registers. */
 export const diagrams: ExternalDiagramDefinition[] = [
+  cynefin,
   info,
   ishikawa,
   kanban,

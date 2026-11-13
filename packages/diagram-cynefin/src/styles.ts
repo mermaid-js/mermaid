@@ -1,7 +1,7 @@
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { cleanAndMerge } from '../../utils.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import { getConfig as getConfigAPI } from '../../config.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
+import { getThemeVariables } from '@mermaid-js/core/themes/theme-default.js';
+import { getConfig as getConfigAPI } from '@mermaid-js/core/config.js';
 
 /**
  * Resolve the cynefin-specific theme block from the current mermaid theme.

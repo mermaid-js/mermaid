@@ -377,6 +377,15 @@ importers:
         specifier: ~5.7.3
         version: 5.7.3
 
+  packages/diagram-cynefin:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+
   packages/diagram-info:
     dependencies:
       '@mermaid-js/core':
@@ -490,6 +499,9 @@ importers:
       '@mermaid-js/core':
         specifier: workspace:^
         version: link:../core
+      '@mermaid-js/diagram-cynefin':
+        specifier: workspace:^
+        version: link:../diagram-cynefin
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info
@@ -803,6 +815,9 @@ importers:
       '@mermaid-js/core':
         specifier: workspace:^
         version: link:../core
+      '@mermaid-js/diagram-cynefin':
+        specifier: workspace:^
+        version: link:../diagram-cynefin
       '@mermaid-js/diagram-info':
         specifier: workspace:^
         version: link:../diagram-info

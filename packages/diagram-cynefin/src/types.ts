@@ -1,5 +1,5 @@
 import type { DomainBlock, Transition } from '@mermaid-js/parser';
-import type { CynefinDiagramConfig } from '../../config.type.js';
+import type { CynefinDiagramConfig } from '@mermaid-js/core/config.type.js';
 
 export type DomainName = 'complex' | 'complicated' | 'clear' | 'chaotic' | 'confusion';
 

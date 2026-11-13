@@ -1,9 +1,9 @@
 import type { DomainBlock, Transition } from '@mermaid-js/parser';
-import { getConfig as commonGetConfig } from '../../config.js';
-import type { CynefinDiagramConfig } from '../../config.type.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
-import { log } from '../../logger.js';
-import { cleanAndMerge } from '../../utils.js';
+import { getConfig as commonGetConfig } from '@mermaid-js/core/config.js';
+import type { CynefinDiagramConfig } from '@mermaid-js/core/config.type.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -12,7 +12,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { CynefinDB, CynefinDomain, CynefinTransition, DomainName } from './types.js';
 
 interface CynefinData {
