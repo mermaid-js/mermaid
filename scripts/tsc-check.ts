@@ -59,6 +59,7 @@ const typeDependency = (name: string): string => {
 const PACKAGES = {
   mermaid: 'mermaid',
   '@mermaid-js/core': 'core',
+  '@mermaid-js/layout-cose-bilkent': 'mermaid-layout-cose-bilkent',
   '@mermaid-js/layout-elk': 'mermaid-layout-elk',
   '@mermaid-js/parser': 'parser',
   // TODO: these don't import cleanly yet due to exotic tsconfig.json requirements

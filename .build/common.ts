@@ -35,6 +35,11 @@ export const packageOptions = {
     packageName: 'mermaid-layout-elk',
     file: 'plugin.ts',
   },
+  'mermaid-layout-cose-bilkent': {
+    name: 'mermaid-layout-cose-bilkent',
+    packageName: 'mermaid-layout-cose-bilkent',
+    file: 'plugin.ts',
+  },
   mermaid: {
     name: 'mermaid',
     packageName: 'mermaid',

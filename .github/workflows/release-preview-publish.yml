@@ -68,24 +68,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
 
-      # `@mermaid-js/layout-elk` and `@mermaid-js/tiny` are already scoped to the
-      # org, so unlike `mermaid` they need no rename. Publishing them alongside
-      # lets a preview be exercised the way users combine them: ELK bundled in
-      # mermaid, and ELK registered onto the tiny build, which omits it.
-      - name: Publish layout-elk and tiny
+      # The layouts and `@mermaid-js/tiny` are already scoped to the org, so
+      # unlike `mermaid` they need no rename. Publishing them alongside lets a
+      # preview be exercised the way users combine them: layouts bundled in
+      # mermaid, and registered onto the tiny build, which omits them.
+      - name: Publish layouts and tiny
         run: |
           # Every package is attempted even after one fails, and the step fails
           # at the end. Under `bash -e` a failing subshell aborted the loop, so
           # `tiny` was never attempted while `layout-elk` was being refused —
           # its own publishability stayed unknown across every failed run.
           failed=''
-          for pkg in mermaid-layout-elk tiny; do
+          for pkg in mermaid-layout-cose-bilkent mermaid-layout-elk tiny; do
             (
               cd "packages/$pkg"
               npm version --no-git-tag-version --allow-same-version "$VERSION"
               json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
               pnpm pack
-              # Both packages must stay *public* in the org's GitHub Packages
+              # These packages must stay *public* in the org's GitHub Packages
               # settings. While they were `internal`, this step failed with
               # `403 permission_denied: write_package`; `@mermaid-js/mermaid`
               # published from the same job and the same `GITHUB_TOKEN` because
@@ -102,8 +102,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
 
-      # After layout-elk, so that `pnpm pack` pins mermaid's dependency on it
-      # to this preview version.
+      # After the layouts, so that `pnpm pack` pins mermaid's dependencies on
+      # them to this preview version.
       - name: Publish mermaid
         working-directory: ./packages/mermaid
         run: |

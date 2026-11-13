@@ -1,30 +1,26 @@
 import cytoscape from 'cytoscape';
 import coseBilkent from 'cytoscape-cose-bilkent';
 import { select } from 'd3';
-import { log } from '../../../logger.js';
-import type { LayoutData, Node, Edge } from '../../types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import type { LayoutData, Node, Edge } from '@mermaid-js/core/rendering-util/types.js';
 import type { CytoscapeLayoutConfig, PositionedNode, PositionedEdge } from './types.js';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 
-/**
- * Declare module augmentation for cytoscape edge types
- */
-declare module 'cytoscape' {
-  interface EdgeSingular {
-    _private: {
-      bodyBounds: unknown;
-      rscratch: {
-        startX: number;
-        startY: number;
-        midX: number;
-        midY: number;
-        endX: number;
-        endY: number;
-      };
+/** Cytoscape's internal edge geometry, which isn't in its public types. */
+interface EdgeSingular extends cytoscape.EdgeSingular {
+  _private: {
+    bodyBounds: unknown;
+    rscratch: {
+      startX: number;
+      startY: number;
+      midX: number;
+      midY: number;
+      endX: number;
+      endY: number;
     };
-  }
+  };
 }
 
 /**
@@ -180,7 +176,7 @@ export function extractPositionedNodes(cy: cytoscape.Core): PositionedNode[] {
 export function extractPositionedEdges(cy: cytoscape.Core): PositionedEdge[] {
   return cy.edges().map((edge) => {
     const data = edge.data();
-    const rscratch = edge._private.rscratch;
+    const rscratch = (edge as EdgeSingular)._private.rscratch;
 
     // Create a positioned edge with all original data plus position
     const positionedEdge: PositionedEdge = {

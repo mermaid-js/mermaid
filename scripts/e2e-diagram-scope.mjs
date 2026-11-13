@@ -127,6 +127,7 @@ const SHARED_PREFIXES = [
   'packages/parser/',
   // Layout engine packages
   'packages/dagre-wrapper/',
+  'packages/mermaid-layout-cose-bilkent/',
   'packages/mermaid-layout-elk/',
   'packages/mermaid-layout-tidy-tree/',
   // Plugin packages (separate bundles but tested in main suite)

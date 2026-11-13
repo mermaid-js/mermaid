@@ -1,6 +1,6 @@
-import type { MermaidConfig } from '../../../config.type.js';
-import { log } from '../../../logger.js';
-import type { LayoutData } from '../../types.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
+import { log } from '@mermaid-js/core/logger.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
 import type { LayoutResult } from './types.js';
 import {
   createCytoscapeInstance,

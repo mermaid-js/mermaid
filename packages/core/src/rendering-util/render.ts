@@ -56,7 +56,6 @@ export const getLayoutLoaderDefinition = (name: string): LayoutLoaderDefinition 
 // TODO: Should we load dagre without lazy loading?
 /**
  * Registers built-in layout names without eagerly importing their implementations.
- * Large-feature loaders are omitted from tiny builds.
  */
 const registerDefaultLayoutLoaders = () => {
   registerLayoutLoaders([
@@ -79,16 +78,6 @@ const registerDefaultLayoutLoaders = () => {
       name: 'layered',
       loader: async () => await import('./layout-algorithms/layered/render.js'),
     },
-    // Excluded from the tiny build along with the other large features.
-    // `getRegisteredLayoutAlgorithm` then falls back to dagre there.
-    ...(injected.includeLargeFeatures
-      ? [
-          {
-            name: 'cose-bilkent',
-            loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
-          },
-        ]
-      : []),
   ]);
 };
 
@@ -125,7 +114,7 @@ const LAST_RESORT_LAYOUT = 'dagre';
 
 /**
  * Get the registered layout algorithm, falling back when it is not available -- `elk` and
- * `cose-bilkent` ship only in large-feature builds (the tiny build omits them), so a diagram
+ * `cose-bilkent` aren't always registered (the tiny build omits them), so a diagram
  * type may name either as its default. `fallback` may itself be absent, so `dagre` closes the chain.
  */
 export const getRegisteredLayoutAlgorithm = (

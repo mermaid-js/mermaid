@@ -5,7 +5,7 @@ import {
   extractPositionedNodes,
   extractPositionedEdges,
 } from './cytoscape-setup.js';
-import type { Node, Edge } from '../../types.js';
+import type { Node, Edge } from '@mermaid-js/core/rendering-util/types.js';
 
 // Mock cytoscape
 const mockCy = {

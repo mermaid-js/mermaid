@@ -19,6 +19,7 @@ import {
   nodeData,
   type ArchitectureJunction,
   type ArchitectureService,
+  type EdgeSingular,
 } from './architectureTypes.js';
 import { getEdgeId } from '../../utils.js';
 
@@ -86,7 +87,7 @@ export const drawEdges = async function (
         }
       }
 
-      if (edge[0]._private.rscratch) {
+      if ((edge[0] as EdgeSingular)._private.rscratch) {
         // const bounds = edge[0]._private.rscratch;
 
         const g = edgesEl.insert('g');

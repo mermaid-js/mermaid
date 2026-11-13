@@ -10,6 +10,7 @@
   ],
   "ignorePatterns": [
     "packages/parser/**",
+    "packages/mermaid-layout-cose-bilkent/**",
     "packages/mermaid-layout-elk/**",
     "packages/mermaid-layout-tidy-tree/**",
     "packages/mermaid-zenuml/**",

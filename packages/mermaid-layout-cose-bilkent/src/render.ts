@@ -1,9 +1,9 @@
-import type { SVG, SVGGroup } from '../../../diagram-api/types.js';
-import type { InternalHelpers } from '../../../internals.js';
-import type { RenderOptions } from '../../render.js';
-import type { LayoutData } from '../../types.js';
+import type { SVG, SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
+import type { InternalHelpers } from '@mermaid-js/core/internals.js';
+import type { RenderOptions } from '@mermaid-js/core/rendering-util/render.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
 import { executeCoseBilkentLayout } from './layout.js';
-import type { D3Selection } from '../../../types.js';
+import type { D3Selection } from '@mermaid-js/core/types.js';
 
 type Node = Record<string, unknown>;
 

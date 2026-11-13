@@ -163,7 +163,7 @@ registerLayoutLoaders([
 ]);
 ```
 
-The loader is lazy, so the code only downloads when a diagram asks for it. `cose-bilkent` is registered the same way but wrapped in a check on `includeLargeFeatures`, which is how a layout stays out of the tiny build. Users then select the layout by the name you registered:
+The loader is lazy, so the code only downloads when a diagram asks for it. Large layouts, like ELK and `cose-bilkent`, live in their own packages instead: the `mermaid` entry (`packages/mermaid/src/mermaid.ts`) registers them, and the tiny entry leaves them out. Users then select the layout by the name you registered:
 
 ```text
 ---

@@ -66,9 +66,9 @@ These are only defaults, and the most specific thing you say wins. Highest prior
 4. The global default (`theme: default`, `look: classic`, `layout: dagre`).
 
 A layout that is not registered in the running build falls back to `dagre`, with a warning
-in the console. `elk` ships as a separate package you register yourself, and `cose-bilkent`
-is only bundled into builds that include the large features, so naming either as a default
-does not require every build to carry it.
+in the console. `elk` and `cose-bilkent` are separate packages that `mermaid` registers and
+the tiny build leaves out, so naming either as a default does not require every build to
+carry it.
 
 Within each of the first two you can also scope a value to one diagram type, and the
 scoped value wins over the global one you set alongside it. `theme`, `look` and `layout`

@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/layout-cose-bilkent": "workspace:^",
     "@mermaid-js/layout-elk": "workspace:^"
   },
   "devDependencies": {
