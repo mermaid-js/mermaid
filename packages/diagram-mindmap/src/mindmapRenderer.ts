@@ -1,13 +1,13 @@
-import type { DrawDefinition } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
-import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
-import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
-import type { LayoutData } from '../../rendering-util/types.js';
+import type { DrawDefinition } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getDiagramElement } from '@mermaid-js/core/rendering-util/insertElementsForSize.js';
+import { getRegisteredLayoutAlgorithm, render } from '@mermaid-js/core/rendering-util/render.js';
+import { setupViewPortForSVG } from '@mermaid-js/core/rendering-util/setupViewPortForSVG.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
 import type { FilledMindMapNode } from './mindmapTypes.js';
-import defaultConfig from '../../defaultConfig.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
 import type { MindmapDB } from './mindmapDb.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '@mermaid-js/core/config.js';
 
 /**
  * Update the layout data with actual node dimensions after drawing

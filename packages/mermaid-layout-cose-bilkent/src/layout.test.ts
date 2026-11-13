@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { validateLayoutData, executeCoseBilkentLayout } from './layout.js';
 import type { LayoutResult } from './types.js';
-import type { MindmapNode } from '@mermaid-js/core/diagrams/mindmap/mindmapTypes.js';
 import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
 import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
 
@@ -66,7 +65,7 @@ vi.mock('cytoscape', () => {
 
 describe('Cose-Bilkent Layout Algorithm', () => {
   let mockConfig: MermaidConfig;
-  let mockRootNode: MindmapNode;
+  let mockRootNode: Record<string, unknown>;
   let mockLayoutData: LayoutData;
 
   beforeEach(() => {
@@ -104,7 +103,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
           y: 0,
         },
       ],
-    } as MindmapNode;
+    };
 
     mockLayoutData = {
       nodes: [

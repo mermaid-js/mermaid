@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { parser } from './parser/mindmap.jison';
 import { MindmapDB } from './mindmapDb.js';
 import type { MindmapLayoutNode, MindmapLayoutEdge } from './mindmapDb.js';
-import * as configApi from '../../config.js';
+import * as configApi from '@mermaid-js/core/config.js';
 
 describe('mindmap color selection', () => {
   beforeEach(() => {

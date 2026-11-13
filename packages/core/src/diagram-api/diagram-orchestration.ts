@@ -12,7 +12,6 @@ import stateV2 from '../diagrams/state/stateDetector-V2.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
-import mindmap from '../diagrams/mindmap/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
@@ -68,7 +67,7 @@ export const addDiagrams = () => {
   );
 
   if (injected.includeLargeFeatures) {
-    registerLazyLoadedDiagrams(flowchartElk, mindmap, architecture);
+    registerLazyLoadedDiagrams(flowchartElk, architecture);
   }
 
   // Ordering of detectors is important. The first one to return true will be used.

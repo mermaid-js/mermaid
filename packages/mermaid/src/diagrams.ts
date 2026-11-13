@@ -6,6 +6,7 @@ import { info } from '@mermaid-js/diagram-info';
 import { ishikawa } from '@mermaid-js/diagram-ishikawa';
 import journey from '@mermaid-js/diagram-journey';
 import kanban from '@mermaid-js/diagram-kanban';
+import mindmap from '@mermaid-js/diagram-mindmap';
 import { packet } from '@mermaid-js/diagram-packet';
 import { pie } from '@mermaid-js/diagram-pie';
 import { radar } from '@mermaid-js/diagram-radar';
@@ -24,6 +25,7 @@ export const diagrams: ExternalDiagramDefinition[] = [
   ishikawa,
   journey,
   kanban,
+  mindmap,
   packet,
   pie,
   radar,

@@ -10,9 +10,12 @@ import mermaid from './mermaid.js';
 const diagramImports = (entry: string) =>
   [
     ...readFileSync(new URL(entry, import.meta.url), 'utf8').matchAll(
-      /'@mermaid-js\/diagram-[^']+'/g
+      /'(@mermaid-js\/diagram-[^']+)'/g
     ),
-  ].map(([name]) => name);
+  ].map(([, name]) => name);
+
+/** Diagram packages that tiny leaves out, to stay small. */
+const LARGE_DIAGRAMS = ['@mermaid-js/diagram-mindmap'];
 
 describe('mermaid', () => {
   it.each([...coseBilkentLayouts, ...elkLayouts])('registers the $name layout', (layout) => {
@@ -33,6 +36,7 @@ describe('mermaid', () => {
     { text: 'ishikawa-beta', expected: 'ishikawa' },
     { text: 'journey', expected: 'journey' },
     { text: 'kanban', expected: 'kanban' },
+    { text: 'mindmap', expected: 'mindmap' },
     { text: 'packet', expected: 'packet' },
     { text: 'packet-beta', expected: 'packet' },
     { text: 'pie', expected: 'pie' },
@@ -58,7 +62,9 @@ describe('mermaid', () => {
   });
 
   // Both entries share one core instance in tests, so compare their imports.
-  it('imports the same diagram packages as tiny', () => {
-    expect(diagramImports('../../tiny/src/mermaid.ts')).toEqual(diagramImports('./diagrams.ts'));
+  it('imports the same diagram packages as tiny, apart from the large ones', () => {
+    expect(diagramImports('../../tiny/src/mermaid.ts')).toEqual(
+      diagramImports('./diagrams.ts').filter((name) => !LARGE_DIAGRAMS.includes(name))
+    );
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import * as configApi from '../../config.js';
+import * as configApi from '@mermaid-js/core/config.js';
 import { MindmapDB } from './mindmapDb.js';
 
 /**

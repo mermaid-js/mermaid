@@ -1,17 +1,17 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MindmapDB } from './mindmapDb.js';
 import type { MindmapLayoutNode, MindmapLayoutEdge } from './mindmapDb.js';
-import type { Edge } from '../../rendering-util/types.js';
+import type { Edge } from '@mermaid-js/core/rendering-util/types.js';
 import {
   buildGridSourceOrder,
   readGridConfig,
   resolveGridPlacements,
-} from '../../rendering-util/layout-algorithms/grid/placement.js';
-import type * as ConfigModule from '../../config.js';
-import { getUserDefinedConfig } from '../../config.js';
+} from '@mermaid-js/core/rendering-util/layout-algorithms/grid/placement.js';
+import type * as ConfigModule from '@mermaid-js/core/config.js';
+import { getUserDefinedConfig } from '@mermaid-js/core/config.js';
 
 // Mock the getConfig function
-vi.mock('../../diagram-api/diagramAPI.js', () => ({
+vi.mock('@mermaid-js/core/diagram-api/diagramAPI.js', () => ({
   getConfig: vi.fn(() => ({
     mindmap: {
       layoutAlgorithm: 'cose-bilkent',
@@ -22,7 +22,7 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
-vi.mock('../../config.js', async (importOriginal) => {
+vi.mock('@mermaid-js/core/config.js', async (importOriginal) => {
   const actual = await importOriginal<typeof ConfigModule>();
   return {
     ...actual,

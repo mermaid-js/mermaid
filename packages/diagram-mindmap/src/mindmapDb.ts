@@ -1,11 +1,11 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { D3Element } from '../../types.js';
-import { sanitizeText } from '../../diagrams/common/common.js';
-import { log } from '../../logger.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { D3Element } from '@mermaid-js/core/types.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
+import { log } from '@mermaid-js/core/logger.js';
 import type { MindmapNode } from './mindmapTypes.js';
-import defaultConfig from '../../defaultConfig.js';
-import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
-import { getUserDefinedConfig } from '../../config.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
+import type { LayoutData, Node, Edge } from '@mermaid-js/core/rendering-util/types.js';
+import { getUserDefinedConfig } from '@mermaid-js/core/config.js';
 import { MAX_SECTIONS } from './svgDraw.js';
 
 // Extend Node type for mindmap-specific properties

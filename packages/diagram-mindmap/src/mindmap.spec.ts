@@ -2,7 +2,7 @@
 import { parser as mindmap } from './parser/mindmap.jison';
 import { MindmapDB } from './mindmapDb.js';
 // Todo fix utils functions for tests
-import { setLogLevel } from '../../diagram-api/diagramAPI.js';
+import { setLogLevel } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 
 describe('when parsing a mindmap ', function () {
   beforeEach(function () {

@@ -455,6 +455,19 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
 
+  packages/diagram-mindmap:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
+
   packages/diagram-packet:
     dependencies:
       '@mermaid-js/core':
@@ -600,6 +613,9 @@ importers:
       '@mermaid-js/diagram-kanban':
         specifier: workspace:^
         version: link:../diagram-kanban
+      '@mermaid-js/diagram-mindmap':
+        specifier: workspace:^
+        version: link:../diagram-mindmap
       '@mermaid-js/diagram-packet':
         specifier: workspace:^
         version: link:../diagram-packet
