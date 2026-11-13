@@ -1,5 +1,10 @@
-import * as configApi from '../../config.js';
-import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import {
+  hasPalette,
+  isColorTheme,
+  paletteSlotCount,
+  safeLook,
+} from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
 
 const genColor = () => {
   const config = configApi.getConfig();

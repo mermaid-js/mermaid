@@ -7,7 +7,6 @@ import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import xychart from '../diagrams/xychart/xychartDetector.js';
-import requirement from '../diagrams/requirement/requirementDetector.js';
 import sequence from '../diagrams/sequence/sequenceDetector.js';
 import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
 import stateV2 from '../diagrams/state/stateDetector-V2.js';
@@ -85,7 +84,6 @@ export const addDiagrams = () => {
     classDiagramV2,
     er,
     gantt,
-    requirement,
     sequence,
     swimlanes,
     flowchartV2,

@@ -1,3 +1,5 @@
+import type { RequirementBoxData } from '@mermaid-js/core/rendering-util/rendering-elements/shapes/requirementBox.js';
+
 export type RequirementType =
   | 'Requirement'
   | 'Functional Requirement'
@@ -10,7 +12,7 @@ export type RiskLevel = 'Low' | 'Medium' | 'High';
 
 export type VerifyType = 'Analysis' | 'Demonstration' | 'Inspection' | 'Test';
 
-export interface Requirement {
+export interface Requirement extends RequirementBoxData {
   name: string;
   type: RequirementType;
   requirementId: string;
@@ -36,7 +38,7 @@ export interface Relation {
   dst: string;
 }
 
-export interface Element {
+export interface Element extends RequirementBoxData {
   name: string;
   type: string;
   docRef: string;

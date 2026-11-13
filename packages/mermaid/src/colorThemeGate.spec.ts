@@ -50,7 +50,7 @@ const PLAIN_THEMES = Object.keys(themes).filter((name) => !COLOR_THEMES.has(name
 
 /**
  * Drives both channels. Most stylesheets read `theme`, `look` and the palette off the
- * options they are handed; `requirement/styles.js` reads all three from `getConfig()`
+ * options they are handed; the requirement stylesheet reads all three from `getConfig()`
  * instead. Setting site config as well as passing options means one helper covers both,
  * and the assertions do not have to know which stylesheet reads from where.
  */
@@ -69,7 +69,7 @@ const render = (
   };
   configApi.reset();
   // The resolved options go into site config too, not just the theme name. Without that,
-  // `requirement/styles.js` -- which reads the palette from `getConfig()` -- never sees an
+  // the requirement stylesheet -- which reads the palette from `getConfig()` -- never sees an
   // `overrides` palette, so every slot-count assertion against it would quietly run
   // against the shipped twelve-entry palette instead of the one under test and pass for
   // the wrong reason.

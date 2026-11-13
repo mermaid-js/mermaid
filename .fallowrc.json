@@ -50,7 +50,6 @@
     "packages/core/src/diagrams/mindmap/**",
     "packages/core/src/diagrams/quadrant-chart/**",
     "packages/core/src/diagrams/railroad/**",
-    "packages/core/src/diagrams/requirement/**",
     "packages/core/src/diagrams/sequence/**",
     "packages/core/src/diagrams/state/**",
     "packages/core/src/diagrams/swimlanes/**",

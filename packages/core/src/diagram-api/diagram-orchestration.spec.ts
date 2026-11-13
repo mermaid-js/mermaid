@@ -27,7 +27,6 @@ describe('diagram-orchestration', () => {
       { text: 'erDiagram', expected: 'er' },
       { text: 'journey', expected: 'journey' },
       { text: 'gantt', expected: 'gantt' },
-      { text: 'requirementDiagram', expected: 'requirement' },
       { text: 'sequenceDiagram', expected: 'sequence' },
       { text: 'mindmap', expected: 'mindmap' },
       { text: 'timeline', expected: 'timeline' },

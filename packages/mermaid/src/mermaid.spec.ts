@@ -34,6 +34,7 @@ describe('mermaid', () => {
     { text: 'pie', expected: 'pie' },
     { text: 'pie title: "flowchart"\n flowchart: 1 "pie" pie: 2 "pie"', expected: 'pie' },
     { text: 'radar-beta', expected: 'radar' },
+    { text: 'requirementDiagram', expected: 'requirement' },
     { text: 'sankey', expected: 'sankey' },
     { text: 'sankey-beta', expected: 'sankey' },
     { text: 'treeView-beta', expected: 'treeView' },

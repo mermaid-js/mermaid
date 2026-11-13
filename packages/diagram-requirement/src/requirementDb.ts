@@ -1,7 +1,7 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import type { Node, Edge } from '../../rendering-util/types.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import type { Node, Edge } from '@mermaid-js/core/rendering-util/types.js';
 
 import {
   setAccTitle,
@@ -11,7 +11,7 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type {
   Element,
   Relation,

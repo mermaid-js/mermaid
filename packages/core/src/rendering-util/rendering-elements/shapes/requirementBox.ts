@@ -8,9 +8,19 @@ import { calculateTextWidth, decodeEntities } from '../../../utils.js';
 import { getConfig, sanitizeText } from '../../../diagram-api/diagramAPI.js';
 import { createText } from '../../createText.js';
 import { select } from 'd3';
-import type { Requirement, Element } from '../../../diagrams/requirement/types.js';
 
 type TextAlignment = 'center' | 'start';
+
+/** The parts of a requirement diagram's requirement or element that this shape draws. */
+export interface RequirementBoxData {
+  name: string;
+  type?: string;
+  requirementId?: string;
+  text?: string;
+  risk?: string;
+  verifyMethod?: string;
+  docRef?: string;
+}
 
 export async function requirementBox<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -18,8 +28,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const requirementNode = node as unknown as Requirement;
-  const elementNode = node as unknown as Element;
+  const data = node as unknown as RequirementBoxData;
   const padding = 20;
   const gap = 20;
   const isRequirementNode = 'verifyMethod' in node;
@@ -37,12 +46,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
 
   let typeHeight;
   if (isRequirementNode) {
-    typeHeight = await addText(
-      shapeSvg,
-      `&lt;&lt;${requirementNode.type}&gt;&gt;`,
-      0,
-      node.labelStyle
-    );
+    typeHeight = await addText(shapeSvg, `&lt;&lt;${data.type}&gt;&gt;`, 0, node.labelStyle);
   } else {
     typeHeight = await addText(shapeSvg, '&lt;&lt;Element&gt;&gt;', 0, node.labelStyle);
   }
@@ -50,7 +54,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   let accumulativeHeight = typeHeight;
   const nameHeight = await addText(
     shapeSvg,
-    requirementNode.name,
+    data.name,
     accumulativeHeight,
     node.labelStyle + '; font-weight: bold;'
   );
@@ -60,7 +64,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   if (isRequirementNode) {
     const idHeight = await addText(
       shapeSvg,
-      `${requirementNode.requirementId ? `ID: ${requirementNode.requirementId}` : ''}`,
+      `${data.requirementId ? `ID: ${data.requirementId}` : ''}`,
       accumulativeHeight,
       node.labelStyle,
       bodyTextAlignment
@@ -69,7 +73,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     accumulativeHeight += idHeight;
     const textHeight = await addText(
       shapeSvg,
-      `${requirementNode.text ? `Text: ${requirementNode.text}` : ''}`,
+      `${data.text ? `Text: ${data.text}` : ''}`,
       accumulativeHeight,
       node.labelStyle,
       bodyTextAlignment
@@ -77,7 +81,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     accumulativeHeight += textHeight;
     const riskHeight = await addText(
       shapeSvg,
-      `${requirementNode.risk ? `Risk: ${requirementNode.risk}` : ''}`,
+      `${data.risk ? `Risk: ${data.risk}` : ''}`,
       accumulativeHeight,
       node.labelStyle,
       bodyTextAlignment
@@ -85,7 +89,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     accumulativeHeight += riskHeight;
     await addText(
       shapeSvg,
-      `${requirementNode.verifyMethod ? `Verification: ${requirementNode.verifyMethod}` : ''}`,
+      `${data.verifyMethod ? `Verification: ${data.verifyMethod}` : ''}`,
       accumulativeHeight,
       node.labelStyle,
       bodyTextAlignment
@@ -94,7 +98,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     // Element
     const typeHeight = await addText(
       shapeSvg,
-      `${elementNode.type ? `Type: ${elementNode.type}` : ''}`,
+      `${data.type ? `Type: ${data.type}` : ''}`,
       accumulativeHeight,
       node.labelStyle,
       bodyTextAlignment
@@ -102,7 +106,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     accumulativeHeight += typeHeight;
     await addText(
       shapeSvg,
-      `${elementNode.docRef ? `Doc Ref: ${elementNode.docRef}` : ''}`,
+      `${data.docRef ? `Doc Ref: ${data.docRef}` : ''}`,
       accumulativeHeight,
       node.labelStyle,
       bodyTextAlignment

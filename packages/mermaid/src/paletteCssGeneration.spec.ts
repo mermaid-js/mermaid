@@ -81,7 +81,7 @@ interface PaletteOptions {
 
 /**
  * Drives both channels: `er/styles.ts` reads the theme and palette off its options
- * argument, while `requirement/styles.js` reads them from `getConfig()`.
+ * argument, while the requirement stylesheet reads them from `getConfig()`.
  */
 const render = (
   name: keyof typeof STYLESHEETS,
