@@ -27,7 +27,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 .*direction\s+BT[^\n]*                       return 'direction_bt';
 .*direction\s+RL[^\n]*                       return 'direction_rl';
 .*direction\s+LR[^\n]*                       return 'direction_lr';
-(\r?\n)+                               return 'NEWLINE';
+[^\S\r\n]*(\r?\n)+                   return 'NEWLINE';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
 \%%[^\n]*                              /* skip comments */
@@ -81,7 +81,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <style>"%" return 'PERCENT';
 <style>"-" return 'MINUS';
 <style>"#" return 'BRKT';
-<style>" "                             /* skip spaces */
+<style>[^\S\n]+                        /* skip spaces, tabs and \r */
 <style>["] { this.begin("string"); }
 <style>\n { this.popState(); }
 
