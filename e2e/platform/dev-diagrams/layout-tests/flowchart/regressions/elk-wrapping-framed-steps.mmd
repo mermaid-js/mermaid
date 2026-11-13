@@ -1,0 +1,23 @@
+---
+config:
+  layout: elk
+  elk:
+    wrappingStrategy: MULTI_EDGE
+    aspectRatio: 1.0
+---
+flowchart LR
+  subgraph s1 ["Step 1: Intake"]
+    A["Receive the order and check the customer account"]
+  end
+  subgraph s2 ["Step 2: Stock"]
+    B["Reserve the items in the nearest warehouse and confirm the date"]
+  end
+  subgraph s3 ["Step 3: Packing"]
+    C["Pack the parcel, print the label and attach the invoice"]
+  end
+  subgraph s4 ["Step 4: Dispatch"]
+    D["Hand the parcel to the carrier"]
+  end
+  A -->|"Orders team"| B
+  B -->|"Warehouse"| C
+  C -->|"Packing line"| D

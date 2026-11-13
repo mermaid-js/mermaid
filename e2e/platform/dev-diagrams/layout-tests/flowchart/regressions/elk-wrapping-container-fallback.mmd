@@ -1,0 +1,17 @@
+---
+config:
+  layout: elk
+  elk:
+    wrappingStrategy: MULTI_EDGE
+    aspectRatio: 1.0
+---
+flowchart LR
+  start["Order received"] --> A
+  subgraph steps ["Steps (elk.box, falls back to layered)"]
+    A["Check the account"] --> B["Reserve the stock"]
+    B --> C["Pack the parcel"]
+    C --> D["Print the label"]
+    D --> E["Hand to the carrier"]
+    E --> F["Send the tracking number"]
+  end
+  steps@{ algorithm: elk.box }

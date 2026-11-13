@@ -84,6 +84,8 @@ interface ElkSubgraphConfig {
   nodePlacementAlignment?: string;
   nodePlacementStrategy?: string;
   cycleBreakingStrategy?: string;
+  wrappingStrategy?: string;
+  aspectRatio?: number;
 }
 
 interface ElkPreparedLayout {
@@ -264,11 +266,18 @@ const CONTAINER_ALGORITHM_OVERRIDES = [
 
 /**
  * Undo the algorithm-scoped options on a container, restoring the values a
- * plain subgraph would have had.
+ * plain subgraph would have had. `aspectRatio` is the configured
+ * `elk.aspectRatio`, which a plain subgraph carries for its own wrapping.
  */
-export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unknown>): void {
+export function clearContainerAlgorithmOptions(
+  layoutOptions: Record<string, unknown>,
+  aspectRatio?: number
+): void {
   for (const key of CONTAINER_ALGORITHM_OVERRIDES) {
     delete layoutOptions[key];
+  }
+  if (aspectRatio !== undefined) {
+    layoutOptions['elk.aspectRatio'] = aspectRatio;
   }
   // `spacing.baseValue` and `spacing.nodeNode` are base options that the
   // rectpacking overrides stomp on, so restore the defaults rather than leaving
@@ -449,6 +458,10 @@ export function buildSubgraphLayoutOptions(
     // rather than on its own start node. Same key and same resolution as the
     // root, so `legacy` reproduces the old rendering inside frames too.
     'elk.layered.cycleBreaking.strategy': elkConfig?.cycleBreakingStrategy ?? preset.cycleBreaking,
+    // Also set here, because the root's wrapping does not fold a chain nested
+    // in a container. A container algorithm below replaces the aspect ratio.
+    'elk.layered.wrapping.strategy': elkConfig?.wrappingStrategy,
+    'elk.aspectRatio': elkConfig?.aspectRatio,
     // PORT_POSITION lets a node shift so an edge can leave straight rather than
     // bending immediately off the port.
     'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
@@ -722,14 +735,74 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
-  configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  configureCrossHierarchyEdges(
+    elkGraph,
+    nodeDb,
+    parentLookupDb,
+    data4Layout.config.elk?.aspectRatio,
+    elkContext.log
+  );
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
   orderEdgesByNesting(elkGraph, parentLookupDb);
   applyCyclicEntryConstraint(data4Layout, nodeDb);
+  applyFrameWrappingCorrection(elkGraph);
 
   return { elkGraph, nodeDb, parentLookupDb };
+}
+
+interface ElkSizedNode {
+  width?: number;
+  height?: number;
+  labels?: { height?: number }[];
+  children?: ElkSizedNode[];
+}
+
+function leafArea(node: ElkSizedNode): number {
+  return node.children?.length
+    ? node.children.reduce((sum, child) => sum + leafArea(child), 0)
+    : (node.width ?? 0) * (node.height ?? 0);
+}
+
+/**
+ * The area a top-level node takes once laid out. A frame is estimated as the
+ * square holding its leaves, grown by its padding and its title strip, which
+ * is what ELK adds after it has chosen where to cut.
+ */
+function laidOutArea(node: ElkSizedNode): number {
+  if (!node.children?.length) {
+    return leafArea(node);
+  }
+  const side = Math.sqrt(leafArea(node)) + 2 * SUBGRAPH_PADDING;
+  return side * (side + (node.labels?.[0]?.height ?? 0));
+}
+
+/**
+ * ELK sizes the folded rows from the leaves' own area, before frames add their
+ * padding and title. Four framed steps then look half their real size and the
+ * chain stays a single column. `wrapping.correctionFactor` scales the target
+ * width by the same ratio, so the fold lands near the requested aspect ratio.
+ *
+ * Only a wrapped graph with frames is touched; every other graph keeps ELK's
+ * own choice.
+ */
+export function applyFrameWrappingCorrection(elkGraph: {
+  layoutOptions: Record<string, unknown>;
+  children?: ElkSizedNode[];
+}): void {
+  const strategy = elkGraph.layoutOptions['elk.layered.wrapping.strategy'];
+  const nodes = elkGraph.children ?? [];
+  if (!strategy || strategy === 'OFF' || !nodes.some((node) => node.children?.length)) {
+    return;
+  }
+  const bare = nodes.reduce((sum, node) => sum + leafArea(node), 0);
+  // Frames with no sized leaf (only empty subgraphs) leave nothing to scale.
+  if (!(bare > 0 && Number.isFinite(bare))) {
+    return;
+  }
+  const framed = nodes.reduce((sum, node) => sum + laidOutArea(node), 0);
+  elkGraph.layoutOptions['elk.layered.wrapping.correctionFactor'] = Math.sqrt(framed / bare);
 }
 
 /**
@@ -970,6 +1043,8 @@ function createRootElkGraph(
       'elk.layered.layering.strategy': data4Layout.config.elk?.layeringStrategy ?? preset.layering,
       // Only COFFMAN_GRAHAM reads this; the others ignore it.
       'elk.layered.layering.coffmanGraham.layerBound': data4Layout.config.elk?.layeringLayerBound,
+      'elk.layered.wrapping.strategy': data4Layout.config.elk?.wrappingStrategy,
+      'elk.aspectRatio': data4Layout.config.elk?.aspectRatio,
 
       // 'spacing.nodeNode': 120,
       // 'spacing.nodeNodeBetweenLayers': 25,
@@ -1004,6 +1079,8 @@ function createRootElkGraph(
   // Optimize spacing when rectpacking is the root algorithm.
   if (algorithm === 'elk.rectpacking') {
     Object.assign(graph.layoutOptions, RECTPACKING_OPTIONS, {
+      'elk.aspectRatio':
+        data4Layout.config.elk?.aspectRatio ?? RECTPACKING_OPTIONS['elk.aspectRatio'],
       'elk.contentAlignment': 'H_CENTER V_TOP',
       'elk.padding': '[top=15,left=15,bottom=15,right=15]',
     });
@@ -1265,6 +1342,7 @@ function configureCrossHierarchyEdges(
   elkGraph: { edges: any[] },
   nodeDb: Record<string, NodeWithVertex>,
   parentLookupDb: TreeData,
+  aspectRatio: number | undefined,
   log: ElkLayoutContext['log']
 ): void {
   log.debug('APA01 processing edges, count:', elkGraph.edges.length);
@@ -1278,8 +1356,8 @@ function configureCrossHierarchyEdges(
 
     if (nodeDb[source] && nodeDb[target] && nodeDb[source].parentId !== nodeDb[target].parentId) {
       const ancestorId = findCommonAncestor(source, target, parentLookupDb);
-      setIncludeChildrenPolicy(nodeDb, source, ancestorId, log);
-      setIncludeChildrenPolicy(nodeDb, target, ancestorId, log);
+      setIncludeChildrenPolicy(nodeDb, source, ancestorId, aspectRatio, log);
+      setIncludeChildrenPolicy(nodeDb, target, ancestorId, aspectRatio, log);
     }
   });
 }
@@ -1288,6 +1366,7 @@ function setIncludeChildrenPolicy(
   nodeDb: Record<string, NodeWithVertex>,
   nodeId: string,
   ancestorId: string,
+  aspectRatio: number | undefined,
   log: ElkLayoutContext['log']
 ): void {
   const node = nodeDb[nodeId];
@@ -1306,13 +1385,13 @@ function setIncludeChildrenPolicy(
     resolveContainerAlgorithm(node.metadata?.algorithm)
   ) {
     log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
-    clearContainerAlgorithmOptions(node.layoutOptions);
+    clearContainerAlgorithmOptions(node.layoutOptions, aspectRatio);
     Object.assign(node.layoutOptions, groupTitleSizeOptions(node));
   }
 
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
   if (node.id !== ancestorId && node.parentId) {
-    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log);
+    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, aspectRatio, log);
   }
 }
 
