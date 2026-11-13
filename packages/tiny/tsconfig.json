@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // this package is `type: commonjs` for its IIFE bundle, but its source is ESM
+    "module": "preserve",
+    "noEmit": true
+  },
+  "include": ["./src/**/*.ts"]
+}
