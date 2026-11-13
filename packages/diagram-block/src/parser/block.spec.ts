@@ -1,8 +1,8 @@
 // @ts-ignore: jison doesn't export types
 import block from './block.jison';
 import db from '../blockDB.js';
-import * as configApi from '../../../config.js';
-import { log } from '../../../logger.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import { log } from '@mermaid-js/core/logger.js';
 
 describe('Block diagram', function () {
   describe('when parsing a block diagram graph it should handle > ', function () {

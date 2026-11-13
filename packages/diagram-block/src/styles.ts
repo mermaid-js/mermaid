@@ -1,6 +1,11 @@
 import * as khroma from 'khroma';
-import { getIconStyles } from '../globalStyles.js';
-import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
+import { getIconStyles } from '@mermaid-js/core/diagrams/globalStyles.js';
+import {
+  colorSlotCount,
+  hasPalette,
+  isColorTheme,
+  safeLook,
+} from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
 
 /** Returns the styles given options */
 export interface BlockChartStyleOptions {

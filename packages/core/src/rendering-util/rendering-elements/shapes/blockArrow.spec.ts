@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { Direction } from '../../../diagrams/block/blockTypes.js';
 import type { Point } from '../../../types.js';
 import type { Node } from '../../types.js';
-import { getArrowPoints } from './blockArrow.js';
+import { getArrowPoints, type Direction } from './blockArrow.js';
 
 const bbox = { width: 100, height: 20 };
 const node = { padding: 10 } satisfies Pick<Node, 'padding'>;

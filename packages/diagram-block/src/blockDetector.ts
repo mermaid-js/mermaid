@@ -1,4 +1,7 @@
-import type { DiagramDetector, ExternalDiagramDefinition } from '../../diagram-api/types.js';
+import type {
+  DiagramDetector,
+  ExternalDiagramDefinition,
+} from '@mermaid-js/core/diagram-api/types.js';
 
 const id = 'block';
 

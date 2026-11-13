@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import * as diagramAPI from '../../diagram-api/diagramAPI.js';
+import * as diagramAPI from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import db from './blockDB.js';
 
 describe('block db edge styles', () => {

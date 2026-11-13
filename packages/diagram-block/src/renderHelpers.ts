@@ -1,15 +1,18 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '@mermaid-js/core/config.js';
 import {
   insertEdge,
   insertEdgeLabel,
   positionEdgeLabel,
-} from '../../rendering-util/rendering-elements/edges.js';
-import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes.js';
-import { stampColorSlot } from '../common/colorThemeGate.js';
-import type { D3Selection } from '../../types.js';
-import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
-import { getStylesFromArray } from '../../utils.js';
+} from '@mermaid-js/core/rendering-util/rendering-elements/edges.js';
+import {
+  insertNode,
+  positionNode,
+} from '@mermaid-js/core/rendering-util/rendering-elements/nodes.js';
+import { stampColorSlot } from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
+import type { D3Selection } from '@mermaid-js/core/types.js';
+import type { ShapeID } from '@mermaid-js/core/rendering-util/rendering-elements/shapes.js';
+import { getStylesFromArray } from '@mermaid-js/core/utils.js';
 import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 

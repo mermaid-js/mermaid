@@ -1,9 +1,11 @@
-import type { Direction } from '../../../diagrams/block/blockTypes.js';
 import type { D3Selection, Point } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+
+/** A block diagram arrow's direction. */
+export type Direction = 'up' | 'down' | 'left' | 'right' | 'x' | 'y';
 
 type BlockArrowNode = Node & {
   directions?: Direction[];

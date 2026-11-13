@@ -1,7 +1,7 @@
 import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
-import { log } from '../../logger.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 
 interface BlockPosition {
   px: number;

@@ -3,8 +3,6 @@
   "entry": [
     "packages/core/src/rendering-util/layout-algorithms/**/*.ts",
     "packages/core/src/rendering-util/layout-algorithms/**/*.js",
-    "packages/core/src/diagrams/block/**/*.ts",
-    "packages/core/src/diagrams/block/**/*.js",
     "packages/core/src/rendering-util/rendering-elements/**/*.ts",
     "packages/core/src/rendering-util/rendering-elements/**/*.js"
   ],

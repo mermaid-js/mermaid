@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import * as diagramAPI from '../../diagram-api/diagramAPI.js';
+import * as diagramAPI from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 import { calculateBlockPosition, layout } from './layout.js';

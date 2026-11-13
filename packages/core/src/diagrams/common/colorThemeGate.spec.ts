@@ -39,7 +39,7 @@ describe('safeLook', () => {
 
 /**
  * Unlike `look`, palette entries (`borderColorArray`/`bkgColorArray`) are interpolated
- * straight into generated CSS by the ER stylesheet, the requirement stylesheet, `block/styles.ts`
+ * straight into generated CSS by the ER stylesheet, the requirement stylesheet, the block stylesheet
  * and their equivalents, with nothing analogous to `safeLook` validating an entry first. A
  * hostile array entry — the same kind of `"]{a` payload `safeLook` guards against — would
  * inject if it ever reached that code.

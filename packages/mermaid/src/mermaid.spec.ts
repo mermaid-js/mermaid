@@ -28,6 +28,8 @@ describe('mermaid', () => {
   });
 
   it.each([
+    { text: 'block', expected: 'block' },
+    { text: 'block-beta', expected: 'block' },
     { text: 'cynefin-beta', expected: 'cynefin' },
     { text: 'erDiagram', expected: 'er' },
     { text: 'eventmodeling', expected: 'eventmodeling' },

@@ -1,7 +1,7 @@
 // @ts-ignore: jison doesn't export types
 import block from './parser/block.jison';
 import db from './blockDB.js';
-import * as configApi from '../../config.js';
+import * as configApi from '@mermaid-js/core/config.js';
 import getStyles from './styles.js';
 
 /**

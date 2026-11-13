@@ -1,10 +1,10 @@
 import { clone } from 'es-toolkit/compat';
-import * as configApi from '../../config.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import common from '../common/common.js';
-import { clear as commonClear } from '../common/commonDb.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
+import { clear as commonClear } from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { Block, ClassDef } from './blockTypes.js';
 
 // Initialize the node database for simple lookups

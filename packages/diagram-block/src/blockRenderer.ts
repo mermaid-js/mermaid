@@ -1,10 +1,10 @@
 import { select as d3select } from 'd3';
-import type { Diagram } from '../../Diagram.js';
-import * as configApi from '../../config.js';
-import { log } from '../../logger.js';
-import insertMarkers from '../../rendering-util/rendering-elements/markers.js';
-import { insertLookDefs } from '../../rendering-util/insertLookDefs.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import { log } from '@mermaid-js/core/logger.js';
+import insertMarkers from '@mermaid-js/core/rendering-util/rendering-elements/markers.js';
+import { insertLookDefs } from '@mermaid-js/core/rendering-util/insertLookDefs.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import type { BlockDB } from './blockDB.js';
 import { layout } from './layout.js';
 import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';

@@ -1,4 +1,4 @@
-export type { BlockDiagramConfig as BlockConfig } from '../../config.type.js';
+export type { BlockDiagramConfig as BlockConfig } from '@mermaid-js/core/config.type.js';
 
 export type BlockType =
   | 'na'
@@ -72,5 +72,3 @@ export interface ClassDef {
   textStyles: string[];
   styles: string[];
 }
-
-export type Direction = 'up' | 'down' | 'left' | 'right' | 'x' | 'y';
