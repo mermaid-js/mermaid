@@ -1085,7 +1085,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   );
 
   // Setup the view box and size of the svg element
-  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, gitGraphConfig.useMaxWidth);
+  setupGraphViewbox(diagram, gitGraphConfig.diagramPadding, gitGraphConfig.useMaxWidth);
 };
 
 export default {

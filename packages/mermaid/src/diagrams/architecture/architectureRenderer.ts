@@ -639,7 +639,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   await drawGroups(groupElem, cy, db, id);
   positionNodes(db, cy);
 
-  setupGraphViewbox(undefined, svg, db.getConfigField('padding'), db.getConfigField('useMaxWidth'));
+  setupGraphViewbox(svg, db.getConfigField('padding'), db.getConfigField('useMaxWidth'));
 };
 
 export const renderer = { draw };
