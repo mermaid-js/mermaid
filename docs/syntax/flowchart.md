@@ -2184,6 +2184,51 @@ flowchart LR
     classDef foobar stroke:#00f
 ```
 
+#### Classes on edges
+
+A class can be attached to an edge in the same way, by writing `:::` and the class name straight after the arrow:
+
+```mermaid
+flowchart LR
+    A -->:::hot B
+    A ==>:::hot C
+    B -.->:::muted D
+    C -->|slow|:::muted D
+    classDef hot stroke:#f66,stroke-width:3px
+    classDef muted stroke:#999,stroke-dasharray:3
+```
+
+```mermaid-example
+flowchart LR
+    A -->:::hot B
+    A ==>:::hot C
+    B -.->:::muted D
+    C -->|slow|:::muted D
+    classDef hot stroke:#f66,stroke-width:3px
+    classDef muted stroke:#999,stroke-dasharray:3
+```
+
+The class goes on every edge the arrow draws, so one suffix styles a whole group:
+
+```mermaid
+flowchart LR
+    A & B -->:::hot C & D
+    classDef hot stroke:#f66,stroke-width:3px
+```
+
+```mermaid-example
+flowchart LR
+    A & B -->:::hot C & D
+    classDef hot stroke:#f66,stroke-width:3px
+```
+
+Each arrow of a chain takes its own class, and an edge ID can come first (`A e1@-->:::hot B`). The class is applied as the styles of its `classDef`, as `class e1 hot` does for an edge with an ID, and its name is added to the edge's SVG `<path>` as written. Page CSS outside the diagram can therefore style or animate the edge by that name (`.hot { stroke: red !important }`), without rendering the diagram again. The `!important` is needed to override the diagram's own rules and the styles of the `classDef`.
+
+- Write one class per arrow: `:::a:::b` is a syntax error, for an arrow as it is for a node.
+- Put a space between the class name and the destination node, on the same line (`A -->:::hot B`). After a class the destination cannot move to the next line, with any label form. Without a class, the next line is accepted after a plain arrow and after an inline label (`A -- text -->`), but not after a pipe label (`A -->|text|`).
+- A label can sit between the arrow's ends (`A -- text -->:::hot B`) or in pipes (`A -->|text|:::hot B`). Write the class after the whole arrow.
+- `A --:::hot--> B` is still an edge labelled `:::hot`, and `A --:::hot B` is a syntax error, because `--` followed by text opens a label.
+
 ### CSS classes
 
 > **Note:** Applying styles to Mermaid nodes via external CSS (e.g., `.cssClass > rect { fill: ... }`) does **not** work reliably. Mermaid's internal styles are injected with `!important` and scoped to the SVG element ID, giving them higher specificity than external CSS rules. External CSS will be silently overridden.

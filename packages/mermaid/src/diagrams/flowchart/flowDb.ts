@@ -36,6 +36,10 @@ interface LinkData {
   id: string;
 }
 
+interface LinkClasses {
+  classes: string[];
+}
+
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 const GRID_LAYOUT_METADATA_KEYS = ['row', 'column', 'horizontalAlign', 'verticalAlign'] as const;
 const FLOWCHART_METADATA_KEYS = new Set<string>([
@@ -364,7 +368,7 @@ export class FlowDB implements DiagramDB {
       type: undefined,
       text: '',
       labelType: 'text',
-      classes: [],
+      classes: this.isLinkClasses(type) ? [...type.classes] : [],
       isUserDefinedId: false,
       interpolate: this.edges.defaultInterpolate,
     };
@@ -421,6 +425,15 @@ You have to call mermaid.initialize.`
       typeof value === 'object' &&
       'id' in value &&
       typeof (value as LinkData).id === 'string'
+    );
+  }
+
+  private isLinkClasses(value: unknown): value is LinkClasses {
+    return (
+      value !== null &&
+      typeof value === 'object' &&
+      'classes' in value &&
+      Array.isArray(value.classes)
     );
   }
 
@@ -1429,10 +1442,14 @@ You have to call mermaid.initialize.`
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,
-        classes:
+        classes: [
           rawEdge?.stroke === 'invisible'
             ? ''
             : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+          ...rawEdge.classes,
+        ]
+          .filter(Boolean)
+          .join(' '),
         arrowTypeStart:
           rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open'
             ? 'none'
