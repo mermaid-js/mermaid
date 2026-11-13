@@ -1,0 +1,22 @@
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 45
+    columnGap: 70
+    placements:
+      C: { row: 1, column: 1 }
+      Nested: { row: 2, column: 1 }
+      D: { row: 1, column: 1 }
+      E: { row: 2, column: 1 }
+---
+flowchart TB
+  C[C]
+
+  subgraph Nested["Nested"]
+    D[D]
+    E[E]
+  end
+
+  C --> D
+  C --> E

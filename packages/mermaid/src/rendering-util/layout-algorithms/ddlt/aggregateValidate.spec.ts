@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { combineValidateLayoutResults, type NamedValidateResult } from './aggregateValidate.js';
-import type { ValidateLayoutResult } from '../layout-utils/validateLayout.js';
+import {
+  combineValidateLayoutResults,
+  countIssuesByType,
+  type NamedValidateResult,
+} from './aggregateValidate.js';
+import type { Issue, ValidateLayoutResult } from '../layout-utils/validateLayout.js';
 
 function makeResult(overrides: Partial<ValidateLayoutResult>): ValidateLayoutResult {
   return {
@@ -101,5 +105,30 @@ describe('combineValidateLayoutResults', () => {
     ];
     const report = combineValidateLayoutResults(items);
     expect(report.byCase.map((r) => r.id)).toEqual(['second', 'first']);
+  });
+});
+
+describe('countIssuesByType', () => {
+  it('counts every hard-constraint issue by type across runs, sorted by type', () => {
+    const issue = (type: Issue['type']): Issue => ({ type, message: type });
+    const counts = countIssuesByType([
+      {
+        id: 'a',
+        result: makeResult({
+          ok: false,
+          score: 0,
+          issues: [issue('node-overlap'), issue('edge-non-orthogonal'), issue('node-overlap')],
+        }),
+      },
+      {
+        id: 'b',
+        result: makeResult({ ok: false, score: 0, issues: [issue('edge-non-orthogonal')] }),
+      },
+      { id: 'c', result: makeResult({}) },
+    ]);
+    expect(Object.entries(counts)).toEqual([
+      ['edge-non-orthogonal', 2],
+      ['node-overlap', 2],
+    ]);
   });
 });

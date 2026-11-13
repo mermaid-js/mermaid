@@ -8,6 +8,7 @@ import { getStepDuration, isStepEdge } from '../../rendering-util/edgeStep.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
+import { validateGridPlacementCoordinates } from '../../utils/gridPlacement.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -18,6 +19,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { stripPrototypeKeys } from '../common/sanitizeMetadata.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   DroppedSubGraphMember,
@@ -39,6 +41,48 @@ interface LinkClasses {
 }
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
+const GRID_LAYOUT_METADATA_KEYS = ['row', 'column', 'horizontalAlign', 'verticalAlign'] as const;
+const FLOWCHART_METADATA_KEYS = new Set<string>([
+  'shape',
+  'label',
+  'icon',
+  'form',
+  'pos',
+  'img',
+  'w',
+  'h',
+  'constraint',
+  'priority',
+  'assigned',
+  'ticket',
+  'labelType',
+  'view',
+  ...GRID_LAYOUT_METADATA_KEYS,
+] satisfies (keyof NodeMetaData)[]);
+
+/**
+ * Projects only own grid-placement properties into renderer metadata, or returns `undefined`.
+ * Container callers may also forward `algorithm`; unrelated author metadata stays in the DB.
+ */
+function pickFlowchartLayoutMetadata(
+  metadata: NodeMetaData | undefined,
+  includeContainerAlgorithm = false
+): Record<string, unknown> | undefined {
+  if (!metadata) {
+    return undefined;
+  }
+  const source = metadata as unknown as Record<string, unknown>;
+  const layoutMetadata: Record<string, unknown> = {};
+  for (const key of GRID_LAYOUT_METADATA_KEYS) {
+    if (Object.hasOwn(source, key)) {
+      layoutMetadata[key] = source[key];
+    }
+  }
+  if (includeContainerAlgorithm && Object.hasOwn(source, 'algorithm')) {
+    layoutMetadata.algorithm = source.algorithm;
+  }
+  return Object.keys(layoutMetadata).length > 0 ? layoutMetadata : undefined;
+}
 
 // Set by a diagram that models pools and lanes itself, never by the author of a `@{ }` block.
 const INTERNAL_METADATA_KEYS = ['laneRole', 'laneIndex', 'drawnExtent'];
@@ -169,7 +213,9 @@ export class FlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
-      doc = withoutInternalKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData);
+      doc = withoutInternalKeys(
+        stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData)
+      );
     }
 
     // Check if this is metadata for an already-declared subgraph
@@ -263,6 +309,8 @@ export class FlowDB implements DiagramDB {
     }
 
     if (doc !== undefined) {
+      vertex.metadata = { ...vertex.metadata, ...doc };
+
       if (doc.shape) {
         if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
           throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
@@ -1109,6 +1157,10 @@ You have to call mermaid.initialize.`
     return { arrowTypeStart, arrowTypeEnd };
   }
 
+  /**
+   * Adds a renderer node with parent, shape, style, and filtered layout metadata.
+   * Existing nodes receive style updates rather than being duplicated.
+   */
   private addNodeFromVertex(
     vertex: FlowVertex,
     nodes: Node[],
@@ -1148,6 +1200,7 @@ You have to call mermaid.initialize.`
         assetWidth: vertex.assetWidth,
         assetHeight: vertex.assetHeight,
         constraint: vertex.constraint,
+        metadata: pickFlowchartLayoutMetadata(vertex.metadata),
       };
       if (isGroup) {
         nodes.push({
@@ -1180,6 +1233,11 @@ You have to call mermaid.initialize.`
     return compiledStyles;
   }
 
+  /**
+   * Projects the database into renderer nodes and edges using the current configuration.
+   * Hides collapsed descendants, redirects boundary edges, and forwards only supported
+   * layout metadata for visible vertices and expanded subgraphs.
+   */
   public getData() {
     const config = getConfig();
     const nodes: Node[] = [];
@@ -1332,12 +1390,7 @@ You have to call mermaid.initialize.`
           isGroup: true,
           look: config.look,
           colorIndex: declarationIndex.get(subGraph.id),
-          // Forwarded so layout engines can read per-container settings such as
-          // `@{ algorithm: elk.box }`. `view` is consumed above; everything else
-          // is opaque here and simply passed through. The cast is the
-          // interface-vs-index-signature gap: `NodeMetaData` is an interface, so
-          // it is not structurally assignable to `Record<string, unknown>`.
-          metadata: subGraph.metadata as Record<string, unknown> | undefined,
+          metadata: pickFlowchartLayoutMetadata(subGraph.metadata, true),
         });
       }
     }
@@ -1425,6 +1478,30 @@ You have to call mermaid.initialize.`
         ? { droppedSubGraphMembers: [...this.droppedSubGraphMembers] }
         : {};
     return { nodes, edges, other, config };
+  }
+
+  /**
+   * Rejects invalid inline coordinates and warns about unknown metadata when grid is selected.
+   * Expanded subgraph metadata may additionally specify a container `algorithm`.
+   */
+  public validate() {
+    const config = getConfig();
+    if (config.layout !== 'grid') {
+      return;
+    }
+    const items = [...this.vertices.values(), ...this.subGraphs];
+    validateGridPlacementCoordinates(undefined, items);
+    for (const item of items) {
+      const isSubgraph = this.subGraphLookup.has(item.id);
+      for (const key of Object.keys(item.metadata ?? {})) {
+        if (FLOWCHART_METADATA_KEYS.has(key) || (isSubgraph && key === 'algorithm')) {
+          continue;
+        }
+        log.warn(
+          `Unknown metadata key "${key}" on ${isSubgraph ? 'subgraph' : 'node'} "${item.id}" with grid layout.`
+        );
+      }
+    }
   }
 
   public defaultConfig() {
