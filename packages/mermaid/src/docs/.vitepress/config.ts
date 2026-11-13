@@ -183,6 +183,7 @@ function sidebarSyntax() {
         syntaxItem('Use Case Diagram', 'usecase'),
         syntaxItem('GitGraph (Git) Diagram', 'gitgraph'),
         syntaxItem('C4 Diagram', 'c4'),
+        syntaxItem('C4 Diagram (beta)', 'c4-beta'),
         syntaxItem('Mindmaps', 'mindmap'),
         syntaxItem('Timeline', 'timeline'),
         syntaxItem('ZenUML', 'zenuml'),
