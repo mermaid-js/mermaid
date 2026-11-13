@@ -422,6 +422,9 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 - `mainBranchName` : String, default is `main`. The name of the default/root branch.
 - `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
 - `parallelCommits`: Boolean, default is `false`. If set to `true`, commits x distance away from the parent are shown at the same level in the diagram.
+- `rotateCommitLabel`: Boolean, default is `true`. If set to `true`, the commit labels are rotated (see [Commit labels Layout](#commit-labels-layout-rotated-or-horizontal)).
+
+These options are read each time a diagram is rendered. When you change them between renders — for example with `mermaid.initialize()`, or in the frontmatter while editing in the Live Editor — the next render uses the new values; there is no need to reload the page.
 
 Let's look at them one by one.
 
