@@ -3,8 +3,8 @@
  * declaration was discarded, outranked, or never emitted.
  */
 import { describe, expect, it } from 'vitest';
-import themes from '../../themes/index.js';
-import { COLOR_THEMES } from '../common/colorThemeGate.js';
+import themes from '../../../themes/index.js';
+import { COLOR_THEMES } from '../../common/colorThemeGate.js';
 import swimlanesStyles from './styles.js';
 
 const COLOUR_THEMES = [...COLOR_THEMES];

@@ -73,6 +73,12 @@ describe('detectScope', () => {
     );
   });
 
+  it('maps swimlanes inside the flowchart folder to swimlanes', () => {
+    expect(
+      detectScope(['packages/core/src/diagrams/flowchart/swimlanes/styles.ts']).split(',')
+    ).toContain(`${SPEC_BASE_DIR}/swimlanes/`);
+  });
+
   it('maps a fixtures-only diagram package to its differently named fixtures', () => {
     expect(detectScope(['packages/diagram-quadrant/src/quadrantDb.ts'])).toBe(
       `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`

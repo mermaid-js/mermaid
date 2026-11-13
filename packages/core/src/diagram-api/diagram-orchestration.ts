@@ -1,7 +1,7 @@
 import c4 from '../diagrams/c4/c4Detector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
 import agentflow from '../diagrams/agentflow/afDetector.js';
-import swimlanes from '../diagrams/swimlanes/detector.js';
+import swimlanes from '../diagrams/flowchart/swimlanes/detector.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';

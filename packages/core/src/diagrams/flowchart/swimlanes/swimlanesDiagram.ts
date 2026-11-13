@@ -5,7 +5,7 @@
 // than duplicating the entire flowchart plugin. This is the one sanctioned
 // exception to the cross-diagram isolation rule documented in diagrams/CLAUDE.md;
 // the dependency is on flowchart's exported entry points only, never its internals.
-import { createFlowDiagram } from '../flowchart/flowDiagram.js';
+import { createFlowDiagram } from '../flowDiagram.js';
 import swimlanesStyles from './styles.js';
 
 export const diagram = createFlowDiagram({ styles: swimlanesStyles });

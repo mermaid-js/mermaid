@@ -147,7 +147,9 @@ const SHARED_PREFIXES = [
 
 // Regex: extract diagram name from paths like
 // packages/core/src/diagrams/<name>/... or packages/diagram-<name>/...
-const DIAGRAM_PATH_RE = /^packages\/(?:core\/src\/diagrams\/|diagram-)([^/]+)\//;
+// Swimlanes lives inside the flowchart folder but has its own e2e tests.
+const DIAGRAM_PATH_RE =
+  /^packages\/(?:core\/src\/diagrams\/|diagram-)(?:flowchart\/(?:src\/)?(?=swimlanes\/))?([^/]+)\//;
 
 // Diagram packages named differently from their e2e folders.
 const PACKAGE_E2E_NAMES = { journey: 'user-journey', quadrant: 'quadrant-chart' };

@@ -1,5 +1,5 @@
-import getFlowchartStyles from '../flowchart/styles.js';
-import type { FlowChartStyleOptions } from '../flowchart/styles.js';
+import getFlowchartStyles from '../styles.js';
+import type { FlowChartStyleOptions } from '../styles.js';
 
 /**
  * Swimlanes reuses the flowchart styles and appends the lane-specific rule.

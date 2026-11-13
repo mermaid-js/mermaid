@@ -2,7 +2,7 @@ import type {
   DiagramDetector,
   DiagramLoader,
   ExternalDiagramDefinition,
-} from '../../diagram-api/types.js';
+} from '../../../diagram-api/types.js';
 
 const id = 'swimlane';
 
