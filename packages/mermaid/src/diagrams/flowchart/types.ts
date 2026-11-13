@@ -55,13 +55,15 @@ export interface FlowText {
   type: 'text';
 }
 
+export type StrokeType = 'normal' | 'thick' | 'invisible' | 'dotted' | 'INVALID';
+
 export interface FlowEdge {
   isUserDefinedId: boolean;
   start: string;
   end: string;
   interpolate?: string;
   type?: string;
-  stroke?: 'normal' | 'thick' | 'invisible' | 'dotted';
+  stroke?: StrokeType;
   style?: string[];
   length?: number;
   text: string;
@@ -102,7 +104,7 @@ export interface DroppedSubGraphMember {
 
 export interface FlowLink {
   length?: number;
-  stroke: string;
+  stroke: StrokeType;
   type: string;
   text?: string;
 }

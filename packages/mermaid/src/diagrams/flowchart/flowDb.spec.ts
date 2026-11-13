@@ -2,6 +2,26 @@ import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph, FlowText } from './types.js';
 import flow from './parser/flowParser.js';
 
+describe('flow db invalid links', () => {
+  it.each([
+    ['==>', '--'],
+    ['-->', 'x--'],
+  ])('keeps invalid link %s / %s safe for layout', (end, start) => {
+    const db = new FlowDB();
+    db.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    db.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    const link = db.destructLink(end, start);
+    expect(link).toEqual({ type: 'INVALID', stroke: 'INVALID', length: 1 });
+    db.addLink(['A'], ['B'], link);
+
+    expect(db.getData().edges[0]).toMatchObject({
+      minlen: 1,
+      thickness: undefined,
+      pattern: undefined,
+    });
+  });
+});
+
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
   let subgraphs: FlowSubGraph[];

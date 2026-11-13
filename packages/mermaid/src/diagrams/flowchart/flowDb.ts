@@ -30,6 +30,7 @@ import type {
   FlowText,
   FlowVertex,
   FlowVertexTypeParam,
+  StrokeType,
 } from './types.js';
 import DOMPurify from 'dompurify';
 interface LinkData {
@@ -959,7 +960,7 @@ You have to call mermaid.initialize.`
         break;
     }
 
-    let stroke = 'normal';
+    let stroke: StrokeType = 'normal';
 
     if (str.includes('=')) {
       stroke = 'thick';
@@ -983,7 +984,7 @@ You have to call mermaid.initialize.`
     return count;
   }
 
-  private destructEndLink(_str: string) {
+  private destructEndLink(_str: string): FlowLink {
     const str = _str.trim();
     let line = str.slice(0, -1);
     let type = 'arrow_open';
@@ -1012,7 +1013,7 @@ You have to call mermaid.initialize.`
         break;
     }
 
-    let stroke = 'normal';
+    let stroke: StrokeType = 'normal';
     let length = line.length - 1;
 
     if (line.startsWith('=')) {
@@ -1033,14 +1034,14 @@ You have to call mermaid.initialize.`
     return { type, stroke, length };
   }
 
-  public destructLink(_str: string, _startStr: string) {
+  public destructLink(_str: string, _startStr?: string): FlowLink {
     const info = this.destructEndLink(_str);
     let startInfo;
     if (_startStr) {
       startInfo = this.destructStartLink(_startStr);
 
       if (startInfo.stroke !== info.stroke) {
-        return { type: 'INVALID', stroke: 'INVALID' };
+        return { type: 'INVALID', stroke: 'INVALID', length: 1 };
       }
 
       if (startInfo.type === 'arrow_open') {
@@ -1049,7 +1050,7 @@ You have to call mermaid.initialize.`
       } else {
         // x-- xyz -->  - not supported
         if (startInfo.type !== info.type) {
-          return { type: 'INVALID', stroke: 'INVALID' };
+          return { type: 'INVALID', stroke: 'INVALID', length: 1 };
         }
 
         startInfo.type = 'double_' + startInfo.type;
@@ -1418,6 +1419,8 @@ You have to call mermaid.initialize.`
       if (rawEdge.style) {
         styles.push(...rawEdge.style);
       }
+      // 'INVALID' is internal to the parser; renderers and consumers see no stroke.
+      const stroke = rawEdge.stroke === 'INVALID' ? undefined : rawEdge.stroke;
       const edge: Edge = {
         id: getEdgeId(start, end, { counter: index, prefix: 'L' }, rawEdge.id),
         isUserDefinedId: rawEdge.isUserDefinedId,
@@ -1427,7 +1430,7 @@ You have to call mermaid.initialize.`
         label: rawEdge.text,
         labelType: rawEdge.labelType,
         labelpos: 'c',
-        thickness: rawEdge.stroke,
+        thickness: stroke,
         minlen: rawEdge.length,
         classes:
           rawEdge?.stroke === 'invisible'
@@ -1443,7 +1446,7 @@ You have to call mermaid.initialize.`
         cssCompiledStyles: this.getCompiledStyles(rawEdge.classes),
         labelStyle: styles,
         style: styles,
-        pattern: rawEdge.stroke,
+        pattern: stroke,
         look: config.look,
         animate: rawEdge.animate,
         animation: rawEdge.animation,
