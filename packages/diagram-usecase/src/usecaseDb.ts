@@ -6,7 +6,7 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type {
   Actor,
   ClassDef,
@@ -25,10 +25,10 @@ import type {
   UsecaseNote,
 } from './usecaseTypes.js';
 import { DEFAULT_DIRECTION, ARROW_TYPE } from './usecaseTypes.js';
-import type { UsecaseDiagramConfig } from '../../config.type.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
-import { getConfig as getGlobalConfig } from '../../diagram-api/diagramAPI.js';
-import { sanitizeText } from '../common/common.js';
+import type { UsecaseDiagramConfig } from '@mermaid-js/core/config.type.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
+import { getConfig as getGlobalConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
 
 export const DEFAULT_USECASE_CONFIG: Required<UsecaseDiagramConfig> = DEFAULT_CONFIG.usecase;
 

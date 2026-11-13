@@ -1,8 +1,7 @@
 import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { Diagram } from '../../Diagram.js';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
-import { getConfig, setConfig } from '../../config.js';
-import { sanitizeText } from '../common/common.js';
+import { Diagram } from '@mermaid-js/core/Diagram.js';
+import { getConfig, setConfig } from '@mermaid-js/core/config.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
 import { db } from './usecaseDb.js';
 import { ARROW_TYPE } from './usecaseTypes.js';
 import getStyles from './styles.js';
@@ -70,8 +69,6 @@ vi.mock('d3', () => {
   };
 });
 // -------------------------------
-
-addDiagrams();
 
 describe('UseCase diagram with Chevrotain parser', () => {
   beforeEach(() => {

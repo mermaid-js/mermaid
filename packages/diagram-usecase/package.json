@@ -1,0 +1,48 @@
+{
+  "name": "@mermaid-js/diagram-usecase",
+  "version": "12.3.0",
+  "description": "The use case diagram for mermaid",
+  "module": "dist/mermaid-diagram-usecase.core.mjs",
+  "types": "./dist/usecaseDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/usecaseDetector.ts",
+      "types": "./dist/usecaseDetector.d.ts",
+      "import": "./dist/mermaid-diagram-usecase.core.mjs",
+      "default": "./dist/mermaid-diagram-usecase.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-usecase"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "chevrotain": "~13.2.0",
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

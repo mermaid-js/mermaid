@@ -59,6 +59,7 @@ describe('mermaid', () => {
     { text: 'treeView-beta', expected: 'treeView' },
     { text: 'treemap', expected: 'treemap' },
     { text: 'treemap-beta', expected: 'treemap' },
+    { text: 'usecase-beta', expected: 'usecase' },
     { text: 'venn-beta', expected: 'venn' },
     { text: 'wardley-beta', expected: 'wardley' },
     { text: 'xychart', expected: 'xychart' },

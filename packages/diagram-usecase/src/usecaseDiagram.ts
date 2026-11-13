@@ -1,4 +1,4 @@
-import type { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '@mermaid-js/core/diagram-api/types.js';
 import { parser } from './parser/usecase.chevrotain.js';
 import { db } from './usecaseDb.js';
 import { renderer } from './usecaseRenderer.js';

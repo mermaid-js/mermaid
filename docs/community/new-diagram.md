@@ -11,9 +11,10 @@ function, register them under an id, and Mermaid handles detection, lazy loading
 sanitization for you.
 
 The use case diagram is the reference implementation for new work. When this guide says "look at
-usecase", the files are in `packages/core/src/diagrams/usecase/`. Read them alongside these
+usecase", the files are in `packages/diagram-usecase/src/`. Read them alongside these
 steps: they are short, and they show the current conventions rather than the historical ones that
-older diagrams still carry.
+older diagrams still carry. Each diagram is its own `packages/diagram-<diagram>` package, so start
+by copying usecase's `package.json`, `tsconfig.json`, and `README.md`.
 
 ## What a diagram is made of
 
@@ -21,7 +22,7 @@ Each diagram exports a `DiagramDefinition` (`diagram-api/types.ts`) from a singl
 whole of `usecaseDiagram.ts` is this:
 
 ```ts
-import type { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '@mermaid-js/core/diagram-api/types.js';
 import { parser } from './parser/usecase.chevrotain.js';
 import { db } from './usecaseDb.js';
 import { renderer } from './usecaseRenderer.js';
@@ -85,9 +86,9 @@ one page will leak into each other.
 ## Step 1: Grammar and parsing
 
 New diagram grammars should use [Chevrotain](https://chevrotain.io/docs/), co-located with the
-diagram itself under `packages/core/src/diagrams/<diagram>/parser/`. The use case diagram is
+diagram itself under `packages/diagram-<diagram>/src/parser/`. The use case diagram is
 the reference implementation: a lexer, a `CstParser`, and a CST visitor that builds the diagram
-model, sharing `diagrams/common/parser/runChevrotainParse.ts` to run the lexer/parser pair and
+model, sharing `@mermaid-js/core/diagrams/common/parser/runChevrotainParse.js` to run the lexer/parser pair and
 report failures with source positions.
 
 Keeping the grammar next to the diagram mirrors the existing JISON layout, so a diagram stays
@@ -121,7 +122,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
   clear as commonClear,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 ```
 
 Your own `clear()` should call `commonClear()` as well as resetting your own fields.
@@ -138,7 +139,7 @@ Apply the configured padding and hand the sizing to the shared helper, so your d
 every other diagram instead of rendering at some unrelated size:
 
 ```ts
-import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
+import { setupViewPortForSVG } from '@mermaid-js/core/rendering-util/setupViewPortForSVG.js';
 
 setupViewPortForSVG(svg, padding, 'usecaseDiagram', config.useMaxWidth);
 ```
@@ -173,9 +174,9 @@ const loader: DiagramLoader = async () => {
 export const usecase: ExternalDiagramDefinition = { id, detector, loader };
 ```
 
-Then import it in `diagram-api/diagram-orchestration.ts` and add it to the
-`registerLazyLoadedDiagrams(...)` call. Order matters there: the first detector that returns true
-wins, so a loose pattern placed early will swallow other diagrams. The loader is what keeps
+Then import it in `packages/mermaid/src/diagrams.ts` and add it to the `diagrams` list, and do the
+same in `packages/tiny/src/mermaid.ts`. Order matters: the first detector that returns true wins, so
+a loose pattern will swallow diagrams registered after it. The loader is what keeps
 Mermaid's bundle small, because your diagram is only fetched once someone writes one.
 
 [The id becomes the aria roledescription](#aria-roledescription), so pick a word that describes
@@ -254,7 +255,7 @@ A new diagram without tests will not be merged. There are three kinds, and none 
 
 Unit tests for the parser and db go next to the code as `*.spec.ts`. Cover the syntax you
 documented, and cover invalid input too: a diagram that accepts nonsense silently is worse than
-one that rejects it. Run them with `vitest run packages/core/src/diagrams/<diagram>`.
+one that rejects it. Run them with `vitest run packages/diagram-<diagram>`.
 
 Visual regression tests come from `.mmd` fixtures. Put one file per scenario in
 `e2e/diagrams/<diagram>/`, and that is the whole job:
@@ -264,7 +265,7 @@ run fails fast if two fixtures collide. `e2e/sheet-order.json` holds the orderin
 with `pnpm e2e`. Cover realistic diagrams rather than one minimal smoke test, and include a
 fixture per theme if your styling is at all involved.
 
-A documentation test keeps your examples honest. `usecase.docs.spec.ts` reads the published
+A documentation test keeps your examples honest. `packages/mermaid/src/usecase.docs.spec.ts` reads the published
 `syntax/usecase.md`, extracts every ` ```mermaid-example ` block, and parses it. Copy that pattern
 and your documentation cannot drift into examples that no longer work.
 
@@ -304,13 +305,13 @@ nature, and that is fine, but keep unrelated refactors out of the same branch.
 This is what a reviewer checks. Going through it yourself first is the fastest way to a short
 review.
 
-- [ ] Parser uses Chevrotain, co-located under `diagrams/<diagram>/parser/`
+- [ ] Parser uses Chevrotain, co-located under `packages/diagram-<diagram>/src/parser/`
 - [ ] Invalid input produces a parse error with position, not a crash
 - [ ] `DiagramDefinition` exports parser, db, renderer, and styles
-- [ ] Detector in its own file, registered in `diagram-orchestration.ts`, ordered so it does not shadow other diagrams
+- [ ] Detector in its own file, registered in `packages/mermaid/src/diagrams.ts`, ordered so it does not shadow other diagrams
 - [ ] Diagram id reads well as an aria roledescription
 - [ ] db holds no module-level state and `clear()` resets everything, including `commonClear()`
-- [ ] No imports from other diagrams' folders
+- [ ] No imports from other diagram packages
 - [ ] Renderer applies padding and `useMaxWidth` through `setupViewPortForSVG`
 - [ ] Handdrawn mode implemented, or its absence documented
 - [ ] `styles.ts` takes theme options, with no hardcoded colors

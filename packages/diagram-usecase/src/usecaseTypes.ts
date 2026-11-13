@@ -1,6 +1,11 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
-import type { MermaidConfig, UsecaseDiagramConfig } from '../../config.type.js';
-import type { ClusterNode, Edge, LayoutData, NonClusterNode } from '../../rendering-util/types.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import type { MermaidConfig, UsecaseDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type {
+  ClusterNode,
+  Edge,
+  LayoutData,
+  NonClusterNode,
+} from '@mermaid-js/core/rendering-util/types.js';
 
 export type LabelType = 'text' | 'markdown';
 export type ActorType = 'normal' | 'hollow' | 'awesome' | 'icon';

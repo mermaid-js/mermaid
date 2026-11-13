@@ -1,6 +1,11 @@
-import * as configApi from '../../config.js';
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
+import {
+  hasPalette,
+  isColorTheme,
+  paletteSlotCount,
+  safeLook,
+} from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
 
 interface UsecaseStyleOptions {
   actorBkg?: string;

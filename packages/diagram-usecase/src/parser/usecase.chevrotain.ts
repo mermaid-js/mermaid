@@ -1,5 +1,8 @@
-import type { ParserDefinition } from '../../../diagram-api/types.js';
-import { isKnownLocation, runChevrotainParse } from '../../common/parser/runChevrotainParse.js';
+import type { ParserDefinition } from '@mermaid-js/core/diagram-api/types.js';
+import {
+  isKnownLocation,
+  runChevrotainParse,
+} from '@mermaid-js/core/diagrams/common/parser/runChevrotainParse.js';
 import { db } from '../usecaseDb.js';
 import { usecaseLexer } from './usecase.lexer.js';
 import { usecaseParser } from './usecase.parser.js';

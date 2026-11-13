@@ -9,7 +9,6 @@ import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
-import { usecase } from '../diagrams/usecase/usecaseDetector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -66,7 +65,6 @@ export const addDiagrams = () => {
     sequence,
     swimlanes,
     flowchartV2,
-    stateV2,
-    usecase
+    stateV2
   );
 };

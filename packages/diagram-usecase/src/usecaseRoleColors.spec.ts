@@ -18,9 +18,9 @@
  * working under both, which is the real escape hatch for semantic colour.
  */
 import { afterEach, describe, expect, it } from 'vitest';
-import * as configApi from '../../config.js';
-import type { MermaidConfig } from '../../config.type.js';
-import themes from '../../themes/index.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
+import themes from '@mermaid-js/core/themes/index.js';
 import getStyles from './styles.js';
 
 const COLOUR_THEMES = [

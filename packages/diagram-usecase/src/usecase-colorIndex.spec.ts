@@ -24,13 +24,10 @@
  * kinds is part of the contract and not just an implementation detail.
  */
 import { beforeAll, describe, expect, it } from 'vitest';
-import { Diagram } from '../../Diagram.js';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import { Diagram } from '@mermaid-js/core/Diagram.js';
 import { db } from './usecaseDb.js';
 
 beforeAll(async () => {
-  // Registers the use case diagram so `Diagram.fromText` can resolve it.
-  addDiagrams();
   await Diagram.fromText('usecase-beta\n actor TestActor');
 });
 

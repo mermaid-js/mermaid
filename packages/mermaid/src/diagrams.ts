@@ -21,6 +21,7 @@ import sankey from '@mermaid-js/diagram-sankey';
 import timeline from '@mermaid-js/diagram-timeline';
 import { treemap } from '@mermaid-js/diagram-treemap';
 import treeView from '@mermaid-js/diagram-treeview';
+import { usecase } from '@mermaid-js/diagram-usecase';
 import venn from '@mermaid-js/diagram-venn';
 import wardley from '@mermaid-js/diagram-wardley';
 import xychart from '@mermaid-js/diagram-xychart';
@@ -52,6 +53,7 @@ export const diagrams: ExternalDiagramDefinition[] = [
   timeline,
   treeView,
   treemap,
+  usecase,
   venn,
   wardley,
   xychart,

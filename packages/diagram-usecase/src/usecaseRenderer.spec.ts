@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import type { Diagram } from '../../Diagram.js';
-import type { SVG } from '../../diagram-api/types.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import type { SVG } from '@mermaid-js/core/diagram-api/types.js';
 import type {
   UsecaseLayoutCluster,
   UsecaseLayoutData,
@@ -20,7 +20,7 @@ import {
 
 const renderCallStyles: (string | null)[] = [];
 
-vi.mock('../../rendering-util/render.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/render.js', () => ({
   getRegisteredLayoutAlgorithm: () => 'dagre',
   render: (_data: UsecaseLayoutData, svg: SVG) => {
     // Labels are measured inside `render`, so record the fonts that were in force at that moment.

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { getAccDescription, getAccTitle } from '../common/commonDb.js';
+import { getAccDescription, getAccTitle } from '@mermaid-js/core/diagrams/common/commonDb.js';
 import { parser } from './parser/usecase.chevrotain.js';
 import { db } from './usecaseDb.js';
 import { ARROW_TYPE } from './usecaseTypes.js';

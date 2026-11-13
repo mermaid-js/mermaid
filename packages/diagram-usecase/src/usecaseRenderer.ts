@@ -1,13 +1,13 @@
 import { select } from 'd3';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
-import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
-import { markdownToLines } from '../../rendering-util/handle-markdown-text.js';
-import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DrawDefinition, SVG } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getDiagramElement } from '@mermaid-js/core/rendering-util/insertElementsForSize.js';
+import { getRegisteredLayoutAlgorithm, render } from '@mermaid-js/core/rendering-util/render.js';
+import { markdownToLines } from '@mermaid-js/core/rendering-util/handle-markdown-text.js';
+import { setupViewPortForSVG } from '@mermaid-js/core/rendering-util/setupViewPortForSVG.js';
 import type { UsecaseLayoutData, UsecaseLayoutEdge, UsecaseLayoutNode } from './usecaseTypes.js';
-import utils from '../../utils.js';
+import utils from '@mermaid-js/core/utils.js';
 import type { UsecaseDB } from './usecaseTypes.js';
 
 export const USECASE_MARKERS: UsecaseLayoutData['markers'] = [

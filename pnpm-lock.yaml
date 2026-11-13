@@ -674,6 +674,22 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
 
+  packages/diagram-usecase:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      chevrotain:
+        specifier: ~13.2.0
+        version: 13.2.0
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-venn:
     dependencies:
       '@mermaid-js/core':
@@ -799,6 +815,9 @@ importers:
       '@mermaid-js/diagram-treeview':
         specifier: workspace:^
         version: link:../diagram-treeview
+      '@mermaid-js/diagram-usecase':
+        specifier: workspace:^
+        version: link:../diagram-usecase
       '@mermaid-js/diagram-venn':
         specifier: workspace:^
         version: link:../diagram-venn
@@ -1154,6 +1173,9 @@ importers:
       '@mermaid-js/diagram-treeview':
         specifier: workspace:^
         version: link:../diagram-treeview
+      '@mermaid-js/diagram-usecase':
+        specifier: workspace:^
+        version: link:../diagram-usecase
       '@mermaid-js/diagram-venn':
         specifier: workspace:^
         version: link:../diagram-venn
