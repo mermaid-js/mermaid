@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { SVGGroup } from '../../../diagram-api/types.js';
+import type { SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
 import { TextDimensionCalculatorWithFont } from './textDimensionCalculator.js';
 
-vi.mock('../../../rendering-util/createText.js', () => ({
+vi.mock('@mermaid-js/core/rendering-util/createText.js', () => ({
   computeDimensionOfText: () => ({ width: 6, height: 3 }),
 }));
 

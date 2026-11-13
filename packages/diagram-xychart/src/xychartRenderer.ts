@@ -1,7 +1,7 @@
-import type { Diagram } from '../../Diagram.js';
-import { log } from '../../logger.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 import type {
   DrawableElem,
   TextElem,

@@ -1,6 +1,6 @@
 import type { ScaleBand } from 'd3';
 import { scaleBand } from 'd3';
-import { log } from '../../../../../logger.js';
+import { log } from '@mermaid-js/core/logger.js';
 import type { TextDimensionCalculator } from '../../textDimensionCalculator.js';
 import { BaseAxis } from './baseAxis.js';
 import type { XYChartAxisThemeConfig, XYChartAxisConfig } from '../../interfaces.js';

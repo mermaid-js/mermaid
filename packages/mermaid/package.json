@@ -92,6 +92,7 @@
     "@mermaid-js/diagram-treeview": "workspace:^",
     "@mermaid-js/diagram-venn": "workspace:^",
     "@mermaid-js/diagram-wardley": "workspace:^",
+    "@mermaid-js/diagram-xychart": "workspace:^",
     "@mermaid-js/layout-cose-bilkent": "workspace:^",
     "@mermaid-js/layout-elk": "workspace:^",
     "@mermaid-js/plugin-katex": "workspace:^"

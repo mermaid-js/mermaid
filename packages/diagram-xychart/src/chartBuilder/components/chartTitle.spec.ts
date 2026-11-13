@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import defaultConfig from '../../../../defaultConfig.js';
-import themes from '../../../../themes/index.js';
-import type { SVGGroup } from '../../../../diagram-api/types.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
+import themes from '@mermaid-js/core/themes/index.js';
+import type { SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
 import { XYChartBuilder } from '../index.js';
 import type {
   DrawableElem,

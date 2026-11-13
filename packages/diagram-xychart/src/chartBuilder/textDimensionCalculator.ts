@@ -1,5 +1,5 @@
-import type { SVGGroup } from '../../../diagram-api/types.js';
-import { computeDimensionOfText } from '../../../rendering-util/createText.js';
+import type { SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
+import { computeDimensionOfText } from '@mermaid-js/core/rendering-util/createText.js';
 import type { Dimension } from './interfaces.js';
 
 export interface TextDimensionCalculator {

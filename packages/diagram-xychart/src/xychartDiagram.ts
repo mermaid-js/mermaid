@@ -1,4 +1,4 @@
-import type { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '@mermaid-js/core/diagram-api/types.js';
 // @ts-ignore: Jison doesn't support types.
 import parser from './parser/xychart.jison';
 import db from './xychartDb.js';

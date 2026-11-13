@@ -1,9 +1,9 @@
-import * as configApi from '../../config.js';
-import defaultConfig from '../../defaultConfig.js';
-import type { SVGGroup } from '../../diagram-api/types.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import { cleanAndMerge } from '../../utils.js';
-import { sanitizeText } from '../common/common.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
+import type { SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
+import { getThemeVariables } from '@mermaid-js/core/themes/theme-default.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -12,7 +12,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
 import type {
   DrawableElem,

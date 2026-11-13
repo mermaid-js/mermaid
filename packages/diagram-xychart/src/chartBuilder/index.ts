@@ -1,4 +1,4 @@
-import type { SVGGroup } from '../../../diagram-api/types.js';
+import type { SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
 import type { DrawableElem, XYChartConfig, XYChartData, XYChartThemeConfig } from './interfaces.js';
 import { Orchestrator } from './orchestrator.js';
 

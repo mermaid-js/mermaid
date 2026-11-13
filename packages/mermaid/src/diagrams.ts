@@ -22,6 +22,7 @@ import { treemap } from '@mermaid-js/diagram-treemap';
 import treeView from '@mermaid-js/diagram-treeview';
 import venn from '@mermaid-js/diagram-venn';
 import wardley from '@mermaid-js/diagram-wardley';
+import xychart from '@mermaid-js/diagram-xychart';
 
 /** The diagram packages that the `mermaid` entry registers. */
 export const diagrams: ExternalDiagramDefinition[] = [
@@ -51,4 +52,5 @@ export const diagrams: ExternalDiagramDefinition[] = [
   treemap,
   venn,
   wardley,
+  xychart,
 ];

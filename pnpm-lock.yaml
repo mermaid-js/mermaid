@@ -693,6 +693,19 @@ importers:
         specifier: ^7.4.3
         version: 7.4.3
 
+  packages/diagram-xychart:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/examples:
     devDependencies:
       mermaid:
@@ -773,6 +786,9 @@ importers:
       '@mermaid-js/diagram-wardley':
         specifier: workspace:^
         version: link:../diagram-wardley
+      '@mermaid-js/diagram-xychart':
+        specifier: workspace:^
+        version: link:../diagram-xychart
       '@mermaid-js/layout-cose-bilkent':
         specifier: workspace:^
         version: link:../mermaid-layout-cose-bilkent
@@ -1122,6 +1138,9 @@ importers:
       '@mermaid-js/diagram-wardley':
         specifier: workspace:^
         version: link:../diagram-wardley
+      '@mermaid-js/diagram-xychart':
+        specifier: workspace:^
+        version: link:../diagram-xychart
 
   tests/release-verification:
     devDependencies:

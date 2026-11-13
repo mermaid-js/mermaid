@@ -21,6 +21,7 @@ import { treemap } from '@mermaid-js/diagram-treemap';
 import treeView from '@mermaid-js/diagram-treeview';
 import venn from '@mermaid-js/diagram-venn';
 import wardley from '@mermaid-js/diagram-wardley';
+import xychart from '@mermaid-js/diagram-xychart';
 
 void mermaid.registerExternalDiagrams([
   block,
@@ -47,6 +48,7 @@ void mermaid.registerExternalDiagrams([
   treemap,
   venn,
   wardley,
+  xychart,
 ]);
 
 export * from '@mermaid-js/core';

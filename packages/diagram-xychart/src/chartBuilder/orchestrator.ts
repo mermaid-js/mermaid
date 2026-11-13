@@ -1,4 +1,4 @@
-import type { SVGGroup } from '../../../diagram-api/types.js';
+import type { SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
 import type { Axis } from './components/axis/index.js';
 import { getAxis } from './components/axis/index.js';
 import type { ChartTitle } from './components/chartTitle.js';
