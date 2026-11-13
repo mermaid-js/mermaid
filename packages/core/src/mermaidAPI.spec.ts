@@ -1,4 +1,4 @@
-import { assert, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
@@ -39,12 +39,8 @@ vi.mock(import('stylis'), { spy: true });
 
 import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
-import { ClassDB } from './diagrams/class/classDb.js';
-import { FlowDB } from './diagrams/flowchart/flowDb.js';
-import { SequenceDB } from './diagrams/sequence/sequenceDb.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
-import { StateDB } from './diagrams/state/stateDb.js';
 import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
 import { JSDOM } from 'jsdom';
 import { log } from './logger.js';
@@ -1269,9 +1265,8 @@ flowchart TB
           Crash --> [*]`
       );
       expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
-      assert(stateDiagram1.db instanceof StateDB);
-      assert(stateDiagram2.db instanceof StateDB);
-      expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
+      expect([stateDiagram1.type, stateDiagram2.type]).toEqual(['stateDiagram', 'stateDiagram']);
+      expect(stateDiagram1.db.getDirection?.()).not.toEqual(stateDiagram2.db.getDirection?.());
 
       const flowDiagram1 = await mermaidAPI.getDiagramFromText(
         `flowchart LR
@@ -1283,9 +1278,8 @@ flowchart TB
       );
       // Since flowDiagram will return new Db object each time, we can compare the db to be different.
       expect(flowDiagram1.db).not.toBe(flowDiagram2.db);
-      assert(flowDiagram1.db instanceof FlowDB);
-      assert(flowDiagram2.db instanceof FlowDB);
-      expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
+      expect([flowDiagram1.type, flowDiagram2.type]).toEqual(['flowchart-v2', 'flowchart-v2']);
+      expect(flowDiagram1.db.getDirection?.()).not.toEqual(flowDiagram2.db.getDirection?.());
 
       const classDiagram1 = await mermaidAPI.getDiagramFromText(
         `classDiagram
@@ -1323,9 +1317,8 @@ flowchart TB
       );
       // Since classDiagram will return new Db object each time, we can compare the db to be different.
       expect(classDiagram1.db).not.toBe(classDiagram2.db);
-      assert(classDiagram1.db instanceof ClassDB);
-      assert(classDiagram2.db instanceof ClassDB);
-      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+      expect([classDiagram1.type, classDiagram2.type]).toEqual(['classDiagram', 'classDiagram']);
+      expect(classDiagram1.db.getDirection?.()).not.toEqual(classDiagram2.db.getDirection?.());
 
       const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
         `sequenceDiagram
@@ -1345,9 +1338,9 @@ flowchart TB
 
       // Since sequenceDiagram will return new Db object each time, we can compare the db to be different.
       expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
-      assert(sequenceDiagram1.db instanceof SequenceDB);
-      assert(sequenceDiagram2.db instanceof SequenceDB);
-      expect(sequenceDiagram1.db.getActors()).not.toEqual(sequenceDiagram2.db.getActors());
+      expect([sequenceDiagram1.type, sequenceDiagram2.type]).toEqual(['sequence', 'sequence']);
+      const actorsOf = (db: unknown) => (db as { getActors(): unknown }).getActors();
+      expect(actorsOf(sequenceDiagram1.db)).not.toEqual(actorsOf(sequenceDiagram2.db));
     });
   });
 
