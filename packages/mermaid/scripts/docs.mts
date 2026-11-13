@@ -58,7 +58,7 @@ import { visit } from 'unist-util-visit';
 
 // short-circuit `.schema.yaml` imports, so that we can safely import `shapes.js`
 register('./loadHook.mjs', import.meta.url);
-const { shapesDefs } = await import('../src/rendering-util/rendering-elements/shapes.js');
+const { shapesDefs } = await import('../../core/src/rendering-util/rendering-elements/shapes.js');
 
 export const MERMAID_RELEASE_VERSION = mermaidPackageJson.version;
 const MERMAID_MAJOR_VERSION = MERMAID_RELEASE_VERSION.split('.')[0];
@@ -474,7 +474,7 @@ async function transformJsonSchema(file: string) {
   });
 
   /** Location of the `schema.yaml` files */
-  const SCHEMA_INPUT_DIR = 'src/schemas/';
+  const SCHEMA_INPUT_DIR = '../core/src/schemas/';
   /**
    * Location to store the generated `schema.json` file for the website
    *
@@ -650,7 +650,7 @@ export const processDocs = async () => {
 
   if (vitepress) {
     console.log(`${action} 1 .schema.yaml file`);
-    await transformJsonSchema('src/schemas/config.schema.yaml');
+    await transformJsonSchema('../core/src/schemas/config.schema.yaml');
   } else {
     // skip because this creates so many Markdown files that it lags git
     console.log('Skipping 1 .schema.yaml file');

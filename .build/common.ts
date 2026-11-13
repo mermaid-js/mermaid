@@ -2,7 +2,18 @@ export interface PackageOptions {
   name: string;
   packageName: string;
   file: string;
+  /**
+   * Publish every source module as its own entry point, so that dependents can
+   * deep-import it (e.g. `@mermaid-js/core/config.js`).
+   */
+  allModules?: boolean;
 }
+
+/**
+ * Custom export condition that resolves workspace packages to their source, so
+ * every bundle shares one copy of each module instead of their prebuilt `dist/`.
+ */
+export const sourceCondition = 'mermaid-source';
 
 /**
  * Shared common options for both ESBuild and Vite
@@ -12,6 +23,12 @@ export const packageOptions = {
     name: 'mermaid-parser',
     packageName: 'parser',
     file: 'index.ts',
+  },
+  core: {
+    name: 'mermaid-core',
+    packageName: 'core',
+    file: 'mermaid.ts',
+    allModules: true,
   },
   mermaid: {
     name: 'mermaid',
@@ -31,9 +48,9 @@ export const packageOptions = {
   'mermaid-layout-elk': {
     name: 'mermaid-layout-elk',
     packageName: 'mermaid-layout-elk',
-    // Built from mermaid's own ELK source (path is relative to the package's
+    // Built from core's ELK source (path is relative to the package's
     // `src`) so the plugin and the bundled layout are the same implementation.
-    file: '../../mermaid/src/rendering-util/layout-algorithms/elk/plugin.ts',
+    file: '../../core/src/rendering-util/layout-algorithms/elk/plugin.ts',
   },
   'mermaid-layout-tidy-tree': {
     name: 'mermaid-layout-tidy-tree',

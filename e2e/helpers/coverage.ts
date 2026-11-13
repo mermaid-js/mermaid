@@ -28,10 +28,11 @@ export const coverageOptions: CoverageReportOptions = {
     '**/chunks/mermaid.esm/**': true,
     '**/*': false,
   },
-  // Sourcemap paths are package-relative (`src/...`); make them repo-relative.
+  // Sourcemap paths resolve against the dist root (`core/src/...`, as the bundle
+  // is built from `@mermaid-js/core`'s source); make them repo-relative.
   sourcePath: (filePath: string): string =>
-    filePath.startsWith('src/') ? `packages/mermaid/${filePath}` : filePath,
-  sourceFilter: (sourcePath: string): boolean => sourcePath.startsWith('packages/mermaid/src/'),
+    filePath.startsWith('core/src/') ? `packages/${filePath}` : filePath,
+  sourceFilter: (sourcePath: string): boolean => sourcePath.startsWith('packages/core/src/'),
   sourceMapResolver: (url, defaultResolver) =>
     url.startsWith('http') ? Promise.resolve(readDistSourceMap(url)) : defaultResolver(url),
 };

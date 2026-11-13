@@ -19,7 +19,7 @@
  *
  * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
- *   const spec = detectScope(['packages/mermaid/src/diagrams/flowchart/flowchart.ts']);
+ *   const spec = detectScope(['packages/core/src/diagrams/flowchart/flowchart.ts']);
  *   // => 'e2e/rendering/flowchart/'
  */
 
@@ -111,18 +111,18 @@ const IGNORABLE_SUFFIXES = ['.md'];
 // ---------------------------------------------------------------------------
 const SHARED_PREFIXES = [
   // Shared diagram utilities (used by all diagram types)
-  'packages/mermaid/src/diagrams/common/',
+  'packages/core/src/diagrams/common/',
   // Shared rendering utilities (shapes, edges, layout — affects all diagrams)
-  'packages/mermaid/src/rendering-util/',
+  'packages/core/src/rendering-util/',
   // Themes (affects all visual output)
-  'packages/mermaid/src/themes/',
+  'packages/core/src/themes/',
   // Core API and config (affects all diagrams)
-  'packages/mermaid/src/config',
-  'packages/mermaid/src/mermaid',
-  'packages/mermaid/src/mermaidAPI',
-  'packages/mermaid/src/diagram-api/',
-  'packages/mermaid/src/Diagram.',
-  'packages/mermaid/src/schemas/',
+  'packages/core/src/config',
+  'packages/core/src/mermaid',
+  'packages/core/src/mermaidAPI',
+  'packages/core/src/diagram-api/',
+  'packages/core/src/Diagram.',
+  'packages/core/src/schemas/',
   // Parser package (used by multiple diagram types via Langium)
   'packages/parser/',
   // Layout engine packages
@@ -144,8 +144,8 @@ const SHARED_PREFIXES = [
 ];
 
 // Regex: extract diagram name from paths like
-// packages/mermaid/src/diagrams/<name>/...
-const DIAGRAM_PATH_RE = /^packages\/mermaid\/src\/diagrams\/([^/]+)\//;
+// packages/core/src/diagrams/<name>/...
+const DIAGRAM_PATH_RE = /^packages\/core\/src\/diagrams\/([^/]+)\//;
 
 // ---------------------------------------------------------------------------
 // Core detection function

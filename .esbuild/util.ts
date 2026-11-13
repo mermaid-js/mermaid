@@ -1,10 +1,10 @@
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import type { BuildOptions } from 'esbuild';
-import { readFileSync } from 'fs';
+import { globSync, readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
-import { buildTarget } from '../.build/common.js';
+import { buildTarget, sourceCondition } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -47,6 +47,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
+    conditions: [sourceCondition, 'module'],
     sourcemap: coverageBuild ? 'linked' : 'external',
     ...override,
   };
@@ -74,7 +75,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   const {
     core,
     format,
-    options: { name, file, packageName },
+    options: { name, file, packageName, allModules },
     globalName = 'mermaid',
     includeLargeFeatures,
     profiling,
@@ -86,12 +87,19 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   const { dependencies, peerDependencies, version } = JSON.parse(
     readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
   );
+  const absWorkingDir = resolve(__dirname, `../packages/${packageName}`);
   const output: BuildOptions = buildOptions({
     ...rest,
-    absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
-    entryPoints: {
-      [outFileName]: `src/${file}`,
-    },
+    absWorkingDir,
+    entryPoints: allModules
+      ? globSync('src/**/*.{ts,js}', {
+          cwd: absWorkingDir,
+          // skip tests and test-only helpers (ddlt is a node-only test harness)
+          exclude: (path) =>
+            /\.(spec|test|d)\.|[/\\](__tests__|__mocks__|tests|ddlt)([/\\]|$)/.test(path),
+        })
+      : { [outFileName]: `src/${file}` },
+    outbase: allModules ? 'src' : undefined,
     globalName,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,

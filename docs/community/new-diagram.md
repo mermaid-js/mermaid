@@ -11,7 +11,7 @@ function, register them under an id, and Mermaid handles detection, lazy loading
 sanitization for you.
 
 The use case diagram is the reference implementation for new work. When this guide says "look at
-usecase", the files are in `packages/mermaid/src/diagrams/usecase/`. Read them alongside these
+usecase", the files are in `packages/core/src/diagrams/usecase/`. Read them alongside these
 steps: they are short, and they show the current conventions rather than the historical ones that
 older diagrams still carry.
 
@@ -85,7 +85,7 @@ one page will leak into each other.
 ## Step 1: Grammar and parsing
 
 New diagram grammars should use [Chevrotain](https://chevrotain.io/docs/), co-located with the
-diagram itself under `packages/mermaid/src/diagrams/<diagram>/parser/`. The use case diagram is
+diagram itself under `packages/core/src/diagrams/<diagram>/parser/`. The use case diagram is
 the reference implementation: a lexer, a `CstParser`, and a CST visitor that builds the diagram
 model, sharing `diagrams/common/parser/runChevrotainParse.ts` to run the lexer/parser pair and
 report failures with source positions.
@@ -254,7 +254,7 @@ A new diagram without tests will not be merged. There are three kinds, and none 
 
 Unit tests for the parser and db go next to the code as `*.spec.ts`. Cover the syntax you
 documented, and cover invalid input too: a diagram that accepts nonsense silently is worse than
-one that rejects it. Run them with `vitest run packages/mermaid/src/diagrams/<diagram>`.
+one that rejects it. Run them with `vitest run packages/core/src/diagrams/<diagram>`.
 
 Visual regression tests come from `.mmd` fixtures. Put one file per scenario in
 `e2e/diagrams/<diagram>/`, and that is the whole job:

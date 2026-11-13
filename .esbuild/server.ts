@@ -7,10 +7,10 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import path, { resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { buildTarget, packageOptions } from '../.build/common.js';
+import { buildTarget, packageOptions, type PackageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
-import { DDLT_SIZE_CAPTURE_VERSION } from '../packages/mermaid/src/rendering-util/layout-algorithms/ddlt/captureContract.js';
+import { DDLT_SIZE_CAPTURE_VERSION } from '../packages/core/src/rendering-util/layout-algorithms/ddlt/captureContract.js';
 import {
   reduceRegistryDocument,
   type RegistrySummary,
@@ -57,15 +57,12 @@ console.log('');
 
 // The dev server is never published, so always compile the render profiler in.
 // It stays a no-op until toggled on at runtime: `__mermaidProfiler.enable()`.
-const configs = Object.values(packageOptions).map(({ packageName }) =>
-  getBuildConfig({
-    ...defaultOptions,
-    minify: false,
-    core: false,
-    profiling: true,
-    options: packageOptions[packageName],
-  })
-);
+// Packages built from `allModules` are bundled into their dependents from source.
+const configs = Object.values<PackageOptions>(packageOptions)
+  .filter(({ allModules }) => !allModules)
+  .map((options) =>
+    getBuildConfig({ ...defaultOptions, minify: false, core: false, profiling: true, options })
+  );
 const mermaidIIFEConfig = getBuildConfig({
   ...defaultOptions,
   minify: false,

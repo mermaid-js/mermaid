@@ -30,7 +30,7 @@ vi.mock('d3', () => {
       attr: returnThis,
       style: returnThis,
       text: returnThis,
-      // [0][0] (below) is required by drawText() in packages/mermaid/src/diagrams/sequence/svgDraw.js
+      // [0][0] (below) is required by drawText() in packages/core/src/diagrams/sequence/svgDraw.js
       0: {
         0: {
           getBBox: function () {

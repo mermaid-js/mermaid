@@ -67,7 +67,7 @@ generated/
 /AGENTS.md
 /assistant/
 /.claude/
-packages/mermaid/src/diagrams/CLAUDE.md
+packages/core/src/diagrams/CLAUDE.md
 packages/parser/CLAUDE.md
 AGENTS.mermaid.md
 CLAUDE.mermaid.md
@@ -83,5 +83,6 @@ mermaid-parser.tar.gz
 test-results/
 .playwright-mcp/
 
-# Copied from packages/mermaid by the build (.esbuild/build.ts); packed into the tiny tarball.
+# Copied from packages/mermaid by the build (.esbuild/build.ts); packed into the tiny and core tarballs.
 packages/tiny/THIRD_PARTY_NOTICES
+packages/core/THIRD_PARTY_NOTICES

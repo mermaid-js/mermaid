@@ -16,6 +16,11 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
     profiling: shouldProfile,
     options: packageOptions[entryName],
   } as const;
+  if (commonOptions.options.allModules) {
+    // one unbundled module per source file, no min/esm/IIFE variants
+    await build(getBuildConfig({ ...commonOptions, core: true }));
+    return;
+  }
   const buildConfigs: MermaidBuildOptions[] = [
     // package.mjs
     { ...commonOptions },
@@ -95,6 +100,7 @@ const buildTinyMermaid = async () => {
   await writeFile('./packages/tiny/package.json', JSON.stringify(tinyPkg, null, 2) + '\n');
   await cp('./packages/mermaid/CHANGELOG.md', './packages/tiny/CHANGELOG.md');
   await cp('./packages/mermaid/THIRD_PARTY_NOTICES', './packages/tiny/THIRD_PARTY_NOTICES');
+  await cp('./packages/mermaid/THIRD_PARTY_NOTICES', './packages/core/THIRD_PARTY_NOTICES');
 };
 
 const main = async () => {

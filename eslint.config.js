@@ -24,7 +24,7 @@ export default tseslint.config(
       '.claude/',
       '**/generated/',
       '**/coverage/',
-      'packages/mermaid/src/config.type.ts',
+      'packages/core/src/config.type.ts',
       'packages/mermaid/src/docs/.vitepress/components.d.ts',
     ],
   },
@@ -205,10 +205,10 @@ export default tseslint.config(
     // lineJump *specs* stay here since, like the other layout specs, they use
     // console for debug output.
     files: [
-      'packages/mermaid/src/rendering-util/layout-algorithms/swimlanes/**',
-      'packages/mermaid/src/rendering-util/layout-algorithms/ddlt/**',
-      'packages/mermaid/src/rendering-util/layout-algorithms/layout-utils/**',
-      'packages/mermaid/src/rendering-util/rendering-elements/lineJump*.spec.ts',
+      'packages/core/src/rendering-util/layout-algorithms/swimlanes/**',
+      'packages/core/src/rendering-util/layout-algorithms/ddlt/**',
+      'packages/core/src/rendering-util/layout-algorithms/layout-utils/**',
+      'packages/core/src/rendering-util/rendering-elements/lineJump*.spec.ts',
     ],
     rules: {
       'no-console': 'off',
@@ -270,7 +270,7 @@ export default tseslint.config(
     // The `layered` engine is ported nearly verbatim from mermaid-v13 so later v13 fixes can be
     // brought over by hand. It is written for `noUncheckedIndexedAccess` (hence the `!` reads)
     // and in v13's style, so these style-only rules are relaxed here.
-    files: ['packages/mermaid/src/rendering-util/layout-algorithms/layered/**/*.ts'],
+    files: ['packages/core/src/rendering-util/layout-algorithms/layered/**/*.ts'],
     rules: {
       curly: 'off',
       '@typescript-eslint/no-unnecessary-type-assertion': 'off',

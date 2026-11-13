@@ -91,7 +91,7 @@ const genGradient = (THEME_COLOR_LIMIT: number, svgId: string, mainBkg: string) 
 // TODO: These options seem incorrect.
 const getStyles: DiagramStylesProvider = (options) => {
   const { theme } = options;
-  // svgId is passed inside options by the caller in packages/mermaid/src/styles.ts
+  // svgId is passed inside options by the caller in packages/core/src/styles.ts
   // as `themes[type]({ ...options, svgId })`. The second parameter is never populated.
   const svgId: string | undefined = options.svgId;
   const neoRootLabel = theme?.includes('redux')

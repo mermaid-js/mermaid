@@ -10,7 +10,7 @@ This library provides a collection of custom SVG shapes, utilities, and helpers 
 
 ## Shape Helpers and Utilities
 
-Before starting with shape creation, it's essential to familiarize yourself with the utilities provided in the `utils.ts` file from `packages/mermaid/src/rendering-util/rendering-elements/shapes/util.js`. These utilities are designed to assist with various aspects of SVG shape manipulation and ensure consistent and accurate rendering.
+Before starting with shape creation, it's essential to familiarize yourself with the utilities provided in the `utils.ts` file from `packages/core/src/rendering-util/rendering-elements/shapes/util.js`. These utilities are designed to assist with various aspects of SVG shape manipulation and ensure consistent and accurate rendering.
 
 ## Available Utilities
 
@@ -115,7 +115,7 @@ To add a new shape:
 
 ### 2. Register the Shape
 
-- **Register the shape**: Add your shape to the `shapes` object in the [main shapes module](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/rendering-util/rendering-elements/shapes.ts). This allows your shape to be recognized and used within the system.
+- **Register the shape**: Add your shape to the `shapes` object in the [main shapes module](https://github.com/mermaid-js/mermaid/blob/develop/packages/core/src/rendering-util/rendering-elements/shapes.ts). This allows your shape to be recognized and used within the system.
 
 - **Example**:
 

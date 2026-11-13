@@ -13,8 +13,6 @@
   ],
   "excludeRegExp": [
     "node_modules",
-    "docs",
-    "vitepress",
     "detector",
     "Detector"
   ],

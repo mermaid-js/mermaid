@@ -268,13 +268,7 @@ importers:
         specifier: ^9.0.4
         version: 9.0.4(debug@4.4.3)
 
-  packages/examples:
-    devDependencies:
-      mermaid:
-        specifier: workspace:*
-        version: link:../mermaid
-
-  packages/mermaid:
+  packages/core:
     dependencies:
       '@braintree/sanitize-url':
         specifier: ^7.1.2
@@ -343,9 +337,6 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
     devDependencies:
-      '@adobe/jsonschema2md':
-        specifier: ^8.0.11
-        version: 8.0.11
       '@iconify/types':
         specifier: ^2.0.0
         version: 2.0.0
@@ -376,9 +367,6 @@ importers:
       '@types/katex':
         specifier: ^0.16.8
         version: 0.16.8
-      '@types/micromatch':
-        specifier: ^4.0.10
-        version: 4.0.10
       '@types/stylis':
         specifier: ^4.2.7
         version: 4.2.7
@@ -388,18 +376,55 @@ importers:
       canvas:
         specifier: ^3.2.3
         version: 3.2.3
-      chokidar:
-        specifier: 3.6.0
-        version: 3.6.0
-      concurrently:
-        specifier: ^9.2.4
-        version: 9.2.4
       csstree-validator:
         specifier: ^4.0.1
         version: 4.0.1
       fastdom:
         specifier: 1.0.12
         version: 1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87)
+      jsdom:
+        specifier: ^26.1.0
+        version: 26.1.0(canvas@3.2.3)
+      json-schema-to-typescript:
+        specifier: ^15.0.4
+        version: 15.0.4
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
+      typescript:
+        specifier: ~5.7.3
+        version: 5.7.3
+
+  packages/examples:
+    devDependencies:
+      mermaid:
+        specifier: workspace:*
+        version: link:../mermaid
+
+  packages/mermaid:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+    devDependencies:
+      '@adobe/jsonschema2md':
+        specifier: ^8.0.11
+        version: 8.0.11
+      '@types/jsdom':
+        specifier: ^21.1.7
+        version: 21.1.7
+      '@types/micromatch':
+        specifier: ^4.0.10
+        version: 4.0.10
+      chokidar:
+        specifier: 3.6.0
+        version: 3.6.0
+      concurrently:
+        specifier: ^9.2.4
+        version: 9.2.4
       globby:
         specifier: ^14.1.0
         version: 14.1.0
@@ -412,9 +437,6 @@ importers:
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0(canvas@3.2.3)
-      json-schema-to-typescript:
-        specifier: ^15.0.4
-        version: 15.0.4
       micromatch:
         specifier: ^4.0.8
         version: 4.0.8
@@ -439,9 +461,6 @@ importers:
       start-server-and-test:
         specifier: ^2.1.5
         version: 2.1.5
-      type-fest:
-        specifier: ^4.41.0
-        version: 4.41.0
       typedoc:
         specifier: ^0.28.20
         version: 0.28.20(typescript@5.7.3)
@@ -520,6 +539,9 @@ importers:
         specifier: ^7.9.0
         version: 7.9.0
     devDependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -4135,9 +4157,6 @@ packages:
 
   '@types/node@18.19.124':
     resolution: {integrity: sha512-hY4YWZFLs3ku6D2Gqo3RchTd9VRCcrjqp/I0mmohYeUVA5Y8eCXKJEasHxLAJVZRJuQogfd1GiJ9lgogBgKeuQ==}
-
-  '@types/node@22.18.3':
-    resolution: {integrity: sha512-gTVM8js2twdtqM+AE2PdGEe9zGQY4UvmFjan9rZcVb6FGdStfjWoWejdmy4CfWVO9rh5MiYQGZloKAGkJt8lMw==}
 
   '@types/node@22.20.1':
     resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}
@@ -8655,10 +8674,6 @@ packages:
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
-
-  picomatch@2.3.1:
-    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
-    engines: {node: '>=8.6'}
 
   picomatch@2.3.2:
     resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
@@ -14449,7 +14464,7 @@ snapshots:
 
   '@types/jsdom@21.1.7':
     dependencies:
-      '@types/node': 22.18.3
+      '@types/node': 22.20.1
       '@types/tough-cookie': 4.0.5
       parse5: 7.3.0
 
@@ -14506,10 +14521,6 @@ snapshots:
   '@types/node@18.19.124':
     dependencies:
       undici-types: 5.26.5
-
-  '@types/node@22.18.3':
-    dependencies:
-      undici-types: 6.21.0
 
   '@types/node@22.20.1':
     dependencies:
@@ -15390,9 +15401,9 @@ snapshots:
     optionalDependencies:
       ajv: 8.18.0
 
-  ajv-formats@2.1.1(ajv@8.18.0):
+  ajv-formats@2.1.1(ajv@8.20.0):
     optionalDependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
   ajv-formats@3.0.1(ajv@8.18.0):
     optionalDependencies:
@@ -15403,9 +15414,9 @@ snapshots:
       ajv: 8.20.0
     optional: true
 
-  ajv-keywords@5.1.0(ajv@8.18.0):
+  ajv-keywords@5.1.0(ajv@8.20.0):
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
       fast-deep-equal: 3.1.3
 
   ajv@6.14.0:
@@ -19424,7 +19435,7 @@ snapshots:
   micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
-      picomatch: 2.3.1
+      picomatch: 2.3.2
 
   mime-db@1.52.0: {}
 
@@ -19939,8 +19950,6 @@ snapshots:
   perfect-debounce@2.1.0: {}
 
   picocolors@1.1.1: {}
-
-  picomatch@2.3.1: {}
 
   picomatch@2.3.2: {}
 
@@ -20575,9 +20584,9 @@ snapshots:
   schema-utils@4.3.2:
     dependencies:
       '@types/json-schema': 7.0.15
-      ajv: 8.18.0
-      ajv-formats: 2.1.1(ajv@8.18.0)
-      ajv-keywords: 5.1.0(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-formats: 2.1.1(ajv@8.20.0)
+      ajv-keywords: 5.1.0(ajv@8.20.0)
 
   search-insights@2.17.3: {}
 

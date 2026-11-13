@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { Buffer } from 'buffer';
-import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
+import type { MermaidConfig } from '../../packages/core/src/config.type.js';
 import { applitoolsBatch, applitoolsTestName } from './applitools.ts';
 import { buildCaptureMetadata, writeArgosMetadataSidecar } from './argos-metadata.ts';
 import { collectCoverage, startCoverage } from './coverage.js';

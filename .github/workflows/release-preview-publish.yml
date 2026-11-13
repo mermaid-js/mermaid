@@ -53,14 +53,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Published before `mermaid`, so that `pnpm pack` pins mermaid's
+      # `workspace:^` dependency on core to this preview version.
+      - name: Publish core
+        working-directory: ./packages/core
+        run: |
+          npm version --no-git-tag-version --allow-same-version "$VERSION"
+          json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
+          # We don't publish a separate `@mermaid-js/parser` so bundle it instead
+          json -I -f package.json -e 'this.bundleDependencies??=[]' -e 'this.bundleDependencies.push("@mermaid-js/parser")'
+          pnpm pack
+          npm publish --tag preview *.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.preview.outputs.version }}
+
       - name: Publish mermaid
         working-directory: ./packages/mermaid
         run: |
           npm version --no-git-tag-version --allow-same-version "$VERSION"
           json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
           json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
-          # We don't publish a separate `@mermaid-js/parser` so bundle it instead
-          json -I -f package.json -e 'this.bundleDependencies??=[]' -e 'this.bundleDependencies.push("@mermaid-js/parser")'
           pnpm pack
           npm publish --tag preview *.tgz
         env:

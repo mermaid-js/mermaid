@@ -1,4 +1,7 @@
-import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
+import type { SVG, SVGGroup } from '../../../diagram-api/types.js';
+import type { InternalHelpers } from '../../../internals.js';
+import type { RenderOptions } from '../../render.js';
+import type { LayoutData } from '../../types.js';
 import { executeCoseBilkentLayout } from './layout.js';
 import type { D3Selection } from '../../../types.js';
 

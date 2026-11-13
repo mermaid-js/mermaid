@@ -16,10 +16,10 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 const require_ = createRequire(import.meta.url);
 
 /**
- * `mermaid`'s emitted `.d.ts` files reference `type-fest` and `@types/d3` directly, so the
+ * `@mermaid-js/core`'s emitted `.d.ts` files reference `type-fest` and `@types/d3` directly, so the
  * throwaway project has to install them itself. Their versions are not a free choice: the
  * check compiles the *published* declarations, and those were built against exactly the
- * ranges `packages/mermaid/package.json` declares.
+ * ranges `packages/core/package.json` declares.
  *
  * They used to be written as `'*'` and a hardcoded `'^7.4.3'`, which quietly meant "whatever
  * the registry serves today". That resolved `type-fest` to a major mermaid has never been
@@ -31,7 +31,7 @@ const require_ = createRequire(import.meta.url);
  * Reading the ranges from the package under test is what makes this reproducible. It is also
  * what the note below the field always asked for.
  */
-const MERMAID_PKG = require_('../packages/mermaid/package.json') as {
+const CORE_PKG = require_('../packages/core/package.json') as {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
 };
@@ -43,10 +43,10 @@ const MERMAID_PKG = require_('../packages/mermaid/package.json') as {
  * exact failure mode being fixed here, and it would come back silently.
  */
 const typeDependency = (name: string): string => {
-  const range = MERMAID_PKG.dependencies?.[name] ?? MERMAID_PKG.devDependencies?.[name];
+  const range = CORE_PKG.dependencies?.[name] ?? CORE_PKG.devDependencies?.[name];
   if (!range) {
     throw new Error(
-      `tsc-check: packages/mermaid/package.json no longer declares '${name}'. ` +
+      `tsc-check: packages/core/package.json no longer declares '${name}'. ` +
         `Update scripts/tsc-check.ts to match wherever it moved.`
     );
   }
@@ -58,6 +58,7 @@ const typeDependency = (name: string): string => {
  */
 const PACKAGES = {
   mermaid: 'mermaid',
+  '@mermaid-js/core': 'core',
   '@mermaid-js/layout-elk': 'mermaid-layout-elk',
   '@mermaid-js/parser': 'parser',
   // TODO: these don't import cleanly yet due to exotic tsconfig.json requirements

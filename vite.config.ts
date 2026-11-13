@@ -1,11 +1,25 @@
 import jison from './.vite/jisonPlugin.js';
 import jsonSchemaPlugin from './.vite/jsonSchemaPlugin.js';
 import typescript from '@rollup/plugin-typescript';
+import { defaultClientConditions, defaultServerConditions } from 'vite';
 import { defaultExclude, defineConfig } from 'vitest/config';
+import { sourceCondition } from './.build/common.js';
+
+/**
+ * Resolve workspace packages to their source, on top of the conditions Vite
+ * (or Vitest, which drops `module` and `browser`) would use.
+ */
+const conditions = [
+  sourceCondition,
+  ...(process.env.VITEST
+    ? defaultServerConditions.filter((condition) => condition !== 'module')
+    : defaultClientConditions),
+];
 
 export default defineConfig({
   resolve: {
     extensions: ['.js'],
+    conditions,
   },
   plugins: [
     jison(),
@@ -15,7 +29,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./packages/mermaid/src/tests/setup.ts'],
+    setupFiles: ['./packages/core/src/tests/setup.ts'],
     exclude: [
       ...defaultExclude,
       'e2e/rendering/**',

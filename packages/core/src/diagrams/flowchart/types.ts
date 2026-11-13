@@ -3,7 +3,7 @@ import type { NodeMetaData } from '../../types.js';
 
 /**
  * Valid `type` args to `yy.addVertex` taken from
- * `packages/mermaid/src/diagrams/flowchart/parser/flow.jison`
+ * `packages/core/src/diagrams/flowchart/parser/flow.jison`
  */
 export type FlowVertexTypeParam =
   | undefined

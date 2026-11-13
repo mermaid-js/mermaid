@@ -153,7 +153,7 @@ const INLINE_LANE_TEST = new RegExp(
 
 const swimlanesRoot = () => {
   const candidates = [
-    resolve(process.cwd(), 'packages/mermaid/src/rendering-util/layout-algorithms/swimlanes'),
+    resolve(process.cwd(), 'packages/core/src/rendering-util/layout-algorithms/swimlanes'),
     resolve(process.cwd(), 'src/rendering-util/layout-algorithms/swimlanes'),
   ];
   const root = candidates.find((candidate) => existsSync(candidate));

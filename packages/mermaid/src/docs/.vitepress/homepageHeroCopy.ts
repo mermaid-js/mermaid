@@ -1,6 +1,6 @@
 import { isMermaidJsOrgHostname } from './headerDomainRules.js';
 
-import { log } from '../../logger.js';
+import { log } from '../../../../core/src/logger.js';
 
 const LOG_PREFIX = '[MMD_DOCS_HERO]';
 

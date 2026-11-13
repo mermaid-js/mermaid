@@ -1,5 +1,5 @@
 import type { LayoutData } from 'mermaid';
-import type { Bounds, Point } from 'mermaid/src/types.js';
+import type { Bounds, Point } from '@mermaid-js/core/types.js';
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
 import type {
   Edge,

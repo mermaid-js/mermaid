@@ -9,7 +9,7 @@ import { buildExampleConfig, getDiagramType, COLOR_THEME_DIAGRAMS } from './exam
  * the docs vitest project. This spec runs from more than one working directory.
  */
 const schemaCandidates = [
-  'packages/mermaid/src/schemas/config.schema.yaml', // repo root
+  'packages/core/src/schemas/config.schema.yaml', // repo root
   'src/schemas/config.schema.yaml', // packages/mermaid
   '../schemas/config.schema.yaml', // packages/mermaid/src/docs
 ].map((candidate) => resolve(process.cwd(), candidate));

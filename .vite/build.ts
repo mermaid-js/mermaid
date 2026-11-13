@@ -101,7 +101,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 
   if (watch && config.build) {
     config.build.watch = {
-      include: ['packages/mermaid-example-diagram/src/**', 'packages/mermaid/src/**'],
+      include: ['packages/mermaid-example-diagram/src/**', 'packages/core/src/**'],
     };
   }
 
