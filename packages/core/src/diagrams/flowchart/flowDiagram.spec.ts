@@ -1,6 +1,7 @@
 /**
  * `init` used to decide the layout; it no longer does, so that the schema resolution chain
- * is the only authority. The chain itself is covered by `config.appearance.spec.ts` and
+ * is the only authority. The chain itself is covered by the `mermaid` package's
+ * `config.appearance.spec.ts` and
  * `swimlanes/swimlanesDiagram.spec.ts`.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';

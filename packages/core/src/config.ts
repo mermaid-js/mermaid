@@ -15,7 +15,7 @@ type AppearanceKey = (typeof APPEARANCE_KEYS)[number];
 
 type DiagramAppearance = Pick<BaseDiagramConfig, AppearanceKey>;
 
-/** Kept in step with the schema's `look` enum by `config.appearance.spec.ts`. */
+/** Kept in step with the schema's `look` enum by `config.schema.spec.ts`. */
 const LOOKS = new Set(['classic', 'handDrawn', 'neo']);
 
 /**

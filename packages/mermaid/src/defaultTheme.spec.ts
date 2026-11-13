@@ -5,10 +5,11 @@
  * file's.
  */
 import { beforeEach, describe, expect, it } from 'vitest';
-import * as configApi from './config.js';
-import erStyles from './diagrams/er/styles.js';
-import { mermaidAPI } from './mermaidAPI.js';
-import themes from './themes/index.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import erStyles from '@mermaid-js/core/diagrams/er/styles.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import themes from '@mermaid-js/core/themes/index.js';
+import './mermaid.js';
 
 /** What mermaid renders with when neither the user nor the diagram type says otherwise. */
 const GLOBAL_DEFAULT_THEME = 'default';
