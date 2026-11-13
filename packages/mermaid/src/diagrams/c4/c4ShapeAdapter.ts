@@ -1,6 +1,7 @@
 import type { C4DiagramConfig } from '../../config.type.js';
 import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { NonClusterNode } from '../../rendering-util/types.js';
+import { lineBreakRegex } from '../common/common.js';
 
 /**
  * Builds a unified-renderer {@link Node} from a legacy C4 shape so the legacy
@@ -111,6 +112,73 @@ const isExternal = (typeC4Shape: string): boolean => typeC4Shape.startsWith('ext
 const stereotypeText = (shape: C4ShapeLike): string => {
   const stereotype = stereotypeLabel(shape.typeC4Shape.text);
   return shape.techn?.text ? `[${stereotype}: ${shape.techn.text}]` : `[${stereotype}]`;
+};
+
+const escapeHtml = (txt: string): string =>
+  txt
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
+/**
+ * Escapes user text for an HTML label while keeping its explicit line breaks: each fragment
+ * between two `<br>` tags (any spelling `lineBreakRegex` accepts) is escaped, and the
+ * fragments are rejoined with `<br/>`.
+ */
+const escapeLabelText = (txt: string): string =>
+  txt.split(lineBreakRegex).map(escapeHtml).join('<br/>');
+
+/**
+ * A colour from the diagram source, accepted only if it is a colour on its own. The value is
+ * interpolated into a CSS declaration, so one carrying `;` or a `url(...)` could append
+ * further declarations; `CSS.supports` rejects those, and anything it cannot judge (no
+ * CSS API, as in jsdom) falls back to a conservative pattern match.
+ */
+export const asColor = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || value === '') {
+    return undefined;
+  }
+  const accepted =
+    typeof globalThis.CSS?.supports === 'function'
+      ? globalThis.CSS.supports('color', value)
+      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%,./]+\)|hsla?\([\d\s%,./deg]+\))$/i.test(value);
+  return accepted ? value : undefined;
+};
+
+/**
+ * A C4 relationship label: name, then optional `[technology]` and description, one per
+ * line. `<br/>` separates the lines either way, since it is a line break in an HTML
+ * label and a line delimiter in a plain SVG one. The emphasis tags only render as
+ * emphasis in an HTML label; with `htmlLabels` off they would show as literal text, so
+ * the plain form carries the same words without them.
+ */
+export const buildEdgeLabel = (
+  rel: { label: C4Text; techn?: C4Text; descr?: C4Text },
+  useHtmlLabels = true
+): string => {
+  const name = rel.label.text;
+  const techn = rel.techn?.text;
+  const descr = rel.descr?.text;
+  if (!useHtmlLabels) {
+    return [name, techn && `[${techn}]`, descr]
+      .filter((part): part is string => Boolean(part))
+      .join('<br/>');
+  }
+  // Each line is built from its own part: reading a filtered list back by position shifted
+  // every later part up whenever an earlier one was empty.
+  const lines: string[] = [];
+  if (name) {
+    lines.push(`<b>${escapeLabelText(name)}</b>`);
+  }
+  if (techn) {
+    lines.push(`<small><i>[${escapeLabelText(techn)}]</i></small>`);
+  }
+  if (descr) {
+    lines.push(`<small>${escapeLabelText(descr)}</small>`);
+  }
+  return lines.join('<br/>');
 };
 
 /** The C4 element types, internal and external, that carry per-type config. */

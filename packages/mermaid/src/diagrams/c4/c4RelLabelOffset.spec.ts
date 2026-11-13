@@ -1,0 +1,92 @@
+import { mermaidAPI } from '../../mermaidAPI.js';
+
+// jsdom measures no text; a fixed width keeps layout deterministic.
+const STUB_TEXT_WIDTH = 40;
+const STUB_TEXT_HEIGHT = 20;
+
+beforeAll(() => {
+  Object.assign(SVGElement.prototype, {
+    getComputedTextLength: () => STUB_TEXT_WIDTH,
+    getBBox: () => ({ x: 0, y: 0, width: STUB_TEXT_WIDTH, height: STUB_TEXT_HEIGHT }),
+  });
+});
+
+const LABEL_OFFSET_X = 5;
+const LABEL_OFFSET_Y = -10;
+
+const source = (offsets: string) => `---
+config:
+  layout: dagre
+  htmlLabels: false
+---
+C4Context
+System(a, "A")
+System(b, "B")
+Rel(a, b, "Uses")
+${offsets}`;
+
+const labelTranslate = async (text: string) => {
+  const { svg } = await mermaidAPI.render('c4-rel-offset', text);
+  const host = document.createElement('div');
+  host.innerHTML = svg;
+  const group = host.querySelector('g.edgeLabel');
+  const match = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
+    group?.getAttribute('transform') ?? ''
+  );
+  return { x: Number(match?.[1]), y: Number(match?.[2]) };
+};
+
+describe('UpdateRelStyle label offsets in the unified renderer', () => {
+  it('moves the edge label group by $offsetX and $offsetY', async () => {
+    const plain = await labelTranslate(source(''));
+    const nudged = await labelTranslate(
+      source(`UpdateRelStyle(a, b, $offsetX="${LABEL_OFFSET_X}", $offsetY="${LABEL_OFFSET_Y}")`)
+    );
+
+    expect(nudged.x - plain.x).toBe(LABEL_OFFSET_X);
+    expect(nudged.y - plain.y).toBe(LABEL_OFFSET_Y);
+  });
+
+  // dagre lays out a boundary that no relationship crosses as a graph of its own and
+  // returns only the top-level edges, so the nudge has to come from the diagram's own
+  // relationships rather than from what the layout handed back.
+  it('moves the label of a relationship inside a boundary nothing else connects to', async () => {
+    const isolated = (offsets: string) =>
+      source(offsets).replace(
+        'System(a, "A")\nSystem(b, "B")\nRel(a, b, "Uses")',
+        'System_Boundary(sb, "Boundary") {\nSystem(a, "A")\nSystem(b, "B")\nRel(a, b, "Uses")\n}'
+      );
+    const plain = await labelTranslate(isolated(''));
+    const nudged = await labelTranslate(
+      isolated(`UpdateRelStyle(a, b, $offsetX="${LABEL_OFFSET_X}", $offsetY="${LABEL_OFFSET_Y}")`)
+    );
+
+    expect(nudged.x - plain.x).toBe(LABEL_OFFSET_X);
+    expect(nudged.y - plain.y).toBe(LABEL_OFFSET_Y);
+  });
+
+  // dagre draws a self-loop as three segments and puts its label on the middle one, whose id
+  // is not the relationship's.
+  it('moves the label of a relationship from an element to itself', async () => {
+    const selfLoop = (offsets: string) =>
+      source(offsets).replace('Rel(a, b, "Uses")', 'Rel(a, a, "Checks")');
+    const labelOf = async (text: string) => {
+      const { svg } = await mermaidAPI.render('c4-rel-offset', text);
+      const host = document.createElement('div');
+      host.innerHTML = svg;
+      const group = host.querySelector('g.label[data-id$="-cyclic-special-mid"]')?.parentElement;
+      const match = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
+        group?.getAttribute('transform') ?? ''
+      );
+      return { x: Number(match?.[1]), y: Number(match?.[2]) };
+    };
+    const plain = await labelOf(selfLoop(''));
+    const nudged = await labelOf(
+      selfLoop(`UpdateRelStyle(a, a, $offsetX="${LABEL_OFFSET_X}", $offsetY="${LABEL_OFFSET_Y}")`)
+    );
+
+    expect(plain.x).not.toBeNaN();
+    expect(nudged.x - plain.x).toBe(LABEL_OFFSET_X);
+    expect(nudged.y - plain.y).toBe(LABEL_OFFSET_Y);
+  });
+});
