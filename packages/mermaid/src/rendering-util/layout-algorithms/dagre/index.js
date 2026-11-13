@@ -111,15 +111,24 @@ const getSelfLoopSide = (graph, node, segments, originalNodeId, rankdir) => {
   return getDefaultSelfLoopSide(rankdir);
 };
 
+// Clearance between a stacked self-loop and the label of the loop inside it.
+const SELF_LOOP_STACK_GAP = 12;
+
 // Build a compact loop around the node instead of rendering dagre's long dummy-edge route.
-const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0) => {
+// `stack` places a loop outside the loops already drawn on the same side of the node (see #6888):
+// `offset` pushes its far edge out, and `minSpan` widens it so its legs pass beside the inner
+// loops' labels instead of through them. The legs still start and end on the node border.
+const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0, stack = {}) => {
   const x = node.x;
   const y = node.y - yOffset;
   const halfWidth = node.width / 2;
   const halfHeight = node.height / 2;
   const maxSpan = Math.max(36, Math.min(100, node.width * 0.8));
-  const span = clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan);
-  const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48);
+  const span = Math.max(
+    clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan),
+    stack.minSpan ?? 0
+  );
+  const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48) + (stack.offset ?? 0);
 
   switch (side) {
     case 'bottom': {
@@ -162,6 +171,20 @@ const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0) => {
   }
 };
 
+// Where the next self-loop on the same side has to go so that it clears this loop and its label.
+const getNextSelfLoopStack = (stack, points, side, label) => {
+  const horizontal = side === 'left' || side === 'right';
+  // Outward extent of the label (it sits just beyond the loop's far edge) and its size along the node.
+  const labelDepth = (horizontal ? label.width : label.height) ?? 0;
+  const labelSpan = (horizontal ? label.height : label.width) ?? 0;
+  const coords = points.map((point) => (horizontal ? point.y : point.x));
+  const span = Math.max(...coords) - Math.min(...coords);
+  return {
+    offset: (stack.offset ?? 0) + labelDepth + SELF_LOOP_STACK_GAP,
+    minSpan: Math.max(span, labelSpan) + 2 * SELF_LOOP_STACK_GAP,
+  };
+};
+
 const getSelfLoopLabelPosition = (node, points, side = 'top', yOffset = 0, label = {}) => {
   const gap = 4;
   const x = node.x;
@@ -201,6 +224,7 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     }
   });
 
+  const selfLoopStacksByNodeAndSide = new Map();
   selfLoopEdgeGroups.forEach((segments) => {
     if (segments.length !== 3) {
       // Unexpected self-loop state: preserve the old rendering behavior rather than dropping edges.
@@ -226,7 +250,10 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     };
     // Dagre uses the dummy route for layout; the SVG output should still be one logical edge.
     const side = getSelfLoopSide(graph, node, segments, originalEdge.start, rankdir);
-    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0);
+    const sideKey = `${originalEdge.start}|${side}`;
+    const stack = selfLoopStacksByNodeAndSide.get(sideKey) ?? {};
+    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0, stack);
+    selfLoopStacksByNodeAndSide.set(sideKey, getNextSelfLoopStack(stack, points, side, label));
     const labelPosition = getSelfLoopLabelPosition(node, points, side, yOffset, label);
     const mergedEdge = {
       ...middleSegment.edge,
@@ -686,8 +713,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
     if (edge.start === edge.end) {
       // Keep the dagre dummy-node workaround for layout, then merge these segments before rendering.
       const nodeId = edge.start;
-      const specialId1 = nodeId + '---' + nodeId + '---1';
-      const specialId2 = nodeId + '---' + nodeId + '---2';
+      // Derive the dummy ids from the edge id, not just the node id: a node can
+      // carry several self-loops, and graphlib would silently overwrite the
+      // first loop's segments when the ids collide (see #6888).
+      const specialId1 = nodeId + '---' + edge.id + '---1';
+      const specialId2 = nodeId + '---' + edge.id + '---2';
       const node = graph.node(nodeId);
       graph.setNode(specialId1, {
         domId: specialId1,
@@ -734,14 +764,14 @@ export const prepareLayoutForDagre = (data4Layout) => {
       edge1.endLabelLeft = '';
       edge1.endLabelRight = ''; // defensive
       edge1.startLabelLeft = ''; // defensive
-      edge1.id = nodeId + '-cyclic-special-1';
+      edge1.id = edge.id + '-cyclic-special-1';
       edgeMid.startLabelRight = '';
       edgeMid.startLabelLeft = ''; // defensive
       edgeMid.endLabelLeft = '';
       edgeMid.endLabelRight = ''; // defensive
       edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
-      edgeMid.id = nodeId + '-cyclic-special-mid';
+      edgeMid.id = edge.id + '-cyclic-special-mid';
       edge2.label = '';
       edge2.startLabelRight = '';
       edge2.startLabelLeft = ''; // defensive
@@ -750,11 +780,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
         edge1.fromCluster = nodeId;
         edge2.toCluster = nodeId;
       }
-      edge2.id = nodeId + '-cyclic-special-2';
+      edge2.id = edge.id + '-cyclic-special-2';
       edge2.arrowTypeStart = 'none';
-      graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
-      graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
-      graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyclic-special-2');
+      graph.setEdge(nodeId, specialId1, edge1, edge.id + '-cyclic-special-0');
+      graph.setEdge(specialId1, specialId2, edgeMid, edge.id + '-cyclic-special-1');
+      graph.setEdge(specialId2, nodeId, edge2, edge.id + '-cyclic-special-2');
     } else {
       graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
     }
