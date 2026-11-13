@@ -9,8 +9,9 @@ import {
   rectsOverlap,
   segmentBoundsOverlapRect,
 } from './geometry.js';
-import type { RectBounds } from './geometry.js';
+import type { Point, RectBounds } from './geometry.js';
 import { buildLaneModel } from '../lanes.js';
+import { EDGE_ROUTING } from '../config.js';
 
 const EPS = 1e-3;
 const MARKER_CLEARANCE_LENGTH = 10;
@@ -61,6 +62,24 @@ function markerClearanceRectFor(
     top: Math.min(tip.y, inner.y),
     bottom: Math.max(tip.y, inner.y),
   };
+}
+
+/** Whether `b` lies on a straight run from `a` to `c`: the line neither turns there nor doubles back. */
+function isStraightJoin(a: Point, b: Point, c: Point): boolean {
+  const first = { x: b.x - a.x, y: b.y - a.y };
+  const second = { x: c.x - b.x, y: c.y - b.y };
+  return (
+    Math.abs(first.x * second.y - first.y * second.x) < EPS &&
+    first.x * second.x + first.y * second.y > 0
+  );
+}
+
+/** The route without the points where it runs straight on, so each segment ends at a bend. */
+function withoutStraightJoins(points: Point[]): Point[] {
+  return points.filter(
+    (point, i) =>
+      i === 0 || i === points.length - 1 || !isStraightJoin(points[i - 1], point, points[i + 1])
+  );
 }
 
 function normalizeRect(rect: RectBounds): RectBounds {
@@ -151,6 +170,8 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
   // Mermaid's point marker occupies roughly 10u at the edge endpoint; keep
   // labels a little farther away so the arrowhead remains visually readable.
   const LABEL_ENDPOINT_CLEARANCE = 12;
+  // A rounded right-angle corner leaves the polyline this far before and after its bend.
+  const LABEL_BEND_CLEARANCE = EDGE_ROUTING.CORNER_RADIUS * Math.SQRT2;
 
   const labelOverlapsForeignNode = (labelId: string, rect: RectLite): boolean => {
     const buffered = inflateRect(rect, LABEL_PLACEMENT_BUFFER);
@@ -217,7 +238,7 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
     if (!labelNode) {
       continue;
     }
-    const pts = edge.points;
+    const pts = edge.points ? withoutStraightJoins(edge.points) : undefined;
     if (!pts || pts.length < 2) {
       continue;
     }
@@ -382,7 +403,23 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
           return false;
         }
       }
-      return true;
+      return clearsBends(seg, anchor);
+    };
+    // A label keeps its box off the bends at either end of its segment, where the line turns.
+    const clearsBends = (
+      seg: SegmentCandidate,
+      anchor: { midX: number; midY: number }
+    ): boolean => {
+      const labelHalfExtent = seg.orientation === 'horizontal' ? lw / 2 : lh / 2;
+      const bends = [
+        seg === firstVisibleSegment ? undefined : pts[seg.idx],
+        seg === lastVisibleSegment ? undefined : pts[seg.idx + 1],
+      ];
+      return bends.every(
+        (bend) =>
+          !bend ||
+          distanceAlongSegment(seg, anchor, bend) + EPS >= labelHalfExtent + LABEL_BEND_CLEARANCE
+      );
     };
     const tryPool = (
       pool: SegmentCandidate[]
@@ -390,12 +427,8 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
       const rankedPool = rankSegments(pool);
       for (const seg of rankedPool) {
         for (const t of ALONG_SEGMENT_TS) {
-          const anchor = anchorAtT(seg, t);
-          if (!labelClearsTerminalEndpoints(seg, anchor)) {
-            continue;
-          }
-          const placement = placementForAnchor(anchor);
-          if (!placement) {
+          const placement = placementForAnchor(anchorAtT(seg, t));
+          if (!placement || !labelClearsTerminalEndpoints(seg, placement.anchor)) {
             continue;
           }
           if (labelOverlapsOwnMarker(placement.rect, pts)) {
@@ -419,13 +452,15 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
     ): { laneId: string; anchor: { midX: number; midY: number } } | undefined => {
       const rankedPool = rankSegments(pool);
       for (const seg of rankedPool) {
-        const anchor = { midX: seg.midX, midY: seg.midY };
-        if (requireEndpointClearance && !labelClearsTerminalEndpoints(seg, anchor)) {
-          continue;
-        }
-        const placement = placementForAnchor(anchor);
+        const placement = placementForAnchor({ midX: seg.midX, midY: seg.midY });
+        const clears =
+          placement &&
+          (requireEndpointClearance
+            ? labelClearsTerminalEndpoints(seg, placement.anchor)
+            : clearsBends(seg, placement.anchor));
         if (
           placement &&
+          clears &&
           !labelOverlapsOwnMarker(placement.rect, pts) &&
           !overlapsPlacedLabel(labelId, placement.rect) &&
           !labelOverlapsForeignNode(labelId, placement.rect) &&

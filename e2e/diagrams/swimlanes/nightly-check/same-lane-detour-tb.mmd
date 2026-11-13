@@ -1,0 +1,28 @@
+---
+description: >-
+  Copy of the layout-tests regression `same-lane-detour-tb`: in a
+  top-to-bottom diagram, "Check -> Report" stays inside lane Qa, even
+  though leaving the lane would save a crossing.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TB
+  subgraph Ops
+  a[Receive]
+  b[Triage]
+  c[Resolve]
+  end
+  subgraph Qa
+  d[Check]
+  e[Report]
+  end
+  subgraph Legal
+  f[Approve]
+  end
+  a --> b --> c
+  c --> a
+  a --> d --> e
+  b --> f
+  f --> e

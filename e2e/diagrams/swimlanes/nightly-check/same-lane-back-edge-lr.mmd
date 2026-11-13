@@ -1,0 +1,24 @@
+---
+description: >-
+  Copy of the layout-tests regression `same-lane-back-edge-lr`: in a
+  left-to-right diagram whose lane Ops has no room for a rail round its
+  boxes, the back edge "Resolve -> Receive" stays inside Ops. It runs
+  above the boxes of its own lane and enters Receive from above, not
+  round a rail outside every lane.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph Ops
+  a[Receive]
+  b[Triage]
+  c[Resolve]
+  end
+  subgraph Qa
+  d{Pass?}
+  end
+  a --> b --> c --> d
+  d -->|No| b
+  c --> a
