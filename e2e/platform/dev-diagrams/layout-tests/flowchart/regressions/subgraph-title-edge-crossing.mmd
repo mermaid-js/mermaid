@@ -1,0 +1,13 @@
+%% An ELK edge into a node whose subgraph has a title: the straight run must not go through the title text.
+flowchart TB
+    subgraph intake ["Stage 1: Intake"]
+        A["Receive the order"]
+    end
+    subgraph stock ["Stage 2: Stock"]
+        B["Reserve the items"]
+    end
+    subgraph ship ["Stage 3: Shipping"]
+        C["Print the label"]
+    end
+    A -->|"Orders team"| B
+    B -->|"Warehouse"| C
