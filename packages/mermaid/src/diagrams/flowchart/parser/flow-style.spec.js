@@ -243,6 +243,29 @@ describe('[Style] when parsing', () => {
     expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
     expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
+
+  it('should allow whitespace around ::: when applying a class to a vertex', function () {
+    const res = flow.parser.parse(`
+    graph TD
+      classDef exClass background:#bbb
+      A([Start]) :::exClass --> B :::exClass
+      C\t:::exClass & D  :::  exClass
+      E[test]::: exClass
+    `);
+
+    const vertices = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges.length).toBe(1);
+    expect(vertices.get('A').text).toBe('Start');
+    for (const id of ['A', 'B', 'C', 'D', 'E']) {
+      expect(vertices.get(id).classes).toEqual(['exClass']);
+    }
+  });
+
+  it('should not allow a newline before ::: when applying a class to a vertex', function () {
+    expect(() => flow.parser.parse('graph TD\nA\n:::exClass')).toThrow(/Parse error/);
+  });
   it('should be possible to apply a class to a comma separated list of vertices', function () {
     let statement = '';
 
