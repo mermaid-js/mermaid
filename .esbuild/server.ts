@@ -57,9 +57,9 @@ console.log('');
 
 // The dev server is never published, so always compile the render profiler in.
 // It stays a no-op until toggled on at runtime: `__mermaidProfiler.enable()`.
-// Packages built from `allModules` are bundled into their dependents from source.
+// `coreOnly` packages are bundled into their dependents from source.
 const configs = Object.values<PackageOptions>(packageOptions)
-  .filter(({ allModules }) => !allModules)
+  .filter(({ coreOnly }) => !coreOnly)
   .map((options) =>
     getBuildConfig({ ...defaultOptions, minify: false, core: false, profiling: true, options })
   );

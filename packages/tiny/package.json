@@ -18,7 +18,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@mermaid-js/core": "workspace:^"
+    "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/diagram-info": "workspace:^"
   },
   "files": [
     "dist/",

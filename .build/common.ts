@@ -1,3 +1,5 @@
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+
 export interface PackageOptions {
   name: string;
   packageName: string;
@@ -7,6 +9,11 @@ export interface PackageOptions {
    * deep-import it (e.g. `@mermaid-js/core/config.js`).
    */
   allModules?: boolean;
+  /**
+   * Only build `X.core.mjs`, since the package is only used through `mermaid`,
+   * which bundles it from source.
+   */
+  coreOnly?: boolean;
 }
 
 /**
@@ -14,6 +21,21 @@ export interface PackageOptions {
  * every bundle shares one copy of each module instead of their prebuilt `dist/`.
  */
 export const sourceCondition = 'mermaid-source';
+
+const packageJsonUrl = (packageName: string) =>
+  new URL(`../packages/${packageName}/package.json`, import.meta.url);
+
+/** Every `packages/diagram-*`, built from its `mermaid-source` entry. */
+export const diagramPackageOptions: Record<string, PackageOptions> = Object.fromEntries(
+  readdirSync(new URL('../packages/', import.meta.url))
+    .filter((packageName) => packageName.startsWith('diagram-'))
+    .filter((packageName) => existsSync(packageJsonUrl(packageName)))
+    .map((packageName) => {
+      const { exports } = JSON.parse(readFileSync(packageJsonUrl(packageName), 'utf8'));
+      const file = exports['.'][sourceCondition].replace('./src/', '');
+      return [packageName, { name: `mermaid-${packageName}`, packageName, file, coreOnly: true }];
+    })
+);
 
 /**
  * Shared common options for both ESBuild and Vite
@@ -29,6 +51,7 @@ export const packageOptions = {
     packageName: 'core',
     file: 'mermaid.ts',
     allModules: true,
+    coreOnly: true,
   },
   'mermaid-layout-elk': {
     name: 'mermaid-layout-elk',
@@ -45,6 +68,7 @@ export const packageOptions = {
     packageName: 'plugin-katex',
     file: 'index.ts',
   },
+  ...diagramPackageOptions,
   mermaid: {
     name: 'mermaid',
     packageName: 'mermaid',

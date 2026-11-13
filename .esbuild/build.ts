@@ -16,8 +16,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
     profiling: shouldProfile,
     options: packageOptions[entryName],
   } as const;
-  if (commonOptions.options.allModules) {
-    // one unbundled module per source file, no min/esm/IIFE variants
+  if (commonOptions.options.coreOnly) {
     await build(getBuildConfig({ ...commonOptions, core: true }));
     return;
   }

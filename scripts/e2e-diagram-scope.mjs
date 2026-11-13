@@ -146,8 +146,8 @@ const SHARED_PREFIXES = [
 ];
 
 // Regex: extract diagram name from paths like
-// packages/core/src/diagrams/<name>/...
-const DIAGRAM_PATH_RE = /^packages\/core\/src\/diagrams\/([^/]+)\//;
+// packages/core/src/diagrams/<name>/... or packages/diagram-<name>/...
+const DIAGRAM_PATH_RE = /^packages\/(?:core\/src\/diagrams\/|diagram-)([^/]+)\//;
 
 // ---------------------------------------------------------------------------
 // Core detection function

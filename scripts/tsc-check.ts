@@ -9,6 +9,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
+import { diagramPackageOptions } from '../.build/common.js';
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -59,6 +60,12 @@ const typeDependency = (name: string): string => {
 const PACKAGES = {
   mermaid: 'mermaid',
   '@mermaid-js/core': 'core',
+  ...Object.fromEntries(
+    Object.keys(diagramPackageOptions).map((packageName) => [
+      `@mermaid-js/${packageName}`,
+      packageName,
+    ])
+  ),
   '@mermaid-js/layout-cose-bilkent': 'mermaid-layout-cose-bilkent',
   '@mermaid-js/layout-elk': 'mermaid-layout-elk',
   '@mermaid-js/parser': 'parser',

@@ -1,0 +1,44 @@
+{
+  "name": "@mermaid-js/diagram-info",
+  "version": "12.3.0",
+  "description": "The info diagram for mermaid",
+  "module": "dist/mermaid-diagram-info.core.mjs",
+  "types": "./dist/infoDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/infoDetector.ts",
+      "types": "./dist/infoDetector.d.ts",
+      "import": "./dist/mermaid-diagram-info.core.mjs",
+      "default": "./dist/mermaid-diagram-info.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-info"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/parser": "workspace:^"
+  },
+  "files": [
+    "dist"
+  ]
+}

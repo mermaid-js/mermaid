@@ -8,9 +8,9 @@
  *   the `-beta` keyword and rejects the same keyword without the `-beta` suffix. For
  *   diagrams whose keyword differs from `{id}-beta`, list the keyword in BETA_KEYWORD_OVERRIDES.
  */
-import { describe, it, expect, beforeAll } from 'vitest';
-import { detectors } from './detectType.js';
-import { addDiagrams } from './diagram-orchestration.js';
+import { describe, it, expect } from 'vitest';
+import { detectors } from '@mermaid-js/core/diagram-api/detectType.js';
+import './mermaid.js';
 
 /**
  * Stable diagrams that never had a beta phase.
@@ -75,10 +75,6 @@ const BETA_KEYWORD_OVERRIDES: Record<string, string> = {
 };
 
 describe('diagram beta policy', () => {
-  beforeAll(() => {
-    addDiagrams();
-  });
-
   it('new diagram types require -beta in syntax', () => {
     const violations: string[] = [];
 

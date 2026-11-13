@@ -1,4 +1,4 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
 
 export interface InfoFields {
   version: string;

@@ -1,7 +1,7 @@
-import type { DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
+import type { DrawDefinition, SVG, SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
 
 /**
  * Draws an info picture in the tag with id: id based on the graph definition in text.

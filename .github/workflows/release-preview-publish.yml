@@ -68,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
 
-      # The layouts, plugins and `@mermaid-js/tiny` are already scoped to the
+      # The diagrams, layouts, plugins and `@mermaid-js/tiny` are scoped to the
       # org, so unlike `mermaid` they need no rename. Publishing them alongside
       # lets a preview be exercised the way users combine them: bundled in
       # mermaid, and registered onto the tiny build, which omits them.
@@ -79,11 +79,13 @@ jobs:
           # `tiny` was never attempted while `layout-elk` was being refused —
           # its own publishability stayed unknown across every failed run.
           failed=''
-          for pkg in mermaid-layout-cose-bilkent mermaid-layout-elk plugin-katex tiny; do
+          for pkg in $(cd packages && ls -d diagram-*) mermaid-layout-cose-bilkent mermaid-layout-elk plugin-katex tiny; do
             (
               cd "packages/$pkg"
               npm version --no-git-tag-version --allow-same-version "$VERSION"
               json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
+              # We don't publish a separate `@mermaid-js/parser` so bundle it instead
+              json -I -f package.json -e 'if (this.dependencies?.["@mermaid-js/parser"]) { this.bundleDependencies??=[]; this.bundleDependencies.push("@mermaid-js/parser") }'
               pnpm pack
               # These packages must stay *public* in the org's GitHub Packages
               # settings. While they were `internal`, this step failed with
@@ -102,7 +104,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
 
-      # After the layouts and plugins, so that `pnpm pack` pins mermaid's
+      # After the diagrams, layouts and plugins, so that `pnpm pack` pins mermaid's
       # dependencies on them to this preview version.
       - name: Publish mermaid
         working-directory: ./packages/mermaid
