@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { prepareLayoutForSwimlanes } from '../../rendering-util/layout-algorithms/swimlanes/helpers.js';
 import { FlowDB } from './flowDb.js';
 import flow from './parser/flowParser.js';
 
@@ -58,5 +59,35 @@ describe('members a subgraph loses to an earlier subgraph', () => {
     flowDb.clear();
 
     expect(flowDb.getData().other).toEqual({});
+  });
+
+  it('forgets an owner removed while breaking a subgraph cycle', () => {
+    expect(
+      dropped(
+        'flowchart LR\nsubgraph kept\n  target\nend\nsubgraph dropped\n  target\nend\nsubgraph target\n  kept\nend'
+      )
+    ).toEqual({});
+  });
+
+  it('preserves unrelated dropped members when breaking a subgraph cycle', () => {
+    expect(
+      dropped(
+        'flowchart LR\nsubgraph kept\n  target\n  a\nend\nsubgraph dropped\n  target\n  a\nend\nsubgraph target\n  kept\nend'
+      )
+    ).toEqual({
+      droppedSubGraphMembers: [{ node: 'a', keptBy: 'kept', droppedFrom: 'dropped' }],
+    });
+  });
+
+  it('keeps an empty swimlane after its former owner loses a cyclic member', () => {
+    const layout = parse(
+      'flowchart LR\nsubgraph kept\n  target\nend\nsubgraph dropped\n  target\nend\nsubgraph target\n  kept\nend'
+    ).getData();
+
+    prepareLayoutForSwimlanes(layout);
+
+    expect(layout.nodes.find((node) => node.id === 'dropped')).toMatchObject({
+      shape: 'swimlane',
+    });
   });
 });
