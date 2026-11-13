@@ -1,0 +1,10 @@
+---
+description: >-
+  A classDef that is defined but never attached should be a visual no-op,
+  matching how flowchart classDef works.
+---
+sequenceDiagram
+  classDef highlighted fill:#f9f,stroke:#333,stroke-width:2px
+  participant Alice
+  participant Bob
+  Alice->>Bob: Hello

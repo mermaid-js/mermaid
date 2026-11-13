@@ -2905,4 +2905,500 @@ Bob->>Alice:Got it!
       expect(actors.get('C').description).toBe('C');
     });
   });
+
+  describe('styling', () => {
+    it('should parse classDef and store class definitions', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef highlighted fill:#f9f,stroke:#333
+      participant Alice
+      participant Bob
+      Alice->>Bob: Hello
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('highlighted')).toBeDefined();
+      expect(classes.get('highlighted').styles).toContain('fill:#f9f');
+      expect(classes.get('highlighted').styles).toContain('stroke:#333');
+    });
+
+    it('should parse style and apply to actor', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      style Alice fill:#bbf,stroke:#00f
+      Alice->>Bob: Hello
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toBeDefined();
+      expect(actors.get('Alice').styles).toContain('fill:#bbf');
+      expect(actors.get('Alice').styles).toContain('stroke:#00f');
+    });
+
+    it('should not add styles to actors that do not exist', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      style NonExistent fill:#f00
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('NonExistent')).toBeUndefined();
+    });
+
+    it('should separate text styles from element styles in classDef', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef myClass fill:#f9f,color:red,font-weight:bold
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('myClass').styles).toContain('fill:#f9f');
+      expect(classes.get('myClass').textStyles).toContain('color:red');
+      expect(classes.get('myClass').textStyles).toContain('font-weight:bold');
+    });
+
+    it('should handle multiple classDef definitions', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef primary fill:#bbf,stroke:#00f
+      classDef secondary fill:#fbb,stroke:#f00
+      participant Alice
+      participant Bob
+      Alice->>Bob: Hello
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('primary')).toBeDefined();
+      expect(classes.get('secondary')).toBeDefined();
+      expect(classes.get('primary').styles).toContain('fill:#bbf');
+      expect(classes.get('secondary').styles).toContain('fill:#fbb');
+    });
+
+    it('should clear styles on diagram reset', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef test fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('test')).toBeDefined();
+
+      // Parse a new diagram without styles
+      const diagram2 = await Diagram.fromText(`
+      sequenceDiagram
+      participant Bob
+      Bob->>Bob: test
+      `);
+      const classes2 = diagram2.db.getClasses();
+      expect(classes2.size).toBe(0);
+    });
+
+    it('should handle style with complex CSS values', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      style Alice fill:#f9f,stroke:#333,stroke-width:2px,stroke-dasharray:5 3
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toContain('fill:#f9f');
+      expect(actors.get('Alice').styles).toContain('stroke-width:2px');
+      expect(actors.get('Alice').styles).toContain('stroke-dasharray:5 3');
+    });
+
+    it('should handle classDef with single property', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef simple fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('simple').styles.length).toBe(1);
+      expect(classes.get('simple').styles[0]).toBe('fill:#f00');
+    });
+
+    it('should not add styles to actors without style keyword', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toBeUndefined();
+    });
+
+    it('should handle style on multiple actors independently', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      style Alice fill:#00f
+      style Bob fill:#f00
+      Alice->>Bob: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').styles).toContain('fill:#00f');
+      expect(actors.get('Bob').styles).toContain('fill:#f00');
+      expect(actors.get('Alice').styles).not.toContain('fill:#f00');
+    });
+
+    it('should attach a previously defined class to an actor via "class" keyword', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef highlighted fill:#f9f,stroke:#333
+      participant Alice
+      class Alice highlighted
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').classes).toContain('highlighted');
+    });
+
+    it('should attach a class to multiple actors with comma-separated ids', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef important fill:#f00
+      participant Alice
+      participant Bob
+      class Alice,Bob important
+      Alice->>Bob: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').classes).toContain('important');
+      expect(actors.get('Bob').classes).toContain('important');
+    });
+
+    it('should silently ignore class assignments to unknown actors', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef foo fill:#f00
+      participant Alice
+      class Bob foo
+      Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Bob')).toBeUndefined();
+      expect(actors.get('Alice').classes).toBeUndefined();
+    });
+
+    it('should not treat "style" as a keyword when used as an actor name in a message', async () => {
+      // Regression: before grammar scoping, "style->>Alice: Hi" would tokenize
+      // as the style statement and silently consume the rest of the line.
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      style->>Alice: Hi
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('style')).toBeDefined();
+      expect(actors.get('Alice')).toBeDefined();
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBeGreaterThan(0);
+      expect(messages[messages.length - 1].message).toBe('Hi');
+    });
+
+    it('should not treat "classDef" as a keyword when used as an actor name in a message', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef->>Alice: hello
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('classDef')).toBeDefined();
+      expect(actors.get('Alice')).toBeDefined();
+    });
+
+    it('should not treat "class" as a keyword when used as an actor name in a message', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      class->>Alice: hi
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('class')).toBeDefined();
+      expect(actors.get('Alice')).toBeDefined();
+    });
+
+    it('should parse multi-word actors starting with style/class/classDef across arrow types', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      Style Guide->>Bob: solid
+      Class Room-->>Student: dotted
+      Style Guide-xBob: cross
+      Style Guide-)Bob: async
+      Style Guide/|-Bob: reverse
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Style Guide')).toBeDefined();
+      expect(actors.get('Class Room')).toBeDefined();
+      expect(actors.get('Bob')).toBeDefined();
+      expect(actors.get('Student')).toBeDefined();
+      expect(diagram.db.getMessages().map((m) => m.message)).toEqual([
+        'solid',
+        'dotted',
+        'cross',
+        'async',
+        'reverse',
+      ]);
+    });
+
+    it('should still support styling and class assignment for actors ending in -x', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef box-x fill:#0f0
+      participant actor-x
+      style actor-x stroke:#333
+      class actor-x box-x
+      `);
+      const actor = diagram.db.getActors().get('actor-x');
+      expect(actor.styles).toEqual(['stroke:#333']);
+      expect(actor.classes).toEqual(['box-x']);
+      expect(diagram.db.getClasses().get('box-x').styles).toEqual(['fill:#0f0']);
+    });
+
+    // The ';' tests below use named colors on purpose: encodeEntities() runs before the
+    // parser and turns '#f00;' into an entity placeholder, so a hex color right before
+    // ';' never reaches the lexer.
+    it('should keep CSS rule terminator stripping in classDef values', async () => {
+      // The ';prop:value' tail stays inside the classDef statement, gets split
+      // into its own declaration, and is dropped by sanitizeCssDeclaration().
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef evil fill:red;background:url(http://attacker)
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      const evil = classes.get('evil');
+      expect(evil).toBeDefined();
+      expect(evil.styles).toEqual(['fill:red']);
+      // The tail must not leak out as a separate statement or actor.
+      expect(diagram.db.getActors().has('background')).toBe(false);
+      expect(diagram.db.getMessages().length).toBe(1);
+    });
+
+    it('should keep a semicolon-separated style tail inside the style statement', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      style Alice fill:red; stroke:blue;background:url(http://attacker)
+      Alice->>Alice: test
+      `);
+      const alice = diagram.db.getActors().get('Alice');
+      expect(alice.styles).toEqual(['fill:red', 'stroke:blue']);
+      expect(diagram.db.getActors().has('background')).toBe(false);
+    });
+
+    it('should still treat ";" after a style statement as a statement separator', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      style Alice fill:red;Alice->>Bob: hi;Note right of Bob: ok
+      `);
+      expect(diagram.db.getActors().get('Alice').styles).toEqual(['fill:red']);
+      const messages = diagram.db.getMessages();
+      expect(messages.map((m) => m.message)).toEqual(['hi', 'ok']);
+    });
+
+    it('should attach a class to a comma-separated actor list with spaces', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef highlighted fill:#f9f
+      participant Alice
+      participant Bob
+      class Alice, Bob highlighted
+      Alice->>Bob: hi
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').classes).toEqual(['highlighted']);
+      expect(actors.get('Bob').classes).toEqual(['highlighted']);
+    });
+
+    it('should ignore malformed style, class and classDef lines without crashing', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      classDef foo
+      style Alice
+      class Alice
+      Alice->>Alice: still renders
+      `);
+      expect(diagram.db.getClasses().has('foo')).toBe(false);
+      const alice = diagram.db.getActors().get('Alice');
+      expect(alice.styles ?? []).toEqual([]);
+      expect(alice.classes ?? []).toEqual([]);
+      expect(diagram.db.getMessages().length).toBe(1);
+    });
+
+    it('should reject classDef declarations containing dangerous CSS functions', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef bad1 fill:expression(alert(1))
+      classDef bad2 fill:#f00,background:url(http://attacker)
+      classDef bad3 fill:#f00,behavior:url(xss.htc)
+      classDef bad4 fill:#f00,xss:javascript:alert(1)
+      classDef bad5 fill:#f00,bg:</style><script>
+      classDef ok fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      // ok survives untouched
+      expect(classes.get('ok').styles).toContain('fill:#f00');
+      // bad1: expression() is stripped
+      expect(classes.get('bad1').styles.join(',')).not.toContain('expression');
+      // bad2: url() is stripped
+      expect(classes.get('bad2').styles.join(',')).not.toContain('url(');
+      expect(classes.get('bad2').styles.join(',')).not.toContain('attacker');
+      // bad3: behavior: is stripped
+      expect(classes.get('bad3').styles.join(',')).not.toContain('behavior');
+      // bad4: javascript: is stripped
+      expect(classes.get('bad4').styles.join(',')).not.toContain('javascript');
+      // bad5: < is stripped (guards against angle-bracket smuggling)
+      expect(classes.get('bad5').styles.join(',')).not.toContain('<');
+    });
+
+    it('should reject behavior: and javascript: with whitespace before colon', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef bad1 fill:#f00,behavior :url(xss.htc)
+      classDef bad2 fill:#f00,xss:javascript :void(0)
+      classDef ok fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('ok').styles).toContain('fill:#f00');
+      expect(classes.get('bad1').styles.join(',')).not.toContain('behavior');
+      expect(classes.get('bad2').styles.join(',')).not.toContain('javascript');
+    });
+
+    it('should reject dangerous patterns hidden inside CSS comments', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef bad1 fill:url/* comment */(http://evil)
+      classDef bad2 fill:expression/* comment */(alert(1))
+      classDef ok fill:#f00
+      participant Alice
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.get('ok').styles).toContain('fill:#f00');
+      expect(classes.get('bad1').styles.join(',')).not.toContain('url');
+      expect(classes.get('bad2').styles.join(',')).not.toContain('expression');
+    });
+
+    it('should reject CSS backslash escapes and string-URL image functions while preserving escaped commas', async () => {
+      const diagram = await Diagram.fromText(
+        [
+          'sequenceDiagram',
+          'classDef escapedUrl fill:u\\72l(//attacker/x.svg)',
+          'classDef imageSet fill:#f00,background:image-set("//attacker/x.png" 1x)',
+          'classDef imageCall fill:#f00,background:image("//attacker/x.png")',
+          'classDef sourceCall fill:#f00,background:src("//attacker/x.png")',
+          'classDef fontFamilyOk fill:#f00,font-family:Arial\\, sans-serif',
+          'participant Alice',
+          'Alice->>Alice: test',
+        ].join('\n')
+      );
+      const classes = diagram.db.getClasses();
+      expect(classes.get('escapedUrl').styles).toEqual([]);
+      expect(classes.get('imageSet').styles).toEqual(['fill:#f00']);
+      expect(classes.get('imageCall').styles).toEqual(['fill:#f00']);
+      expect(classes.get('sourceCall').styles).toEqual(['fill:#f00']);
+      expect(classes.get('fontFamilyOk').styles).toEqual(['fill:#f00']);
+      expect(classes.get('fontFamilyOk').textStyles).toEqual(['font-family:Arial, sans-serif']);
+    });
+
+    it('should reject classDef and class identifiers containing selector or rule syntax', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef a,* fill:#f00
+      classDef bad{color:red} fill:#f00
+      classDef valid_class-1 fill:#0f0
+      participant Alice
+      class Alice a,*
+      class Alice valid_class-1
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.has('a,*')).toBe(false);
+      expect(classes.has('bad{color:red}')).toBe(false);
+      expect(classes.has('valid_class-1')).toBe(true);
+      expect(diagram.db.getActors().get('Alice').classes).toEqual(['valid_class-1']);
+    });
+
+    it('should silently drop style applied to an actor not yet declared', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      style Alice fill:#f00
+      Alice->>Bob: Hello
+      `);
+      const actors = diagram.db.getActors();
+      const alice = actors.get('Alice');
+      // Alice is auto-created by the message line, but the style line ran
+      // before Alice existed in the actors map — so the style is dropped.
+      expect(alice).toBeDefined();
+      expect(alice.styles || []).toHaveLength(0);
+    });
+
+    it('should generate a CSS-safe class name for actors with non-identifier characters', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant A as Customer.Service
+      style A fill:#f00
+      A->>A: test
+      `);
+      const classes = diagram.db.getClasses();
+      // The generated class key must only contain CSS identifier chars.
+      const generated = [...classes.keys()].find((k) => k.startsWith('actor-style-'));
+      expect(generated).toBeDefined();
+      expect(generated).toMatch(/^[\w-]+$/);
+    });
+
+    it.each([
+      ['A.B / A_B', 'A.B', 'A_B'],
+      ['A+B / A_B', 'A+B', 'A_B'],
+      ['Japanese / A_B', '日本語', 'A_B'],
+      ['emoji / A_B', '😀', 'A_B'],
+      ['U+D800 / U+D801', '\uD800', '\uD801'],
+      ['U+D800 / U+DC00', '\uD800', '\uDC00'],
+    ])(
+      'should keep generated style classes distinct for actor ids: %s',
+      async (_label, firstActorId, secondActorId) => {
+        const source = `
+        sequenceDiagram
+        participant ${firstActorId}
+        participant ${secondActorId}
+        style ${firstActorId} fill:#f00
+        style ${secondActorId} fill:#00f
+        ${secondActorId}->>${secondActorId}: test
+        `;
+        const diagram = await Diagram.fromText(source);
+        const actors = diagram.db.getActors();
+        const classes = diagram.db.getClasses();
+        const firstClass = actors.get(firstActorId).styleClassName;
+        const secondClass = actors.get(secondActorId).styleClassName;
+        const generatedClasses = [...classes.keys()].filter((key) =>
+          key.startsWith('actor-style-')
+        );
+
+        expect.soft(firstClass).toBeDefined();
+        expect.soft(secondClass).toBeDefined();
+        expect.soft(firstClass).not.toBe(secondClass);
+        expect.soft(firstClass).toMatch(/^[\w-]+$/);
+        expect.soft(secondClass).toMatch(/^[\w-]+$/);
+        expect.soft(generatedClasses).toHaveLength(2);
+        expect.soft(classes.get(firstClass).styles).toContain('fill:#f00');
+        expect.soft(classes.get(secondClass).styles).toContain('fill:#00f');
+
+        const repeatedDiagram = await Diagram.fromText(source);
+        repeatedDiagram.db.getClasses();
+        const repeatedActors = repeatedDiagram.db.getActors();
+        expect.soft(repeatedActors.get(firstActorId).styleClassName).toBe(firstClass);
+        expect.soft(repeatedActors.get(secondActorId).styleClassName).toBe(secondClass);
+      }
+    );
+  });
 });
