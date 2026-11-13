@@ -1,6 +1,9 @@
 import { darken, lighten, isDark } from 'khroma';
-import { getConfig } from './../../config.js';
-import { colorSlotCount, isColorTheme as isPaletteTheme } from '../common/colorThemeGate.js';
+import { getConfig } from '@mermaid-js/core/config.js';
+import {
+  colorSlotCount,
+  isColorTheme as isPaletteTheme,
+} from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
 
 const genReduxSections = (options) => {
   const { theme } = getConfig();

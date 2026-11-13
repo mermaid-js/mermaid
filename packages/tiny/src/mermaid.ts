@@ -13,6 +13,7 @@ import quadrantChart from '@mermaid-js/diagram-quadrant';
 import { radar } from '@mermaid-js/diagram-radar';
 import requirement from '@mermaid-js/diagram-requirement';
 import sankey from '@mermaid-js/diagram-sankey';
+import timeline from '@mermaid-js/diagram-timeline';
 import { treemap } from '@mermaid-js/diagram-treemap';
 import treeView from '@mermaid-js/diagram-treeview';
 import venn from '@mermaid-js/diagram-venn';
@@ -31,6 +32,7 @@ void mermaid.registerExternalDiagrams([
   radar,
   requirement,
   sankey,
+  timeline,
   treeView,
   treemap,
   venn,

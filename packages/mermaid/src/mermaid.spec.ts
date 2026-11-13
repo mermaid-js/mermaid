@@ -46,6 +46,7 @@ describe('mermaid', () => {
     { text: 'requirementDiagram', expected: 'requirement' },
     { text: 'sankey', expected: 'sankey' },
     { text: 'sankey-beta', expected: 'sankey' },
+    { text: 'timeline', expected: 'timeline' },
     { text: 'treeView-beta', expected: 'treeView' },
     { text: 'treemap', expected: 'treemap' },
     { text: 'treemap-beta', expected: 'treemap' },

@@ -1,5 +1,5 @@
-import { setLogLevel } from '../../diagram-api/diagramAPI.js';
-import * as commonDb from '../common/commonDb.js';
+import { setLogLevel } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import * as commonDb from '@mermaid-js/core/diagrams/common/commonDb.js';
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
 

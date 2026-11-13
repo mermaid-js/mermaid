@@ -1,4 +1,4 @@
-import * as commonDb from '../common/commonDb.js';
+import * as commonDb from '@mermaid-js/core/diagrams/common/commonDb.js';
 let currentSection = '';
 let currentTaskId = 0;
 let direction = 'LR';

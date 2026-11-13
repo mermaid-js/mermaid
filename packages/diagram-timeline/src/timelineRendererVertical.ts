@@ -1,12 +1,12 @@
 import svgDraw from './svgDraw.js';
-import { log } from '../../logger.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import type { Diagram } from '../../Diagram.js';
-import type { MermaidConfig } from '../../config.type.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import type { SVG } from '../../diagram-api/types.js';
-import { parseFontSize } from '../../utils.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { setupGraphViewbox } from '@mermaid-js/core/setupGraphViewbox.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import type { MermaidConfig } from '@mermaid-js/core/config.type.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import type { SVG } from '@mermaid-js/core/diagram-api/types.js';
+import { parseFontSize } from '@mermaid-js/core/utils.js';
 
 interface Block<TDesc, TSection> {
   number: number;

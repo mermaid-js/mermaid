@@ -10,7 +10,6 @@ import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
 import stateV2 from '../diagrams/state/stateDetector-V2.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
-import timeline from '../diagrams/timeline/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
@@ -78,7 +77,6 @@ export const addDiagrams = () => {
     sequence,
     swimlanes,
     flowchartV2,
-    timeline,
     git,
     stateV2,
     xychart,
