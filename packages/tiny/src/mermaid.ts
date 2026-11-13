@@ -1,6 +1,7 @@
 // The `mermaid` entry, minus its large layouts, diagrams and KaTeX.
 import mermaid from '@mermaid-js/core';
 import block from '@mermaid-js/diagram-block';
+import classDiagramV2 from '@mermaid-js/diagram-class';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
 import er from '@mermaid-js/diagram-er';
 import eventmodeling from '@mermaid-js/diagram-eventmodeling';
@@ -29,6 +30,7 @@ import xychart from '@mermaid-js/diagram-xychart';
 
 void mermaid.registerExternalDiagrams([
   block,
+  classDiagramV2,
   cynefin,
   er,
   eventmodeling,

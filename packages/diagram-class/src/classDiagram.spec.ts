@@ -152,8 +152,8 @@ describe('given a basic class diagram, ', function () {
     });
 
     it('emits only explicit namespaces from getData() in compact mode', async () => {
-      const { setConfig } = await import('../../diagram-api/diagramAPI.js');
-      const { reset } = await import('../../config.js');
+      const { setConfig } = await import('@mermaid-js/core/diagram-api/diagramAPI.js');
+      const { reset } = await import('@mermaid-js/core/config.js');
       // setConfig merges into the live config; reset restores defaults.
       // We only touch `class.hierarchicalNamespaces` here.
       setConfig({ class: { hierarchicalNamespaces: false } });
@@ -197,8 +197,8 @@ describe('given a basic class diagram, ', function () {
     });
 
     it('moves classes inside implicit namespaces to the nearest explicit ancestor in compact mode', async () => {
-      const { setConfig } = await import('../../diagram-api/diagramAPI.js');
-      const { reset } = await import('../../config.js');
+      const { setConfig } = await import('@mermaid-js/core/diagram-api/diagramAPI.js');
+      const { reset } = await import('@mermaid-js/core/config.js');
       setConfig({ class: { hierarchicalNamespaces: false } });
       try {
         // `Company` is declared; `Company.Engineering` is auto-created by the

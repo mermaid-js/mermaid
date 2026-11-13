@@ -1,6 +1,7 @@
 import type { ExternalDiagramDefinition } from '@mermaid-js/core';
 import architecture from '@mermaid-js/diagram-architecture';
 import block from '@mermaid-js/diagram-block';
+import classDiagramV2 from '@mermaid-js/diagram-class';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
 import er from '@mermaid-js/diagram-er';
 import eventmodeling from '@mermaid-js/diagram-eventmodeling';
@@ -32,6 +33,7 @@ import xychart from '@mermaid-js/diagram-xychart';
 export const diagrams: ExternalDiagramDefinition[] = [
   architecture,
   block,
+  classDiagramV2,
   cynefin,
   er,
   eventmodeling,

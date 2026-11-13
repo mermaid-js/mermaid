@@ -1,6 +1,6 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { parseGenericTypes, sanitizeText } from '../common/common.js';
-import type { ClassBoxData } from '../../rendering-util/rendering-elements/shapes/classBox.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { parseGenericTypes, sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
+import type { ClassBoxData } from '@mermaid-js/core/rendering-util/rendering-elements/shapes/classBox.js';
 
 export interface ClassNode extends ClassBoxData {
   id: string;

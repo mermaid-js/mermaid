@@ -1,8 +1,8 @@
 import { select } from 'd3';
-import { log } from '../../logger.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import common from '../common/common.js';
-import utils, { getEdgeId } from '../../utils.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
+import utils, { getEdgeId } from '@mermaid-js/core/utils.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -11,8 +11,8 @@ import {
   clear as commonClear,
   setDiagramTitle,
   getDiagramTitle,
-} from '../common/commonDb.js';
-import { createTooltip } from '../common/svgDrawCommon.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
+import { createTooltip } from '@mermaid-js/core/diagrams/common/svgDrawCommon.js';
 import { ClassMember } from './classTypes.js';
 import type {
   ClassRelation,
@@ -25,8 +25,8 @@ import type {
   StyleClass,
   Interface,
 } from './classTypes.js';
-import type { Node, Edge } from '../../rendering-util/types.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
+import type { Node, Edge } from '@mermaid-js/core/rendering-util/types.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
 import DOMPurify from 'dompurify';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';

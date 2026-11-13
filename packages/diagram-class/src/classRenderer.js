@@ -1,10 +1,10 @@
 import { select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { log } from '../../logger.js';
+import { log } from '@mermaid-js/core/logger.js';
 import svgDraw from './svgDraw.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 
 let idCache = {};
 const padding = 20;

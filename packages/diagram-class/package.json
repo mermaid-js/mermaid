@@ -1,0 +1,51 @@
+{
+  "name": "@mermaid-js/diagram-class",
+  "version": "12.3.0",
+  "description": "The class diagram for mermaid",
+  "module": "dist/mermaid-diagram-class.core.mjs",
+  "types": "./dist/classDetector-V2.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/classDetector-V2.ts",
+      "types": "./dist/classDetector-V2.d.ts",
+      "import": "./dist/mermaid-diagram-class.core.mjs",
+      "default": "./dist/mermaid-diagram-class.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-class"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "d3": "^7.9.0",
+    "dagre-d3-es": "7.0.14",
+    "dompurify": "^3.4.17"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/jsdom": "^21.1.7",
+    "jsdom": "^26.1.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

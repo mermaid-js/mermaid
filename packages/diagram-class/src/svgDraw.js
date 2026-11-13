@@ -1,7 +1,7 @@
 import { line, curveBasis } from 'd3';
-import utils from '../../utils.js';
-import { log } from '../../logger.js';
-import { parseGenericTypes, getUrl } from '../common/common.js';
+import utils from '@mermaid-js/core/utils.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { parseGenericTypes, getUrl } from '@mermaid-js/core/diagrams/common/common.js';
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation, conf, diagObj) {

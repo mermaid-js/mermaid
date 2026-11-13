@@ -20,6 +20,7 @@
   "devDependencies": {
     "@mermaid-js/core": "workspace:^",
     "@mermaid-js/diagram-block": "workspace:^",
+    "@mermaid-js/diagram-class": "workspace:^",
     "@mermaid-js/diagram-cynefin": "workspace:^",
     "@mermaid-js/diagram-er": "workspace:^",
     "@mermaid-js/diagram-eventmodeling": "workspace:^",

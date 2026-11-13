@@ -31,6 +31,7 @@ describe('mermaid', () => {
     { text: 'architecture-beta', expected: 'architecture' },
     { text: 'block', expected: 'block' },
     { text: 'block-beta', expected: 'block' },
+    { text: 'classDiagram', expected: 'classDiagram' },
     { text: 'cynefin-beta', expected: 'cynefin' },
     { text: 'erDiagram', expected: 'er' },
     { text: 'eventmodeling', expected: 'eventmodeling' },

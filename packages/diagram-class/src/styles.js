@@ -1,5 +1,10 @@
-import { getIconStyles } from '../globalStyles.js';
-import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
+import { getIconStyles } from '@mermaid-js/core/diagrams/globalStyles.js';
+import {
+  colorSlotCount,
+  hasPalette,
+  isColorTheme,
+  safeLook,
+} from '@mermaid-js/core/diagrams/common/colorThemeGate.js';
 
 /**
  * Cycling per-class colour, mirroring the ER stylesheet. A class box is the structural twin

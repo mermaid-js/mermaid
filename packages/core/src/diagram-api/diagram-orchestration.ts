@@ -2,7 +2,6 @@ import c4 from '../diagrams/c4/c4Detector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
 import agentflow from '../diagrams/agentflow/afDetector.js';
 import swimlanes from '../diagrams/swimlanes/detector.js';
-import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
@@ -56,5 +55,5 @@ export const addDiagrams = () => {
   }
 
   // Ordering of detectors is important. The first one to return true will be used.
-  registerLazyLoadedDiagrams(agentflow, c4, classDiagramV2, swimlanes, flowchartV2);
+  registerLazyLoadedDiagrams(agentflow, c4, swimlanes, flowchartV2);
 };
