@@ -1,0 +1,8 @@
+bpmn-beta LR
+  lane "Sales"
+    start message s1 "Order received"
+    group "Approval"
+      user task t1 "Review order"
+      xor gw "Approved?"
+    end e1 "Done"
+  s1 --> t1 --> gw --> e1
