@@ -248,28 +248,7 @@ export class StateDB {
    */
   extract(statements: Stmt[] | { doc: Stmt[] }) {
     this.clear(true);
-    for (const item of Array.isArray(statements) ? statements : statements.doc) {
-      switch (item.stmt) {
-        case STMT_STATE:
-          this.addState(item.id.trim(), item.type, item.doc, item.description, item.note);
-          break;
-        case STMT_RELATION:
-          this.addRelation(item.state1, item.state2, item.description);
-          break;
-        case STMT_CLASSDEF:
-          this.addStyleClass(item.id.trim(), item.classes);
-          break;
-        case STMT_STYLEDEF:
-          this.handleStyleDef(item);
-          break;
-        case STMT_APPLYCLASS:
-          this.setCssClass(item.id.trim(), item.styleClass);
-          break;
-        case 'click':
-          this.addLink(item.id, item.url, item.tooltip);
-          break;
-      }
-    }
+    this.extractDoc(Array.isArray(statements) ? statements : statements.doc);
     const diagramStates = this.getStates();
     const config = getConfig();
 
@@ -298,6 +277,35 @@ export class StateDB {
         );
       }
       node.label = node.label[0];
+    }
+  }
+
+  private extractDoc(statements: Stmt[]) {
+    for (const item of statements) {
+      switch (item.stmt) {
+        case STMT_STATE:
+          this.addState(item.id.trim(), item.type, item.doc, item.description, item.note);
+          // States inside composite states share the same id space
+          if (item.doc) {
+            this.extractDoc(item.doc);
+          }
+          break;
+        case STMT_RELATION:
+          this.addRelation(item.state1, item.state2, item.description);
+          break;
+        case STMT_CLASSDEF:
+          this.addStyleClass(item.id.trim(), item.classes);
+          break;
+        case STMT_STYLEDEF:
+          this.handleStyleDef(item);
+          break;
+        case STMT_APPLYCLASS:
+          this.setCssClass(item.id.trim(), item.styleClass);
+          break;
+        case 'click':
+          this.addLink(item.id, item.url, item.tooltip);
+          break;
+      }
     }
   }
 
