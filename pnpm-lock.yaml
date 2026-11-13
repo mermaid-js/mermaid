@@ -414,6 +414,15 @@ importers:
         specifier: ^4.41.0
         version: 4.41.0
 
+  packages/diagram-radar:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+
   packages/diagram-sankey:
     dependencies:
       '@mermaid-js/core':
@@ -453,6 +462,9 @@ importers:
       '@mermaid-js/diagram-pie':
         specifier: workspace:^
         version: link:../diagram-pie
+      '@mermaid-js/diagram-radar':
+        specifier: workspace:^
+        version: link:../diagram-radar
       '@mermaid-js/diagram-sankey':
         specifier: workspace:^
         version: link:../diagram-sankey
@@ -751,6 +763,9 @@ importers:
       '@mermaid-js/diagram-pie':
         specifier: workspace:^
         version: link:../diagram-pie
+      '@mermaid-js/diagram-radar':
+        specifier: workspace:^
+        version: link:../diagram-radar
       '@mermaid-js/diagram-sankey':
         specifier: workspace:^
         version: link:../diagram-sankey

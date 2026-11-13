@@ -28,6 +28,7 @@ describe('mermaid', () => {
     { text: 'packet', expected: 'packet' },
     { text: 'packet-beta', expected: 'packet' },
     { text: 'pie', expected: 'pie' },
+    { text: 'radar-beta', expected: 'radar' },
     { text: 'pie title: "flowchart"\n flowchart: 1 "pie" pie: 2 "pie"', expected: 'pie' },
     { text: 'sankey', expected: 'sankey' },
     { text: 'sankey-beta', expected: 'sankey' },

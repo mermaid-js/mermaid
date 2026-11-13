@@ -1,6 +1,11 @@
-import type { Axis, Curve, Option } from '../../../../parser/dist/src/language/generated/ast.js';
-import type { RadarDiagramConfig } from '../../config.type.js';
-import type { DiagramDBBase } from '../../diagram-api/types.js';
+import type { Radar } from '@mermaid-js/parser';
+import type { RadarDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { DiagramDBBase } from '@mermaid-js/core/diagram-api/types.js';
+
+export type Axis = Radar['axes'][number];
+export type Curve = Radar['curves'][number];
+export type Option = Radar['options'][number];
+export type Entry = Curve['entries'][number];
 
 export interface RadarAxis {
   name: string;

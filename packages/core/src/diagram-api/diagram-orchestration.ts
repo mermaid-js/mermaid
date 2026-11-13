@@ -17,7 +17,6 @@ import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import kanban from '../diagrams/kanban/detector.js';
-import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import treeView from '../diagrams/treeView/detector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
@@ -103,7 +102,6 @@ export const addDiagrams = () => {
     block,
     eventmodeling,
     treeView,
-    radar,
     ishikawa,
     treemap,
     railroad,
