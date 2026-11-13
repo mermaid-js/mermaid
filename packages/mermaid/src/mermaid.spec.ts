@@ -15,7 +15,7 @@ const diagramImports = (entry: string) =>
   ].map(([, name]) => name);
 
 /** Diagram packages that tiny leaves out, to stay small. */
-const LARGE_DIAGRAMS = ['@mermaid-js/diagram-mindmap'];
+const LARGE_DIAGRAMS = ['@mermaid-js/diagram-architecture', '@mermaid-js/diagram-mindmap'];
 
 describe('mermaid', () => {
   it.each([...coseBilkentLayouts, ...elkLayouts])('registers the $name layout', (layout) => {
@@ -28,6 +28,7 @@ describe('mermaid', () => {
   });
 
   it.each([
+    { text: 'architecture-beta', expected: 'architecture' },
     { text: 'block', expected: 'block' },
     { text: 'block-beta', expected: 'block' },
     { text: 'cynefin-beta', expected: 'cynefin' },

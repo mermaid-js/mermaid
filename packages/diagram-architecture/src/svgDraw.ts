@@ -1,9 +1,9 @@
 import type cytoscape from 'cytoscape';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { createText } from '../../rendering-util/createText.js';
-import { getIconSVG } from '../../rendering-util/icons.js';
-import type { D3Element } from '../../types.js';
-import { sanitizeText } from '../common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { createText } from '@mermaid-js/core/rendering-util/createText.js';
+import { getIconSVG } from '@mermaid-js/core/rendering-util/icons.js';
+import type { D3Element } from '@mermaid-js/core/types.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
 import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import {
@@ -21,7 +21,7 @@ import {
   type ArchitectureService,
   type EdgeSingular,
 } from './architectureTypes.js';
-import { getEdgeId } from '../../utils.js';
+import { getEdgeId } from '@mermaid-js/core/utils.js';
 
 export const drawEdges = async function (
   edgesEl: D3Element,

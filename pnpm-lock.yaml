@@ -285,12 +285,6 @@ importers:
       chevrotain:
         specifier: ~13.2.0
         version: 13.2.0
-      cytoscape:
-        specifier: ^3.34.0
-        version: 3.34.0
-      cytoscape-fcose:
-        specifier: ^2.2.0
-        version: 2.2.0(cytoscape@3.34.0)
       d3:
         specifier: ^7.9.0
         version: 7.9.0
@@ -325,12 +319,6 @@ importers:
       '@iconify/types':
         specifier: ^2.0.0
         version: 2.0.0
-      '@types/cytoscape':
-        specifier: ^3.21.9
-        version: 3.21.9
-      '@types/cytoscape-fcose':
-        specifier: ^2.2.5
-        version: 2.2.5
       '@types/d3-scale':
         specifier: ^4.0.9
         version: 4.0.9
@@ -373,6 +361,34 @@ importers:
       typescript:
         specifier: ~5.7.3
         version: 5.7.3
+
+  packages/diagram-architecture:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+      cytoscape:
+        specifier: ^3.34.0
+        version: 3.34.0
+      cytoscape-fcose:
+        specifier: ^2.2.0
+        version: 2.2.0(cytoscape@3.34.0)
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@iconify/types':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@types/cytoscape-fcose':
+        specifier: ^2.2.5
+        version: 2.2.5
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
 
   packages/diagram-block:
     dependencies:
@@ -688,6 +704,9 @@ importers:
       '@mermaid-js/core':
         specifier: workspace:^
         version: link:../core
+      '@mermaid-js/diagram-architecture':
+        specifier: workspace:^
+        version: link:../diagram-architecture
       '@mermaid-js/diagram-block':
         specifier: workspace:^
         version: link:../diagram-block
@@ -4374,9 +4393,6 @@ packages:
 
   '@types/cytoscape-fcose@2.2.5':
     resolution: {integrity: sha512-FaM6MM5zC4Yh72E60vkpbM4tstJS90wj3u1Vq/SMiK/MShhLaMd17QkmR39S14aUWdfNSlUEfx/g/XkDdFmXDA==}
-
-  '@types/cytoscape@3.21.9':
-    resolution: {integrity: sha512-JyrG4tllI6jvuISPjHK9j2Xv/LTbnLekLke5otGStjFluIyA9JjgnvgZrSBsp8cEDpiTjwgZUZwpPv8TSBcoLw==}
 
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
@@ -14684,8 +14700,6 @@ snapshots:
   '@types/cytoscape-fcose@2.2.5':
     dependencies:
       cytoscape: 3.34.0
-
-  '@types/cytoscape@3.21.9': {}
 
   '@types/d3-array@3.2.2': {}
 

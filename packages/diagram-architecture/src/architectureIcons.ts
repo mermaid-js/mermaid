@@ -1,4 +1,4 @@
-import { unknownIcon } from '../../rendering-util/icons.js';
+import { unknownIcon } from '@mermaid-js/core/rendering-util/icons.js';
 import type { IconifyJSON } from '@iconify/types';
 
 const wrapIcon = (icon: string) => {

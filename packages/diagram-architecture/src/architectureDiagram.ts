@@ -1,4 +1,4 @@
-import type { DiagramDefinition } from '../../diagram-api/types.js';
+import type { DiagramDefinition } from '@mermaid-js/core/diagram-api/types.js';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
 import styles from './architectureStyles.js';

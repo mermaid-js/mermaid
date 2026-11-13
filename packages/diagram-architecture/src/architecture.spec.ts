@@ -2,7 +2,7 @@ import { assert, it, describe, expect, vi, beforeEach, afterEach } from 'vitest'
 import cytoscape from 'cytoscape';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
-import { setConfig, reset as resetConfig } from '../../config.js';
+import { setConfig, reset as resetConfig } from '@mermaid-js/core/config.js';
 describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {

@@ -1,9 +1,9 @@
 import { describe } from 'vitest';
 import { draw } from './architectureRenderer.js';
-import { Diagram } from '../../Diagram.js';
-import { addDetector } from '../../diagram-api/detectType.js';
+import { Diagram } from '@mermaid-js/core/Diagram.js';
+import { addDetector } from '@mermaid-js/core/diagram-api/detectType.js';
 import architectureDetector from './architectureDetector.js';
-import { ensureNodeFromSelector, jsdomIt } from '../../tests/util.js';
+import { ensureNodeFromSelector, jsdomIt } from '@mermaid-js/core/tests/util.js';
 
 const { id, detector, loader } = architectureDetector;
 

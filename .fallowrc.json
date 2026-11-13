@@ -32,7 +32,6 @@
     "packages/mermaid/scripts/**",
     "packages/core/scripts/**",
     "packages/core/src/dagre-wrapper/**",
-    "packages/core/src/diagrams/architecture/**",
     "packages/core/src/diagrams/c4/**",
     "packages/core/src/diagrams/class/**",
     "packages/core/src/diagrams/common/**",

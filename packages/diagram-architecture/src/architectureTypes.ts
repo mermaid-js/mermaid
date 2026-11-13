@@ -1,6 +1,6 @@
-import type { DiagramDBBase } from '../../diagram-api/types.js';
-import type { ArchitectureDiagramConfig } from '../../config.type.js';
-import type { D3Element } from '../../types.js';
+import type { DiagramDBBase } from '@mermaid-js/core/diagram-api/types.js';
+import type { ArchitectureDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { D3Element } from '@mermaid-js/core/types.js';
 import type cytoscape from 'cytoscape';
 
 /*=======================================*\

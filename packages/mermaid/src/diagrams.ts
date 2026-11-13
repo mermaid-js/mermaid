@@ -1,4 +1,5 @@
 import type { ExternalDiagramDefinition } from '@mermaid-js/core';
+import architecture from '@mermaid-js/diagram-architecture';
 import block from '@mermaid-js/diagram-block';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
 import er from '@mermaid-js/diagram-er';
@@ -24,6 +25,7 @@ import wardley from '@mermaid-js/diagram-wardley';
 
 /** The diagram packages that the `mermaid` entry registers. */
 export const diagrams: ExternalDiagramDefinition[] = [
+  architecture,
   block,
   cynefin,
   er,

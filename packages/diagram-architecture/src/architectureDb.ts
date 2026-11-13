@@ -1,9 +1,9 @@
-import { getConfig as commonGetConfig } from '../../config.js';
-import type { ArchitectureDiagramConfig } from '../../config.type.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
-import type { D3Element } from '../../types.js';
-import { cleanAndMerge } from '../../utils.js';
+import { getConfig as commonGetConfig } from '@mermaid-js/core/config.js';
+import type { ArchitectureDiagramConfig } from '@mermaid-js/core/config.type.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
+import type { D3Element } from '@mermaid-js/core/types.js';
+import { cleanAndMerge } from '@mermaid-js/core/utils.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -12,7 +12,7 @@ import {
   setAccDescription,
   setAccTitle,
   setDiagramTitle,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type {
   ArchitectureAdjacencyList,
   ArchitectureDirectionPairMap,

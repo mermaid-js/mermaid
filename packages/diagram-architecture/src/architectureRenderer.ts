@@ -3,12 +3,12 @@ import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import { withSeededRandom } from './architectureSeed.js';
 import { select } from 'd3';
-import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
-import type { Diagram } from '../../Diagram.js';
-import { log } from '../../logger.js';
-import { registerIconPacks } from '../../rendering-util/icons.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import type { DrawDefinition, SVG } from '@mermaid-js/core/diagram-api/types.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { registerIconPacks } from '@mermaid-js/core/rendering-util/icons.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { setupGraphViewbox } from '@mermaid-js/core/setupGraphViewbox.js';
 import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import type {

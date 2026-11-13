@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/diagram-architecture": "workspace:^",
     "@mermaid-js/diagram-block": "workspace:^",
     "@mermaid-js/diagram-cynefin": "workspace:^",
     "@mermaid-js/diagram-er": "workspace:^",

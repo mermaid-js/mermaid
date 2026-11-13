@@ -42,8 +42,6 @@
     "@mermaid-js/parser": "workspace:^",
     "@types/d3": "^7.4.3",
     "chevrotain": "~13.2.0",
-    "cytoscape": "^3.34.0",
-    "cytoscape-fcose": "^2.2.0",
     "d3": "^7.9.0",
     "dagre-d3-es": "7.0.14",
     "dayjs": "^1.11.21",
@@ -57,8 +55,6 @@
   },
   "devDependencies": {
     "@iconify/types": "^2.0.0",
-    "@types/cytoscape": "^3.21.9",
-    "@types/cytoscape-fcose": "^2.2.5",
     "@types/d3-scale": "^4.0.9",
     "@types/d3-scale-chromatic": "^3.1.0",
     "@types/d3-selection": "^3.0.11",

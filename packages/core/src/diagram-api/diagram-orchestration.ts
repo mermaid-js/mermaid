@@ -9,7 +9,6 @@ import classDiagramV2 from '../diagrams/class/classDetector-V2.js';
 import stateV2 from '../diagrams/state/stateDetector-V2.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
-import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { usecase } from '../diagrams/usecase/usecaseDetector.js';
@@ -58,7 +57,7 @@ export const addDiagrams = () => {
   );
 
   if (injected.includeLargeFeatures) {
-    registerLazyLoadedDiagrams(flowchartElk, architecture);
+    registerLazyLoadedDiagrams(flowchartElk);
   }
 
   // Ordering of detectors is important. The first one to return true will be used.
