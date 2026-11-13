@@ -1,0 +1,12 @@
+%%{init: {'layout': 'elk', 'elk': {'directedSubgraphs': 'aligned'}}}%%
+%% With elk.directedSubgraphs aligned, two linked nodes in a row under a wide row are not spread to its ends (issue #4648).
+flowchart TB
+    subgraph wide [" "]
+        direction LR
+        Collect --> Sort --> Weigh --> Pack --> Label --> Ship
+    end
+    subgraph pair [" "]
+        direction LR
+        Measure["Measure the parcel"] --> Price["Price the parcel"]
+    end
+    Collect --> Measure

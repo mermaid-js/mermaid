@@ -1,0 +1,14 @@
+%% A TB subgraph with no link inside it and no directed subgraph beside it is left to ELK: each stage links straight across to its target.
+flowchart LR
+  subgraph Stages
+    draft --> review --> publish
+  end
+  subgraph Targets
+    direction TB
+    web([web])
+    print([print])
+    archive([archive])
+  end
+  draft -.-> web
+  review -.-> print
+  publish -.-> archive

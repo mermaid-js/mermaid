@@ -1,0 +1,23 @@
+---
+config:
+  layout: elk
+  flowchart:
+    nodeSpacing: 10
+    rankSpacing: 10
+  elk:
+    directedSubgraphs: aligned
+---
+%% A row spread over the full width keeps room between two nodes for the label of the link between them.
+flowchart TB
+    subgraph left [" "]
+        direction LR
+        A["Intake form"] --> B["Review queue"]
+        B -->|"asks the reviewer"| C["Reviewer panel"]
+    end
+    subgraph right [" "]
+        direction RL
+        D["Show result"] --> E["Score"]
+        E --> F["Update model"]
+        F --> G["Next round"]
+    end
+    C --> D

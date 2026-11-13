@@ -1,0 +1,22 @@
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+%% elk.directedSubgraphs aligned: subgraphs with their own direction become aligned rows or columns with straight links.
+flowchart TB
+    subgraph r1 [" "]
+        direction LR
+        A1["Receive"] --> A2["Check"] --> A3["Reserve"] --> A4["Pick"]
+    end
+    subgraph r2 [" "]
+        direction RL
+        B1["Pack"] --> B2["Label"] --> B3["Weigh"] --> B4["Seal"]
+    end
+    subgraph r3 [" "]
+        direction LR
+        C1["Load"] --> C2["Dispatch"] --> C3["Track"]
+    end
+    A4 --> B1
+    B4 --> C1

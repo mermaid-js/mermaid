@@ -1766,11 +1766,161 @@ flowchart LR
   B1 --> B2
 ```
 
-#### Limitation
+#### Links across the subgraph border
 
-If any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
+With the ELK layout (the default), a subgraph keeps its direction when its nodes are linked to the outside. Such a link leaves the subgraph on the side facing downstream in the direction of the graph around it, and enters on the side facing upstream: in a `flowchart LR`, it leaves on the right and enters on the left, then runs inside the subgraph in the subgraph's own direction.
+
+The subgraph inherits the direction of the parent graph instead, as it does with every other layout, when:
+
+- no link runs between two nodes inside it, so its direction has nothing to order;
+- it also sets a layout algorithm of its own, such as `@{ algorithm: elk.box }`;
+- it, or a subgraph inside it, holds a link between a subgraph and one of its own nodes;
+- the diagram uses an ELK algorithm other than `elk.layered`.
+
+No warning is logged in these cases.
+
+#### Subgraphs as aligned rows or columns (ELK)
+
+With `layout: elk`, subgraphs with their own direction are drawn as aligned rows or columns (`elk.directedSubgraphs: aligned`, the default).
+Set `elk.directedSubgraphs: ports` to leave them where ELK puts them, with the links passing their frames through ports.
+In a `flowchart TB` or `BT`, subgraphs with `direction LR` or `RL` become rows of one common width, stacked under each other in the order they are written.
+In a `flowchart LR` or `RL`, subgraphs with `direction TB` or `BT` become columns of one common height.
+
+A row that holds subgraphs with their own direction is a band: in a `flowchart TB`, a `direction LR` subgraph holding `direction TB` subgraphs draws them as columns side by side, in the order they are written, all of one height.
+The columns of a band are spread over the band's whole width with equal gaps, and each gap is at least as wide as the widest label of a link into the band, so a label never covers a column.
+The nodes of a row are spread over its whole width the same way, unless that would make one of the row's links turn more often; then the row keeps its nodes together and is shifted so its first link runs straight.
+A row right above or below a band puts each node over a column: over the column in the same place when the row has as many nodes as the band has columns, or else over the one column each node links to, so a link from a node into its own column runs straight. The row stays over the columns even when a link of a node to another column then has to turn.
 
 ```mermaid
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+flowchart TB
+    subgraph plan ["Plan"]
+        direction LR
+        Brief --> Review
+    end
+    subgraph teams [" "]
+        direction LR
+        subgraph a ["Team A"]
+            direction TB
+            A1["Design"] --> A2["Build"]
+        end
+        subgraph b ["Team B"]
+            direction TB
+            B1["Layout"] --> B2["Render"]
+        end
+    end
+    Review --> A1
+    Review --> B1
+    Brief --> A2
+```
+
+```mermaid-example
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+flowchart TB
+    subgraph plan ["Plan"]
+        direction LR
+        Brief --> Review
+    end
+    subgraph teams [" "]
+        direction LR
+        subgraph a ["Team A"]
+            direction TB
+            A1["Design"] --> A2["Build"]
+        end
+        subgraph b ["Team B"]
+            direction TB
+            B1["Layout"] --> B2["Render"]
+        end
+    end
+    Review --> A1
+    Review --> B1
+    Brief --> A2
+```
+
+A link from a node in one of them to a node in another, or to a node outside them, enters the target on the side facing the source, and leaves its source on the side facing the target unless leaving by a side saves a turn.
+It runs in the gaps between rows and columns, never across a node or a subgraph's title; it crosses a link inside a subgraph only when that saves a long detour.
+Each subgraph is shifted so that its first link to something placed before it, in the order the links are written, is a straight line.
+A link that cannot reach the facing side of its target, because another node is in the way, runs down the nearest free corridor (the gap between two subgraphs or two nodes, or the margin inside a frame) and enters from the side facing that corridor.
+A link runs straight when its ends line up; otherwise it takes at most two turns into the top or bottom of a node and at most three into a side.
+Its label goes on its longest segment where the label covers nothing else.
+Links that meet on one side of a node are spread along it, far enough apart that the widest end marker (a circle, 14 px across) does not touch the next one; a link that can run straight keeps its place, and the others keep their order so they do not cross.
+Their ends stay clear of the title of the subgraph above them when the rest of the side has room.
+Links that would run along the same gap or corridor each get a lane of their own.
+Rows that alternate `direction LR` and `direction RL` draw a snake, with each row's last node straight above the next row's first node.
+
+```mermaid
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+flowchart TB
+    Buyer(["Buyer"])
+    subgraph shop ["Web shop"]
+        direction LR
+        Cart --> Order --> Payment --> Receipt
+    end
+    subgraph warehouse ["Warehouse"]
+        direction LR
+        Pick --> Pack --> Ship
+    end
+    Buyer --> Cart
+    Order -- paid --> Pick
+```
+
+```mermaid-example
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+flowchart TB
+    Buyer(["Buyer"])
+    subgraph shop ["Web shop"]
+        direction LR
+        Cart --> Order --> Payment --> Receipt
+    end
+    subgraph warehouse ["Warehouse"]
+        direction LR
+        Pick --> Pack --> Ship
+    end
+    Buyer --> Cart
+    Order -- paid --> Pick
+```
+
+With this option a subgraph keeps its direction even when no link runs between two nodes inside it, as long as another subgraph with its own direction sits beside it in the same parent, so the two line up; one on its own is left to ELK, as with `ports`.
+The other exceptions listed above still apply, and the arrangement stops short in these cases:
+
+- only the subgraphs that sit directly in the diagram, and the subgraphs directly inside a band, are arranged; a subgraph nested deeper keeps the default arrangement inside it;
+- a subgraph that ELK places beside another, rather than before or after it, is neither shifted nor widened, and a link between the two keeps ELK's route;
+- a node that sits directly in the diagram is never moved; the subgraph is shifted to line up with it instead;
+- a link with no free way through the gaps and corridors keeps the route ELK drew for it, and a link between two rows of one band, for which ELK drew none, runs straight across the band;
+- a link that does not meet a node at the middle of a side ends on the box around the node, which for a round or diamond shape lies a little off the outline;
+- a `flowchart BT` or `RL` keeps its rows and columns where ELK put them, without spreading them over the full width;
+- a row whose links ELK drew with bends between nodes that would move apart keeps its nodes where they are;
+- the end labels of a link, such as multiplicities, are placed along the new route rather than where ELK reserved room for them.
+
+No warning is logged in these cases.
+
+With the dagre layout (`layout: dagre`), if any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
+
+```mermaid
+---
+config:
+  layout: dagre
+---
 flowchart LR
     subgraph subgraph1
         direction TB
@@ -1790,6 +1940,10 @@ flowchart LR
 ```
 
 ```mermaid-example
+---
+config:
+  layout: dagre
+---
 flowchart LR
     subgraph subgraph1
         direction TB

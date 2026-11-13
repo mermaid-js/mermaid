@@ -267,6 +267,25 @@ export interface MermaidConfig {
      *
      */
     orientFeedbackEdges?: boolean;
+    /**
+     * How subgraphs whose `direction` differs from the diagram's are arranged
+     * next to each other.
+     *
+     * `aligned` (the default) — the subgraphs that sit directly in the diagram are stacked
+     * across the diagram's direction at one common width: full-width rows in
+     * a `TB` or `BT` flowchart, full-height columns in an `LR` or `RL` one.
+     * A link between two of them leaves the side of its source that faces
+     * the target and enters the target on the side that faces the source,
+     * running in the gap between them. Each subgraph is shifted so that the
+     * first link into it, in source order, is a straight line; the other
+     * links take at most two turns.
+     *
+     * `ports` — each subgraph keeps its own direction, and ELK places the
+     * subgraphs and routes the links between them through ports on their
+     * frames, without aligning them.
+     *
+     */
+    directedSubgraphs?: 'aligned' | 'ports';
   };
   grid?: GridLayoutConfig;
   /**
