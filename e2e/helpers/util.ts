@@ -296,7 +296,7 @@ export const verifyScreenshot = async (
       return;
     }
 
-    await expect(target).toHaveScreenshot(snapshotName);
+    await expect(target).toHaveScreenshot(snapshotName, { scale: 'device' });
   }
 };
 
