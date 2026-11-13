@@ -1,0 +1,26 @@
+---
+description: >-
+  ER diagram covering three entities each with their own attribute block,
+  related by two relationships, rendered under the "neo" look with the
+  "redux-color" theme.
+config:
+  look: neo
+  theme: redux-color
+---
+erDiagram
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    LINE-ITEM {
+        string productCode
+        int quantity
+        float pricePerUnit
+    }
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains

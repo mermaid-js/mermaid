@@ -1,0 +1,15 @@
+---
+description: >-
+  Verifies precedence across three simultaneous styling mechanisms: the implicit
+  `default` classDef (applies to c), an explicit `:::blue` classDef (applies to
+  p), and a direct `style` statement (also applies to c, on top of default)
+  under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+      c[CUSTOMER]
+      p[PERSON]:::blue
+      classDef blue stroke:lightblue, color: #0000FF
+      classDef default fill:pink
+      style c color:green

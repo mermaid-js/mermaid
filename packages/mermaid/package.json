@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "12.1.0",
+  "version": "12.3.0",
   "description": "Markdown-ish syntax for generating flowcharts, mindmaps, sequence diagrams, class diagrams, gantt charts, git graphs and more.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -40,6 +40,7 @@
     "docs:verify": "pnpm docs:code && pnpm docs:spellcheck && tsx scripts/docs.cli.mts --verify",
     "docs:pre:vitepress": "pnpm --filter ./src/docs prefetch && rimraf src/vitepress && pnpm docs:code && tsx scripts/docs.cli.mts --vitepress && pnpm --filter ./src/vitepress install --no-frozen-lockfile --ignore-scripts",
     "docs:build:vitepress": "pnpm docs:pre:vitepress && (cd src/vitepress && pnpm run build) && cpy --flat src/docs/landing/ ./src/vitepress/.vitepress/dist/landing",
+    "bench:layered": "tsx scripts/layered-bench.ts",
     "docs:dev": "pnpm docs:pre:vitepress && concurrently \"pnpm --filter ./src/vitepress dev\" \"tsx scripts/docs.cli.mts --watch --vitepress\"",
     "docs:dev:docker": "pnpm docs:pre:vitepress && concurrently \"pnpm --filter ./src/vitepress dev:docker\" \"tsx scripts/docs.cli.mts --watch --vitepress\"",
     "docs:serve": "pnpm docs:build:vitepress && vitepress serve src/vitepress",
@@ -84,16 +85,15 @@
     "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.14",
     "dayjs": "^1.11.21",
-    "dompurify": "^3.4.12",
-    "elkjs": "^0.9.3",
+    "dompurify": "^3.4.17",
+    "elkjs": "^0.12.0",
     "es-toolkit": "^1.45.1",
-    "katex": "^0.16.47",
+    "katex": "^0.18.0",
     "khroma": "^2.1.0",
     "marked": "^16.3.0",
     "roughjs": "^4.6.6",
     "stylis": "^4.3.6",
-    "ts-dedent": "^2.2.0",
-    "uuid": "^11.1.0 || ^12 || ^13 || ^14.0.0"
+    "ts-dedent": "^2.2.0"
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^8.0.11",
@@ -139,7 +139,8 @@
   },
   "files": [
     "dist/",
-    "README.md"
+    "README.md",
+    "THIRD_PARTY_NOTICES"
   ],
   "publishConfig": {
     "access": "public"

@@ -1,3 +1,7 @@
+---
+description: 'Model SysML v1.6 requirements and elements with risk and verification attributes, linked by relationships such as satisfies and traces.'
+---
+
 # Requirement Diagram
 
 > A Requirement diagram provides a visualization for requirements and their connections, to each other and other documented elements. The modeling specs follow those defined by SysML v1.6.
@@ -26,6 +30,8 @@ Rendering requirements is straightforward.
 Requirement diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
+
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
 
 The same diagram, drawn both ways:
 

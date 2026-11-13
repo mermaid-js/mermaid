@@ -1,3 +1,7 @@
+---
+description: 'Model object-oriented structure with UML classes, members, methods, generics, relationships, cardinality, annotations, and namespaces.'
+---
+
 # Class diagrams
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
@@ -42,6 +46,8 @@ classDiagram
 Class diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
+
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
 
 The same diagram, drawn both ways:
 

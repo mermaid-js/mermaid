@@ -1,0 +1,21 @@
+---
+description:
+  Verifies the same unsupported-markdown/raw-string label handling (literal
+  comparisons, markdown-styled subgraph titles, list syntax in backtick labels,
+  etc.) still renders correctly as plain SVG text when htmlLabels is set to
+  false instead of the default true.
+config:
+  htmlLabels: false
+---
+flowchart TB
+    mermaid{"What is
+yourmermaid version?"} --> v10["<11"] --"`<**1**1`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["`How to fix **fix**`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["`Github, Gitlab, BitBucket, etc.`"]
+    a["`1.`"]
+    b["`- x`"]
+      

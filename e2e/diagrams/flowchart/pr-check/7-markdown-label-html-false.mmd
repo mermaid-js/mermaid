@@ -1,0 +1,14 @@
+---
+description: >-
+  Markdown-string labels (backtick-quoted: bold, italic) with htmlLabels: false,
+  so labels fall back to the SVG-text (tspan) rendering path. Pairs with
+  6-markdown-label-html-true.mmd, same label content, only htmlLabels differs.
+  Under this path, bold/italic markers are stripped but the surrounding
+  whitespace collapses (e.g. "bold" and "and" run together) -- a known,
+  pre-existing rendering quirk of markdown labels without htmlLabels, not
+  something this fixture is meant to fix.
+config:
+  htmlLabels: false
+---
+flowchart TD
+  A["`This is **bold** and *italic* text`"] --> B["`A second markdown label`"]

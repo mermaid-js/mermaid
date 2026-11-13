@@ -36,7 +36,9 @@ build can opt back in.
 
 - **elk** (default): [ELK (Eclipse Layout Kernel)](https://www.eclipse.org/elk/). Bundled with Mermaid; no setup required. Specific ELK algorithms can be selected as `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box`, and `elk.rectpacking`.
 - **dagre**: Dagre layout for layered graphs
+- **grid**: Built-in deterministic row/column layout for unified renderers. See [Grid Layout](/syntax/grid-layout.html).
 - **cose-bilkent**: Cose Bilkent layout for force-directed graphs
+- **layered** (beta, v\<MERMAID_RELEASE_VERSION>+): Built-in layered layout for flowcharts and other graph diagrams, with curved, stepped or straight edge routing. [Layered Layout](/config/layered)
 - **tidy-tree**: Tidy tree layout for hierarchical diagrams, from the [`@mermaid-js/layout-tidy-tree`](https://www.npmjs.com/package/@mermaid-js/layout-tidy-tree) package [Tidy Tree Configuration](/config/tidy-tree)
 
 Mindmaps are the one diagram type not laid out with ELK by default; they use
@@ -53,7 +55,7 @@ Since `elk` is the default, a diagram needs no configuration to use it. To pick
 a different layout, set it in your diagram's YAML config or initialization
 options. For example:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: dagre
@@ -63,7 +65,7 @@ graph TD;
   B-->C;
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: dagre
