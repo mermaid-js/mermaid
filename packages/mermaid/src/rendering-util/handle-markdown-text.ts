@@ -68,6 +68,13 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       node.tokens.forEach((contentNode) => {
         processNode(contentNode as MarkedToken, node.type);
       });
+    } else if (node.type === 'codespan') {
+      // The text of a code span is literal. The renderer decodes the entities that `sanitizeText` adds.
+      node.text.split(/\s+/).forEach((word) => {
+        if (word) {
+          lines[currentLine].push({ content: word, type: 'code' });
+        }
+      });
     } else if (node.type === 'html') {
       lines[currentLine].push({ content: node.text, type: 'normal' });
     }
@@ -117,6 +124,20 @@ export function nonMarkdownToHTML(text: string) {
   }</p>`;
 }
 
+/**
+ * Makes the text of a code span safe to put in HTML.
+ *
+ * - `<` and `>` become entities, thus the text does not become markup.
+ * - `&` stays as it is, because `sanitizeText` can have made entities before this step.
+ * - `:` becomes an entity, thus `replaceIconSubstring` does not find an icon in the text.
+ *
+ * @param text - Literal text.
+ * @returns The text for an HTML `<code>` element.
+ */
+function escapeCodeSpan(text: string): string {
+  return text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/:/g, '&#58;');
+}
+
 export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {
   const nodes = marked.lexer(markdown);
 
@@ -138,6 +159,9 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `${node.text}`;
     } else if (node.type === 'escape') {
       return node.text;
+    } else if (node.type === 'codespan') {
+      // The text of a code span is literal, thus it must not become markup.
+      return `<code>${escapeCodeSpan(node.text)}</code>`;
     }
     log.warn(`Unsupported markdown: ${node.type}`);
     return node.raw;
