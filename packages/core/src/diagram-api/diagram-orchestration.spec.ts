@@ -27,7 +27,6 @@ describe('diagram-orchestration', () => {
       { text: 'erDiagram', expected: 'er' },
       { text: 'journey', expected: 'journey' },
       { text: 'gantt', expected: 'gantt' },
-      { text: 'pie', expected: 'pie' },
       { text: 'requirementDiagram', expected: 'requirement' },
       { text: 'sequenceDiagram', expected: 'sequence' },
       { text: 'mindmap', expected: 'mindmap' },
@@ -85,13 +84,6 @@ describe('diagram-orchestration', () => {
             }
           `)
       ).toBe('er');
-    });
-
-    it('should not detect flowchart if pie contains flowchart', () => {
-      expect(
-        detectType(`pie title: "flowchart"
-      flowchart: 1 "pie" pie: 2 "pie"`)
-      ).toBe('pie');
     });
   });
 });

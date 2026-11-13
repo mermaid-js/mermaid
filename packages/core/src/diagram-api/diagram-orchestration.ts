@@ -5,7 +5,6 @@ import swimlanes from '../diagrams/swimlanes/detector.js';
 import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
-import { pie } from '../diagrams/pie/pieDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import xychart from '../diagrams/xychart/xychartDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
@@ -91,7 +90,6 @@ export const addDiagrams = () => {
     classDiagramV2,
     er,
     gantt,
-    pie,
     requirement,
     sequence,
     swimlanes,

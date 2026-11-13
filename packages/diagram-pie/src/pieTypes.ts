@@ -1,5 +1,5 @@
-import type { PieDiagramConfig } from '../../config.type.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
+import type { PieDiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { DiagramDB } from '@mermaid-js/core/diagram-api/types.js';
 
 export interface PieFields {
   sections: Sections;

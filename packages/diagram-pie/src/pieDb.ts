@@ -1,4 +1,4 @@
-import { log } from '../../logger.js';
+import { log } from '@mermaid-js/core/logger.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -7,11 +7,11 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { PieFields, PieDB, Sections, D3Section } from './pieTypes.js';
 import type { RequiredDeep } from 'type-fest';
-import type { PieDiagramConfig } from '../../config.type.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
+import type { PieDiagramConfig } from '@mermaid-js/core/config.type.js';
+import DEFAULT_CONFIG from '@mermaid-js/core/defaultConfig.js';
 
 export const DEFAULT_PIE_CONFIG: Required<PieDiagramConfig> = DEFAULT_CONFIG.pie;
 

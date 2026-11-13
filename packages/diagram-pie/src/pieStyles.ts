@@ -1,4 +1,4 @@
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
 import type { PieStyleOptions } from './pieTypes.js';
 
 const getStyles: DiagramStylesProvider = (options: PieStyleOptions) =>

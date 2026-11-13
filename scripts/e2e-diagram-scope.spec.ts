@@ -70,7 +70,7 @@ describe('detectScope', () => {
   it('combines patterns from two different diagrams', () => {
     const result = detectScope([
       'packages/core/src/diagrams/gantt/ganttDb.ts',
-      'packages/core/src/diagrams/pie/pieDb.ts',
+      'packages/diagram-pie/src/pieDb.ts',
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([

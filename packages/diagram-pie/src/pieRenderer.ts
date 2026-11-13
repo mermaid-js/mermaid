@@ -1,12 +1,12 @@
 import type d3 from 'd3';
 import { arc, pie as d3pie, scaleOrdinal } from 'd3';
-import type { MermaidConfig, PieDiagramConfig } from '../../config.type.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { cleanAndMerge, parseFontSize } from '../../utils.js';
+import type { MermaidConfig, PieDiagramConfig } from '@mermaid-js/core/config.type.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DrawDefinition, SVG, SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
+import { cleanAndMerge, parseFontSize } from '@mermaid-js/core/utils.js';
 import type { D3Section, PieDB, Sections } from './pieTypes.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
