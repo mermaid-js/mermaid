@@ -1,6 +1,6 @@
-import type { C4DiagramConfig } from '../../config.type.js';
-import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
-import type { NonClusterNode } from '../../rendering-util/types.js';
+import type { C4DiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { ShapeID } from '@mermaid-js/core/rendering-util/rendering-elements/shapes.js';
+import type { NonClusterNode } from '@mermaid-js/core/rendering-util/types.js';
 
 /**
  * Builds a unified-renderer {@link Node} from a legacy C4 shape so the legacy

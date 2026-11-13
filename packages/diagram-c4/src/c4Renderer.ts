@@ -1,19 +1,19 @@
 import svgDraw from './svgDraw.js';
-import { log } from '../../logger.js';
+import { log } from '@mermaid-js/core/logger.js';
 // @ts-ignore: JISON doesn't support types
 import { parser } from './parser/c4Diagram.jison';
-import common from '../common/common.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import c4Db from './c4Db.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
-import assignWithDepth from '../../assignWithDepth.js';
-import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
-import { getDiagramRoot } from '../../utils/diagramRoot.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { Diagram } from '../../Diagram.js';
-import type { C4DiagramConfig } from '../../config.type.js';
-import type { SVG } from '../../diagram-api/types.js';
-import type { TextDimensionConfig } from '../../types.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '@mermaid-js/core/diagram-api/requiredConfig.js';
+import assignWithDepth from '@mermaid-js/core/assignWithDepth.js';
+import { wrapLabel, calculateTextWidth, calculateTextHeight } from '@mermaid-js/core/utils.js';
+import { getDiagramRoot } from '@mermaid-js/core/utils/diagramRoot.js';
+import { configureSvgSize } from '@mermaid-js/core/setupGraphViewbox.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import type { C4DiagramConfig } from '@mermaid-js/core/config.type.js';
+import type { SVG } from '@mermaid-js/core/diagram-api/types.js';
+import type { TextDimensionConfig } from '@mermaid-js/core/types.js';
 import type {
   C4Boundary,
   C4DrawConfig,
@@ -24,9 +24,9 @@ import type {
   C4Shape,
   C4Text,
 } from './c4Types.js';
-import { shapes } from '../../rendering-util/rendering-elements/shapes.js';
+import { shapes } from '@mermaid-js/core/rendering-util/rendering-elements/shapes.js';
 import { buildC4Node } from './c4ShapeAdapter.js';
-import intersect from '../../rendering-util/rendering-elements/intersect/index.js';
+import intersect from '@mermaid-js/core/rendering-util/rendering-elements/intersect/index.js';
 
 type C4DB = typeof c4Db;
 

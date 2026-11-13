@@ -1,6 +1,7 @@
 import type { ExternalDiagramDefinition } from '@mermaid-js/core';
 import architecture from '@mermaid-js/diagram-architecture';
 import block from '@mermaid-js/diagram-block';
+import c4 from '@mermaid-js/diagram-c4';
 import classDiagramV2 from '@mermaid-js/diagram-class';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
 import er from '@mermaid-js/diagram-er';
@@ -32,14 +33,19 @@ import xychart from '@mermaid-js/diagram-xychart';
 
 /** The diagram packages that the `mermaid` entry registers. */
 export const diagrams: ExternalDiagramDefinition[] = [
+  // Detectors run in this order and the first match wins. These keep their original order:
+  // `flowchart-elk` also matches flowchart's detector, and C4's detector matches its keywords
+  // anywhere in the text.
+  flowchartElk,
+  mindmap,
   architecture,
+  c4,
+  // The rest don't overlap.
   block,
   classDiagramV2,
   cynefin,
   er,
   eventmodeling,
-  // Before `flowchart`, whose detector also matches `flowchart-elk`.
-  flowchartElk,
   flowchart,
   gantt,
   git,
@@ -47,7 +53,6 @@ export const diagrams: ExternalDiagramDefinition[] = [
   ishikawa,
   journey,
   kanban,
-  mindmap,
   packet,
   pie,
   quadrantChart,

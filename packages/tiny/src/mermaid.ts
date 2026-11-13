@@ -1,6 +1,7 @@
 // The `mermaid` entry, minus its large layouts, diagrams and KaTeX.
 import mermaid from '@mermaid-js/core';
 import block from '@mermaid-js/diagram-block';
+import c4 from '@mermaid-js/diagram-c4';
 import classDiagramV2 from '@mermaid-js/diagram-class';
 import { cynefin } from '@mermaid-js/diagram-cynefin';
 import er from '@mermaid-js/diagram-er';
@@ -29,7 +30,9 @@ import venn from '@mermaid-js/diagram-venn';
 import wardley from '@mermaid-js/diagram-wardley';
 import xychart from '@mermaid-js/diagram-xychart';
 
+// `diagrams.ts`'s list, in the same order, minus the large diagrams.
 void mermaid.registerExternalDiagrams([
+  c4,
   block,
   classDiagramV2,
   cynefin,

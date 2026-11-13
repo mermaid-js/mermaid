@@ -412,6 +412,16 @@ importers:
         specifier: ^7.4.3
         version: 7.4.3
 
+  packages/diagram-c4:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
   packages/diagram-class:
     dependencies:
       '@mermaid-js/core':
@@ -837,6 +847,9 @@ importers:
       '@mermaid-js/diagram-block':
         specifier: workspace:^
         version: link:../diagram-block
+      '@mermaid-js/diagram-c4':
+        specifier: workspace:^
+        version: link:../diagram-c4
       '@mermaid-js/diagram-class':
         specifier: workspace:^
         version: link:../diagram-class
@@ -1213,6 +1226,9 @@ importers:
       '@mermaid-js/diagram-block':
         specifier: workspace:^
         version: link:../diagram-block
+      '@mermaid-js/diagram-c4':
+        specifier: workspace:^
+        version: link:../diagram-c4
       '@mermaid-js/diagram-class':
         specifier: workspace:^
         version: link:../diagram-class

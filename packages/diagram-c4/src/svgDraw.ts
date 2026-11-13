@@ -1,9 +1,9 @@
-import common from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
+import * as svgDrawCommon from '@mermaid-js/core/diagrams/common/svgDrawCommon.js';
 import type { BaseType, Selection } from 'd3';
-import type { SVG, SVGGroup } from '../../diagram-api/types.js';
-import type { D3Selection } from '../../types.js';
-import type { RectData } from '../common/commonTypes.js';
+import type { SVG, SVGGroup } from '@mermaid-js/core/diagram-api/types.js';
+import type { D3Selection } from '@mermaid-js/core/types.js';
+import type { RectData } from '@mermaid-js/core/diagrams/common/commonTypes.js';
 import type { C4Boundary, C4DrawConfig, C4Font, C4Rel } from './c4Types.js';
 
 type TextAttrs = Record<string, string | number>;

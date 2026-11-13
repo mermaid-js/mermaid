@@ -1,4 +1,3 @@
-import c4 from '../diagrams/c4/c4Detector.js';
 import agentflow from '../diagrams/agentflow/afDetector.js';
 import errorDiagram from '../diagrams/error/errorDiagram.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
@@ -48,5 +47,5 @@ export const addDiagrams = () => {
   );
 
   // Ordering of detectors is important. The first one to return true will be used.
-  registerLazyLoadedDiagrams(agentflow, c4);
+  registerLazyLoadedDiagrams(agentflow);
 };

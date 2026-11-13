@@ -1,7 +1,7 @@
 import c4Db from '../c4Db.js';
 // @ts-ignore: JISON doesn't support types
 import c4 from './c4Diagram.jison';
-import { setConfig } from '../../../config.js';
+import { setConfig } from '@mermaid-js/core/config.js';
 
 setConfig({
   securityLevel: 'strict',

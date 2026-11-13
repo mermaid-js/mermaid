@@ -1,12 +1,12 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
-import { sanitizeText } from '../common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import { getRequiredConfig } from '@mermaid-js/core/diagram-api/requiredConfig.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
 import {
   setAccTitle,
   getAccTitle,
   getAccDescription,
   setAccDescription,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
 
 /**

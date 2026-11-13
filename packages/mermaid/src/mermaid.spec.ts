@@ -7,15 +7,20 @@ import elkLayouts from '@mermaid-js/layout-elk';
 import { diagrams } from './diagrams.js';
 import mermaid from './mermaid.js';
 
-const diagramImports = (entry: string) =>
-  [
-    ...readFileSync(new URL(entry, import.meta.url), 'utf8').matchAll(
-      /'(@mermaid-js\/diagram-[^']+)'/g
-    ),
-  ].map(([, name]) => name);
+/** The diagrams that an entry registers, in order. */
+const diagramList = (entry: string, listStart: string) => {
+  const source = readFileSync(new URL(entry, import.meta.url), 'utf8');
+  const list = source.slice(source.indexOf(listStart) + listStart.length);
+  return list
+    .slice(0, list.indexOf(']'))
+    .replaceAll(/\/\/.*/g, '')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean);
+};
 
-/** Diagram packages that tiny leaves out, to stay small. */
-const LARGE_DIAGRAMS = ['@mermaid-js/diagram-architecture', '@mermaid-js/diagram-mindmap'];
+/** Diagrams that tiny leaves out, to stay small. */
+const LARGE_DIAGRAMS = ['architecture', 'flowchartElk', 'mindmap'];
 
 describe('mermaid', () => {
   it.each([...coseBilkentLayouts, ...elkLayouts])('registers the $name layout', (layout) => {
@@ -31,6 +36,7 @@ describe('mermaid', () => {
     { text: 'architecture-beta', expected: 'architecture' },
     { text: 'block', expected: 'block' },
     { text: 'block-beta', expected: 'block' },
+    { text: 'C4Context', expected: 'c4' },
     { text: 'classDiagram', expected: 'classDiagram' },
     { text: 'cynefin-beta', expected: 'cynefin' },
     { text: 'erDiagram', expected: 'er' },
@@ -72,6 +78,9 @@ describe('mermaid', () => {
     { text: 'wardley-beta', expected: 'wardley' },
     { text: 'xychart', expected: 'xychart' },
     { text: 'xychart-beta', expected: 'xychart' },
+    // C4's detector matches its keywords anywhere, so only the diagrams before it win.
+    { text: 'mindmap\n  C4Container', expected: 'mindmap' },
+    { text: 'flowchart\n  C4Container', expected: 'c4' },
   ])('detects $text as $expected', ({ text, expected }) => {
     expect(mermaid.detectType(text)).toBe(expected);
   });
@@ -84,10 +93,12 @@ describe('mermaid', () => {
     expect(Object.keys(detectors).slice(-diagrams.length)).toEqual(diagrams.map(({ id }) => id));
   });
 
-  // Both entries share one core instance in tests, so compare their imports.
-  it('imports the same diagram packages as tiny, apart from the large ones', () => {
-    expect(diagramImports('../../tiny/src/mermaid.ts')).toEqual(
-      diagramImports('./diagrams.ts').filter((name) => !LARGE_DIAGRAMS.includes(name))
+  // Both entries share one core instance in tests, so compare their sources.
+  it('registers the same diagrams in the same order as tiny, apart from the large ones', () => {
+    expect(diagramList('../../tiny/src/mermaid.ts', 'registerExternalDiagrams([')).toEqual(
+      diagramList('./diagrams.ts', 'ExternalDiagramDefinition[] = [').filter(
+        (name) => !LARGE_DIAGRAMS.includes(name)
+      )
     );
   });
 });

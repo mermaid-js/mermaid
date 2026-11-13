@@ -1,4 +1,4 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import { C4_ELEMENT_TYPES } from './c4ShapeAdapter.js';
 
 // Per-element-type font rules from the c4 config (personFontFamily and friends).

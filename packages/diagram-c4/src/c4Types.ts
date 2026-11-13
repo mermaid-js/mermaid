@@ -1,4 +1,4 @@
-import type { C4DiagramConfig } from '../../config.type.js';
+import type { C4DiagramConfig } from '@mermaid-js/core/config.type.js';
 
 /**
  * A text element of a C4 entity (label, type, description, …).
