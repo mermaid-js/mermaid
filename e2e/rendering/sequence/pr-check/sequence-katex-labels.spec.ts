@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { imgSnapshotTest } from '../../../helpers/util';
 
+interface MermaidWindow {
+  __mermaid?: {
+    initialize: (config: object) => void;
+    render: (id: string, text: string, container: Element) => Promise<{ svg: string }>;
+  };
+}
+
 // #7681: KaTeX in sequence actor names and block titles. Block titles used to be wrapped, which put
 // <br/> inside $$...$$ and left raw markup in the label; section titles with math were drawn on top
 // of their divider; and math labels ignored the actor/message font.
@@ -84,6 +91,46 @@ test.describe('sequence diagram KaTeX labels (#7681)', () => {
       expect(layout.dividers).toHaveLength(2);
       expect(layout.elseTitleTop).toBeGreaterThanOrEqual(layout.dividers[0]);
       expect(layout.andTitleTop).toBeGreaterThanOrEqual(layout.dividers[1]);
+    });
+  });
+
+  // Math labels are measured in the browser and the result is written to foreignObject sizes in
+  // SVG units. Rendering inside a CSS-scaled ancestor (e.g. a scaled slide deck) must not shrink them.
+  test('sizes math labels the same inside a CSS-scaled container', async ({ page }) => {
+    await page.goto('/rerender.html');
+    await page.addScriptTag({
+      type: 'module',
+      content: `import mermaid from './mermaid.esm.mjs'; window.__mermaid = mermaid;`,
+    });
+    await page.waitForFunction(() => (window as MermaidWindow).__mermaid !== undefined);
+
+    const sizes = await page.evaluate(async (text: string) => {
+      const mermaid = (window as MermaidWindow).__mermaid!;
+      mermaid.initialize({ startOnLoad: false });
+      const renderIn = async (id: string, transform: string) => {
+        const container = document.createElement('div');
+        container.style.transform = transform;
+        container.style.transformOrigin = '0 0';
+        document.body.append(container);
+        const { svg } = await mermaid.render(id, text, container);
+        const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+        return [...doc.querySelectorAll('foreignObject')].map((fo) => [
+          Number(fo.getAttribute('width')),
+          Number(fo.getAttribute('height')),
+        ]);
+      };
+      return {
+        plain: await renderIn('katexPlain', 'none'),
+        scaled: await renderIn('katexScaled', 'scale(0.5)'),
+      };
+    }, diagram);
+
+    expect(sizes.plain.length).toBeGreaterThan(0);
+    expect(sizes.scaled).toHaveLength(sizes.plain.length);
+    sizes.plain.forEach(([width, height], i) => {
+      expect(width).toBeGreaterThan(0);
+      expect(Math.abs(sizes.scaled[i][0] - width)).toBeLessThanOrEqual(1);
+      expect(Math.abs(sizes.scaled[i][1] - height)).toBeLessThanOrEqual(1);
     });
   });
 });

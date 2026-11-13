@@ -143,6 +143,28 @@ const popupMenuToggle = function (popId) {
   );
 };
 
+/**
+ * Measures an HTML node in layout (CSS) pixels, ignoring CSS transforms on its ancestors.
+ *
+ * `getBoundingClientRect()` returns the on-screen size, so inside a scaled container (e.g. a
+ * `transform: scale(0.5)` slide) it would be too small for the foreignObject that holds the node.
+ * `offsetWidth`/`offsetHeight` are the untransformed layout size but rounded to whole pixels, so
+ * the precise rect is kept whenever both agree (no scaling), and in environments without layout.
+ *
+ * @param {HTMLElement} node
+ * @returns {{ width: number, height: number }}
+ */
+const measureLayoutBox = (node) => {
+  const rect = node.getBoundingClientRect();
+  const { offsetWidth, offsetHeight } = node;
+  const unscaled =
+    Math.abs(rect.width - offsetWidth) < 1 && Math.abs(rect.height - offsetHeight) < 1;
+  if (!offsetWidth || !offsetHeight || unscaled) {
+    return { width: rect.width, height: rect.height };
+  }
+  return { width: offsetWidth, height: offsetHeight };
+};
+
 export const drawKatex = async function (elem, textData, msgModel = null) {
   let textElem = elem.append('foreignObject');
   const linesSanitized = await renderKatexSanitized(textData.text, configApi.getConfig());
@@ -162,7 +184,7 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
     divElem.style('font-weight', textData.fontWeight);
   }
   divElem.html(linesSanitized);
-  const dim = divElem.node().getBoundingClientRect();
+  const dim = measureLayoutBox(divElem.node());
 
   textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
 
@@ -1990,7 +2012,7 @@ const _drawTextCandidateFunc = (function () {
       .html(await renderKatexSanitized(content, configApi.getConfig()));
 
     // Measure the label as it is actually rendered (with the actor font) to size and centre it.
-    const dim = label.node().getBoundingClientRect();
+    const dim = measureLayoutBox(label.node());
     f.attr('x', x + width / 2 - dim.width / 2)
       .attr('y', y + height / 2 - dim.height / 2)
       .attr('width', Math.ceil(dim.width))

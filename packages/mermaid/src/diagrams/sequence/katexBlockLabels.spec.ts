@@ -42,7 +42,20 @@ const renderedTitles = async (code: string) => {
   await diagram.renderer.draw(code, 'tst', '1.2.3', diagram);
   const db = diagram.db as { getMessages: () => { type: number; message: string }[] };
   const { LINETYPE } = diagram.db as unknown as { LINETYPE: Record<string, number> };
-  const titleTypes = new Set([LINETYPE.LOOP_START, LINETYPE.ALT_START, LINETYPE.ALT_ELSE]);
+  const titleTypes = new Set(
+    [
+      'LOOP_START',
+      'ALT_START',
+      'ALT_ELSE',
+      'OPT_START',
+      'PAR_START',
+      'PAR_OVER_START',
+      'PAR_AND',
+      'CRITICAL_START',
+      'CRITICAL_OPTION',
+      'BREAK_START',
+    ].map((name) => LINETYPE[name])
+  );
   return db
     .getMessages()
     .filter((msg) => titleTypes.has(msg.type))
@@ -81,6 +94,61 @@ sequenceDiagram
     for (const title of titles) {
       expect(title).not.toMatch(/<br\s*\/?>/i);
       expect(mathIn(title)).toHaveLength(1);
+    }
+  });
+
+  it('keeps math intact in opt, par, par_over, critical and break titles', async () => {
+    const titles = await renderedTitles(`%%{init: {"sequence": {"wrap": true, "width": 60}}}%%
+sequenceDiagram
+  participant A
+  participant B
+  rect rgb(200, 220, 255)
+    opt ${LONG_TEXT} $$a$$
+      A->>B: opt
+    end
+  end
+  par ${LONG_TEXT} $$b$$
+    A->>B: one
+  and ${LONG_TEXT} $$c$$
+    B->>A: two
+  end
+  par_over ${LONG_TEXT} $$d$$
+    A->>B: three
+  end
+  critical ${LONG_TEXT} $$e$$
+    A->>B: four
+  option ${LONG_TEXT} $$f$$
+    A->>B: five
+  end
+  rect
+    break ${LONG_TEXT} $$g$$
+      A->>B: six
+    end
+  end`);
+
+    expect(titles).toHaveLength(7);
+    for (const title of titles) {
+      expect(title).not.toMatch(/<br\s*\/?>/i);
+      expect(mathIn(title)).toHaveLength(1);
+    }
+  });
+
+  // Exercises the KaTeX actor-label path in jsdom (no layout, so sizes are 0). That the footer
+  // label is actually filled and sized in a browser is asserted by the Playwright test.
+  it('draws a math label for both the header and the footer actor', async () => {
+    document.body.innerHTML = '<svg id="tst" xmlns="http://www.w3.org/2000/svg"></svg>';
+    const code = `sequenceDiagram
+  participant A as $$\\alpha$$lex
+  participant B
+  A->>B: hi`;
+    const diagram = await Diagram.fromText(code);
+    await diagram.renderer.draw(code, 'tst', '1.2.3', diagram);
+
+    const actorLabels = [...document.querySelectorAll('#tst switch > foreignObject')];
+    expect(actorLabels).toHaveLength(2);
+    for (const label of actorLabels) {
+      expect(label.getAttribute('width')).not.toBeNull();
+      expect(label.getAttribute('height')).not.toBeNull();
     }
   });
 
