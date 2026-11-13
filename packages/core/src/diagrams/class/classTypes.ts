@@ -1,7 +1,8 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { parseGenericTypes, sanitizeText } from '../common/common.js';
+import type { ClassBoxData } from '../../rendering-util/rendering-elements/shapes/classBox.js';
 
-export interface ClassNode {
+export interface ClassNode extends ClassBoxData {
   id: string;
   type: string;
   label: string;

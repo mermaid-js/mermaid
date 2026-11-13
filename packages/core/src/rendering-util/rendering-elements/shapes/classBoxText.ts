@@ -1,15 +1,15 @@
 import { select } from 'd3';
-import { getConfig } from '../../config.js';
-import { getNodeClasses } from '../../rendering-util/rendering-elements/shapes/util.js';
-import { calculateTextWidth, decodeEntities } from '../../utils.js';
-import type { ClassMember, ClassNode } from './classTypes.js';
-import { sanitizeText } from '../../diagram-api/diagramAPI.js';
-import { createText } from '../../rendering-util/createText.js';
-import { configureLabelImages } from '../../rendering-util/rendering-elements/shapes/labelImageUtils.js';
-import { evaluate, hasKatex } from '../common/common.js';
-import type { Node } from '../../rendering-util/types.js';
-import type { MermaidConfig } from '../../config.type.js';
-import type { D3Selection } from '../../types.js';
+import { getConfig } from '../../../config.js';
+import { getNodeClasses } from './util.js';
+import { calculateTextWidth, decodeEntities } from '../../../utils.js';
+import type { ClassBoxMember } from './classBox.js';
+import { sanitizeText } from '../../../diagram-api/diagramAPI.js';
+import { createText } from '../../createText.js';
+import { configureLabelImages } from './labelImageUtils.js';
+import { evaluate, hasKatex } from '../../../diagrams/common/common.js';
+import type { Node } from '../../types.js';
+import type { MermaidConfig } from '../../../config.type.js';
+import type { D3Selection } from '../../../types.js';
 
 // Creates the shapeSvg and inserts text
 export async function textHelper<T extends SVGGraphicsElement>(
@@ -38,7 +38,7 @@ export async function textHelper<T extends SVGGraphicsElement>(
   annotationGroup = shapeSvg.insert('g').attr('class', 'annotation-group text');
   if (node.annotations.length > 0) {
     const annotation = node.annotations[0];
-    await addText(annotationGroup, { text: `«${annotation}»` } as unknown as ClassMember, 0);
+    await addText(annotationGroup, { text: `«${annotation}»` }, 0);
 
     const annotationGroupBBox = annotationGroup.node()!.getBBox();
     annotationGroupHeight = annotationGroupBBox.height;
@@ -98,7 +98,7 @@ export async function textHelper<T extends SVGGraphicsElement>(
 // Modified version of labelHelper() to help create and place text for classes
 async function addText<T extends SVGGraphicsElement>(
   parentGroup: D3Selection<T>,
-  node: Node | ClassNode | ClassMember,
+  node: Node | Pick<ClassBoxMember, 'text'>,
   yOffset: number,
   styles: string[] = []
 ) {

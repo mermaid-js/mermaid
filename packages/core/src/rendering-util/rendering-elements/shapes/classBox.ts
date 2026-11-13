@@ -2,14 +2,28 @@ import { updateNodeBounds } from './util.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
 import type { Node } from '../../types.js';
-import type { ClassNode } from '../../../diagrams/class/classTypes.js';
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import intersect from '../intersect/index.js';
-import { textHelper } from '../../../diagrams/class/shapeUtil.js';
+import { textHelper } from './classBoxText.js';
 import { evaluate } from '../../../diagrams/common/common.js';
 import type { D3Selection } from '../../../types.js';
 import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
+
+/** A class diagram member (attribute or method) that this shape draws. */
+export interface ClassBoxMember {
+  text: string;
+  parseClassifier(): string;
+}
+
+/** The parts of a class diagram's class that this shape draws. */
+export interface ClassBoxData {
+  text: string;
+  styles: string[];
+  annotations: string[];
+  members: ClassBoxMember[];
+  methods: ClassBoxMember[];
+}
 
 export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const config = getConfig();
@@ -19,7 +33,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   const GAP = PADDING;
   const useHtmlLabels = node.useHtmlLabels ?? evaluate(config.htmlLabels) ?? true;
   // Treat node as classNode
-  const classNode = node as unknown as ClassNode;
+  const classNode = node as unknown as ClassBoxData;
   classNode.annotations = classNode.annotations ?? [];
   classNode.members = classNode.members ?? [];
   classNode.methods = classNode.methods ?? [];
@@ -237,7 +251,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   }
 
   /// Apply styles ///
-  if (classNode.look !== 'handDrawn') {
+  if (node.look !== 'handDrawn') {
     shapeSvg.selectAll('path').attr('style', styles);
   }
   // Apply other styles like stroke-width and stroke-dasharray to border (not background of shape)
