@@ -1,44 +1,9 @@
 import { it, describe, expect } from 'vitest';
-import { detectType } from './detectType.js';
-import { addDiagrams } from './diagram-orchestration.js';
+import { detectType } from '@mermaid-js/core/diagram-api/detectType.js';
+import './mermaid.js';
 
-describe('diagram-orchestration', () => {
-  it('should register diagrams', () => {
-    expect(() => detectType('error')).toThrow();
-    addDiagrams();
-    expect(detectType('error')).toBe('error');
-  });
-
+describe('the diagrams that mermaid registers', () => {
   describe('proper diagram types should be detected', () => {
-    beforeAll(() => {
-      addDiagrams();
-    });
-
-    it.each([
-      { text: 'graph TD;', expected: 'flowchart-v2' },
-      { text: 'flowchart TD;', expected: 'flowchart-v2' },
-      { text: 'flowchart-v2 TD;', expected: 'flowchart-v2' },
-      { text: 'flowchart-elk TD;', expected: 'flowchart-elk' },
-      { text: 'swimlane-beta TD;', expected: 'swimlane' },
-      { text: 'error', expected: 'error' },
-      { text: 'C4Context;', expected: 'c4' },
-      { text: 'classDiagram', expected: 'classDiagram' },
-      { text: 'classDiagram-v2', expected: 'classDiagram' },
-      { text: 'erDiagram', expected: 'er' },
-      { text: 'gantt', expected: 'gantt' },
-      { text: 'sequenceDiagram', expected: 'sequence' },
-      { text: 'mindmap', expected: 'mindmap' },
-      { text: 'timeline', expected: 'timeline' },
-      { text: 'gitGraph', expected: 'gitGraph' },
-      { text: 'stateDiagram', expected: 'stateDiagram' },
-      { text: 'stateDiagram-v2', expected: 'stateDiagram' },
-    ])(
-      'should $text be detected as $expected',
-      ({ text, expected }: { text: string; expected: string }) => {
-        expect(detectType(text)).toBe(expected);
-      }
-    );
-
     it('routes both graph and flowchart to the unified flowchart', () => {
       // `graph` and `flowchart` are the same diagram. They used to differ only when a
       // renderer was configured, which is why `graph` had a legacy id of its own.

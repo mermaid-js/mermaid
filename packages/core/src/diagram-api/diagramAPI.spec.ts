@@ -11,6 +11,10 @@ beforeAll(async () => {
 });
 
 describe('DiagramAPI', () => {
+  it('registers the error diagram', () => {
+    expect(detectType('error')).toBe('error');
+  });
+
   it('should return default diagrams', () => {
     expect(getDiagram('sequence')).not.toBeNull();
   });
