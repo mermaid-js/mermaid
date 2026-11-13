@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderKatexSanitized } from '@mermaid-js/core/diagrams/common/common.js';
 import { getLayoutLoaderDefinition } from '@mermaid-js/core/rendering-util/render.js';
 import coseBilkentLayouts from '@mermaid-js/layout-cose-bilkent';
 import elkLayouts from '@mermaid-js/layout-elk';
+import { diagrams } from './diagrams.js';
 import mermaid from './mermaid.js';
 
 const diagramImports = (entry: string) =>
@@ -40,8 +41,16 @@ describe('mermaid', () => {
     expect(mermaid.detectType(text)).toBe(expected);
   });
 
+  // The test setup registers `diagrams` too, so check the entry against a fresh registry.
+  it('registers its diagram packages after the core diagrams', async () => {
+    vi.resetModules();
+    const { detectors } = await import('@mermaid-js/core/diagram-api/detectType.js');
+    await import('./mermaid.js');
+    expect(Object.keys(detectors).slice(-diagrams.length)).toEqual(diagrams.map(({ id }) => id));
+  });
+
   // Both entries share one core instance in tests, so compare their imports.
   it('imports the same diagram packages as tiny', () => {
-    expect(diagramImports('../../tiny/src/mermaid.ts')).toEqual(diagramImports('./mermaid.ts'));
+    expect(diagramImports('../../tiny/src/mermaid.ts')).toEqual(diagramImports('./diagrams.ts'));
   });
 });

@@ -29,7 +29,10 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./packages/core/src/tests/setup.ts'],
+    setupFiles: [
+      './packages/core/src/tests/setup.ts',
+      './packages/mermaid/src/tests/registerDiagrams.ts',
+    ],
     exclude: [
       ...defaultExclude,
       'e2e/rendering/**',

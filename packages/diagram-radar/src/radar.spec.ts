@@ -4,10 +4,6 @@ import { parser } from './parser.js';
 import { relativeRadius, closedRoundCurve } from './renderer.js';
 import { Diagram } from '@mermaid-js/core/Diagram.js';
 import mermaidAPI from '@mermaid-js/core/mermaidAPI.js';
-import { registerLazyLoadedDiagrams } from '@mermaid-js/core/diagram-api/detectType.js';
-import { radar } from './detector.js';
-
-registerLazyLoadedDiagrams(radar);
 
 const {
   clear,

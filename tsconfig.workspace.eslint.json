@@ -12,6 +12,7 @@
     "packages/core/scripts",
     "packages/core/.lintstagedrc.mjs",
     "packages/mermaid/src/*.ts",
+    "packages/mermaid/src/tests",
     "packages/mermaid/scripts",
     "packages/mermaid/.lintstagedrc.mjs",
     "packages/tiny/src",

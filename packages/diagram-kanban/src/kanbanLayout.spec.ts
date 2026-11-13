@@ -2,11 +2,9 @@
  * Kanban lays its columns out itself and never reads `layout`, so choosing `layout: layered` (or any
  * other engine) in the front matter must not change what it draws.
  */
-import { beforeAll, describe, expect } from 'vitest';
-import { registerLazyLoadedDiagrams } from '@mermaid-js/core/diagram-api/detectType.js';
+import { describe, expect } from 'vitest';
 import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
 import { jsdomIt } from '@mermaid-js/core/tests/util.js';
-import kanban from './detector.js';
 
 const BOARD = `kanban
   todo[Todo]
@@ -27,10 +25,6 @@ const renderBoard = async (source: string): Promise<string> =>
   (await mermaidAPI.render('kanban-board', source)).svg;
 
 describe('kanban ignores the layout setting', () => {
-  beforeAll(() => {
-    registerLazyLoadedDiagrams(kanban);
-  });
-
   jsdomIt('draws the same svg with layout: layered as with no layout', async () => {
     const plain = await renderBoard(BOARD);
     const layered = await renderBoard(withLayout('layered'));

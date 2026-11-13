@@ -1,10 +1,6 @@
 import { expect } from 'vitest';
-import { registerLazyLoadedDiagrams } from '@mermaid-js/core/diagram-api/detectType.js';
 import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
 import { ensureNodeFromSelector, jsdomIt } from '@mermaid-js/core/tests/util.js';
-import treeView from './detector.js';
-
-registerLazyLoadedDiagrams(treeView);
 
 jsdomIt('preserves treeView icons after strict security sanitization', async () => {
   mermaidAPI.initialize({ securityLevel: 'strict' });
