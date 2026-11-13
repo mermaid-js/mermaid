@@ -130,3 +130,24 @@ export function nodeLanesReordered(layout: LayoutData, declared: string[]): bool
   const standing = laneOrderLeftToRight(layout).filter((id) => holding.has(id));
   return standing.join() !== declared.filter((id) => holding.has(id)).join();
 }
+
+/** The deepest overlap between a top-level lane without nodes and any other top-level lane, along the lane axis. */
+export function emptyLaneOverlap(layout: LayoutData, vertical = false): number {
+  const holding = new Set(
+    layout.nodes.filter((n) => !n.isGroup && n.parentId).map((n) => n.parentId)
+  );
+  const span = (lane: Node): [number, number] =>
+    vertical
+      ? [(lane.y ?? 0) - (lane.height ?? 0) / 2, (lane.y ?? 0) + (lane.height ?? 0) / 2]
+      : [extentOf(lane).left, extentOf(lane).right];
+  const lanes = layout.nodes.filter((node) => node.isGroup && !node.parentId);
+  let deepest = 0;
+  for (const empty of lanes.filter((lane) => !holding.has(lane.id))) {
+    const [from, to] = span(empty);
+    for (const other of lanes.filter((lane) => lane !== empty)) {
+      const [otherFrom, otherTo] = span(other);
+      deepest = Math.max(deepest, Math.min(to, otherTo) - Math.max(from, otherFrom));
+    }
+  }
+  return deepest;
+}

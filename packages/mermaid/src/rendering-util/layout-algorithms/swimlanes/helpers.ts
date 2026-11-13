@@ -555,6 +555,28 @@ function lanesRightOfInsertion(
   return [];
 }
 
+/**
+ * Where an empty lane's column starts: at the right edge of the lane before it, or else at the
+ * left edge of the lane after it, or at the right edge of the lanes that stay put when that lies
+ * further right. With `automaticLaneOrdering` a lane can stand left of `after` and, at a tight
+ * node spacing, already reach past its left edge.
+ */
+function insertionLine(
+  placed: ReadonlySet<Node>,
+  moving: readonly Node[],
+  before: Node | undefined,
+  after: Node | undefined
+): number {
+  if (before) {
+    return rightOf(before);
+  }
+  if (!after) {
+    return 0;
+  }
+  const staying = [...placed].filter((lane) => !moving.includes(lane));
+  return Math.max(leftOf(after), ...staying.map(rightOf));
+}
+
 type LaneNode = Node & { swimlaneContentTop?: number };
 
 /** Gives an empty lane the column from `left`, as tall as the lane `rowFrom` (or the minimum). */
@@ -606,9 +628,10 @@ function placeEmptyTopLanes(
     }
     const before = order.slice(0, index).findLast((other) => placed.has(other));
     const after = order.slice(index + 1).find((other) => placed.has(other));
-    const line = before ? rightOf(before) : after ? leftOf(after) : 0;
+    const moving = lanesRightOfInsertion(placed, before, after);
+    const line = insertionLine(placed, moving, before, after);
     const width = emptyLaneWidth(lane, fontSize);
-    openColumnAt(nodes, model, lanesRightOfInsertion(placed, before, after), line, width);
+    openColumnAt(nodes, model, moving, line, width);
     placeEmptyLane(lane, line, width, rowFrom);
     placed.add(lane);
   });

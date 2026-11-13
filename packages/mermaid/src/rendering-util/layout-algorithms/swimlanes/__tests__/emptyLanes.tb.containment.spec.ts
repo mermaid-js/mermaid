@@ -4,6 +4,7 @@ import type { LayoutData } from '../../../types.js';
 import { fuzzCase, layoutFuzzCase } from './emptyLaneFuzz.js';
 import {
   DEFAULT_NODE_SPACING,
+  emptyLaneOverlap,
   extentOf,
   laneOrderLeftToRight,
   laneSeams,
@@ -26,10 +27,34 @@ const FUZZ_SEED = 8754;
 // A random diagram whose first lane is empty, and where automatic ordering puts the second lane
 // left of the third.
 const EMPTY_FIRST_AUTO_ORDER_SEED = 2059;
+// Random diagrams in which, at nodeSpacing 10 with automatic ordering, a lane that stands left of
+// the first populated lane in declared order reaches under the empty first lane.
+const EMPTY_LANE_OVERLAP_SEEDS = [1045, 1046, 1064];
+const OVERLAP_TOLERANCE = 0.5;
+const AUTO_ORDER_SPACINGS = [TIGHT_NODE_SPACING, DEFAULT_NODE_SPACING, 50];
 // Lanes may touch or overlap, but not part: a seam wider than this is a gap.
 const SEAM_TOLERANCE = 0.5;
 const NARROW_NODE_WIDTH = 30;
 const WIDE_LANE_PADDING = 60;
+
+/** The follow-up note on #8754: an empty first lane, and automatic ordering puts Left left of Hub. */
+const emptyFirstSource = (direction: string): string =>
+  [
+    `swimlane-beta ${direction}`,
+    '  subgraph L0[Empty]',
+    '  end',
+    '  subgraph L1[Hub]',
+    '    a',
+    '  end',
+    '  subgraph L2[Left]',
+    '    b',
+    '  end',
+    '  subgraph L3[Right]',
+    '    c',
+    '  end',
+    '  b --> a',
+    '  a --> c',
+  ].join('\n');
 
 /** The diagram from the review of #8754: Legal has no nodes. The spacing is set by the options. */
 const reviewSource = (direction: string, withLegal = true): string =>
@@ -216,21 +241,60 @@ describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own 
     );
   });
 
+  describe.each(['TB', 'BT'])('%s, an empty first lane with automaticLaneOrdering', (direction) => {
+    it('keeps clear of a lane that automatic ordering puts left of the first populated lane', async () => {
+      const layout = await layoutFromSource(emptyFirstSource(direction), {
+        ...tight,
+        automaticLaneOrdering: true,
+      });
+      expect(laneOrderLeftToRight(layout)).toEqual(['L2', 'L0', 'L1', 'L3']);
+      expect(emptyLaneOverlap(layout)).toBeLessThanOrEqual(OVERLAP_TOLERANCE);
+      expect(nodesOutsideTheirLane(layout)).toEqual([]);
+    });
+
+    it('stands where it did at a roomy spacing, touching the lane after it', async () => {
+      const layout = await layoutFromSource(emptyFirstSource(direction), {
+        nodeSpacing: DEFAULT_NODE_SPACING,
+        automaticLaneOrdering: true,
+      });
+      expect(emptyLaneOverlap(layout)).toBeLessThanOrEqual(OVERLAP_TOLERANCE);
+      expect(extentOf(nodeById(layout, 'L0')).right).toBeCloseTo(
+        extentOf(nodeById(layout, 'L1')).left,
+        6
+      );
+    });
+  });
+
+  describe.each(['LR', 'RL'])('%s, an empty first lane with automaticLaneOrdering', (direction) => {
+    it('stands clear of the other lanes: rows tile, so ordering cannot make them overlap', async () => {
+      const layout = await layoutFromSource(emptyFirstSource(direction), {
+        ...tight,
+        automaticLaneOrdering: true,
+      });
+      expect(emptyLaneOverlap(layout, true)).toBeLessThanOrEqual(OVERLAP_TOLERANCE);
+    });
+  });
+
   describe.each(['TB', 'BT'])('%s, random diagrams with automaticLaneOrdering on', (direction) => {
-    it.each([TIGHT_NODE_SPACING, DEFAULT_NODE_SPACING])(
-      'nodeSpacing %d: every node is inside its lane and no gap opens between lanes',
+    it.each(AUTO_ORDER_SPACINGS)(
+      'nodeSpacing %d: every node is inside its lane, no gap opens and no empty lane overlaps another',
       async (nodeSpacing) => {
         const failures: string[] = [];
         let reordered = 0;
-        for (let index = 0; index < FUZZ_CASES_PER_CELL; index++) {
-          const fuzz = fuzzCase(FUZZ_SEED + index, direction);
+        const seeds = [
+          ...Array.from({ length: FUZZ_CASES_PER_CELL }, (_, index) => FUZZ_SEED + index),
+          ...EMPTY_LANE_OVERLAP_SEEDS,
+        ];
+        for (const seed of seeds) {
+          const fuzz = fuzzCase(seed, direction);
           const layout = await layoutFuzzCase(fuzz, nodeSpacing, { automaticLaneOrdering: true });
           reordered += nodeLanesReordered(layout, fuzz.order) ? 1 : 0;
           const outside = nodesOutsideTheirLane(layout);
           const widest = Math.max(...laneSeams(layout));
-          if (outside.length > 0 || widest > SEAM_TOLERANCE) {
+          const overlap = emptyLaneOverlap(layout);
+          if (outside.length > 0 || widest > SEAM_TOLERANCE || overlap > OVERLAP_TOLERANCE) {
             failures.push(
-              `seed ${fuzz.seed}: ${outside.length} outside, widest gap ${widest}\n${fuzz.source}`
+              `seed ${fuzz.seed}: ${outside.length} outside, widest gap ${widest}, empty lane overlap ${overlap}\n${fuzz.source}`
             );
           }
         }
