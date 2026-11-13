@@ -236,6 +236,60 @@ describe('wardley names that contain statement keywords', () => {
     });
   });
 
+  // Lookaheads that scan the rest of a line skip quoted names and stop at a comment.
+  describe('quoted names and comments', () => {
+    it.each([
+      ['a semicolon', 'Billing; API'],
+      ['a bracket', 'Box [beta]'],
+      ['a brace', 'Cache {hot}'],
+      ['a percent sign', '50% off; now'],
+    ])('reads a quoted name with %s in every statement', async (_kind, name) => {
+      const data = await parse([
+        `anchor "${name} user" [0.9, 0.5]`,
+        `component "${name}" [0.5, 0.5]`,
+        `"${name} user" -> "${name}"`,
+        `evolve "${name}" 0.8`,
+        `accelerator "${name}" [0.2, 0.2]`,
+        `deaccelerator "${name}" [0.2, 0.8]`,
+        `pipeline "${name}" {`,
+        `  component "${name} part" [0.6]`,
+        '}',
+      ]);
+
+      expect(data.nodes.map((n) => n.label)).toEqual([`${name} user`, name, `${name} part`]);
+      expect(data.links.map((l) => [l.source, l.target])).toEqual([[`${name} user`, name]]);
+      expect(data.trends.map((t) => t.nodeId)).toEqual([name]);
+      expect(data.accelerators.map((a) => a.name)).toEqual([name]);
+      expect(data.deaccelerators.map((d) => d.name)).toEqual([name]);
+      expect(data.pipelines.map((p) => p.nodeId)).toEqual([name]);
+    });
+
+    it('reads escaped quotes in quoted names and evolution stages', async () => {
+      const data = await parse([
+        String.raw`evolution "R\"D > labs" -> 'it\'s; new' -> Product`,
+        String.raw`component "R\"D; x" [0.5, 0.5]`,
+      ]);
+
+      expect(data.axes.stages).toEqual(['R"D > labs', "it's; new", 'Product']);
+      expect(data.nodes.map((n) => n.label)).toEqual(['R"D; x']);
+    });
+
+    it.each([
+      ['a quoted target', 'component library -> "Box [beta]"', 'Box [beta]'],
+      ['a link label', 'component library -> Box; see [docs]', 'Box'],
+      ['a flow label', "component library +'a [b]'> Box", 'Box'],
+      ['a trailing comment', 'component library -> Box %% see [docs]', 'Box'],
+    ])('reads a link from component library with a bracket in %s', async (_kind, line, target) => {
+      const data = await parse([
+        'component "component library" [0.5, 0.5]',
+        `component "${target}" [0.4, 0.4]`,
+        line,
+      ]);
+
+      expect(data.links.map((l) => [l.source, l.target])).toEqual([['component library', target]]);
+    });
+  });
+
   it('keeps every statement working on indented lines and with CRLF line endings', async () => {
     const data = await parse(
       [
