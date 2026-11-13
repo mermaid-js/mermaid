@@ -65,13 +65,7 @@ describe('getStyles', () => {
     test.each(Object.keys(themes) as (keyof typeof themes)[])(
       'should return a valid style for theme %s',
       (themeId) => {
-        const styles = getStyles(
-          id,
-          '',
-          // @ts-expect-error This will probably be broken until we create a proper Themes type.
-          themes[themeId].getThemeVariables(),
-          ''
-        );
+        const styles = getStyles(id, '', themes[themeId].getThemeVariables(), '');
 
         checkValidStylisCSSStyleSheet(styles);
       }

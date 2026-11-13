@@ -1,4 +1,3 @@
-import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.js';
 import { log } from './logger.js';
 import type { DiagramStylesProvider } from './diagram-api/types.js';
 
@@ -28,7 +27,7 @@ const getStyles = (
     strokeWidth?: number;
     theme?: string;
     look?: string;
-  } & FlowChartStyleOptions,
+  },
   svgId: `${string}`
 ) => {
   let diagramStyles = '';
@@ -77,7 +76,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
+    stroke-width: ${options.strokeWidth ?? 1}px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
@@ -128,7 +127,7 @@ const getStyles = (
 
   [data-look="neo"].node path {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-    stroke-width: ${(options.strokeWidth ?? 1) as number}px;
+    stroke-width: ${options.strokeWidth ?? 1}px;
   }
 
   [data-look="neo"].node .outer-path {
