@@ -395,6 +395,15 @@ importers:
         specifier: ^4.6.6
         version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
 
+  packages/diagram-kanban:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+
   packages/diagram-packet:
     dependencies:
       '@mermaid-js/core':
@@ -468,6 +477,9 @@ importers:
       '@mermaid-js/diagram-ishikawa':
         specifier: workspace:^
         version: link:../diagram-ishikawa
+      '@mermaid-js/diagram-kanban':
+        specifier: workspace:^
+        version: link:../diagram-kanban
       '@mermaid-js/diagram-packet':
         specifier: workspace:^
         version: link:../diagram-packet
@@ -772,6 +784,9 @@ importers:
       '@mermaid-js/diagram-ishikawa':
         specifier: workspace:^
         version: link:../diagram-ishikawa
+      '@mermaid-js/diagram-kanban':
+        specifier: workspace:^
+        version: link:../diagram-kanban
       '@mermaid-js/diagram-packet':
         specifier: workspace:^
         version: link:../diagram-packet

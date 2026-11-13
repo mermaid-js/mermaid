@@ -1,11 +1,11 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { D3Element } from '../../types.js';
-import { sanitizeText } from '../../diagrams/common/common.js';
-import { log } from '../../logger.js';
-import type { Edge, KanbanNode } from '../../rendering-util/types.js';
-import defaultConfig from '../../defaultConfig.js';
-import type { NodeMetaData } from '../../types.js';
-import * as yaml from 'js-yaml';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { D3Element } from '@mermaid-js/core/types.js';
+import { sanitizeText } from '@mermaid-js/core/diagrams/common/common.js';
+import { log } from '@mermaid-js/core/logger.js';
+import type { Edge, KanbanNode } from '@mermaid-js/core/rendering-util/types.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
+import type { NodeMetaData } from '@mermaid-js/core/types.js';
+import * as yaml from '@mermaid-js/core/utils/yaml.js';
 
 let nodes: KanbanNode[] = [];
 let sections: KanbanNode[] = [];

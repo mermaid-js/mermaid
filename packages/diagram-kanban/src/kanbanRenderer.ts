@@ -1,13 +1,16 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { DrawDefinition } from '../../diagram-api/types.js';
-import { log } from '../../logger.js';
-import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DrawDefinition } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { selectSvgElement } from '@mermaid-js/core/rendering-util/selectSvgElement.js';
+import { setupGraphViewbox } from '@mermaid-js/core/setupGraphViewbox.js';
 import type { KanbanDB } from './kanbanTypes.js';
-import defaultConfig from '../../defaultConfig.js';
-import { insertCluster } from '../../rendering-util/rendering-elements/clusters.js';
-import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes.js';
-import type { ClusterNode } from '../../rendering-util/types.js';
+import defaultConfig from '@mermaid-js/core/defaultConfig.js';
+import { insertCluster } from '@mermaid-js/core/rendering-util/rendering-elements/clusters.js';
+import {
+  insertNode,
+  positionNode,
+} from '@mermaid-js/core/rendering-util/rendering-elements/nodes.js';
+import type { ClusterNode } from '@mermaid-js/core/rendering-util/types.js';
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   log.debug('Rendering kanban diagram\n' + text);

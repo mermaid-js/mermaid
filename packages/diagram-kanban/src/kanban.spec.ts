@@ -1,9 +1,9 @@
 // @ts-expect-error No types available for JISON
 import { parser as kanban } from './parser/kanban.jison';
 import kanbanDB from './kanbanDb.js';
-import type { KanbanNode } from '../../rendering-util/types.js';
+import type { KanbanNode } from '@mermaid-js/core/rendering-util/types.js';
 // Todo fix utils functions for tests
-import { setLogLevel } from '../../diagram-api/diagramAPI.js';
+import { setLogLevel } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 
 describe('when parsing a kanban ', function () {
   beforeEach(function () {

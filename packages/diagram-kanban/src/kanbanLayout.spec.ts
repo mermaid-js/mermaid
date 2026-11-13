@@ -3,9 +3,10 @@
  * other engine) in the front matter must not change what it draws.
  */
 import { beforeAll, describe, expect } from 'vitest';
-import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
-import { mermaidAPI } from '../../mermaidAPI.js';
-import { jsdomIt } from '../../tests/util.js';
+import { registerLazyLoadedDiagrams } from '@mermaid-js/core/diagram-api/detectType.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import { jsdomIt } from '@mermaid-js/core/tests/util.js';
+import kanban from './detector.js';
 
 const BOARD = `kanban
   todo[Todo]
@@ -27,7 +28,7 @@ const renderBoard = async (source: string): Promise<string> =>
 
 describe('kanban ignores the layout setting', () => {
   beforeAll(() => {
-    addDiagrams();
+    registerLazyLoadedDiagrams(kanban);
   });
 
   jsdomIt('draws the same svg with layout: layered as with no layout', async () => {

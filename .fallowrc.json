@@ -47,7 +47,6 @@
     "packages/core/src/diagrams/gantt/**",
     "packages/core/src/diagrams/git/**",
     "packages/core/src/diagrams/globalStyles.ts",
-    "packages/core/src/diagrams/kanban/**",
     "packages/core/src/diagrams/mindmap/**",
     "packages/core/src/diagrams/quadrant-chart/**",
     "packages/core/src/diagrams/railroad/**",

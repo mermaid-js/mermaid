@@ -1,7 +1,7 @@
 // @ts-expect-error Incorrect khroma types
 import { darken, lighten, isDark } from 'khroma';
-import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { getIconStyles } from '../globalStyles.js';
+import type { DiagramStylesProvider } from '@mermaid-js/core/diagram-api/types.js';
+import { getIconStyles } from '@mermaid-js/core/diagrams/globalStyles.js';
 
 const genSections: DiagramStylesProvider = (options) => {
   let sections = '';
