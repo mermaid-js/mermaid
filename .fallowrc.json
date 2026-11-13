@@ -55,7 +55,6 @@
     "packages/core/src/diagrams/radar/**",
     "packages/core/src/diagrams/railroad/**",
     "packages/core/src/diagrams/requirement/**",
-    "packages/core/src/diagrams/sankey/**",
     "packages/core/src/diagrams/sequence/**",
     "packages/core/src/diagrams/state/**",
     "packages/core/src/diagrams/swimlanes/**",

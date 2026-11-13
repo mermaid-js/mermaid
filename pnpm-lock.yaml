@@ -297,9 +297,6 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
-      d3-sankey:
-        specifier: ^0.12.3
-        version: 0.12.3
       dagre-d3-es:
         specifier: 7.0.14
         version: 7.0.14
@@ -337,9 +334,6 @@ importers:
       '@types/cytoscape-fcose':
         specifier: ^2.2.5
         version: 2.2.5
-      '@types/d3-sankey':
-        specifier: ^0.12.5
-        version: 0.12.5
       '@types/d3-scale':
         specifier: ^4.0.9
         version: 4.0.9
@@ -401,6 +395,25 @@ importers:
         specifier: workspace:^
         version: link:../parser
 
+  packages/diagram-sankey:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      d3-sankey:
+        specifier: ^0.12.3
+        version: 0.12.3
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+      '@types/d3-sankey':
+        specifier: ^0.12.5
+        version: 0.12.5
+
   packages/examples:
     devDependencies:
       mermaid:
@@ -418,6 +431,9 @@ importers:
       '@mermaid-js/diagram-packet':
         specifier: workspace:^
         version: link:../diagram-packet
+      '@mermaid-js/diagram-sankey':
+        specifier: workspace:^
+        version: link:../diagram-sankey
       '@mermaid-js/layout-cose-bilkent':
         specifier: workspace:^
         version: link:../mermaid-layout-cose-bilkent
@@ -710,6 +726,9 @@ importers:
       '@mermaid-js/diagram-packet':
         specifier: workspace:^
         version: link:../diagram-packet
+      '@mermaid-js/diagram-sankey':
+        specifier: workspace:^
+        version: link:../diagram-sankey
 
   tests/release-verification:
     devDependencies:

@@ -18,7 +18,6 @@ import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import kanban from '../diagrams/kanban/detector.js';
-import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import treeView from '../diagrams/treeView/detector.js';
@@ -102,7 +101,6 @@ export const addDiagrams = () => {
     stateV2,
     journey,
     quadrantChart,
-    sankey,
     xychart,
     block,
     eventmodeling,

@@ -1,10 +1,9 @@
 // @ts-ignore: jison doesn't export types
 import sankey from './sankey.jison';
 import db from '../sankeyDB.js';
-import { cleanupComments } from '../../../diagram-api/comments.js';
+import { cleanupComments } from '@mermaid-js/core/diagram-api/comments.js';
 import { prepareTextForParsing } from '../sankeyUtils.js';
-import * as fs from 'fs';
-import * as path from 'path';
+import data from './energy.csv?raw';
 
 describe('Sankey diagram', function () {
   describe('when parsing an info graph it', function () {
@@ -14,16 +13,12 @@ describe('Sankey diagram', function () {
     });
 
     it('parses csv with sankey-beta syntax', () => {
-      const csv = path.resolve(__dirname, './energy.csv');
-      const data = fs.readFileSync(csv, 'utf8');
       const graphDefinition = prepareTextForParsing(cleanupComments('sankey-beta\n\n ' + data));
 
       sankey.parser.parse(graphDefinition);
     });
 
     it('parses csv with sankey syntax', () => {
-      const csv = path.resolve(__dirname, './energy.csv');
-      const data = fs.readFileSync(csv, 'utf8');
       const graphDefinition = prepareTextForParsing(cleanupComments('sankey\n\n ' + data));
 
       sankey.parser.parse(graphDefinition);

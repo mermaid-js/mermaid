@@ -1,5 +1,5 @@
-import type { Diagram } from '../../Diagram.js';
-import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
+import type { Diagram } from '@mermaid-js/core/Diagram.js';
+import { getConfig, defaultConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
@@ -14,9 +14,9 @@ import {
   sankeyCenter as d3SankeyCenter,
   sankeyJustify as d3SankeyJustify,
 } from 'd3-sankey';
-import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import { Uid } from '../../rendering-util/uid.js';
-import type { SankeyNodeAlignment } from '../../config.type.js';
+import { setupGraphViewbox } from '@mermaid-js/core/setupGraphViewbox.js';
+import { Uid } from '@mermaid-js/core/rendering-util/uid.js';
+import type { SankeyNodeAlignment } from '@mermaid-js/core/config.type.js';
 
 /** d3-sankey computes `layer` at runtime but it's not in the type definitions */
 interface SankeyNodeWithLayer extends d3SankeyNode<{ id: string }, Record<string, unknown>> {

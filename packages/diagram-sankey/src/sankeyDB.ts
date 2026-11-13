@@ -1,5 +1,5 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import common from '../common/common.js';
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import common from '@mermaid-js/core/diagrams/common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -8,7 +8,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
   clear as commonClear,
-} from '../common/commonDb.js';
+} from '@mermaid-js/core/diagrams/common/commonDb.js';
 
 // Sankey diagram represented by nodes and links between those nodes
 let links: SankeyLink[] = [];

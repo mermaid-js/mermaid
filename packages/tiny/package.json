@@ -20,7 +20,8 @@
   "devDependencies": {
     "@mermaid-js/core": "workspace:^",
     "@mermaid-js/diagram-info": "workspace:^",
-    "@mermaid-js/diagram-packet": "workspace:^"
+    "@mermaid-js/diagram-packet": "workspace:^",
+    "@mermaid-js/diagram-sankey": "workspace:^"
   },
   "files": [
     "dist/",
