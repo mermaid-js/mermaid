@@ -81,7 +81,14 @@ function pickFlowchartLayoutMetadata(
 }
 
 // Set by a diagram that models pools and lanes itself, never by the author of a `@{ }` block.
-const INTERNAL_METADATA_KEYS = ['laneRole', 'laneIndex', 'drawnExtent'];
+const INTERNAL_METADATA_KEYS = [
+  'laneRole',
+  'laneIndex',
+  'drawnExtent',
+  'endpointProfile',
+  'oneLinePerVertex',
+  'captionBelow',
+];
 
 function withoutInternalKeys(doc: NodeMetaData): NodeMetaData {
   if (!doc || typeof doc !== 'object') {

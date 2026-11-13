@@ -1,0 +1,14 @@
+bpmn-beta LR
+title A gateway branching above and below its own line
+  pool "Handling"
+    lane "Work"
+      start message s "Request received"
+      xor gw "Which way?"
+      user task up "Check the register"
+      service task down "Charge the card"
+      end e "Filed"
+  s --> gw
+  gw -- nie --> up
+  gw -- tak --> down
+  up --> e
+  down --> e

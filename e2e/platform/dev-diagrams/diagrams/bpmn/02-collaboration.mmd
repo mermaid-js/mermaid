@@ -1,0 +1,13 @@
+bpmn-beta LR
+  pool "Customer"
+    lane "Buyer"
+      start c1 "Places order"
+      end c2 "Receives goods"
+  pool "Supplier"
+    lane "Sales"
+      receive task t1 "Receive order"
+      send task t2 "Confirm order"
+      end e1 "Order handled"
+  c1 -.-> t1
+  t1 --> t2 --> e1
+  t2 -.-> c2
