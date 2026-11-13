@@ -33,9 +33,15 @@ export default tseslint.config(
       parserOptions: {
         project: [
           './tsconfig.eslint.json',
-          './packages/*/tsconfig.json',
-          './packages/*/tsconfig.eslint.json',
+          './tsconfig.workspace.eslint.json',
+          // The packages that `tsconfig.workspace.eslint.json` doesn't cover:
           './packages/mermaid/src/docs/tsconfig.json',
+          './packages/examples/tsconfig.json',
+          './packages/mermaid-example-diagram/tsconfig.json',
+          './packages/mermaid-example-diagram/tsconfig.eslint.json',
+          './packages/mermaid-layout-tidy-tree/tsconfig.json',
+          './packages/mermaid-zenuml/tsconfig.json',
+          './packages/parser/tsconfig.json',
         ],
         tsconfigRootDir: import.meta.dirname,
       },
