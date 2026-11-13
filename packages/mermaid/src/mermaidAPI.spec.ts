@@ -42,7 +42,7 @@ import { Diagram } from './Diagram.js';
 import { ClassDB } from './diagrams/class/classDb.js';
 import { FlowDB } from './diagrams/flowchart/flowDb.js';
 import { SequenceDB } from './diagrams/sequence/sequenceDb.js';
-import { decodeEntities, encodeEntities } from './utils.js';
+import { decodeEntities, encodeColumns, encodeEntities, getErrorMessage } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { StateDB } from './diagrams/state/stateDb.js';
 import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
@@ -83,6 +83,10 @@ describe('mermaidAPI', () => {
         expect(result.substring(6, result.length)).toEqual('ﬂ°°77653¶ß');
       });
 
+      it.each(['a1', '1a'])('prefix is ﬂ° for %s, which is not all digits', (inner) => {
+        expect(encodeEntities(`#${inner};`)).toBe(`ﬂ°${inner}¶ß`);
+      });
+
       it('prefix is ﬂ° if is not all digits', () => {
         const result = encodeEntities(testStr);
         expect(result.substring(6, result.length)).toEqual('ﬂ°there¶ß');
@@ -91,6 +95,34 @@ describe('mermaidAPI', () => {
         const result = encodeEntities(testStr);
         expect(result.substring(result.length - 2, result.length)).toEqual('¶ß');
       });
+    });
+
+    it.each([
+      { case: 'before any replacement', text: 'ab #quot;', columns: [1, 3], expected: [1, 3] },
+      { case: 'after an entity', text: 'a #quot; b', columns: [10], expected: [12] },
+      { case: 'after a numeric entity', text: '#123; x', columns: [7], expected: [10] },
+      { case: 'after two entities', text: '#a;#b;x', columns: [4, 7], expected: [6, 11] },
+      { case: 'inside an entity', text: 'a#quot;b', columns: [6, 8], expected: [6, 10] },
+      {
+        case: 'after a style with a colour',
+        text: 'style a fill:#f00;b',
+        columns: [19],
+        expected: [18],
+      },
+      {
+        case: 'on the semicolon a style drops',
+        text: 'style a fill:#f00;b',
+        columns: [18],
+        expected: [18],
+      },
+      {
+        case: 'after a style whose colour reads like an entity',
+        text: 'style:#a;bcdefghijk',
+        columns: [19],
+        expected: [18],
+      },
+    ])('encodeColumns moves columns $case', ({ text, columns, expected }) => {
+      expect(encodeColumns(text, columns)).toEqual(expected);
     });
 
     it('does all the replacements on the given text', () => {
@@ -862,6 +894,217 @@ graph TD;A--x|text including URL space|B;`)
             "diagramType": "flowchart-v2",
           }
         `);
+    });
+
+    describe('reports parse errors on the line of the source as written', () => {
+      const parseError = (text: string): Promise<unknown> =>
+        mermaidAPI.parse(text).then(
+          () => undefined,
+          (error: unknown) => error
+        );
+      const reportedLines = (error: unknown): number[] =>
+        [...getErrorMessage(error).matchAll(/error on line (\d+)/g)].map(([, line]) =>
+          Number(line)
+        );
+
+      // `line` is the line of `text` that holds the error.
+      it.each([
+        { case: 'nothing removed', text: 'pie\n  "a": x', line: 2 },
+        { case: 'front matter', text: '---\ntitle: x\n---\npie\n  "a": x', line: 5 },
+        { case: 'a comment', text: 'pie\n%% note\n  "a": x', line: 3 },
+        { case: 'two comments', text: 'pie\n%% one\n%% two\n  "a": x', line: 4 },
+        { case: 'a blank line and a comment', text: 'pie\n\n%% note\n  "a": x', line: 4 },
+        { case: 'a comment after the error', text: 'pie\n  "a": x\n%% note\n  "b": 1', line: 2 },
+        { case: 'a directive', text: '%%{init: {"theme":"dark"}}%%\npie\n  "a": x', line: 3 },
+        {
+          case: 'a directive across lines',
+          text: '%%{\n  init: {"theme":"dark"}\n}%%\npie\n  "a": x',
+          line: 5,
+        },
+        {
+          case: 'a directive that leaves its line behind',
+          text: 'pie\n%%{init: {"theme":"dark"}}%%\n  "a": x',
+          line: 3,
+        },
+        {
+          case: 'a comment, jison lexer',
+          text: 'quadrantChart\n%% note\n  x-axis Low --> High\n  A: [0.5]',
+          line: 4,
+        },
+        {
+          case: 'front matter, jison lexer',
+          text: '---\ntitle: x\n---\nquadrantChart\n  A: [0.5]',
+          line: 5,
+        },
+        {
+          case: 'a comment, jison parser',
+          text: 'xychart-beta\n%% note\n  x-axis [a, b]\n  bar [1, 2, ]',
+          line: 4,
+        },
+        {
+          case: 'front matter and a kept comment, Langium',
+          text: '---\ntitle: x\n---\neventmodeling\n%% note\n  tf 01 ui UI\n  tf ?',
+          line: 7,
+        },
+        {
+          case: 'front matter and a kept comment, jison',
+          text: '---\ntitle: x\n---\nagentflow-beta TB\n%% note\n  a --> ]',
+          line: 6,
+        },
+        { case: 'sankey blank lines', text: 'sankey-beta\n\na,b,1\n\n\nc d', line: 6 },
+        { case: 'sankey comment', text: 'sankey-beta\n%% note\na,b,1\nc d', line: 4 },
+        {
+          case: 'sankey front matter',
+          text: '---\ntitle: x\n---\nsankey-beta\na,b,1\nc d',
+          line: 6,
+        },
+        { case: 'a leading blank line', text: '\nsankey-beta\na,b,1\nc d', line: 4 },
+        {
+          case: 'a directive across lines inside a line, Langium',
+          text: 'pie\n  "a": %%{init:\n{"theme":"dark"}\n}%%x',
+          line: 4,
+        },
+        {
+          case: 'a directive across lines inside a line, Langium, with the error left of it',
+          text: 'pie\n  "a"; %%{init:\n{"theme":"dark"}\n}%% : 1',
+          line: 2,
+        },
+        {
+          case: 'a directive across lines inside a line, Langium, with entities before it',
+          text: 'pie\n  "a#quot;#quot;b"; %%{init:\n{"theme":"dark"}\n}%% : 1',
+          line: 2,
+        },
+        {
+          case: 'a directive across lines inside a line, Langium, with an entity before it',
+          text: 'pie\n  "a#quot;": %%{init:\n{"theme":"dark"}\n}%%x',
+          line: 4,
+        },
+        {
+          case: 'a directive across lines inside a line, jison',
+          text: 'xychart-beta\n  x-axis [a, b]\n  bar [1, %%{init:\n{"theme":"dark"}\n}%% 2, ]',
+          line: 5,
+        },
+        {
+          case: 'directives across two lines, each joining its line, after entities on the first',
+          text: 'pie\n  "a#quot;#quot;#quot;b%%{x\n}%%c": 1\n  "d" %%{x\n}%%; : 1',
+          line: 5,
+        },
+        {
+          case: 'a directive across lines inside an entity, which the join completes',
+          text: 'pie\n  "a#quo%%{x\n}%%t;";%%{x\n}%%: 1',
+          line: 3,
+        },
+        {
+          case: 'a directive across lines inside the last line, at the end of input',
+          text: 'sequenceDiagram\n  alt %%{x\ny\n}%%cond',
+          line: 5,
+        },
+        {
+          case: 'a directive across lines inside a line before the last, at the end of input',
+          text: 'sequenceDiagram\n  alt %%{x\ny\n}%%cond\n  A->>B: hi',
+          line: 6,
+        },
+      ])('in the message after $case', async ({ text, line }) => {
+        const error = await parseError(text);
+        const lines = reportedLines(error);
+        expect(lines, getErrorMessage(error)).not.toHaveLength(0);
+        expect(lines, getErrorMessage(error)).toEqual(lines.map(() => line));
+      });
+
+      // Jison's `hash.line` counts from 0; `hash.loc` counts from 1 like the message.
+      it.each([
+        {
+          case: 'a comment, jison lexer',
+          text: 'quadrantChart\n%% note\n  x-axis Low --> High\n  A: [0.5]',
+          hash: { line: 3 },
+        },
+        {
+          case: 'front matter, jison lexer',
+          text: '---\ntitle: x\n---\nquadrantChart\n  A: [0.5]',
+          hash: { line: 4 },
+        },
+        {
+          case: 'a comment, jison parser',
+          text: 'xychart-beta\n%% note\n  x-axis [a, b]\n  bar [1, 2, ]',
+          hash: { line: 3, loc: { first_line: 4, last_line: 4 } },
+        },
+        {
+          case: 'front matter and a kept comment',
+          text: '---\ntitle: x\n---\nagentflow-beta TB\n%% note\n  a --> ]',
+          hash: { line: 5 },
+        },
+        {
+          case: 'sankey blank lines',
+          text: 'sankey-beta\n\na,b,1\n\n\nc d',
+          hash: { line: 5, loc: { first_line: 6, last_line: 6 } },
+        },
+        {
+          case: 'a directive across lines inside a line',
+          text: 'xychart-beta\n  x-axis [a, b]\n  bar [1, %%{init:\n{"theme":"dark"}\n}%% 2, ]',
+          hash: { line: 4, loc: { first_line: 5, last_line: 5 } },
+        },
+        {
+          case: 'a directive across lines inside the last line, at the end of input',
+          text: 'sequenceDiagram\n  alt %%{x\ny\n}%%cond',
+          hash: { line: 4, loc: { first_line: 5, last_line: 5 } },
+        },
+      ])('in the jison hash after $case', async ({ text, hash }) => {
+        expect(await parseError(text)).toMatchObject({ hash });
+      });
+
+      it.each([
+        {
+          case: 'jison',
+          text: '---\ntitle: x\n---\nagentflow-beta TB\n  a@{ shape: procs,* type: "Parse error on line 2" }\n',
+          quoted: '"Parse error on line 2"',
+        },
+        {
+          case: 'Langium',
+          text: '---\ntitle: x\n---\npie\n  "a": "Parse error on line 2, column 3: x"\n',
+          quoted: '"Parse error on line 2, column 3: x"',
+        },
+      ])(
+        'keeps diagram text that reads like a header as written, $case',
+        async ({ text, quoted }) => {
+          expect(getErrorMessage(await parseError(text))).toContain(quoted);
+        }
+      );
+
+      it('stays quick on a line that many directives across lines join', async () => {
+        const RESPONSIVE_MS = 2000;
+        const JOINS = 128_000;
+        const started = performance.now();
+        const error = await parseError(`pie\n  "a": ${'b%%{x\n}%%'.repeat(JOINS)} ;`);
+        expect(performance.now() - started).toBeLessThan(RESPONSIVE_MS);
+        expect(reportedLines(error)[0]).toBe(2);
+      });
+
+      // The agentflow db writes source lines into the `hash` of its own `@{ }` errors, so the
+      // remap leaves a hash alone when the message names no line of the parsed text.
+      const AGENTFLOW_SHAPE_ERROR =
+        'agentflow-beta TB\n\n  content_ref@{ shape: procs,* type: "BilingualContent" }\n';
+      it.each([
+        { case: 'nothing removed', text: AGENTFLOW_SHAPE_ERROR, line: 3 },
+        { case: 'front matter', text: `---\ntitle: x\n---\n${AGENTFLOW_SHAPE_ERROR}`, line: 6 },
+        { case: 'a comment', text: `%% note\n${AGENTFLOW_SHAPE_ERROR}`, line: 4 },
+        {
+          case: 'front matter and a comment',
+          text: `---\ntitle: x\n---\n%% note\n${AGENTFLOW_SHAPE_ERROR}`,
+          line: 7,
+        },
+        {
+          case: 'front matter, with a shape that quotes a parser header',
+          text: '---\ntitle: x\n---\nagentflow-beta TB\n  a@{ shape: procs,* type: "Parse error on line 2" }\n',
+          line: 5,
+        },
+      ])(
+        'keeps the source lines an agentflow shape error already has after $case',
+        async ({ text, line }) => {
+          expect(await parseError(text)).toMatchObject({
+            hash: { line: line - 1, loc: { first_line: line } },
+          });
+        }
+      );
     });
 
     it.each([
