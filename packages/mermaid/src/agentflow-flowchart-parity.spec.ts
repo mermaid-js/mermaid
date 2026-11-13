@@ -10,33 +10,13 @@
  * change gets diffed against this file rather than silently drifting.
  */
 import { describe, expect, it } from 'vitest';
-import { AgentFlowDB } from '../agentflowDb.js';
-import agentflow from './agentflowParser.js';
-import { FlowDB } from '../../flowchart/flowDb.js';
-// @ts-ignore JISON parser has no types
-import flow from '../../flowchart/parser/flowParser.ts';
+import mermaidAPI from '@mermaid-js/core/mermaidAPI.js';
 
-const parseAgentflow = (body: string) => {
-  agentflow.parser.yy = new AgentFlowDB();
-  agentflow.parser.yy.clear();
-  agentflow.parser.yy.setGen('gen-2');
-  agentflow.parser.parse(`agentflow-beta TB\n${body}\n`);
-};
+const accepts = async (header: string, body: string) =>
+  (await mermaidAPI.parse(`${header}\n${body}\n`, { suppressErrors: true })) !== false;
 
-const parseFlowchart = (body: string) => {
-  flow.parser.yy = new FlowDB();
-  flow.parser.yy.clear();
-  flow.parser.parse(`flowchart TB\n${body}\n`);
-};
-
-const accepts = (parse: (body: string) => void, body: string) => {
-  try {
-    parse(body);
-    return true;
-  } catch {
-    return false;
-  }
-};
+const AGENTFLOW = 'agentflow-beta TB';
+const FLOWCHART = 'flowchart TB';
 
 // Bodies that use only syntax both grammars share.
 const SHARED_SYNTAX = [
@@ -50,14 +30,20 @@ const SHARED_SYNTAX = [
 ];
 
 describe('agentflow / flowchart lexer parity', () => {
-  it.each(SHARED_SYNTAX)('agrees on whether to accept %j', (body) => {
-    expect(accepts(parseAgentflow, body)).toBe(accepts(parseFlowchart, body));
+  it('parses both diagram types', async () => {
+    // Otherwise a detection failure would make both sides reject everything and still agree.
+    expect(await accepts(AGENTFLOW, '  A --> B')).toBe(true);
+    expect(await accepts(FLOWCHART, '  A --> B')).toBe(true);
   });
 
-  it('rejects a caret in shape data exactly like flowchart does', () => {
+  it.each(SHARED_SYNTAX)('agrees on whether to accept %j', async (body) => {
+    expect(await accepts(AGENTFLOW, body)).toBe(await accepts(FLOWCHART, body));
+  });
+
+  it('rejects a caret in shape data exactly like flowchart does', async () => {
     // `<shapeData>[^}^"]+` — agentflow briefly used `[^}"]+`, which accepted
     // `A@{ label: a^b }` where flowchart raises a lexical error.
-    expect(accepts(parseAgentflow, '  A@{ label: a^b }')).toBe(false);
-    expect(accepts(parseFlowchart, '  A@{ label: a^b }')).toBe(false);
+    expect(await accepts(AGENTFLOW, '  A@{ label: a^b }')).toBe(false);
+    expect(await accepts(FLOWCHART, '  A@{ label: a^b }')).toBe(false);
   });
 });
