@@ -722,6 +722,15 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
+  // Self-loop distribution is a node option; setting it on the root graph
+  // does not distribute the loops of its children (#8706).
+  for (const edge of data4Layout.edges) {
+    const node = edge.start === edge.end && edge.start ? nodeDb[edge.start] : undefined;
+    if (node) {
+      node.layoutOptions ??= {};
+      node.layoutOptions['elk.layered.edgeRouting.selfLoopDistribution'] ??= 'EQUALLY';
+    }
+  }
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
@@ -982,7 +991,6 @@ function createRootElkGraph(
       // Tweaking options
       'elk.layered.wrapping.multiEdge.improveCuts': true,
       'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
-      'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
       'elk.layered.mergeHierarchyEdges': true,
       // Reserve a margin at the ends of every side so a port cannot land on a
       // corner. ELK's default is 0, which permits it — and a corner is the one

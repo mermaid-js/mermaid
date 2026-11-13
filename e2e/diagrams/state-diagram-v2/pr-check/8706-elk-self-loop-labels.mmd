@@ -1,0 +1,10 @@
+---
+description: Two labeled self-transitions use opposite sides of the state without crossing each other's labels.
+config:
+  layout: elk
+---
+stateDiagram-v2
+  [*] --> Ready
+  Ready --> Ready: send (subscribe)
+  Ready --> Ready: receive + notify observers
+  Ready --> [*]
