@@ -61,7 +61,7 @@ jobs:
         run: pnpm run screenshots:order
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@d32e88dac789dcc7906e7d26f69f24116fa9c97d # v8.1.1
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
         with:
           add-paths: |
             e2e/sheet-order.json
