@@ -10,20 +10,19 @@ import fastdomPromised from 'fastdom/extensions/fastdom-promised.js';
  * const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
  * ```
  */
-const fastdom = // @ts-expect-error -- fastdom types aren't yet ESM-compatible, we need this hack
-  (fastdomModule as typeof fastdomModule.default)
-    .extend({
-      /**
-       * `requestAnimationFrame` is too slow compared to `queueMicrotask`.
-       */
-      raf(cb: () => void) {
-        if (typeof queueMicrotask === 'function') {
-          queueMicrotask(cb);
-        } else {
-          setTimeout(cb, 0);
-        }
-      },
-    })
-    .extend(fastdomPromised);
+const fastdom = fastdomModule
+  .extend({
+    /**
+     * `requestAnimationFrame` is too slow compared to `queueMicrotask`.
+     */
+    raf(cb: () => void) {
+      if (typeof queueMicrotask === 'function') {
+        queueMicrotask(cb);
+      } else {
+        setTimeout(cb, 0);
+      }
+    },
+  })
+  .extend(fastdomPromised);
 
 export default fastdom;

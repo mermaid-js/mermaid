@@ -1,0 +1,19 @@
+---
+description: >-
+  Two sibling subgraphs ("customers" containing CUSTOMER, "orders"
+  containing ORDER) plus a relationship drawn from the individual entity
+  CUSTOMER directly to the subgraph id "orders", testing that an edge can
+  target a subgraph as a whole rather than only its member entities.
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph customers
+  CUSTOMER
+  end
+
+  subgraph orders
+  ORDER
+  end
+
+  CUSTOMER ||--o{ orders : places

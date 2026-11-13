@@ -10,6 +10,7 @@ import {
   markerOffsets,
   markerOffsets2,
 } from '../../utils/lineWithOffset.js';
+import { insertEdgeStepMarks } from './edgeStepAnimation.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 
 import {
@@ -29,8 +30,11 @@ import {
   select,
 } from 'd3';
 import rough from 'roughjs';
+import { resolveEdgeCornerRadius } from '../edgeCornerRadius.js';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
+import { clipOrthogonalEndpointsToNodeOutlines } from './orthogonalEdgeClipping.js';
+import { curveKind, isAxisTaggedRoute, markerTrim, routePath } from './routePath.ts';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
 
 /**
@@ -162,7 +166,8 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).startLeft = startEdgeLabelLeft;
-    setTerminalWidth(fo, edge.startLabelLeft);
+    setTerminalWidth(fo, edge.startLabelLeft, slBox);
+    recordTerminalLabelSize(edge, 'startLeft', slBox);
   }
   if (edge.startLabelRight) {
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
@@ -189,14 +194,14 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).startRight = startEdgeLabelRight;
-    setTerminalWidth(fo, edge.startLabelRight);
+    setTerminalWidth(fo, edge.startLabelRight, slBox);
+    recordTerminalLabelSize(edge, 'startRight', slBox);
   }
   if (edge.endLabelLeft) {
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
-    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     const endLabelElement = await createLabel(
-      endEdgeLabelLeft,
+      inner,
       edge.endLabelLeft,
       getLabelStyles(edge.labelStyle) || '',
       false,
@@ -217,15 +222,14 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).endLeft = endEdgeLabelLeft;
-    setTerminalWidth(fo, edge.endLabelLeft);
+    setTerminalWidth(fo, edge.endLabelLeft, slBox);
+    recordTerminalLabelSize(edge, 'endLeft', slBox);
   }
   if (edge.endLabelRight) {
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
-    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
-
     const endLabelElement = await createLabel(
-      endEdgeLabelRight,
+      inner,
       edge.endLabelRight,
       getLabelStyles(edge.labelStyle) || '',
       false,
@@ -246,51 +250,82 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).endRight = endEdgeLabelRight;
-    setTerminalWidth(fo, edge.endLabelRight);
+    setTerminalWidth(fo, edge.endLabelRight, slBox);
+    recordTerminalLabelSize(edge, 'endRight', slBox);
   }
   return labelElement;
 };
 
 /**
+ * Record a terminal label's measured size so a layout can reserve room for it.
+ * Every terminal label is centred on its group's origin.
+ *
+ * @param {any} edge
+ * @param {import('../types.js').TerminalLabelKey} key
+ * @param {{ width: number, height: number }} box
+ */
+function recordTerminalLabelSize(edge, key, box) {
+  edge.terminalLabelSizes ??= {};
+  edge.terminalLabelSizes[key] = { width: box.width, height: box.height };
+}
+
+/**
  * @param {any} fo
  * @param {any} value
+ * @param {{ width: number, height: number }} box - the measured label
  */
-function setTerminalWidth(fo, value) {
+export function setTerminalWidth(fo, value, box) {
   if (getEffectiveHtmlLabels(getConfig()) && fo) {
-    fo.style.width = value.length * 9 + 'px';
-    fo.style.height = '12px';
+    // Never smaller than the measured text; a fixed 12px height clipped it (#8329).
+    fo.style.width = Math.max(value.length * 9, box.width) + 'px';
+    fo.style.height = box.height + 'px';
   }
 }
 
+/**
+ * Where to put an edge's label along its drawn path.
+ */
+export const resolveEdgeLabelPosition = (edge, paths) => {
+  let x = edge.x;
+  let y = edge.y;
+  if (paths?.updatedPath) {
+    const updatedMid = utils.calcLabelPosition(paths.updatedPath);
+    if (paths.originalPath) {
+      const originalMid = utils.calcLabelPosition(paths.originalPath);
+      x = edge.x + (updatedMid.x - originalMid.x);
+      y = edge.y + (updatedMid.y - originalMid.y);
+    } else {
+      x = updatedMid.x;
+      y = updatedMid.y;
+    }
+  }
+  return { x, y };
+};
+
 export const positionEdgeLabel = (edge, paths) => {
   log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
-  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths.updatedPath) {
-        x = pos.x;
-        y = pos.y;
-      }
-    }
+    const { x, y } = resolveEdgeLabelPosition(edge, paths);
+    log.debug(
+      'Moving label ' + edge.label + ' from (',
+      edge.x,
+      ',',
+      edge.y,
+      ') to (',
+      x,
+      ',',
+      y,
+      ') abc88'
+    );
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }
+
+  // `path` is still needed below for the terminal-label branches, which only read from it
+  // (they do not themselves reposition the main label).
+  const path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
 
   if (edge.startLabelLeft) {
     const el = terminalLabels.get(edge.id).startLeft;
@@ -341,6 +376,84 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
 };
+
+/** Distance below which two coordinates count as the same row or column. */
+const AXIS_TOLERANCE = 0.5;
+const sharesColumn = (a, b) => Math.abs(a.x - b.x) < AXIS_TOLERANCE;
+const sharesRow = (a, b) => Math.abs(a.y - b.y) < AXIS_TOLERANCE;
+const coincides = (a, b) => sharesColumn(a, b) && sharesRow(a, b);
+
+/** Whether the shape intersection stays on the axis the layout's final segment ran along. */
+function keepsArrivalAxis(originalLast, lastInner, candidate) {
+  if (sharesColumn(originalLast, lastInner) && !sharesRow(originalLast, lastInner)) {
+    return sharesColumn(candidate, lastInner);
+  }
+  if (sharesRow(originalLast, lastInner) && !sharesColumn(originalLast, lastInner)) {
+    return sharesRow(candidate, lastInner);
+  }
+  return sharesColumn(candidate, lastInner) || sharesRow(candidate, lastInner);
+}
+
+/** The last segment the layout drew into the node, as the point it heads for and where it left. */
+function arrivalSegment(originalLast, lastInner, before) {
+  return coincides(originalLast, lastInner)
+    ? { heading: lastInner, from: before }
+    : { heading: originalLast, from: lastInner };
+}
+
+/** Whether the segment to the candidate points against the direction the edge was travelling. */
+function runsAgainstHeading({ heading, from }, lastInner, candidate) {
+  return (
+    (heading.x - from.x) * (candidate.x - lastInner.x) +
+      (heading.y - from.y) * (candidate.y - lastInner.y) <
+    0
+  );
+}
+
+/** Moves the candidate onto the row or column the arriving segment ran along. */
+function snapToArrivalAxis({ heading, from }, lastInner, candidate) {
+  if (sharesRow(heading, from) && !sharesColumn(heading, from)) {
+    return { x: candidate.x, y: lastInner.y };
+  }
+  if (sharesColumn(heading, from) && !sharesRow(heading, from)) {
+    return { x: lastInner.x, y: candidate.y };
+  }
+  return candidate;
+}
+
+/** Picks the point where a swimlane edge docks on its head shape, on the axis it arrived on. */
+function dockFinalPoint(originalLast, lastInner, before, candidate) {
+  const wasOrthogonal = sharesColumn(originalLast, lastInner) || sharesRow(originalLast, lastInner);
+  if (wasOrthogonal && !keepsArrivalAxis(originalLast, lastInner, candidate)) {
+    return originalLast;
+  }
+  const arrival = arrivalSegment(originalLast, lastInner, before);
+  if (runsAgainstHeading(arrival, lastInner, candidate)) {
+    return lastInner;
+  }
+  return snapToArrivalAxis(arrival, lastInner, candidate);
+}
+
+/** The arrowhead's pull-back for a marker type; a type the table does not own pulls back nothing. */
+function markerPullBack(arrowType) {
+  const offset = Object.hasOwn(markerOffsets, arrowType) ? markerOffsets[arrowType] : 0;
+  return Number.isFinite(offset) ? offset : 0;
+}
+
+/**
+ * The point a swimlane edge ends on after its last bend, or `undefined` when it ends on the bend.
+ * A final segment that continues straight on and is shorter than the arrowhead's pull-back
+ * would be drawn backwards, so it is dropped. A stub that turns into the node keeps the layout's
+ * end, because the arrowhead must point at the node it enters.
+ */
+function finalDockPoint({ originalLast, lastInner, newLast, minLength }) {
+  const turned = !coincides(originalLast, lastInner);
+  const length = Math.hypot(newLast.x - lastInner.x, newLast.y - lastInner.y);
+  if (length >= Math.max(AXIS_TOLERANCE, minLength)) {
+    return newLast;
+  }
+  return turned && length >= AXIS_TOLERANCE ? originalLast : undefined;
+}
 
 // Swimlanes-only helper, kept module-private: it self-gates to `-to-label` edges
 // (the swimlanes edge-label waypoint mechanism) and is called only from insertEdge's
@@ -598,14 +711,16 @@ export const insertEdge = function (
   startNode,
   endNode,
   diagramId,
-  skipIntersect = false
+  skipIntersect = false,
+  layoutAlgorithm = undefined
 ) {
   if (!diagramId) {
     throw new Error(
       `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
     );
   }
-  const { handDrawnSeed, layout } = getConfig();
+  const { handDrawnSeed, layout: configuredLayout } = getConfig();
+  const layout = layoutAlgorithm ?? configuredLayout;
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = startNode;
@@ -618,60 +733,82 @@ export const insertEdge = function (
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
 
-  // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
-  // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
-  // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
-  // clipping below, so their edge ports are unaffected by swimlanes.
-  if (layout === 'swimlane') {
-    if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
+  // A layout that hands over axis-tagged route points has placed the ends itself, so the
+  // route is drawn as given by `routePath` and is not clipped at all. This is chosen by the
+  // data, not the layout name.
+  const axisRoute = isAxisTaggedRoute(points);
+
+  // Specialized clipping is selected by edge metadata rather than layout name so any orthogonal
+  // router can preserve its bends. Exactly one policy runs; clipping twice destroys owned ports.
+  if (!axisRoute && edge.portClipping === 'outline-orthogonal' && !skipIntersect) {
+    points = clipOrthogonalEndpointsToNodeOutlines(points, tail, head);
+  } else if (!axisRoute && layout === 'swimlane') {
+    // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
+    // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
+    // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
+    // clipping below, so their edge ports are unaffected by swimlanes.
+    if (
+      !skipIntersect &&
+      head.intersect &&
+      tail.intersect &&
+      Array.isArray(points) &&
+      points.length >= 2
+    ) {
       if (points.length === 2) {
-        // Simple straight edge: just clip the two endpoints to the node boundaries.
-        points = [tail.intersect(points[0]), head.intersect(points[1])];
+        // A straight edge clips each end against the shape it leaves or enters. An
+        // axis-aligned one is a port, possibly offset from the node centre: each shape is
+        // asked about its own end so sibling ports stay parallel. A slanted one has no
+        // port, so each shape is asked about the far end to pick the face it faces.
+        const [first, last] = points;
+        points =
+          sharesColumn(first, last) || sharesRow(first, last)
+            ? [tail.intersect(first), head.intersect(last)]
+            : [tail.intersect(last), head.intersect(first)];
       } else {
         // For multi-segment paths, keep the inner bend points and just adjust the entry/exit
         // segments near the nodes.
         const innerPoints = points.slice(1, -1);
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
-        const TOLERANCE = 0.5;
-        const lastIsPinned =
-          Math.abs(points[points.length - 1].x - lastInner.x) < TOLERANCE &&
-          Math.abs(points[points.length - 1].y - lastInner.y) < TOLERANCE;
-
         const newFirst = tail.intersect(firstInner);
-        const newLast = lastIsPinned ? lastInner : head.intersect(lastInner);
 
-        // When the boundary intersection lands ~on the inner point, skip it to
-        // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
-        const lastIsDuplicate =
-          Math.abs(newLast.x - lastInner.x) < TOLERANCE &&
-          Math.abs(newLast.y - lastInner.y) < TOLERANCE;
+        const originalLast = points[points.length - 1];
+        const candidateLast = head.intersect(lastInner);
+        const before = innerPoints.at(-2) ?? points[0];
+        const newLast = dockFinalPoint(originalLast, lastInner, before, candidateLast);
+
+        const finalPoint = finalDockPoint({
+          originalLast,
+          lastInner,
+          newLast,
+          minLength: markerPullBack(edge.arrowTypeEnd),
+        });
         const firstIsDuplicate =
-          Math.abs(newFirst.x - firstInner.x) < TOLERANCE &&
-          Math.abs(newFirst.y - firstInner.y) < TOLERANCE;
+          Math.abs(newFirst.x - firstInner.x) < AXIS_TOLERANCE &&
+          Math.abs(newFirst.y - firstInner.y) < AXIS_TOLERANCE;
 
         const startPoints = firstIsDuplicate ? [] : [newFirst];
-        const endPoints = lastIsDuplicate ? [] : [newLast];
+        const endPoints = finalPoint ? [finalPoint] : [];
 
         points = [...startPoints, ...innerPoints, ...endPoints];
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipIntersect) {
-    // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
+  } else if (!axisRoute && head.intersect && tail.intersect && !skipIntersect) {
+    // Original clipping for layouts that do not own their final boundary ports.
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
   const pointsStr = btoa(JSON.stringify(points));
-  if (edge.toCluster) {
+  if (edge.toCluster && !axisRoute) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
     points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
 
     pointsHasChanged = true;
   }
 
-  if (edge.fromCluster) {
+  if (edge.fromCluster && !axisRoute) {
     log.debug(
       'from cluster abc88',
       clusterDb.get(edge.fromCluster),
@@ -685,9 +822,9 @@ export const insertEdge = function (
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
-  // Apply fixCorners for non-rounded curves to pre-round right-angle corners
-  // (rounded curve type uses generateRoundedPath instead)
-  if (edgeCurveType !== 'rounded') {
+  // Routers can opt out when their points already encode every terminal and corner invariant;
+  // an axis-tagged route always does.
+  if (edgeCurveType !== 'rounded' && !axisRoute && !edge.skipCornerFix) {
     lineData = fixCorners(lineData);
   }
   let curve = curveLinear;
@@ -766,9 +903,19 @@ export const insertEdge = function (
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
-  let linePath =
-    edgeCurveType === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+  let linePath = axisRoute
+    ? routePath(
+        lineData,
+        curveKind(edgeCurveType),
+        markerTrim(edge.arrowTypeStart),
+        markerTrim(edge.arrowTypeEnd)
+      ).d
+    : edgeCurveType === 'rounded'
+      ? generateRoundedPath(
+          applyMarkerOffsetsToPoints(lineData, edge),
+          // Resolve here instead of in a layout so rounded rendering stays generic.
+          resolveEdgeCornerRadius(edge.cornerRadius)
+        )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
@@ -860,6 +1007,16 @@ export const insertEdge = function (
   svgPath.attr('data-points', pointsStr);
   // Add data attributes for neo look support
   svgPath.attr('data-look', handleUndefinedAttr(edge.look));
+  if (edge.step !== undefined) {
+    const { themeVariables } = getConfig();
+    const stepColor = strokeColor ?? themeVariables?.lineColor;
+    insertEdgeStepMarks(elem, edge, linePath, diagramId, {
+      points: lineData,
+      pathNode: svgPath.node(),
+      color: stepColor,
+      textColors: [themeVariables?.background, themeVariables?.primaryTextColor],
+    });
+  }
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem

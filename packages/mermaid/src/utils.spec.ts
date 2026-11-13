@@ -188,7 +188,7 @@ describe('when detecting chart type ', function () {
   it('should handle a graph definition', function () {
     const str = 'graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
   it('should handle a wrap directive', () => {
     const wrap = { type: 'wrap', args: null };
@@ -278,13 +278,13 @@ Alice->Bob: hi`;
   it('should handle a graph definition with leading spaces', function () {
     const str = '    graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
 
   it('should handle a graph definition with leading spaces and newline', function () {
     const str = '  \n  graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
   it('should handle a graph definition for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue';
@@ -594,5 +594,24 @@ describe('calculatePoint', () => {
     expect(() => calculatePoint(points, distanceToTraverse)).toThrow(
       'Could not find a suitable point for the given distance'
     );
+  });
+});
+
+describe('calcTerminalLabelPosition', () => {
+  // #8329: callers centre terminal labels on this point, so an end label must be placed
+  // exactly like a start label, mirrored: no extra offset for its top-left corner.
+  it('places an end label as the mirror image of a start label on a straight edge', () => {
+    const path = [
+      { x: 0, y: 0 },
+      { x: 200, y: 0 },
+    ];
+    const start = utils.calcTerminalLabelPosition(0, 'start_right', path);
+    const end = utils.calcTerminalLabelPosition(0, 'end_left', path);
+    expect(end.x).toBeCloseTo(200 - start.x);
+    expect(end.y).toBeCloseTo(-start.y);
+    const startLeft = utils.calcTerminalLabelPosition(0, 'start_left', path);
+    const endRight = utils.calcTerminalLabelPosition(0, 'end_right', path);
+    expect(endRight.x).toBeCloseTo(200 - startLeft.x);
+    expect(endRight.y).toBeCloseTo(-startLeft.y);
   });
 });

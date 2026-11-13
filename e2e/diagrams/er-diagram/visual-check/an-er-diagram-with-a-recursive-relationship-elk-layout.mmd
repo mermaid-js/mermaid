@@ -1,0 +1,11 @@
+---
+description: >-
+  An entity (CUSTOMER) with a self-referential relationship under the elk
+  layout.
+config:
+  layout: elk
+---
+erDiagram
+    CUSTOMER ||..o{ CUSTOMER : refers
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains

@@ -421,5 +421,11 @@ describe('radar', () => {
         expect(error.message).toMatch(/Parse error on line (\d+|\?), column (\d+|\?):/);
       }
     });
+
+    it('should report an unknown location for errors at the end of input', async () => {
+      await expect(parseAsync('radar', 'radar-beta\n  axis')).rejects.toThrow(
+        'Parse error on line ?, column ?:'
+      );
+    });
   });
 });

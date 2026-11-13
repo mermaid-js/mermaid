@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/tiny",
-  "version": "11.17.2",
+  "version": "12.3.0",
   "description": "Tiny version of mermaid",
   "type": "commonjs",
   "main": "./dist/mermaid.tiny.js",
@@ -13,11 +13,15 @@
   },
   "author": "Sidharth Vinod",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {},
   "devDependencies": {},
   "files": [
     "dist/",
-    "README.md"
+    "README.md",
+    "THIRD_PARTY_NOTICES"
   ],
   "publishConfig": {
     "access": "public"

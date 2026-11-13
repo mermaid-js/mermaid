@@ -161,15 +161,24 @@ describe('Railroad Styles', () => {
     });
 
     it('should fall back to safe defaults when css values are invalid', () => {
-      const styles = getStyles({
+      const injected = {
         fontFamily: 'safe"} .railroad-terminal { display: none; } /*',
         terminalFill: '#fff; stroke: red;',
-      });
+      };
+      const styles = getStyles(injected);
 
       expect(styles).not.toContain('display: none');
       expect(styles).not.toContain('stroke: red;');
       expect(styles).toContain(`font-family: ${configApi.getConfig().themeVariables?.fontFamily}`);
-      expect(styles).toContain(`fill: ${configApi.getConfig().themeVariables?.secondBkg}`);
+      // `buildRailroadStyleOptions` layers theme-default underneath the active theme, so a
+      // variable the active theme never assigns still resolves -- `secondBkg` is unset
+      // across the base/neo/redux family, and railroad falls through to theme-default's
+      // value. Asserting that value directly keeps this independent of which theme is
+      // configured; reading `secondBkg` off `config.themeVariables` only agreed with the
+      // rendered output while the default theme happened to define it. Asserting against
+      // `buildRailroadStyleOptions` instead would be self-referential, since `getStyles`
+      // reads its values straight from it.
+      expect(styles).toContain(`fill: ${themes.default.getThemeVariables().secondBkg}`);
     });
 
     it('should handle all options at once', () => {

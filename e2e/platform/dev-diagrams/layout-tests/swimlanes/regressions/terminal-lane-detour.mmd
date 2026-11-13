@@ -1,0 +1,25 @@
+---
+config:
+  layout: swimlane
+---
+swimlane-beta LR
+
+  subgraph StatusSeeker
+    A(Incoming query)
+    A2{Which team?}
+  end
+
+  subgraph "Head of Engineering"
+      E{Can answer?}
+      E --> F(Answer)
+      E --> G(Investigate) --> F2(Answer)
+  end
+  subgraph "Tech Lead"
+      B{Can answer?}
+      B --> C(Answer)
+
+  end
+  A --> A2
+  A2 --> B
+  A2 --> E
+  B --> E

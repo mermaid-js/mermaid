@@ -1,0 +1,17 @@
+sequenceDiagram
+  actor User
+  participant Plain as Participant
+  participant Bound@{ "type" : "boundary" } as Boundary
+  participant Ctrl@{ "type" : "control" } as Control
+  participant Ent@{ "type" : "entity" } as Entity
+  participant DB@{ "type" : "database" } as Database
+  participant Q@{ "type" : "queue" } as Queue
+  participant Coll@{ "type" : "collections" } as Collections
+  User ->> Plain: start
+  Plain ->> Bound: in
+  Bound ->> Ctrl: handle
+  Ctrl ->> Ent: load
+  Ent ->> DB: read
+  DB ->> Q: enqueue
+  Q ->> Coll: fan out
+  Coll -->> User: done

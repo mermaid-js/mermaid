@@ -1,0 +1,18 @@
+---
+description: >-
+  A `namespace` block grouping two classes (C1, C2) with an association
+  between them, alongside two classes (C3, C4) declared outside any
+  namespace, under the dagre layout.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  namespace Namespace1 {
+  class C1
+  class C2
+  }
+  C1 --> C2
+  class C3
+  class C4

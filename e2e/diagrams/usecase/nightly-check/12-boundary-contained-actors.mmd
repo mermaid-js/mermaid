@@ -1,0 +1,22 @@
+---
+description: >-
+  A system boundary containing an actor alongside its use cases (not just
+  use cases), with a classDef applied to the boundary and an outside actor
+  connecting into the boundary's use cases.
+---
+usecase-beta
+  direction LR
+
+  actor Guest("Restaurant guest")
+  systemBoundary "Professional Services":::service
+    actor Chef("Chef")
+    ReviewMeal("Review meal")
+    PrepareMeal("Prepare meal")
+  end
+  Professional_Services@{ type: package }
+
+  Chef --> PrepareMeal
+  Chef --> ReviewMeal
+  Guest --> ReviewMeal
+
+  classDef service stroke:#b8860b,stroke-width:2px

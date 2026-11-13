@@ -1,3 +1,7 @@
+---
+description: 'Model interactions over time with participants, messages, activations, notes, loops, alt/opt/par blocks, and sequence numbering.'
+---
+
 # Sequence diagrams
 
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
@@ -16,6 +20,66 @@ A note on nodes, the word "end" could potentially break the diagram, due to the 
 
 If unavoidable, one must use parentheses(), quotation marks "", or brackets {},[], to enclose the word "end". i.e : (end), [end], {end}.
 ```
+
+## Default theme and look (v12.0.0+)
+
+Sequence diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+sequenceDiagram
+  autonumber
+  actor Customer
+  participant Web as Web app
+  participant API as API gateway
+  participant Bank
+  Customer->>Web: Place order
+  Web->>API: POST /orders
+  activate API
+  API->>Bank: Authorise payment
+  Bank-->>API: Approved
+  API-->>Web: 201 Created
+  deactivate API
+  Web-->>Customer: Order confirmed
+  Note over Customer,Bank: One order, one transaction
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+  autonumber
+  actor Customer
+  participant Web as Web app
+  participant API as API gateway
+  participant Bank
+  Customer->>Web: Place order
+  Web->>API: POST /orders
+  activate API
+  API->>Bank: Authorise payment
+  Bank-->>API: Approved
+  API-->>Web: 201 Created
+  deactivate API
+  Web-->>Customer: Order confirmed
+  Note over Customer,Bank: One order, one transaction
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ sequence: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
 
 ## Syntax
 
@@ -200,14 +264,6 @@ sequenceDiagram
     destroy Bob
     Bob->>Alice: I agree
 ```
-
-#### Unfixable actor/participant creation/deletion error
-
-If an error of the following type occurs when creating or deleting an actor/participant:
-
-> The destroyed participant **participant-name** does not have an associated destroying message after its declaration. Please check the sequence diagram.
-
-And fixing diagram code does not get rid of this error and rendering of all other diagrams results in the same error, then you need to update the mermaid version to (v10.7.0+).
 
 ### Grouping / Box
 
