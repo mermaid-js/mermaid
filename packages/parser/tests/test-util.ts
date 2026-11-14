@@ -17,6 +17,8 @@ import type {
   EventModelingServices,
   TreeView,
   TreeViewServices,
+  Wardley,
+  WardleyServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -27,6 +29,7 @@ import {
   createGitGraphServices,
   createEventModelingServices,
   createTreeViewServices,
+  createWardleyServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -133,3 +136,14 @@ export function createTreeViewTestServices() {
   return { services: treeViewServices, parse };
 }
 export const treeViewParse = createTreeViewTestServices().parse;
+
+const wardleyServices: WardleyServices = createWardleyServices().Wardley;
+const wardleyParser: LangiumParser = wardleyServices.parser.LangiumParser;
+export function createWardleyTestServices() {
+  const parse = (input: string) => {
+    return wardleyParser.parse<Wardley>(input);
+  };
+
+  return { services: wardleyServices, parse };
+}
+export const wardleyParse = createWardleyTestServices().parse;
