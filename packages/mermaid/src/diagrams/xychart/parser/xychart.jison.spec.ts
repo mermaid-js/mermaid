@@ -76,6 +76,23 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).toThrow();
   });
 
+  it('parse orientation words as text outside the chart header', () => {
+    const str =
+      'xychart \n title verticality \n x-axis Verticals [horizontally, b] \n line horizontals [1, 2]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setOrientation).not.toHaveBeenCalled();
+    expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('verticality');
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'Verticals', type: 'text' });
+    expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
+      { text: 'horizontally', type: 'text' },
+      { text: 'b', type: 'text' },
+    ]);
+    expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'horizontals', type: 'text' }, [
+      dp(1),
+      dp(2),
+    ]);
+  });
+
   it('parse x-axis', () => {
     const str = 'xychart \nx-axis xAxisName\n';
     expect(parserFnConstructor(str)).not.toThrow();
