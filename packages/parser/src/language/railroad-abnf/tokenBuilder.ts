@@ -6,6 +6,16 @@ import { AbstractMermaidTokenBuilder } from '../common/index.js';
 const COMMENT = /;[^\n\r]*/y;
 // Inside a rule, `;` is the terminator when only whitespace, a comment or the next rule follows it.
 const TERMINATOR_FOLLOWER = /[\t ]*(?:[\n\r;]|$|[A-Za-z][\dA-Za-z-]*[\t ]*=)/y;
+// A `;` starting a line with text after it is a commented-out line.
+const LINE_START_TERMINATOR_FOLLOWER = /[\t ]*(?:[\n\r]|$)/y;
+
+const startsLine = (text: string, offset: number): boolean => {
+  let i = offset - 1;
+  while (text[i] === ' ' || text[i] === '\t') {
+    i--;
+  }
+  return i < 0 || text[i] === '\n' || text[i] === '\r';
+};
 
 const isInsideRule = (tokens: IToken[]): boolean => {
   for (let i = tokens.length - 1; i >= 0; i--) {
@@ -21,8 +31,11 @@ const isInsideRule = (tokens: IToken[]): boolean => {
 
 const matchComment = (text: string, offset: number, tokens: IToken[]) => {
   if (isInsideRule(tokens)) {
-    TERMINATOR_FOLLOWER.lastIndex = offset + 1;
-    if (TERMINATOR_FOLLOWER.test(text)) {
+    const follower = startsLine(text, offset)
+      ? LINE_START_TERMINATOR_FOLLOWER
+      : TERMINATOR_FOLLOWER;
+    follower.lastIndex = offset + 1;
+    if (follower.test(text)) {
       return null;
     }
   }

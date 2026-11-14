@@ -13,9 +13,19 @@ describe('Railroad ABNF parser', () => {
     ['two rules on one line', 'a = "x" ; b = "y" ;'],
     ['comment lines', '; a = "z" ;\na = "x" ;\n;; b = "z" ;\nb = "y" ;'],
     ['a comment inside a rule', 'a = "x" ; first\n  / "z" ;\nb = "y" ;'],
+    ['the terminator on its own line', 'a = "x"\n  ; \nb = "y" ;'],
   ])('should keep the rule terminator with %s', (_, rules) => {
     const result = parser.parse<RailroadAbnf>(`railroad-abnf-beta\n${rules}`);
     expectNoErrorsOrAlternatives(result);
     expect(result.value.rules.map((rule) => rule.name)).toEqual(['a', 'b']);
+  });
+
+  it('should keep a commented-out definition inside a rule as a comment', () => {
+    const result = parser.parse<RailroadAbnf>(
+      'railroad-abnf-beta\na = "x"\n  ; disabled = "z"\n  / "y" ;\nb = "b" ;'
+    );
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.rules.map((rule) => rule.name)).toEqual(['a', 'b']);
+    expect(result.value.rules[0].definition.alternatives).toHaveLength(2);
   });
 });
