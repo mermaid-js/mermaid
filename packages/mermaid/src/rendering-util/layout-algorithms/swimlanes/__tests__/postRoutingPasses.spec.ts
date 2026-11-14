@@ -158,11 +158,15 @@ describe('swimlane post-routing passes: the same choices as their previous versi
     addDiagrams();
   });
 
-  it.each(GRAPHS)('$name', async (graph) => {
-    comparison.mismatches = [];
-    await layOut(graph);
-    expect(comparison.mismatches).toEqual([]);
-  }, GRAPH_TIMEOUT_MS);
+  it.each(GRAPHS)(
+    '$name',
+    async (graph) => {
+      comparison.mismatches = [];
+      await layOut(graph);
+      expect(comparison.mismatches).toEqual([]);
+    },
+    GRAPH_TIMEOUT_MS
+  );
 
   it('changes routes in several of the graphs, so the agreement is not only on no change', () => {
     expect(Object.fromEntries(comparison.changedRuns)).toEqual({
