@@ -32,7 +32,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 // event starting with "==>" keyword
 ":"\s(?:[^:\n]|":"(?!\s))+        return 'event';
-[^#:\n]+               return 'period';
+(?:[^#:\n]|":"(?!\s))+ return 'period';
 
 
 <<EOF>>                 return 'EOF';
