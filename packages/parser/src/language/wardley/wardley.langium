@@ -126,7 +126,8 @@ terminal KW_WARDLEY: 'wardley-beta';
 // - where the statement has a fixed shape, is followed by it, so a link line that starts
 //   with a name such as `size guide -> Shop` is not read as a statement. `evolution` must be
 //   followed by a stage name, and its line must hold nothing a link has but an evolution
-//   cannot: `+`, `;`, `-->`, `-.->` or a bare `>`, outside quotes and before any `%%`.
+//   cannot: `+`, `;`, `-->`, `-.->` or a bare `>`, outside quotes and before any `%%`. Other
+//   hyphens, as in `real-time` or `A--B`, are part of a name.
 //   A line such as `evolution A -> B` still lexes as an evolution; the diagram reads it as a
 //   link when a node named `evolution A` exists.
 // - when its lookahead scans the rest of the line, skips quoted names (with the same escapes
@@ -134,7 +135,7 @@ terminal KW_WARDLEY: 'wardley-beta';
 //   is a component and `component library -> "Box [beta]"` is a link.
 // `label` and `inertia` are matched only after the `]`, `(` or `)` that precedes them.
 terminal KW_SIZE: /(?<![^ \t\r\n][ \t]*)size(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]*\[)/;
-terminal KW_EVOLUTION: /(?<![^ \t\r\n][ \t]*)evolution(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]+[\w"'])(?!(?:[^\r\n"'%+;>-]|%(?!%)|-(?![->.])|->|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*(?:[+;>]|-->|-\.->))/;
+terminal KW_EVOLUTION: /(?<![^ \t\r\n][ \t]*)evolution(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]+[\w"'])(?!(?:[^\r\n"'%+;>-]|%(?!%)|->|-(?!-?>|\.->)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*(?:[+;>]|-->|-\.->))/;
 terminal KW_ANCHOR: /(?<![^ \t\r\n][ \t]*)anchor(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%\[]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*\[)/;
 terminal KW_COMPONENT: /(?<![^ \t\r\n][ \t]*)component(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%\[]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*\[)/;
 terminal KW_LABEL: /(?<=\][ \t]*)label(?![A-Za-z0-9_&(]|-(?!>))/;

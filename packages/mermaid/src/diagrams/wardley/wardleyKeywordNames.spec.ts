@@ -203,6 +203,29 @@ describe('wardley names that contain statement keywords', () => {
     });
 
     it.each([
+      ['a link label', 'evolution A--B -> Shop; weekly sync', { label: 'weekly sync' }],
+      ['a dashed link', 'evolution A--B -.-> Shop', { dashed: true }],
+      ['a labelled flow', "evolution A--B +'orders'> Shop", { flow: 'forward', label: 'orders' }],
+      ['a flow on the arrow', 'evolution A--B --> Shop', {}],
+    ])(
+      'reads a line from a name with a double hyphen and %s as a link',
+      async (_kind, line, expected) => {
+        const data = await parse([
+          'component "evolution A--B" [0.5, 0.5]',
+          'component Shop [0.4, 0.4]',
+          line,
+        ]);
+
+        expect(data.links).toHaveLength(1);
+        expect(data.links[0]).toMatchObject({
+          source: 'evolution A--B',
+          target: 'Shop',
+          ...expected,
+        });
+      }
+    );
+
+    it.each([
       [
         'quoted stages with link characters',
         `evolution "R&D; labs" -> "Product (+rental)" -> 'A > B'`,
