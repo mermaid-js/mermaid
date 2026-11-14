@@ -94,5 +94,24 @@ describe('diagram-orchestration', () => {
       flowchart: 1 "pie" pie: 2 "pie"`)
       ).toBe('pie');
     });
+
+    it('should only detect c4 when a C4 diagram keyword starts the diagram', () => {
+      for (const keyword of [
+        'C4Context',
+        'C4Container',
+        'C4Component',
+        'C4Dynamic',
+        'C4Deployment',
+      ]) {
+        expect(detectType(`${keyword}\ntitle Demo`)).toBe('c4');
+        expect(detectType(`  \n  ${keyword};`)).toBe('c4');
+      }
+
+      expect(detectType('flowchart LR\n  A["C4Container"] --> B')).toBe('flowchart-v2');
+      expect(detectType('sequenceDiagram\n  Alice->>Bob: C4Component')).toBe('sequence');
+      expect(detectType('stateDiagram-v2\n  note right of A: C4Deployment')).toBe('stateDiagram');
+      expect(detectType('classDiagram\n  class C4Container')).toBe('classDiagram');
+      expect(detectType('flowchart LR\n  %% C4Dynamic\n  A --> B')).toBe('flowchart-v2');
+    });
   });
 });
