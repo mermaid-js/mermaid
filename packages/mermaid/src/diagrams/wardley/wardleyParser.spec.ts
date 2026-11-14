@@ -163,17 +163,23 @@ evolve Kettle 0.62`
 title Test Decorators
 component API [0.6, 0.7] (build)
 component Database [0.4, 0.5] (buy)
-component Cache [0.5, 0.6] (outsource)`
+component Cache [0.5, 0.6] (outsource)
+component Marketplace [0.3, 0.8] (market)
+component Platform [0.2, 0.9] (ecosystem)`
     );
 
     const data = db.getWardleyData();
     const api = data.nodes.find((n) => n.label === 'API');
     const database = data.nodes.find((n) => n.label === 'Database');
     const cache = data.nodes.find((n) => n.label === 'Cache');
+    const marketplace = data.nodes.find((n) => n.label === 'Marketplace');
+    const platform = data.nodes.find((n) => n.label === 'Platform');
 
     expect(api?.sourceStrategy).toBe('build');
     expect(database?.sourceStrategy).toBe('buy');
     expect(cache?.sourceStrategy).toBe('outsource');
+    expect(marketplace?.sourceStrategy).toBe('market');
+    expect(platform?.sourceStrategy).toBe('ecosystem');
   });
 
   it('parses size directive', async () => {
@@ -341,5 +347,32 @@ component foo- [0.2, 0.3]`
     expect(node).toBeDefined();
     expect(node?.x).toBeCloseTo(30);
     expect(node?.y).toBeCloseTo(20);
+  });
+
+  it('parses attitude zones and normalizes explorers/villagers aliases', async () => {
+    await parser.parse(
+      `wardley-beta
+title Attitudes
+pioneers [0.9, 0.1, 0.7, 0.3]
+settlers [0.7, 0.4, 0.5, 0.6]
+townplanners [0.5, 0.7, 0.3, 0.95]
+explorers [0.85, 0.15, 0.65, 0.35]
+villagers [0.65, 0.45, 0.45, 0.65]`
+    );
+
+    const data = db.getWardleyData();
+    expect(data.attitudes).toHaveLength(5);
+    expect(data.attitudes.map((a) => a.kind)).toEqual([
+      'pioneers',
+      'settlers',
+      'townplanners',
+      'pioneers',
+      'settlers',
+    ]);
+    expect(data.attitudes[0].kind).toBe('pioneers');
+    expect(data.attitudes[0].x1).toBeCloseTo(10);
+    expect(data.attitudes[0].y1).toBeCloseTo(90);
+    expect(data.attitudes[0].x2).toBeCloseTo(30);
+    expect(data.attitudes[0].y2).toBeCloseTo(70);
   });
 });
