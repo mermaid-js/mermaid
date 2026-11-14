@@ -124,6 +124,12 @@ function parallelGraph(direction: Graph['direction'], edges: number): Graph {
 /** Random graphs, enough that each pass changes routes in several of them. */
 const RANDOM_GRAPHS = 48;
 
+/**
+ * Each graph runs the previous, slower passes beside the current ones. A graph takes under a
+ * second alone and up to 7 s in the coverage run, which is over the 5 s default.
+ */
+const GRAPH_TIMEOUT_MS = 30_000;
+
 const GRAPHS: Graph[] = [
   ...Array.from({ length: RANDOM_GRAPHS }, (_, i) => randomGraph(i + 1)),
   parallelGraph('LR', 10),
@@ -156,7 +162,7 @@ describe('swimlane post-routing passes: the same choices as their previous versi
     comparison.mismatches = [];
     await layOut(graph);
     expect(comparison.mismatches).toEqual([]);
-  });
+  }, GRAPH_TIMEOUT_MS);
 
   it('changes routes in several of the graphs, so the agreement is not only on no change', () => {
     expect(Object.fromEntries(comparison.changedRuns)).toEqual({
