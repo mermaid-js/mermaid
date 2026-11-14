@@ -93,6 +93,15 @@ describe('Testing xychart jison file', () => {
     ]);
   });
 
+  it.each(['xychart; title vertical', 'xychart\rtitle vertical'])(
+    'parse orientation word as title after header terminator in %j',
+    (str) => {
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.setOrientation).not.toHaveBeenCalled();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('vertical');
+    }
+  );
+
   it('parse x-axis', () => {
     const str = 'xychart \nx-axis xAxisName\n';
     expect(parserFnConstructor(str)).not.toThrow();

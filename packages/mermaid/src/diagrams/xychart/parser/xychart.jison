@@ -15,7 +15,8 @@
 %%
 \%\%(?!\{)[^\n]*                          /* skip comments */
 [^\}]\%\%[^\n]*                           /* skip comments */
-<chart_config>(\r?\n)                     { this.popState(); return 'NEWLINE'; }
+<chart_config>(\r?\n|\r)                  { this.popState(); return 'NEWLINE'; }
+<chart_config>";"                         { this.popState(); return 'SEMI'; }
 <chart_config>[^\S\r\n]+                   /* skip */
 <axis_data>(\r?\n)                        { this.popState(); return 'NEWLINE'; }
 <data>(\r?\n)                             { this.popState(); return 'NEWLINE'; }
