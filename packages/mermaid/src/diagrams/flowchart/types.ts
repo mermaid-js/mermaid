@@ -46,6 +46,8 @@ export interface FlowVertex {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  /** Sanitized authored metadata retained until getData selects layout-owned fields. */
+  metadata?: NodeMetaData;
 }
 
 export interface FlowText {

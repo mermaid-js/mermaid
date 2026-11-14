@@ -1,0 +1,14 @@
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      V1: {row: 1, column: 1}
+      V2p: {row: 2, column: 2}
+      V2: {row: 1, column: 3}
+      V3: {row: 1, column: 4}
+---
+flowchart TB
+  V1 --> V2
+  V2 --> V3
+  V2p --> V1

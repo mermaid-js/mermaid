@@ -1,0 +1,19 @@
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      Customer: { row: 2, column: 1 }
+      Browse: { row: 1, column: 2 }
+      Checkout: { row: 2, column: 2 }
+      Track: { row: 3, column: 2 }
+---
+usecase-beta
+  actor Customer
+  Browse("Browse products")
+  Checkout("Complete checkout")
+  Track("Track order")
+
+  Customer --> Browse
+  Customer --> Checkout
+  Customer --> Track
