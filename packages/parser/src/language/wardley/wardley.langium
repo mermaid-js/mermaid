@@ -13,7 +13,7 @@ entry Wardley:
 
 fragment Statement:
     size=Size
-    | evolution=Evolution
+    | evolutions+=Evolution
     | anchors+=Anchor
     | components+=Component
     | links+=Link
@@ -116,19 +116,36 @@ terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market';
 
 // Define keywords explicitly to ensure they take precedence over NAME_WITH_SPACES
 terminal KW_WARDLEY: 'wardley-beta';
-terminal KW_SIZE: 'size';
-terminal KW_EVOLUTION: 'evolution';
-terminal KW_ANCHOR: 'anchor';
-terminal KW_COMPONENT: 'component';
-terminal KW_LABEL: 'label';
-terminal KW_INERTIA: 'inertia';
-terminal KW_EVOLVE: 'evolve';
-terminal KW_PIPELINE: 'pipeline';
-terminal KW_NOTE: 'note';
-terminal KW_ANNOTATIONS: 'annotations';
-terminal KW_ANNOTATION: 'annotation';
-terminal KW_ACCELERATOR: 'accelerator';
-terminal KW_DEACCELERATOR: 'deaccelerator';
+
+// Keywords are matched only where the syntax expects them, so names such as `notebook`,
+// `size guide`, `component library` or `inertia` still lex as NAME_WITH_SPACES. Each one:
+// - is a whole word: `(?![A-Za-z0-9_&(]|-(?!>))` rejects the characters that would continue
+//   a name, while `->` after it still ends the word;
+// - for a statement keyword, starts its line: `(?<![^ \t\r\n][ \t]*)` rejects anything but
+//   spaces or tabs before it on the line. (Chevrotain does not allow `^` in a pattern.);
+// - where the statement has a fixed shape, is followed by it, so a link line that starts
+//   with a name such as `size guide -> Shop` is not read as a statement. `evolution` must be
+//   followed by a stage name, and its line must hold nothing a link has but an evolution
+//   cannot: `+`, `;`, `-->`, `-.->` or a bare `>`, outside quotes and before any `%%`.
+//   A line such as `evolution A -> B` still lexes as an evolution; the diagram reads it as a
+//   link when a node named `evolution A` exists.
+// - when its lookahead scans the rest of the line, skips quoted names (with the same escapes
+//   as STRING) and stops at `;` (a link label) or `%%` (a comment), so `component "A; B" [...]`
+//   is a component and `component library -> "Box [beta]"` is a link.
+// `label` and `inertia` are matched only after the `]`, `(` or `)` that precedes them.
+terminal KW_SIZE: /(?<![^ \t\r\n][ \t]*)size(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]*\[)/;
+terminal KW_EVOLUTION: /(?<![^ \t\r\n][ \t]*)evolution(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]+[\w"'])(?!(?:[^\r\n"'%+;>-]|%(?!%)|-(?![->.])|->|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*(?:[+;>]|-->|-\.->))/;
+terminal KW_ANCHOR: /(?<![^ \t\r\n][ \t]*)anchor(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%\[]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*\[)/;
+terminal KW_COMPONENT: /(?<![^ \t\r\n][ \t]*)component(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%\[]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*\[)/;
+terminal KW_LABEL: /(?<=\][ \t]*)label(?![A-Za-z0-9_&(]|-(?!>))/;
+terminal KW_INERTIA: /(?<=[\]()][ \t]*)inertia(?![A-Za-z0-9_&(]|-(?!>))/;
+terminal KW_EVOLVE: /(?<![^ \t\r\n][ \t]*)evolve(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%\[]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*[0-9]\.[0-9])/;
+terminal KW_PIPELINE: /(?<![^ \t\r\n][ \t]*)pipeline(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%{]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*\{)/;
+terminal KW_NOTE: /(?<![^ \t\r\n][ \t]*)note(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]*["'])/;
+terminal KW_ANNOTATIONS: /(?<![^ \t\r\n][ \t]*)annotations(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]*\[)/;
+terminal KW_ANNOTATION: /(?<![^ \t\r\n][ \t]*)annotation(?![A-Za-z0-9_&(]|-(?!>))(?=[ \t]*[0-9])/;
+terminal KW_ACCELERATOR: /(?<![^ \t\r\n][ \t]*)accelerator(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%\[]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*\[)/;
+terminal KW_DEACCELERATOR: /(?<![^ \t\r\n][ \t]*)deaccelerator(?![A-Za-z0-9_&(]|-(?!>))(?=(?:[^\r\n;"'%\[]|%(?!%)|"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*')*\[)/;
 
 // NAME_WITH_SPACES must be defined LAST to avoid shadowing other terminals
 // Uses negative lookahead to exclude matching content that starts with reserved keywords

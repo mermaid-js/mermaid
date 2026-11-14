@@ -65,28 +65,54 @@ const extractFlowFromArrow = (
   return { label: flowLabel };
 };
 
+type Evolution = Wardley['evolutions'][number];
+type LinkStatement = Pick<Wardley['links'][number], 'from' | 'to'> &
+  Partial<Pick<Wardley['links'][number], 'arrow' | 'fromPort' | 'toPort' | 'linkLabel'>>;
+
+/**
+ * The node name that an evolution line would link from if it were a link. Only a line with
+ * two plain stages, `evolution A -> B`, can be one, and the name is `evolution A` exactly as
+ * written.
+ */
+const evolutionLinkSource = (evolution: Evolution): string | undefined => {
+  const [first, second, ...rest] = evolution.stages;
+  if (
+    !first ||
+    !second ||
+    rest.length > 0 ||
+    [first, second].some((stage) => stage.boundary !== undefined || stage.secondName !== undefined)
+  ) {
+    return undefined;
+  }
+  const statement = evolution.$cstNode;
+  const firstStage = first.$cstNode;
+  if (!statement || !firstStage) {
+    return undefined;
+  }
+  return statement.text.slice(0, firstStage.end - statement.offset).trimStart();
+};
+
+const addLink = (db: WardleyDB, link: LinkStatement) => {
+  const isDashed = !!link.arrow && (link.arrow.includes('-.->') || link.arrow.includes('.-.'));
+
+  let flow = getFlowFromPort(link.fromPort) ?? getFlowFromPort(link.toPort);
+  const { flow: arrowFlow, label: flowLabel } = extractFlowFromArrow(link.arrow);
+  if (!flow && arrowFlow) {
+    flow = arrowFlow;
+  }
+
+  const annotation = link.linkLabel;
+  const label = flowLabel ?? annotation;
+
+  db.addLink(db.resolveNodeId(link.from), db.resolveNodeId(link.to), isDashed, label, flow);
+};
+
 const populateDb = (ast: Wardley, db: WardleyDB) => {
   populateCommonDb(ast, db);
 
   // Set size if provided
   if (ast.size) {
     db.setSize(ast.size.width, ast.size.height);
-  }
-
-  // Process evolution stages
-  if (ast.evolution) {
-    const stages = ast.evolution.stages.map((stage) => {
-      // Handle dual-label stages like "Genesis / Concept"
-      if (stage.secondName) {
-        return `${stage.name.trim()} / ${stage.secondName.trim()}`;
-      }
-      return stage.name.trim();
-    });
-    const stageBoundaries = ast.evolution.stages
-      .filter((stage) => stage.boundary !== undefined)
-      .map((stage) => stage.boundary!);
-
-    db.updateAxes({ stages, stageBoundaries });
   }
 
   // Add anchors as nodes with className 'anchor'
@@ -170,21 +196,46 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
     });
   });
 
-  // Add links
-  ast.links.forEach((link) => {
-    const isDashed = !!link.arrow && (link.arrow.includes('-.->') || link.arrow.includes('.-.'));
-
-    let flow = getFlowFromPort(link.fromPort) ?? getFlowFromPort(link.toPort);
-    const { flow: arrowFlow, label: flowLabel } = extractFlowFromArrow(link.arrow);
-    if (!flow && arrowFlow) {
-      flow = arrowFlow;
-    }
-
-    const annotation = link.linkLabel;
-    const label = flowLabel ?? annotation;
-
-    db.addLink(db.resolveNodeId(link.from), db.resolveNodeId(link.to), isDashed, label, flow);
+  // An `evolution A -> B` line is also a link from a node named `evolution A`. Now that the
+  // nodes exist, read it as a link when that node does, and as the axis otherwise.
+  const evolutionLinks = ast.evolutions.flatMap((evolution) => {
+    const from = evolutionLinkSource(evolution);
+    return from !== undefined && db.getNode(db.resolveNodeId(from))
+      ? [{ evolution, link: { from, to: evolution.stages[1].name } }]
+      : [];
   });
+  const axisEvolutions = ast.evolutions.filter(
+    (evolution) => !evolutionLinks.some((evolutionLink) => evolutionLink.evolution === evolution)
+  );
+  // As before, the last evolution line sets the axis.
+  const axis = axisEvolutions[axisEvolutions.length - 1];
+  if (axis) {
+    const stages = axis.stages.map((stage) => {
+      // Handle dual-label stages like "Genesis / Concept"
+      if (stage.secondName) {
+        return `${stage.name.trim()} / ${stage.secondName.trim()}`;
+      }
+      return stage.name.trim();
+    });
+    const stageBoundaries = axis.stages
+      .filter((stage) => stage.boundary !== undefined)
+      .map((stage) => stage.boundary!);
+
+    db.updateAxes({ stages, stageBoundaries });
+  }
+
+  // Add links, in the order they are written
+  [
+    ...ast.links.map((link) => ({ offset: link.$cstNode?.offset ?? 0, link })),
+    ...evolutionLinks.map(({ evolution, link }) => ({
+      offset: evolution.$cstNode?.offset ?? 0,
+      link,
+    })),
+  ]
+    .sort((a, b) => a.offset - b.offset)
+    .forEach(({ link }) => {
+      addLink(db, link);
+    });
 
   // Add evolves (trends)
   ast.evolves.forEach((evolve) => {

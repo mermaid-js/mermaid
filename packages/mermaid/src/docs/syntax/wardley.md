@@ -106,6 +106,8 @@ component "Custom Service" [0.55, 0.35]
 
 Names may contain hyphens (`real-time processing`, `end-user`) without quoting. Quote a name only if it begins with a non-letter or contains a character the grammar does not otherwise accept.
 
+Names may also be, start with, or contain a statement keyword, such as `note`, `notebook`, `size guide` or `component library`. A line such as `evolution tracker -> Shop` is a link when a component or anchor named `evolution tracker` exists, and an evolution statement otherwise.
+
 ```mermaid-example
 wardley-beta
 title Hyphenated Names
