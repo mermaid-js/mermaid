@@ -22,7 +22,8 @@ export const ROUTE_CLEARANCE_PX = 6;
 
 /**
  * Parallel runs of different edges closer than this are hard to tell apart, so candidates avoid them.
- * Perpendicular crossings are not affected.
+ * Perpendicular crossings are not affected. Lives here (rather than routerOccupancy.ts) because it is
+ * shared with routerPlanning.ts and routerConstraint.ts already imports from this module.
  */
 export const EDGE_CLEARANCE_PX = 24;
 
