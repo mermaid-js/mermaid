@@ -67,6 +67,12 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setOrientation).toHaveBeenCalledWith('vertical');
   });
 
+  it('parse chart orientation case-insensitively', () => {
+    const str = 'xychart-beta HORIZONTAL';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setOrientation).toHaveBeenCalledWith('horizontal');
+  });
+
   it('parse chart orientation with spaces', () => {
     let str = 'xychart        horizontal        ';
     expect(parserFnConstructor(str)).not.toThrow();
