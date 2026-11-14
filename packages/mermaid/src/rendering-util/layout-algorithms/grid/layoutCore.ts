@@ -547,7 +547,7 @@ export function runGridLayoutCore(
   data4Layout: LayoutData,
   options: GridLayoutCoreInternalOptions = {}
 ): GridLayoutResult {
-  const data = data4Layout as GridLayoutData;
+  const data = data4Layout;
 
   // Routing and label placement are transactional: a failed recovery must not leave partial
   // coordinates on the shared render model. Commit only the geometry from a complete run.

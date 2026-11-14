@@ -277,6 +277,82 @@ describe('computeLabelTransform', () => {
   });
 });
 
+describe('insertEdge draws axis-tagged routes with routePath', () => {
+  const edgeWith = (points, extra = {}) => ({
+    id: 'L_a_b_0',
+    cssCompiledStyles: {},
+    style: [],
+    thickness: 'normal',
+    pattern: 'solid',
+    classes: 'flowchart-link',
+    look: 'classic',
+    arrowTypeEnd: 'arrow_point',
+    points,
+    ...extra,
+  });
+  const shape = () => ({ intersect: vi.fn((point) => ({ x: point.x + 1, y: point.y + 1 })) });
+
+  it('builds the path from the tagged points, whichever layout drew them', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const tail = shape();
+    const head = shape();
+    const edge = edgeWith(
+      [
+        { x: 0, y: 0, axis: 'v' },
+        { x: 40, y: 100, axis: 'v' },
+      ],
+      { curve: 'basis' }
+    );
+
+    insertEdge(svg, edge, null, 'flowchart', tail, head, 'd', false, 'dagre');
+
+    // basis maps to curved; the arrow_point marker trims 4 off the end, with a 6 lead.
+    expect(svg.select('path').attr('d')).toBe('M0,0C0,45 40,45 40,90L40,96');
+    // The route's ends are the layout's; they are not re-intersected here.
+    expect(tail.intersect).not.toHaveBeenCalled();
+    expect(head.intersect).not.toHaveBeenCalled();
+    expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual(edge.points);
+  });
+
+  it('maps edge.curve onto the route kinds', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = edgeWith(
+      [
+        { x: 0, y: 0, axis: 'v' },
+        { x: 0, y: 50, axis: 'v' },
+        { x: 50, y: 50, axis: 'h' },
+      ],
+      { curve: 'rounded', arrowTypeEnd: undefined }
+    );
+
+    insertEdge(svg, edge, null, 'flowchart', shape(), shape(), 'd', false, 'dagre');
+
+    expect(svg.select('path').attr('d')).toBe('M0,0L0,45A5,5 0 0,0 5,50L50,50');
+  });
+
+  it('leaves untagged points on the existing clip-and-curve path', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const tail = shape();
+    const head = shape();
+    const edge = edgeWith(
+      [
+        { x: 0, y: 0 },
+        { x: 0, y: 50 },
+        { x: 0, y: 100 },
+      ],
+      { curve: 'linear' }
+    );
+
+    insertEdge(svg, edge, null, 'flowchart', tail, head, 'd', false, 'dagre');
+
+    expect(tail.intersect).toHaveBeenCalled();
+    expect(head.intersect).toHaveBeenCalled();
+  });
+});
+
 describe('insertEdge swimlane endpoint clipping', () => {
   it('honors duplicated endpoint pins instead of recomputing polygon intersections', () => {
     document.body.innerHTML = '';

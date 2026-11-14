@@ -1,0 +1,20 @@
+---
+description:
+  layered.edgeRouting set to curved (the default) on a flowchart whose edges
+  skip ranks, fan out and fan in, with labelled edges.
+config:
+  layout: layered
+  layered:
+    edgeRouting: curved
+---
+flowchart TB
+  start([Start]) --> check{Valid?}
+  check -->|yes| a[Parse]
+  check -->|no| err[Report]
+  start --> log[Log]
+  a --> b[Transform]
+  a --> c[Index]
+  b --> done((Done))
+  c --> done
+  log --> done
+  err --> done

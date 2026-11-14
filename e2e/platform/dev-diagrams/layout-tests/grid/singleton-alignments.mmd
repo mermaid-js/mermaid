@@ -1,0 +1,25 @@
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 32
+    columnGap: 36
+---
+flowchart TB
+  LT["LT"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: top }
+  CT["CT"]@{ row: 1, column: 2, horizontalAlign: center, verticalAlign: top }
+  RT["RT"]@{ row: 1, column: 3, horizontalAlign: right, verticalAlign: top }
+  LC["LC"]@{ row: 2, column: 1, horizontalAlign: left, verticalAlign: center }
+  CC["CC"]@{ row: 2, column: 2, horizontalAlign: center, verticalAlign: center }
+  RC["RC"]@{ row: 2, column: 3, horizontalAlign: right, verticalAlign: center }
+  LB["LB"]@{ row: 3, column: 1, horizontalAlign: left, verticalAlign: bottom }
+  CB["CB"]@{ row: 3, column: 2, horizontalAlign: center, verticalAlign: bottom }
+  RB["RB"]@{ row: 3, column: 3, horizontalAlign: right, verticalAlign: bottom }
+
+  W1([Wide peer])@{ row: 4, column: 1 }
+  W2([Wide peer])@{ row: 4, column: 2 }
+  W3([Wide peer])@{ row: 4, column: 3 }
+
+  T1["Tall<br/>peer<br/>row one"]@{ row: 1, column: 4 }
+  T2["Tall<br/>peer<br/>row two"]@{ row: 2, column: 4 }
+  T3["Tall<br/>peer<br/>row three"]@{ row: 3, column: 4 }

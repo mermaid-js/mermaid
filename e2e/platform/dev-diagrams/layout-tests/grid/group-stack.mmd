@@ -1,0 +1,17 @@
+---
+config:
+  layout: grid
+  grid:
+    columnGap: 40
+    cellGap: 12
+---
+flowchart TB
+  A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
+
+  subgraph G["Nested"]
+    G1["Inner member"]@{ row: 1, column: 1 }
+  end
+  G@{ row: 1, column: 1, horizontalAlign: center, verticalAlign: bottom }
+
+  B["Beta wider label"]@{ row: 1, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  C["Tall peer<br/>line two<br/>line three"]@{ row: 1, column: 2 }
