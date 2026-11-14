@@ -150,8 +150,11 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     return nodeColors[nodeId] ?? colorScheme(nodeId);
   };
 
+  // Keep blending within the diagram, including labels beneath the links.
+  const drawing = svg.append('g').attr('class', 'sankey-diagram');
+
   // Create rectangles for nodes
-  svg
+  drawing
     .append('g')
     .attr('class', 'nodes')
     .selectAll('.node')
@@ -203,7 +206,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   };
 
   // Create labels for nodes
-  const labelsGroup = svg.append('g').attr('class', 'node-labels').attr('font-size', 14);
+  const labelsGroup = drawing.append('g').attr('class', 'node-labels').attr('font-size', 14);
 
   const appendLabel = (className?: string) =>
     labelsGroup
@@ -225,7 +228,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   }
 
   // Creates the paths that represent the links.
-  const link = svg
+  const link = drawing
     .append('g')
     .attr('class', 'links')
     .attr('fill', 'none')
