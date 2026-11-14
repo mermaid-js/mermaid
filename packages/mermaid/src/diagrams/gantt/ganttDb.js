@@ -406,6 +406,10 @@ const parseDuration = function (str) {
   return [NaN, 'ms'];
 };
 
+const isAbsoluteEndSpec = function (str, dateFormat) {
+  return dayjs(str, dateFormat.trim(), true).isValid();
+};
+
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
@@ -526,7 +530,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = isAbsoluteEndSpec(endTimeData, dateFormat);
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -682,11 +686,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+        rawTasks[pos].manualEndTime = isAbsoluteEndSpec(rawTasks[pos].raw.endTime.data, dateFormat);
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
