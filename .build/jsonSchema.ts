@@ -35,6 +35,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'radar',
   'usecase',
   'venn',
+  'wardley-beta',
   'cynefin',
 ] as const;
 
