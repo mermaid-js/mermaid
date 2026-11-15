@@ -14,6 +14,10 @@ export class TreeViewValueConverter extends AbstractMermaidValueConverter {
       // Strip surrounding quotes: "name" or 'name' → name
       return input.substring(1, input.length - 1);
     }
+    if (rule.name === 'BARE_NAME') {
+      // Trim trailing whitespace only — internal runs of spaces are part of the name
+      return input.replace(/[\t ]+$/, '');
+    }
     if (rule.name === 'CLASS_ANNOTATION') {
       // " :::className" → className (strip leading whitespace and :::)
       const trimmed = input.trim();

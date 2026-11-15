@@ -62,7 +62,7 @@ interface PegAny extends PegPrimary {
 }
 
 entry RailroadPeg returns RailroadPeg:
-    'railroad-peg'
+    'railroad-peg-beta'
     ((title=TITLE | accTitle=ACC_TITLE | accDescr=ACC_DESCR))*
     rules+=PegRule*
 ;

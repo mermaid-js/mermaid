@@ -1,0 +1,21 @@
+---
+description: >-
+  State diagram composite-container colouring: three concurrency regions
+  (NumLock/CapsLock/ScrollLock) in one composite state. Rendered under the
+  "redux-color" theme.
+config:
+  theme: redux-color
+---
+stateDiagram-v2
+    [*] --> Active
+    state Active {
+      [*] --> NumOff
+      NumOff --> NumOn
+      --
+      [*] --> CapsOff
+      CapsOff --> CapsOn
+      --
+      [*] --> ScrollOff
+      ScrollOff --> ScrollOn
+    }
+    Active --> [*]

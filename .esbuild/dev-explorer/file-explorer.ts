@@ -176,7 +176,7 @@ export class DevFileExplorer extends LitElement {
           <div class="title">Dev Explorer</div>
           <div class="subtle">
             root:
-            <span class="path">${this.root || 'cypress/platform/dev-diagrams'}</span>
+            <span class="path">${this.root || 'e2e/platform/dev-diagrams'}</span>
           </div>
           <div style="margin-top: 6px;">
             <sl-breadcrumb>

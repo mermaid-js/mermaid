@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "4b6422acfb3b81e1e808b0e63741e8940a424dc1483863c6e6b9758882060340",
+    "capturedAt": "2026-05-06T11:53:21.591Z",
+    "capturedFrom": "/knsv3.html"
+  },
+  "nodes": [
+    {
+      "id": "A1",
+      "width": 110.59375,
+      "height": 45
+    },
+    {
+      "id": "A2",
+      "width": 98.9140625,
+      "height": 45
+    },
+    {
+      "id": "G1",
+      "width": 119.9296875,
+      "height": 45
+    },
+    {
+      "id": "G2",
+      "width": 165.84375,
+      "height": 45
+    },
+    {
+      "id": "G3",
+      "width": 181.78125,
+      "height": 66
+    },
+    {
+      "id": "C1",
+      "width": 161.59375,
+      "height": 66
+    },
+    {
+      "id": "C2",
+      "width": 202.8046875,
+      "height": 66
+    },
+    {
+      "id": "C3",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "C4",
+      "width": 105.921875,
+      "height": 45
+    },
+    {
+      "id": "S1",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "R1",
+      "width": 170.5078125,
+      "height": 66
+    },
+    {
+      "id": "R2",
+      "width": 137.0546875,
+      "height": 45
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+---
+description: >-
+  A `loop` block containing 3 repeated messages between the same two
+  participants.
+config:
+  look: classic
+---
+sequenceDiagram
+  participant participant0@{ "type" : "participant" }
+  participant actor1@{ "type" : "actor" }
+  participant boundary2@{ "type" : "boundary" }
+  loop For each participant
+    participant0 ->> actor1: Message 0
+    participant0 ->> actor1: Message 1
+    participant0 ->> actor1: Message 2
+  end

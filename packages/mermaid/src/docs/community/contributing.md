@@ -1,3 +1,7 @@
+---
+description: 'The Mermaid contributing guide: set up the development environment, run tests, follow code conventions, and submit pull requests and documentation.'
+---
+
 # Mermaid Contributing Guide
 
 You decided to take part in the development? Welcome!
@@ -334,7 +338,7 @@ When using Docker prepend your command with `./run`:
 
 One can use `jsdomIt` to test any part of Mermaid that interacts with the DOM, as long as it is not related to the layout.
 
-The function `jsdomIt` ([developed in utils.ts](../../tests/util.ts)) overrides `it` from `vitest`, and creates a pseudo-browser environment that works almost like the real deal for the duration of the test. It uses JSDOM to create a DOM, and adds objects `window` and `document` to `global` to mock the browser environment.
+The function `jsdomIt` ([developed in utils.ts](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/tests/util.ts)) overrides `it` from `vitest`, and creates a pseudo-browser environment that works almost like the real deal for the duration of the test. It uses JSDOM to create a DOM, and adds objects `window` and `document` to `global` to mock the browser environment.
 
 > [!NOTE]
 > The layout cannot work in `jsdomIt` tests because JSDOM has no rendering engine, hence the pseudo-browser environment.
@@ -523,7 +527,7 @@ This is a danger alert
 
 ### Navigation
 
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes for **topbar**.
+If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/docs/.vitepress/config.ts). The same goes for **topbar**.
 
 ### Build Docs
 

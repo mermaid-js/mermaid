@@ -1,0 +1,14 @@
+---
+description: >-
+  All 3 note-position keywords (left of / right of / over) on the same
+  participant.
+config:
+  look: classic
+---
+sequenceDiagram
+  participant A@{ "type" : "actor" }
+  participant B@{ "type" : "boundary" }
+  Note left of A: Note left of 0
+  Note right of A: Note right of 1
+  Note over A: Note over 2
+  A ->> B: Message with notes

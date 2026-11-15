@@ -160,6 +160,21 @@ describe('radar diagrams', () => {
     await expect(parser.parse(str)).resolves.not.toThrow();
   });
 
+  it('should limit the number of ticks to MAX_TICKS', async () => {
+    // Otherwise, user can set millions of ticks, which causes DoS
+    for (const { ticks, expected } of [
+      { ticks: 12, expected: 12 }, // under limit
+      { ticks: 32, expected: 32 }, // at limit
+      { ticks: 33, expected: 32 }, // over limit
+    ]) {
+      const str = `radar-beta
+      ticks ${ticks}
+      `;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      expect(getOptions().ticks).toBe(expected);
+    }
+  });
+
   describe('renderer', () => {
     describe('relativeRadius', () => {
       it('should calculate relative radius', () => {

@@ -62,9 +62,23 @@ describe('TreeViewValueConverter', () => {
     });
   });
 
+  describe('BARE_NAME', () => {
+    it('should preserve consecutive internal spaces', () => {
+      expect(convert(converter, 'BARE_NAME', 'But  _  _ton💓.tsx')).toBe('But  _  _ton💓.tsx');
+    });
+
+    it('should trim trailing whitespace', () => {
+      expect(convert(converter, 'BARE_NAME', 'index.js  ')).toBe('index.js');
+    });
+  });
+
   describe('ICON_ANNOTATION', () => {
     it('should extract icon name', () => {
-      expect(convert(converter, 'ICON_ANNOTATION', ' icon(database)')).toBe('database');
+      expect(convert(converter, 'ICON_ANNOTATION', ' icon(folder)')).toBe('folder');
+    });
+
+    it('should extract prefixed iconify name', () => {
+      expect(convert(converter, 'ICON_ANNOTATION', ' icon(logos:react)')).toBe('logos:react');
     });
 
     it('should return empty string for icon()', () => {

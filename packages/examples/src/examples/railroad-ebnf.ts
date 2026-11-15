@@ -8,7 +8,7 @@ export default {
     {
       title: 'Expression Grammar',
       isDefault: true,
-      code: `railroad-ebnf
+      code: `railroad-ebnf-beta
     title Expression Grammar
 
     expression = term ( "+" term | "-" term )* ;
@@ -19,7 +19,7 @@ export default {
     },
     {
       title: 'Semantic Version',
-      code: `railroad-ebnf
+      code: `railroad-ebnf-beta
     title Semantic Version
 
     version = core ( "-" prerelease )? ( "+" build )? ;

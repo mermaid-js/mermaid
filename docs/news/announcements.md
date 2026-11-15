@@ -6,6 +6,12 @@
 
 # Announcements
 
+## Mermaid is going on a diet: try the v13 alpha
+
+The v13 alpha is a proof of concept of a plugin-based, DOM-free Mermaid. With the same syntax, a flowchart-only bundle is about 100 kB (min+gzip) and renders about 50× faster than v12 today. We are aiming for 100×. The alpha tries one path for v13, a full rewrite. The other path is gradual updates to v12, and your feedback decides which one we take.
+
+[Try the alpha](../intro/v13-alpha.md) and [join the discussion](https://github.com/orgs/mermaid-js/discussions/8685).
+
 ## 🚀 Exciting News from Mermaid Chart! 🚀
 
 We're thrilled to announce that Mermaid Chart has successfully raised $7.5 million in Seed funding! 🌟 This achievement marks the beginning of a new era for Mermaid and Mermaid Chart.
@@ -22,7 +28,7 @@ We're thrilled to announce that Mermaid Chart has successfully raised $7.5 milli
 
 We are incredibly excited about the future and are grateful to the community, our team, and our investors for being part of this journey. Together, we're not just creating diagrams; we're designing the future of collaboration.
 
-🌐 Learn more about our groundbreaking tools and what's next for Mermaid Chart by visiting [our website](https://mermaid.ai/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises).
+🌐 Learn more about our groundbreaking tools and what's next for Mermaid Chart by visiting [our website](https://mermaid.ai/blog/posts/mermaid-chart-raises-7-5m-to-reinvent-visual-collaboration-for-enterprises).
 
 Thank you for being part of our story. Here's to creating, innovating, and collaborating on a global scale!
 

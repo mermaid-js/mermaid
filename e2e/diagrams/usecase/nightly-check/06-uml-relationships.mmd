@@ -1,0 +1,17 @@
+---
+description: >-
+  The UML relationship set — generalization between two actors, an
+  `include` and an `extend` relationship between use cases, and a
+  generalization between two use cases.
+---
+usecase-beta
+    direction LR
+    actor Admin
+    actor Person
+    Checkout("Checkout")
+    Payment("Process payment")
+    Coupon("Apply coupon")
+    Admin --|> Person
+    Checkout ..> : include Payment
+    Coupon ..> : extend Checkout
+    Coupon --|> Checkout

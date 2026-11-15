@@ -117,7 +117,7 @@ To add a new shape:
 
 ### 2. Register the Shape
 
-- **Register the shape**: Add your shape to the `shapes` object in the [main shapes module](../rendering-util/rendering-elements/shapes.ts). This allows your shape to be recognized and used within the system.
+- **Register the shape**: Add your shape to the `shapes` object in the [main shapes module](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/rendering-util/rendering-elements/shapes.ts). This allows your shape to be recognized and used within the system.
 
 - **Example**:
 

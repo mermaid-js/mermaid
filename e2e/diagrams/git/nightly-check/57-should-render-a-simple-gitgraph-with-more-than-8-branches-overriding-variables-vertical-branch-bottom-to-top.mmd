@@ -1,0 +1,29 @@
+---
+description: >-
+  BT gitGraph creating nine branches (exceeding the 8-color default palette) while overriding the
+  gitBranchLabel0-7 theme variables via an init directive, checking custom branch-label coloring
+  beyond the default palette size.
+---
+%%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+        'gitBranchLabel0': '#ffffff',
+        'gitBranchLabel1': '#ffffff',
+        'gitBranchLabel2': '#ffffff',
+        'gitBranchLabel3': '#ffffff',
+        'gitBranchLabel4': '#ffffff',
+        'gitBranchLabel5': '#ffffff',
+        'gitBranchLabel6': '#ffffff',
+        'gitBranchLabel7': '#ffffff',
+  } } }%%
+gitGraph BT:
+  checkout main
+  branch branch1
+  branch branch2
+  branch branch3
+  branch branch4
+  branch branch5
+  branch branch6
+  branch branch7
+  branch branch8
+  branch branch9
+  checkout branch1
+  commit id: "1"

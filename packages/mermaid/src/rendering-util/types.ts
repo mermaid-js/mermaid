@@ -13,8 +13,15 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
 interface BaseNode {
   id: string;
+  /**
+   * Stable authored identifier used to resolve placement maps when `id` is generated for rendering.
+   * Edges and DOM lookup continue to use `id`; layouts use this field only as a configuration key.
+   */
+  placementId?: string;
   label?: string;
   description?: string[];
+  /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */
+  stereotype?: string;
   parentId?: string;
   position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
   cssStyles?: string[]; // Renamed from `styles` to `cssStyles`
@@ -34,7 +41,6 @@ interface BaseNode {
   domId?: string; // When you create the node in the getData function you do not have the domId yet
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
-  explicitDir?: boolean; // true only when the user wrote an explicit 'direction X' keyword
   haveCallback?: boolean;
   link?: string;
   linkTarget?: string;
@@ -43,10 +49,21 @@ interface BaseNode {
   isGroup?: boolean;
   width?: number;
   height?: number;
+  wrappingWidth?: number;
+  /** Minimum width of the label area; short labels are widened to it (see `minNodeWidth`). */
+  minWidth?: number;
+  /**
+   * Spread the points where edges attach to this node across its side, so end
+   * markers on neighbouring edges overlap as little as the side allows.
+   * Honoured by layouts that place attachment points themselves (ELK).
+   */
+  spreadPorts?: boolean;
   labelBBox?: {
     width: number;
     height: number;
   };
+  /** Optional rendered title/header region for group-like containers. */
+  groupTitleRect?: GroupTitleRect;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
   calcIntersect?: (bounds: Bounds, point: Point) => any;
@@ -81,6 +98,7 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  metadata?: Record<string, unknown>;
   layer?: number;
   order?: number;
   children?: NodeChildren;
@@ -98,6 +116,13 @@ interface BaseNode {
  * Group/cluster nodes, e.g. nodes that contain other nodes.
  */
 export type NodeChildren = Node[];
+
+export interface GroupTitleRect {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
 
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
@@ -119,6 +144,13 @@ export interface NonClusterNode extends BaseNode {
 // Common properties for any node in the system
 export type Node = ClusterNode | NonClusterNode;
 
+export type TerminalLabelKey = 'startLeft' | 'startRight' | 'endLeft' | 'endRight';
+
+export interface TerminalLabelSize {
+  width: number;
+  height: number;
+}
+
 // Common properties for any edge in the system
 export interface Edge {
   id: string;
@@ -127,6 +159,16 @@ export interface Edge {
   style?: string[];
   animate?: boolean;
   animation?: 'fast' | 'slow';
+  /** Order in which the step animation dot travels this edge (1 = first). */
+  step?: number;
+  /** Highest `step` in the diagram, so every step edge shares one loop length. */
+  stepCount?: number;
+  /** Seconds the dot spends on each step (`flowchart.stepDuration`). */
+  stepDuration?: number;
+  /** Whether a badge shows this edge's `step` number (`flowchart.stepNumbers`). */
+  showStepNumber?: boolean;
+  /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
+  metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges
   arrowhead?: string;
   arrowheadStyle?: string;
@@ -146,8 +188,18 @@ export interface Edge {
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
+  /** Measured terminal labels, each centred on its label group's origin. */
+  terminalLabelSizes?: Partial<Record<TerminalLabelKey, TerminalLabelSize>>;
+  /** Terminal label centres placed by the layout; preferred over the along-the-path default. */
+  terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
+  /** Corner radius shared by initial path generation and later generic path rewrites. */
+  cornerRadius?: number;
+  /** Selects shape-aware clipping without coupling the shared renderer to a layout name. */
+  portClipping?: 'outline-orthogonal';
+  /** Preserves router-owned terminal and bend invariants during shared rendering. */
+  skipCornerFix?: boolean;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;

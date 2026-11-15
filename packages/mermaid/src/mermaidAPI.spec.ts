@@ -1,4 +1,4 @@
-import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
+import { assert, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
@@ -47,6 +47,7 @@ import { toBase64 } from './utils/base64.js';
 import { StateDB } from './diagrams/state/stateDb.js';
 import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
 import { JSDOM } from 'jsdom';
+import { log } from './logger.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -352,11 +353,11 @@ describe('mermaidAPI', () => {
           });
         }
 
-        it('there are htmlLabels in the configuration', () => {
+        describe('there are htmlLabels in the configuration', () => {
           expect_correct_styles_with_htmlElements(mocked_config_with_htmlLabels);
         });
 
-        it('there are flowchart.htmlLabels in the configuration', () => {
+        describe('there are flowchart.htmlLabels in the configuration', () => {
           const mocked_config_flowchart_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
@@ -474,6 +475,34 @@ describe('mermaidAPI', () => {
       );
       expect(result).toEqual(
         '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId :not(#someId){background:green!important;}'
+      );
+    });
+
+    it.for([
+      // test for CSS sibling components
+      ['should namespace sibling combinator', '& ~ *', '#someId #someId~*'],
+      // CSS ignores these whitespace characters
+      ['should namespace sibling combinator', '& \n\t \r \f \r\n + *', '#someId #someId+*'],
+      /*
+       * Experimental column combinator,
+       * see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Column_combinator
+       *
+       * Output whitespace will probably change once JSDOM supports it.
+       */
+      ['should namespace column combinator', '& || *', '#someId #someId || *'],
+      ['should namespace root if using unsupported declarations', '&', '#someId #someId'],
+      // child combinators and descent combinators are already namespaced
+      ['should not namespace child combinator', '& > *', '#someId>*'],
+      ['should not namespace descent combinator', '& *', '#someId *'],
+    ] as const)('%s %s to %s', ([_description, inputSelector, expectedSelector]) => {
+      const result = createUserStyles(
+        { ...mockConfig, themeCSS: `${inputSelector} { color: red; }` },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        `#someId .edge-pattern-dashed{stroke-dasharray:3;}${expectedSelector}{color:red;}`
       );
     });
 
@@ -625,18 +654,18 @@ describe('mermaidAPI', () => {
     it('resets mermaid config to global defaults', () => {
       const config = {
         logLevel: 0,
-        securityLevel: 'loose',
+        htmlLabels: false,
       } as const;
       mermaidAPI.initialize(config);
-      mermaidAPI.setConfig({ securityLevel: 'strict', logLevel: 1 });
+      mermaidAPI.setConfig({ logLevel: 1, htmlLabels: true });
       expect(mermaidAPI.getConfig().logLevel).toBe(1);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(true);
       mermaidAPI.reset();
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('loose');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(false);
       mermaidAPI.globalReset();
       expect(mermaidAPI.getConfig().logLevel).toBe(5);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(mermaidAPI.defaultConfig.htmlLabels);
     });
 
     it('prevents changes to site defaults (sneaky)', () => {
@@ -758,7 +787,7 @@ describe('mermaidAPI', () => {
       `);
     });
     it('resolves swimlanes as its own diagram type', async () => {
-      await expect(mermaidAPI.parse('swimlane TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+      await expect(mermaidAPI.parse('swimlane-beta TD;A-->B;')).resolves.toMatchInlineSnapshot(`
         {
           "config": {},
           "diagramType": "swimlane",
@@ -834,6 +863,258 @@ graph TD;A--x|text including URL space|B;`)
           }
         `);
     });
+
+    it.each([
+      { row: 0, column: -2 },
+      { row: -2, column: 0 },
+    ])(
+      'accepts signed grid coordinates ($row, $column) through each entry point',
+      async (placement) => {
+        const { row, column } = placement;
+        const sources = [
+          `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: ${row}, column: ${column} }`,
+          `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: { row: ${row}, column: ${column} }
+---
+flowchart TB
+  A`,
+          `%%{init: {"layout": "grid", "grid": {"placements": {"A": ${JSON.stringify(placement)}}}}}%%
+flowchart TB
+  A`,
+        ];
+
+        for (const source of sources) {
+          await expect(mermaidAPI.parse(source)).resolves.toMatchObject({
+            diagramType: 'flowchart-v2',
+          });
+        }
+
+        mermaidAPI.initialize({ layout: 'grid', grid: { placements: { A: placement } } });
+        try {
+          await expect(mermaidAPI.parse('flowchart TB\n  A')).resolves.toMatchObject({
+            diagramType: 'flowchart-v2',
+          });
+        } finally {
+          mermaidAPI.initialize({});
+        }
+      }
+    );
+
+    describe.each(['node', 'subgraph'])('inline agentflow grid coordinates on a %s', (target) => {
+      beforeEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      afterEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      const definition = (metadata: Record<string, unknown>, layout = 'grid') => {
+        const placement = JSON.stringify(metadata);
+        const body =
+          target === 'node'
+            ? `request["Receive"]@${placement}`
+            : `flow pipeline@${placement}\n  request["Receive"]\nend`;
+        return `---
+config:
+  layout: ${layout}
+---
+agentflow-beta
+${body}`;
+      };
+
+      it.each([
+        { field: 'row', value: 'first' },
+        { field: 'column', value: 'first' },
+        { field: 'row', value: 1.5 },
+        { field: 'column', value: 1.5 },
+        { field: 'row', value: null },
+        { field: 'column', value: null },
+      ])('rejects $field=$value during parsing', async ({ field, value }) => {
+        const source = definition({ [field]: value });
+        const id = target === 'node' ? 'request' : 'pipeline';
+
+        await expect(mermaidAPI.parse(source)).rejects.toMatchObject({
+          code: 'GRID_INVALID_COORDINATE',
+          details: { nodeId: id, placementId: id, field, value },
+        });
+        await expect(mermaidAPI.parse(source, { suppressErrors: true })).resolves.toBe(false);
+      });
+
+      it.each([{ row: 0, column: -2 }, { row: -2, column: 0 }, {}])(
+        'accepts signed or omitted coordinates %j with arbitrary metadata',
+        async (placement) => {
+          await expect(
+            mermaidAPI.parse(definition({ ...placement, custom: 'preserved' }))
+          ).resolves.toMatchObject({ diagramType: 'agentflow' });
+        }
+      );
+
+      it.each(['dagre', 'elk'])(
+        'does not validate grid coordinates when layout is %s',
+        async (layout) => {
+          await expect(
+            mermaidAPI.parse(definition({ row: 'first', column: 1.5 }, layout))
+          ).resolves.toMatchObject({ diagramType: 'agentflow' });
+        }
+      );
+    });
+
+    describe('unknown inline grid metadata', () => {
+      beforeEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      afterEach(() => {
+        vi.restoreAllMocks();
+        mermaidAPI.initialize({});
+      });
+
+      it.each([
+        { metadata: 'row: 1, column 2', key: 'column 2' },
+        { metadata: 'column: 1, row 2', key: 'row 2' },
+        { metadata: 'column: 3, row 1', key: 'row 1' },
+        { metadata: 'row: 1, custom: value', key: 'custom' },
+      ])(
+        'warns about "$key" during parsing without rejecting the diagram',
+        async ({ metadata, key }) => {
+          const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+          await expect(
+            mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ ${metadata} }`)
+          ).resolves.toMatchObject({ diagramType: 'flowchart-v2' });
+
+          expect(warn).toHaveBeenCalledExactlyOnceWith(
+            `Unknown metadata key "${key}" on node "A" with grid layout.`
+          );
+        }
+      );
+
+      it('warns about unknown subgraph metadata', async () => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  subgraph group
+    A
+  end
+  group@{ algorithm: elk.box, row 2 }`);
+
+        expect(warn).toHaveBeenCalledExactlyOnceWith(
+          'Unknown metadata key "row 2" on subgraph "group" with grid layout.'
+        );
+      });
+
+      it('accepts supported node and subgraph metadata alongside grid placement', async () => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  subgraph group
+    A@{ shape: rect, label: "Service", row: 1, column: 2, horizontalAlign: left, verticalAlign: top }
+  end
+  group@{ algorithm: elk.box, view: expanded, row: 0, column: -1 }`);
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+
+      it.each(['dagre', 'elk'])('does not warn about unknown metadata with %s', async (layout) => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await expect(
+          mermaidAPI.parse(`---
+config:
+  layout: ${layout}
+---
+flowchart TB
+  A@{ row: 1, column 2, custom: value }
+  subgraph group
+    B
+  end
+  group@{ row 2 }`)
+        ).resolves.toMatchObject({ diagramType: 'flowchart-v2' });
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+    });
+
+    describe.each(['inline', 'frontmatter', 'directive', 'initialize'] as const)(
+      'invalid grid coordinates from %s',
+      (entryPoint) => {
+        it.each([
+          { field: 'row', value: 'first', received: '"first" (string)' },
+          { field: 'column', value: 'first', received: '"first" (string)' },
+          { field: 'row', value: '1', received: '"1" (string)' },
+          { field: 'column', value: '1', received: '"1" (string)' },
+          { field: 'row', value: 1.5, received: '1.5 (number)' },
+          { field: 'column', value: 1.5, received: '1.5 (number)' },
+          { field: 'row', value: null, received: 'null (null)' },
+          { field: 'column', value: null, received: 'null (null)' },
+        ])('rejects $field=$received without coercion', async ({ field, value, received }) => {
+          const placement = { [field]: value };
+          const placementText = JSON.stringify(placement);
+          const diagram = 'flowchart TB\n  A';
+          const definitions = {
+            inline: `---
+config:
+  layout: grid
+---
+${diagram}@${placementText}`,
+            frontmatter: `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: ${placementText}
+---
+${diagram}`,
+            directive: `%%{init: {"layout": "grid", "grid": {"placements": {"A": ${placementText}}}}}%%
+${diagram}`,
+            initialize: diagram,
+          };
+          const expectedError = {
+            code: 'GRID_INVALID_COORDINATE',
+            message: `GRID_INVALID_COORDINATE: Invalid ${field} for placement "A": expected a safe integer; received ${received}.`,
+            details: { nodeId: 'A', placementId: 'A', field, value },
+          };
+
+          if (entryPoint === 'initialize') {
+            mermaidAPI.initialize({ layout: 'grid', grid: { placements: { A: placement } } });
+          }
+
+          try {
+            await expect(mermaidAPI.parse(definitions[entryPoint])).rejects.toMatchObject(
+              expectedError
+            );
+            await expect(
+              mermaidAPI.parse(definitions[entryPoint], { suppressErrors: true })
+            ).resolves.toBe(false);
+          } finally {
+            mermaidAPI.initialize({});
+          }
+        });
+      }
+    );
   });
 
   describe('render', () => {
@@ -904,6 +1185,148 @@ graph TD;A--x|text including URL space|B;`)
           );
         });
       });
+    });
+
+    jsdomIt('preserves treeView icons after strict security sanitization', async () => {
+      mermaidAPI.initialize({ securityLevel: 'strict' });
+
+      const { svg } = await mermaidAPI.render(
+        'tree-view-strict-icons',
+        `---
+config:
+  treeView:
+    showIcons: true
+---
+treeView-beta
+  src/
+    index.js`
+      );
+
+      const dom = new JSDOM(svg);
+      const iconNode = ensureNodeFromSelector('.treeView-node-icon', dom.window.document);
+      ensureNodeFromSelector('path', iconNode);
+      expect(dom.window.document.querySelector('use')).toBeNull();
+    });
+
+    jsdomIt('escapes an id starting with a digit in the scoped styles', async () => {
+      const { svg } = await mermaidAPI.render('02_test', 'erDiagram\n  A ||--o{ B : has');
+
+      const dom = new JSDOM(svg);
+      const styleNode = ensureNodeFromSelector('style', dom.window.document);
+      expect(styleNode.innerHTML).toMatch(/^#\\30 2_test /);
+      expect(styleNode.innerHTML).not.toContain('#02_test');
+    });
+
+    jsdomIt('shows the actual parse error message in the error diagram', async () => {
+      const edges = Array.from({ length: 501 }, (_, index) => `N${index} --> N${index + 1}`).join(
+        '\n'
+      );
+
+      await expect(
+        mermaidAPI.render('flowchart-too-many-edges', `flowchart TD\n${edges}`)
+      ).rejects.toThrow(/Edge limit exceeded/);
+
+      // the error SVG stays in the document, check that it carries the message
+      const texts = [...document.querySelectorAll('.error-text')].map(
+        (element) => element.textContent ?? ''
+      );
+      expect(texts).toContain('Syntax error in text');
+      expect(texts.some((text) => text.includes('Edge limit exceeded'))).toBe(true);
+    });
+
+    jsdomIt('shows invalid grid coordinates in the error diagram', async () => {
+      const message =
+        'GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received 0.5 (number).';
+      await expect(
+        mermaidAPI.render(
+          'flowchart-invalid-grid-coordinate',
+          `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 0.5 }`
+        )
+      ).rejects.toThrow(message);
+
+      const texts = [...document.querySelectorAll('.error-text')].map(
+        (element) => element.textContent ?? ''
+      );
+      expect(texts).toContain('Syntax error in text');
+      expect(texts.join(' ')).toContain(message);
+    });
+
+    describe.each([
+      {
+        entryPoint: 'inline',
+        source: `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 0.5 }`,
+      },
+      {
+        entryPoint: 'frontmatter',
+        source: `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: { row: 0.5 }
+---
+flowchart TB
+  A`,
+      },
+      {
+        entryPoint: 'directive',
+        source: `%%{init: {"layout": "grid", "grid": {"placements": {"A": {"row": 0.5}}}}}%%
+flowchart TB
+  A`,
+      },
+      {
+        entryPoint: 'multiple directives',
+        source: `%%{init: {"layout": "grid"}}%%
+%%{init: {"grid": {"placements": {"A": {"row": 0.5}}}}}%%
+flowchart TB
+  A`,
+      },
+    ])('invalid $entryPoint grid coordinates', ({ entryPoint, source }) => {
+      afterEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      for (const suppressErrorRendering of [false, true]) {
+        jsdomIt(`rejects with suppressErrorRendering=${suppressErrorRendering}`, async () => {
+          mermaidAPI.initialize({ theme: 'default', suppressErrorRendering });
+          if (entryPoint === 'multiple directives') {
+            await mermaidAPI.parse('%%{init: {"theme": "forest"}}%%\nflowchart TB\n  A');
+          }
+          const container = document.createElement('div');
+          document.body.append(container);
+          const message =
+            'GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received 0.5 (number).';
+
+          await expect(
+            mermaid.render('invalid-config-grid-coordinate', source, container)
+          ).rejects.toMatchObject({
+            code: 'GRID_INVALID_COORDINATE',
+            message,
+            details: { nodeId: 'A', placementId: 'A', field: 'row', value: 0.5 },
+          });
+          expect(configApi.getConfig().theme).toBe('default');
+
+          if (suppressErrorRendering) {
+            expect(container.childElementCount).toBe(0);
+          } else {
+            const texts = [...container.querySelectorAll('.error-text')].map(
+              (element) => element.textContent ?? ''
+            );
+            expect(texts).toContain('Syntax error in text');
+            expect(texts.join(' ')).toContain(message);
+          }
+        });
+      }
     });
   });
 

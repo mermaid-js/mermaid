@@ -1,0 +1,27 @@
+---
+description: >-
+  Hand-drawn class diagram testing the `direction BT` statement
+  (bottom-to-top layout) with a Student class aggregating IdCard and Bike
+  via labeled composition arrows with cardinalities; one of four sibling
+  fixtures (TB/BT/RL/LR) that repeat the same diagram for each direction
+  value.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  direction BT
+  class Student {
+  -idCard : IdCard
+  }
+  class IdCard{
+  -id : int
+  -name : string
+  }
+  class Bike{
+  -id : int
+  -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides

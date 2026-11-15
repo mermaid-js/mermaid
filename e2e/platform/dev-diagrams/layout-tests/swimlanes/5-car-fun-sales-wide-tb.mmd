@@ -1,0 +1,36 @@
+---
+config:
+  layout: swimlane
+  swimlane:
+    ignoreCrossLaneEdges: true
+    optimizeRanksByCrossings: true
+---
+swimlane-beta TD
+        A --> B --> C --> D --> E --> F --> G
+        D --> H --> I --Yes but with a long label that will wrap to the next line --> J --> E
+        I -- No --> K --> L --> M & N
+        subgraph Car
+          A
+        end
+        subgraph Fun
+          F
+          G
+        end
+        subgraph Sales
+          B
+          M
+        end
+
+        subgraph Constr
+          C
+          D
+          E
+          H
+          L
+          N
+        end
+        subgraph Legal
+          I
+          J["J: I am a very very long label that will wrap to the next line<br>and this is a second line<br>and this is a second line<br>and this is a second line<br>and this is a second line"]
+          K
+        end

@@ -1,0 +1,24 @@
+---
+description: >-
+  Actor and aliased database participant types rendered under the neo look
+  and redux-color theme, checking alignment of a note over a single actor,
+  a wider note spanning API and DB, and both a plain and an explicitly
+  colored rect block.
+config:
+  theme: redux-color
+  look: neo
+---
+sequenceDiagram
+  actor User
+  participant API
+  participant DB@{ "type" : "database" } as Database
+  Note over User: A note on the actor
+  rect
+    User ->> API: request
+    API ->> DB: query
+  end
+  Note over API,DB: A wider note
+  rect rgb(200, 230, 255)
+    DB -->> API: rows
+  end
+  API -->> User: response

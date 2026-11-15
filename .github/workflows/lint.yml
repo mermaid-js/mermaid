@@ -2,11 +2,15 @@ name: Lint
 
 on:
   push:
+    branches-ignore:
+      - 'renovate/**'
   merge_group:
   pull_request:
   workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ startsWith(github.head_ref || github.ref_name, 'renovate/') }}
 
 permissions:
   contents: write
@@ -35,10 +39,7 @@ jobs:
           node-version-file: '.node-version'
 
       - name: Install Packages
-        run: |
-          pnpm install --frozen-lockfile
-        env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
+        run: pnpm install --frozen-lockfile
 
       - name: Run Linting
         shell: bash
@@ -91,7 +92,7 @@ jobs:
 
       - uses: testomatio/check-tests@0ea638fcec1820cf2e7b9854fdbdd04128a55bd4 # stable
         with:
-          framework: cypress
-          tests: './cypress/e2e/**/**.spec.js'
+          framework: playwright
+          tests: './e2e/{rendering,other}/**/*.spec.{js,ts}'
           token: ${{ secrets.GITHUB_TOKEN }}
           has-tests-label: true

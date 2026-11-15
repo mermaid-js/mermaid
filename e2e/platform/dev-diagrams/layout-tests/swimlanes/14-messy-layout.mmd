@@ -1,0 +1,133 @@
+---
+config:
+  theme: redux
+  look: neo
+  swimlane:
+    automaticLaneOrdering: true
+---
+swimlane-beta TD
+
+subgraph Requestor
+  1([START])
+  2[Creates a Purchase Request in Approvals]
+  3[Submits the PR for Approval]
+  15[Creates an EAF Request]
+  16[Sets the Purchase Request field]
+  17[Fills out the Expense line based on information given]
+  18[Submits the EAF for Approval]
+  24[Inform Supply Chain Associate regarding the approved EAF <br/> Note: Log Note in PR Request]
+  36[Receives the Delivered Items]
+  39([END])
+end
+
+subgraph Department_Head [Department Head]
+  4[Reviews and Approve the PR]
+  19[Reviews and Approves the EAF]
+end
+
+subgraph Supply_Chain_Associate [Supply Chain Associate]
+  5[Approves the PR]
+  6[Creates a Request for Quotation based on the PR]
+  7{Needs canvassing?}
+  8[Creates 2 or more alternative RFQs]
+  9[Sends all RFQs]
+  11[Update the RFQs based on the supplier's response]
+  12[Submits the RFQs for Approval]
+  25[Submit chosen RFQ for Approval]
+  29[Sends the PO to the Supplier]
+  35[Sets the Requestor as Responsible in Receipt Transfer]
+  38[Forwards SI and DR to Requestor <br/> Note: Log Note in PR Request]
+end
+
+subgraph Supplier
+  10[Responds to the RFQs]
+  30[Responds to the PO]
+  31[Delivers the Goods]
+  32{Delivery Location}
+  37[Sends SI and DR to Supply Chain Associate]
+end
+
+subgraph Supply_Chain_Head [Supply Chain Head]
+  13[Reviews and Approves all RFQs]
+  14[Inform requestor for all information needed for EAF <br/> Note: Log Note in PR Request]
+  26[Reviews and Approves the chosen RFQ]
+end
+
+subgraph General_Manager [General Manager]
+  20[Reviews and Approves the EAF]
+  28[Reviews and Approves the chosen RFQ <br/> Note: RFQ will be converted to PO]
+end
+
+subgraph Finance_Manager [Finance Manager]
+  21[Reviews and Approves the EAF]
+end
+
+subgraph BOD
+  22[Reviews and Approves the EAF]
+  23[Suggest the best Supplier based on all RFQs <br/> Note: Log Note in EAF Request]
+end
+
+subgraph Finance_Head [Finance Head]
+  27[Reviews and Approves the chosen RFQ]
+end
+
+subgraph Warehouse
+  33{Trade or Non-Trade Goods?}
+  33a[[Perform     - Receiving Trade Goods]]
+  33b[[Perform  - Receiving Non-Trade Goods]]
+end
+
+%% Connections
+1 --> 2
+2 --> 3
+3 --> 4
+4 --> 5
+5 --> 6
+6 --> 7
+7 -- Yes --> 8
+8 --> 9
+7 -- No --> 9
+9 --> 10
+10 --> 11
+11 --> 12
+12 --> 13
+13 --> 14
+14 --> 15
+15 --> 16
+16 --> 17
+17 --> 18
+18 --> 19
+19 --> 20
+20 --> 21
+21 --> 22
+22 --> 23
+23 --> 24
+24 --> 25
+25 --> 26
+26 --> 27
+27 --> 28
+28 --> 29
+29 --> 30
+30 --> 31
+31 --> 32
+
+%% Warehouse Delivery Flow
+32 -- Warehouse --> 33
+33 -- Trade --> 33a
+33 -- Non-Trade --> 33b
+33a --> 39
+33b --> 39
+
+%% Office Delivery Flow
+32 -- Office --> 35
+35 --> 36
+36 --> 37
+37 --> 38
+38 --> 39
+
+%% Odoo vs Manual Styling
+classDef odoo fill:#e1d5e7,stroke:#9673a6,stroke-width:2px,color:#000000;
+classDef manual fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+
+class 2,3,4,5,6,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,35,38 odoo;
+class 1,7,10,30,31,32,33,33a,33b,36,37,39 manual;

@@ -1,0 +1,25 @@
+---
+description: >-
+  Legacy v1 state diagram with a composite state (Active) split into three
+  concurrent regions via "--" dividers (NumLock, CapsLock, ScrollLock
+  toggles), exercising fork-less concurrency/parallel-region rendering.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*] --> Active
+
+  state Active {
+  [*] --> NumLockOff
+  NumLockOff --> NumLockOn : EvNumLockPressed
+  NumLockOn --> NumLockOff : EvNumLockPressed
+  --
+  [*] --> CapsLockOff
+  CapsLockOff --> CapsLockOn : EvCapsLockPressed
+  CapsLockOn --> CapsLockOff : EvCapsLockPressed
+  --
+  [*] --> ScrollLockOff
+  ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+  ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+  }

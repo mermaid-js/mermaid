@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that setting flowchart.curve to 'rounded' produces smoothly rounded
+  corners on edges that make right-angle turns, including the branching edges
+  from a decision node that later reconverge at a shared end node.
+config:
+  flowchart:
+    curve: rounded
+---
+flowchart TD
+  A[Start] --> B{Decision}
+  B -->|Yes| C[Process 1]
+  B -->|No| D[Process 2]
+  C --> E[End]
+  D --> E

@@ -1,11 +1,10 @@
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { sanitizeUrl } from '@braintree/sanitize-url';
 import type { BaseType, Selection } from 'd3';
 import type { SVG, SVGGroup } from '../../diagram-api/types.js';
 import type { D3Selection } from '../../types.js';
 import type { RectData } from '../common/commonTypes.js';
-import type { C4Boundary, C4DrawConfig, C4Font, C4Rel, C4Shape } from './c4Types.js';
+import type { C4Boundary, C4DrawConfig, C4Font, C4Rel } from './c4Types.js';
 
 type TextAttrs = Record<string, string | number>;
 
@@ -22,23 +21,6 @@ type DrawTextFunction = <T extends SVGElement>(
 
 export const drawRect = function (elem: SVG | SVGGroup, rectData: RectData) {
   return svgDrawCommon.drawRect(elem, rectData);
-};
-
-export const drawImage = function <T extends SVGElement>(
-  elem: D3Selection<T>,
-  width: number,
-  height: number,
-  x: number,
-  y: number,
-  link: string
-) {
-  const imageElem = elem.append('image');
-  imageElem.attr('width', width);
-  imageElem.attr('height', height);
-  imageElem.attr('x', x);
-  imageElem.attr('y', y);
-  const sanitizedLink = link.startsWith('data:image/png;base64') ? link : sanitizeUrl(link);
-  imageElem.attr('xlink:href', sanitizedLink);
 };
 
 export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId: string) => {
@@ -228,215 +210,6 @@ const drawBoundary = function (elem: SVG, boundary: C4Boundary, conf: C4DrawConf
   }
 };
 
-export const drawC4Shape = function (elem: SVG, c4Shape: C4Shape, conf: C4DrawConfig) {
-  const fillColor = c4Shape.bgColor
-    ? c4Shape.bgColor
-    : (conf[c4Shape.typeC4Shape.text + '_bg_color'] as string);
-  const strokeColor = c4Shape.borderColor
-    ? c4Shape.borderColor
-    : (conf[c4Shape.typeC4Shape.text + '_border_color'] as string);
-  const fontColor = c4Shape.fontColor ? c4Shape.fontColor : '#FFFFFF';
-
-  let personImg =
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAACD0lEQVR4Xu2YoU4EMRCGT+4j8Ai8AhaH4QHgAUjQuFMECUgMIUgwJAgMhgQsAYUiJCiQIBBY+EITsjfTdme6V24v4c8vyGbb+ZjOtN0bNcvjQXmkH83WvYBWto6PLm6v7p7uH1/w2fXD+PBycX1Pv2l3IdDm/vn7x+dXQiAubRzoURa7gRZWd0iGRIiJbOnhnfYBQZNJjNbuyY2eJG8fkDE3bbG4ep6MHUAsgYxmE3nVs6VsBWJSGccsOlFPmLIViMzLOB7pCVO2AtHJMohH7Fh6zqitQK7m0rJvAVYgGcEpe//PLdDz65sM4pF9N7ICcXDKIB5Nv6j7tD0NoSdM2QrU9Gg0ewE1LqBhHR3BBdvj2vapnidjHxD/q6vd7Pvhr31AwcY8eXMTXAKECZZJFXuEq27aLgQK5uLMohCenGGuGewOxSjBvYBqeG6B+Nqiblggdjnc+ZXDy+FNFpFzw76O3UBAROuXh6FoiAcf5g9eTvUgzy0nWg6I8cXHRUpg5bOVBCo+KDpFajOf23GgPme7RSQ+lacIENUgJ6gg1k6HjgOlqnLqip4tEuhv0hNEMXUD0clyXE3p6pZA0S2nnvTlXwLJEZWlb7cTQH1+USgTN4VhAenm/wea1OCAOmqo6fE1WCb9WSKBah+rbUWPWAmE2Rvk0ApiB45eOyNAzU8xcTvj8KvkKEoOaIYeHNA3ZuygAvFMUO0AAAAASUVORK5CYII=';
-  switch (c4Shape.typeC4Shape.text) {
-    case 'person':
-      personImg =
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAACD0lEQVR4Xu2YoU4EMRCGT+4j8Ai8AhaH4QHgAUjQuFMECUgMIUgwJAgMhgQsAYUiJCiQIBBY+EITsjfTdme6V24v4c8vyGbb+ZjOtN0bNcvjQXmkH83WvYBWto6PLm6v7p7uH1/w2fXD+PBycX1Pv2l3IdDm/vn7x+dXQiAubRzoURa7gRZWd0iGRIiJbOnhnfYBQZNJjNbuyY2eJG8fkDE3bbG4ep6MHUAsgYxmE3nVs6VsBWJSGccsOlFPmLIViMzLOB7pCVO2AtHJMohH7Fh6zqitQK7m0rJvAVYgGcEpe//PLdDz65sM4pF9N7ICcXDKIB5Nv6j7tD0NoSdM2QrU9Gg0ewE1LqBhHR3BBdvj2vapnidjHxD/q6vd7Pvhr31AwcY8eXMTXAKECZZJFXuEq27aLgQK5uLMohCenGGuGewOxSjBvYBqeG6B+Nqiblggdjnc+ZXDy+FNFpFzw76O3UBAROuXh6FoiAcf5g9eTvUgzy0nWg6I8cXHRUpg5bOVBCo+KDpFajOf23GgPme7RSQ+lacIENUgJ6gg1k6HjgOlqnLqip4tEuhv0hNEMXUD0clyXE3p6pZA0S2nnvTlXwLJEZWlb7cTQH1+USgTN4VhAenm/wea1OCAOmqo6fE1WCb9WSKBah+rbUWPWAmE2Rvk0ApiB45eOyNAzU8xcTvj8KvkKEoOaIYeHNA3ZuygAvFMUO0AAAAASUVORK5CYII=';
-      break;
-    case 'external_person':
-      personImg =
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAB6ElEQVR4Xu2YLY+EMBCG9+dWr0aj0Wg0Go1Go0+j8Xdv2uTCvv1gpt0ebHKPuhDaeW4605Z9mJvx4AdXUyTUdd08z+u6flmWZRnHsWkafk9DptAwDPu+f0eAYtu2PEaGWuj5fCIZrBAC2eLBAnRCsEkkxmeaJp7iDJ2QMDdHsLg8SxKFEJaAo8lAXnmuOFIhTMpxxKATebo4UiFknuNo4OniSIXQyRxEA3YsnjGCVEjVXD7yLUAqxBGUyPv/Y4W2beMgGuS7kVQIBycH0fD+oi5pezQETxdHKmQKGk1eQEYldK+jw5GxPfZ9z7Mk0Qnhf1W1m3w//EUn5BDmSZsbR44QQLBEqrBHqOrmSKaQAxdnLArCrxZcM7A7ZKs4ioRq8LFC+NpC3WCBJsvpVw5edm9iEXFuyNfxXAgSwfrFQ1c0iNda8AdejvUgnktOtJQQxmcfFzGglc5WVCj7oDgFqU18boeFSs52CUh8LE8BIVQDT1ABrB0HtgSEYlX5doJnCwv9TXocKCaKbnwhdDKPq4lf3SwU3HLq4V/+WYhHVMa/3b4IlfyikAduCkcBc7mQ3/z/Qq/cTuikhkzB12Ae/mcJC9U+Vo8Ej1gWAtgbeGgFsAMHr50BIWOLCbezvhpBFUdY6EJuJ/QDW0XoMX60zZ0AAAAASUVORK5CYII=';
-      break;
-  }
-
-  const c4ShapeElem = elem.append('g');
-  c4ShapeElem.attr('class', 'person-man');
-
-  // <rect fill="#08427B" height="119.2188" rx="2.5" ry="2.5" stroke="#073B6F" stroke-width="0.5" width="110" x="120" y="7"/>
-  // draw rect of c4Shape
-  const rect = svgDrawCommon.getNoteRect();
-
-  switch (c4Shape.typeC4Shape.text) {
-    case 'person':
-    case 'external_person':
-    case 'system':
-    case 'external_system':
-    case 'container':
-    case 'external_container':
-    case 'component':
-    case 'external_component':
-      rect.x = c4Shape.x;
-      rect.y = c4Shape.y;
-      rect.fill = fillColor;
-      rect.width = c4Shape.width;
-      rect.height = c4Shape.height;
-      rect.stroke = strokeColor;
-      rect.rx = 2.5;
-      rect.ry = 2.5;
-      rect.attrs = { 'stroke-width': 0.5 };
-      drawRect(c4ShapeElem, rect);
-      break;
-    case 'system_db':
-    case 'external_system_db':
-    case 'container_db':
-    case 'external_container_db':
-    case 'component_db':
-    case 'external_component_db':
-      c4ShapeElem
-        .append('path')
-        .attr('fill', fillColor)
-        .attr('stroke-width', '0.5')
-        .attr('stroke', strokeColor)
-        .attr(
-          'd',
-          'Mstartx,startyc0,-10 half,-10 half,-10c0,0 half,0 half,10l0,heightc0,10 -half,10 -half,10c0,0 -half,0 -half,-10l0,-height'
-            .replaceAll('startx', c4Shape.x as unknown as string)
-            .replaceAll('starty', c4Shape.y as unknown as string)
-            .replaceAll('half', (c4Shape.width / 2) as unknown as string)
-            .replaceAll('height', c4Shape.height as unknown as string)
-        );
-      c4ShapeElem
-        .append('path')
-        .attr('fill', 'none')
-        .attr('stroke-width', '0.5')
-        .attr('stroke', strokeColor)
-        .attr(
-          'd',
-          'Mstartx,startyc0,10 half,10 half,10c0,0 half,0 half,-10'
-            .replaceAll('startx', c4Shape.x as unknown as string)
-            .replaceAll('starty', c4Shape.y as unknown as string)
-            .replaceAll('half', (c4Shape.width / 2) as unknown as string)
-        );
-      break;
-    case 'system_queue':
-    case 'external_system_queue':
-    case 'container_queue':
-    case 'external_container_queue':
-    case 'component_queue':
-    case 'external_component_queue':
-      c4ShapeElem
-        .append('path')
-        .attr('fill', fillColor)
-        .attr('stroke-width', '0.5')
-        .attr('stroke', strokeColor)
-        .attr(
-          'd',
-          'Mstartx,startylwidth,0c5,0 5,half 5,halfc0,0 0,half -5,halfl-width,0c-5,0 -5,-half -5,-halfc0,0 0,-half 5,-half'
-            .replaceAll('startx', c4Shape.x as unknown as string)
-            .replaceAll('starty', c4Shape.y as unknown as string)
-            .replaceAll('width', c4Shape.width as unknown as string)
-            .replaceAll('half', (c4Shape.height / 2) as unknown as string)
-        );
-      c4ShapeElem
-        .append('path')
-        .attr('fill', 'none')
-        .attr('stroke-width', '0.5')
-        .attr('stroke', strokeColor)
-        .attr(
-          'd',
-          'Mstartx,startyc-5,0 -5,half -5,halfc0,half 5,half 5,half'
-            .replaceAll('startx', (c4Shape.x + c4Shape.width) as unknown as string)
-            .replaceAll('starty', c4Shape.y as unknown as string)
-            .replaceAll('half', (c4Shape.height / 2) as unknown as string)
-        );
-      break;
-  }
-
-  // draw type of c4Shape
-  const c4ShapeFontConf = getC4ShapeFont(conf, c4Shape.typeC4Shape.text);
-  // The type text was measured by the renderer before drawing.
-  const typeC4ShapeWidth = c4Shape.typeC4Shape.width!;
-  c4ShapeElem
-    .append('text')
-    .attr('fill', fontColor)
-    .attr('font-family', c4ShapeFontConf.fontFamily)
-    .attr('font-size', c4ShapeFontConf.fontSize - 2)
-    .attr('font-style', 'italic')
-    .attr('lengthAdjust', 'spacing')
-    .attr('textLength', typeC4ShapeWidth)
-    .attr('x', c4Shape.x + c4Shape.width / 2 - typeC4ShapeWidth / 2)
-    .attr('y', c4Shape.y + c4Shape.typeC4Shape.Y!)
-    .text('<<' + c4Shape.typeC4Shape.text + '>>');
-
-  // draw image/sprite
-  switch (c4Shape.typeC4Shape.text) {
-    case 'person':
-    case 'external_person':
-      drawImage(
-        c4ShapeElem,
-        48,
-        48,
-        c4Shape.x + c4Shape.width / 2 - 24,
-        c4Shape.y + c4Shape.image.Y,
-        personImg
-      );
-      break;
-  }
-
-  // draw label
-  let textFontConf = (conf[c4Shape.typeC4Shape.text + 'Font'] as () => C4Font)();
-  textFontConf.fontWeight = 'bold';
-  textFontConf.fontSize = textFontConf.fontSize + 2;
-  textFontConf.fontColor = fontColor;
-  _drawTextCandidateFunc(conf)(
-    c4Shape.label.text,
-    c4ShapeElem,
-    c4Shape.x,
-    c4Shape.y + c4Shape.label.Y!,
-    c4Shape.width,
-    c4Shape.height,
-    { fill: fontColor },
-    textFontConf
-  );
-
-  // draw techn/type
-  textFontConf = (conf[c4Shape.typeC4Shape.text + 'Font'] as () => C4Font)();
-  textFontConf.fontColor = fontColor;
-
-  if (c4Shape.techn && c4Shape.techn?.text !== '') {
-    _drawTextCandidateFunc(conf)(
-      c4Shape.techn.text,
-      c4ShapeElem,
-      c4Shape.x,
-      c4Shape.y + c4Shape.techn.Y!,
-      c4Shape.width,
-      c4Shape.height,
-      { fill: fontColor, 'font-style': 'italic' },
-      textFontConf
-    );
-  } else if (c4Shape.type && c4Shape.type.text !== '') {
-    _drawTextCandidateFunc(conf)(
-      c4Shape.type.text,
-      c4ShapeElem,
-      c4Shape.x,
-      c4Shape.y + c4Shape.type.Y!,
-      c4Shape.width,
-      c4Shape.height,
-      { fill: fontColor, 'font-style': 'italic' },
-      textFontConf
-    );
-  }
-
-  // draw descr
-  if (c4Shape.descr && c4Shape.descr.text !== '') {
-    textFontConf = conf.personFont();
-    textFontConf.fontColor = fontColor;
-    _drawTextCandidateFunc(conf)(
-      c4Shape.descr.text,
-      c4ShapeElem,
-      c4Shape.x,
-      c4Shape.y + c4Shape.descr.Y!,
-      c4Shape.width,
-      c4Shape.height,
-      { fill: fontColor },
-      textFontConf
-    );
-  }
-
-  return c4Shape.height;
-};
-
 export const insertDatabaseIcon = function (elem: SVG, id: string) {
   elem
     .append('defs')
@@ -566,14 +339,6 @@ export const insertArrowCrossHead = function (elem: SVG, id: string) {
   // this is actual shape for arrowhead
 };
 
-const getC4ShapeFont = (cnf: C4DrawConfig, typeC4Shape: string): C4Font => {
-  return {
-    fontFamily: cnf[typeC4Shape + 'FontFamily'] as string,
-    fontSize: cnf[typeC4Shape + 'FontSize'] as number,
-    fontWeight: cnf[typeC4Shape + 'FontWeight'] as string | number,
-  };
-};
-
 const _drawTextCandidateFunc = (function () {
   function byText<T extends SVGElement>(
     content: string,
@@ -683,9 +448,7 @@ const _drawTextCandidateFunc = (function () {
 export default {
   drawRect,
   drawBoundary,
-  drawC4Shape,
   drawRels,
-  drawImage,
   insertArrowHead,
   insertArrowEnd,
   insertArrowFilledHead,

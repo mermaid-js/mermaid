@@ -1,0 +1,18 @@
+---
+description: >-
+  Markdown bold/italic emphasis in a requirement's quoted name and text, and an
+  element's quoted name/type/docref under the elk layout.
+config:
+  layout: elk
+---
+requirementDiagram
+    requirement "__my bolded name__" {
+        id: 1
+        text: "**Bolded text** _italicized text_"
+        risk: high
+        verifymethod: test
+    }
+    element "*my italicized name*" {
+      type: "**Bolded type** _italicized type_"
+      docref: "*Italicized* __Bolded__"
+    }

@@ -11,14 +11,14 @@
 
 Mermaid can render Pie Chart diagrams.
 
-```mermaid-example
+```mermaid
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
     "Rats" : 15
 ```
 
-```mermaid
+```mermaid-example
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
@@ -50,21 +50,21 @@ Drawing a pie chart is really simple in mermaid.
 .
 .
 
-## Donut chart diagram (v\<MERMAID_RELEASE_VERSION>+)
+## Donut chart diagram (v11.16.0+)
 
 By setting `donutHole` parameter on config, Mermaid can render Donut Chart Diagram.
 
-## Legend Position (v\<MERMAID_RELEASE_VERSION>+)
+## Legend Position (v11.16.0+)
 
 By setting `legendPosition` parameter on config, you can set where the legend is positioned.
 
-## Highlight Slice (v\<MERMAID_RELEASE_VERSION>+)
+## Highlight Slice (v11.16.0+)
 
 By setting `highlightSlice` parameter on config, you can highlight specific slice. You can also highlight slice by hovering on it.
 
 ## Example
 
-```mermaid-example
+```mermaid
 ---
 config:
   pie:
@@ -82,7 +82,7 @@ pie showData
     "Iron" :  5
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   pie:

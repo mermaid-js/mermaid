@@ -1,0 +1,15 @@
+---
+description:
+  Renders a basic top-down flowchart under dagre layout, covering rectangle,
+  round, and decision node shapes plus labeled edges and a FontAwesome icon
+  label, as a baseline smoke test.
+config:
+  layout: "dagre"
+---
+flowchart TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      

@@ -16,7 +16,8 @@ export interface Node {
   level: number;
   name: string;
   nodeType: NodeType;
-  iconId?: string;
+  /** Iconify icon reference (`pack:name`), a built-in icon (`file`/`folder`), or `none` */
+  icon?: string;
   cssClass?: string;
   description?: string;
   BBox?: BBox;
@@ -29,7 +30,7 @@ export interface TreeViewDB extends DiagramDBBase<TreeViewDiagramConfig> {
     name: string,
     nodeType: NodeType,
     cssClass?: string,
-    iconId?: string,
+    icon?: string,
     description?: string
   ) => void;
   getRoot: () => Node;

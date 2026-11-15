@@ -1,0 +1,23 @@
+---
+description: >-
+  State diagram composite-container colouring under the handDrawn look (roughjs
+  shapes, not rects — a separate style codepath from the classic look): three
+  concurrency regions (NumLock/CapsLock/ScrollLock) in one composite state.
+  Rendered under the "redux-dark-color" theme.
+config:
+  theme: redux-dark-color
+  look: handDrawn
+---
+stateDiagram-v2
+    [*] --> Active
+    state Active {
+      [*] --> NumOff
+      NumOff --> NumOn
+      --
+      [*] --> CapsOff
+      CapsOff --> CapsOn
+      --
+      [*] --> ScrollOff
+      ScrollOff --> ScrollOn
+    }
+    Active --> [*]

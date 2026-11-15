@@ -8,10 +8,10 @@ const id = 'railroad';
 
 /**
  * Detector function to identify Railroad diagrams
- * Looks for 'railroad-diagram' keyword at the start of the text
+ * Looks for 'railroad-beta' keyword at the start of the text
  */
 const detector: DiagramDetector = (txt) => {
-  return /^\s*railroad-diagram/i.test(txt);
+  return /^\s*railroad-beta/i.test(txt);
 };
 
 /**

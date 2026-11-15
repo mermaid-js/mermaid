@@ -1,0 +1,14 @@
+{
+  "outcome": "valid",
+  "semanticAssertions": {
+    "vertices": [
+      { "id": "payload", "vertexKind": "input" },
+      {
+        "id": "create_issue",
+        "vertexKind": "tool",
+        "metadata": { "connectorRef": "github.create_issue" }
+      }
+    ],
+    "edges": [{ "start": "payload", "end": "create_issue", "edgeSemantic": "sequence" }]
+  }
+}

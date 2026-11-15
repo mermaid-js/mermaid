@@ -1,0 +1,25 @@
+{
+  "nodes": [
+    {
+      "id": "Dep1.Proc1",
+      "width": 141.0124969482422,
+      "height": 54
+    },
+    {
+      "id": "Dep1.Proc2",
+      "width": 141.0124969482422,
+      "height": 54
+    },
+    {
+      "id": "Dep1.Proc3",
+      "width": 141.0124969482422,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c5e0670f5ee0282f9c324b689073e847e07a8e1b6ba34b841745e89e9b37d47e",
+    "capturedAt": "2026-06-08T14:18:15.818Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/pebr-3-process-too-wide-in-lane.mmd theme=default look=classic layout=swimlane"
+  }
+}

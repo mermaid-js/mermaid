@@ -1,12 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
- * assignWithDepth Extends the functionality of {@link Object.assign} with the
- *   ability to merge arbitrary-depth objects For each key in src with path `k` (recursively)
- *   performs an Object.assign(dst[`k`], src[`k`]) with a slight change from the typical handling of
- *   undefined for dst[`k`]: instead of raising an error, dst[`k`] is auto-initialized to `{}` and
- *   effectively merged with src[`k`]<p> Additionally, dissimilar types will not clobber unless the
- *   config.clobber parameter === true. Example:
+ * Extends the functionality of {@link Object.assign} with the
+ * ability to merge arbitrary-depth objects.
+ *
+ * For each key in `src` with path `k` (recursively)
+ * performs an `Object.assign(dst['k'], src['k'])` with a slight change from the
+ * typical handling of `undefined` for `dst['k']`:
+ * instead of raising an error, `dst['k']` is auto-initialized to `{}` and
+ * effectively merged with `src['k']`
+ *
+ * Additionally, dissimilar types will not clobber. Example:
  *
  * ```
  * const config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
@@ -16,21 +18,22 @@
  * //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
  * ```
  *
- *   Traditional Object.assign would have clobbered foo in config_0 with foo in config_1. If src is a
- *   destructured array of objects and dst is not an array, assignWithDepth will apply each element
- *   of src to dst in order.
+ * Traditional {@link Object.assign} would have clobbered `foo` in `config_0` with `foo` in `config_1`.
+ * If `src` is a destructured array of objects and `dst` is not an array,
+ * `assignWithDepth` will apply each element of `src` to `dst` in order.
+ *
  * @param dst - The destination of the merge
  * @param src - The source object(s) to merge into destination
  * @param config -
  * * depth: depth to traverse within src and dst for merging
- * * clobber: should dissimilar types clobber
  */
 const assignWithDepth = (
-  dst: any,
-  src: any,
-  { depth = 2, clobber = false }: { depth?: number; clobber?: boolean } = {}
-): any => {
-  const config: { depth: number; clobber: boolean } = { depth, clobber };
+  dst: unknown,
+  src: unknown,
+  { depth = 2 }: { depth?: number } = {}
+): // eslint-disable-next-line @typescript-eslint/no-explicit-any
+any => {
+  const config = { depth };
   if (Array.isArray(src) && !Array.isArray(dst)) {
     src.forEach((s) => assignWithDepth(dst, s, config));
     return dst;
@@ -42,26 +45,45 @@ const assignWithDepth = (
     });
     return dst;
   }
-  if (dst === undefined || depth <= 0) {
+  if (dst === undefined || dst === null || depth <= 0) {
     if (dst !== undefined && dst !== null && typeof dst === 'object' && typeof src === 'object') {
       return Object.assign(dst, src);
     } else {
       return src;
     }
   }
-  if (src !== undefined && typeof dst === 'object' && typeof src === 'object') {
-    Object.keys(src).forEach((key) => {
-      if (
-        typeof src[key] === 'object' &&
-        src[key] !== null &&
-        (dst[key] === undefined || typeof dst[key] === 'object')
-      ) {
-        if (dst[key] === undefined) {
-          dst[key] = Array.isArray(src[key]) ? [] : {};
+  if (src !== undefined && src !== null && typeof dst === 'object' && typeof src === 'object') {
+    const dstWithKeys = dst as typeof dst & Record<string, unknown>;
+    Object.entries(src).forEach(([key, srcValue]) => {
+      if (typeof srcValue === 'object') {
+        if (srcValue === null) {
+          return;
         }
-        dst[key] = assignWithDepth(dst[key], src[key], { depth: depth - 1, clobber });
-      } else if (clobber || (typeof dst[key] !== 'object' && typeof src[key] !== 'object')) {
-        dst[key] = src[key];
+        if (!Object.hasOwn(dst, key)) {
+          Object.defineProperty(dst, key, {
+            value: undefined,
+            writable: true,
+            enumerable: true,
+            configurable: true,
+          });
+        }
+        if (dstWithKeys[key] === undefined) {
+          dstWithKeys[key] = Array.isArray(srcValue) ? [] : {};
+        }
+        if (typeof dstWithKeys[key] === 'object') {
+          dstWithKeys[key] = assignWithDepth(dstWithKeys[key], srcValue, { depth: depth - 1 });
+        }
+      } else if (typeof dstWithKeys[key] !== 'object') {
+        if (Object.hasOwn(dst, key)) {
+          dstWithKeys[key] = srcValue;
+        } else {
+          Object.defineProperty(dst, key, {
+            value: srcValue,
+            writable: true,
+            enumerable: true,
+            configurable: true,
+          });
+        }
       }
     });
   }

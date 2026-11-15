@@ -1,0 +1,12 @@
+---
+description: >-
+  Autonumbering applied to a bidirectional arrow (`<<->>`) alongside a
+  normal open arrow (`->`), checking the sequence number renders correctly
+  for the bidirectional message type.
+---
+sequenceDiagram
+  autonumber
+  participant A
+  participant B
+  A<<->>B: This is a bidirectional message
+  A->B: This is a normal message

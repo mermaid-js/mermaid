@@ -1,0 +1,17 @@
+---
+description: >-
+  Hand-drawn class diagram combining a bracket text label with a class body
+  that contains both an interface stereotype annotation and a member
+  (+member1), plus a relationship to an undeclared class C2; the sibling
+  "text-label" fixture omits the body.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  class C1["Class 1 with text label"] {
+  &lt;&lt;interface&gt;&gt;
+  +member1
+  }
+  C1 -->  C2

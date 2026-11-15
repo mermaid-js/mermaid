@@ -1,0 +1,8 @@
+%%{init: {'layout': 'elk'}}%%
+%% The labels of a bidirectional labelled pair stay clear of each other and of the nodes after ELK edge straightening (issue #8580).
+flowchart LR
+  P((Portal)) -->|Overall submission flow| DB[(Data store: records.instance)]
+  DB -->|Pending records| W[Worker: polls every 5 minutes]
+  W -->|Submits after checks| EXT((External API))
+  EXT -->|API status| W
+  W -->|Stores the reply or retry status| DB

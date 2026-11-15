@@ -1,0 +1,11 @@
+---
+description: >-
+  No-frontmatter sequence diagram where a short message is sent first,
+  then the rightmost actor (Bob) sends a very long message back to the
+  actor on the left (Alice), checking that a long right-to-left message
+  wraps/sizes correctly — the mirror image of the sibling
+  "-to-the-left-to-one-to-the-right" fixture.
+---
+sequenceDiagram
+  Alice->>Bob: I'm short
+  Bob->>Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be

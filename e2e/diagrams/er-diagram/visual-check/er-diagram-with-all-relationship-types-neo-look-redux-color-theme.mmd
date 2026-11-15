@@ -1,0 +1,15 @@
+---
+description: >-
+  ER diagram covering all 5 relationship-cardinality/identifying combinations
+  mermaid supports, one pair of entities each, rendered under the "neo" look
+  with the "redux-color" theme.
+config:
+  look: neo
+  theme: redux-color
+---
+erDiagram
+    ENTITY_A0 ||--|| ENTITY_B0 : "one-to-one-identifying"
+    ENTITY_A1 ||--o{ ENTITY_B1 : "one-to-many-identifying"
+    ENTITY_A2 }o--o{ ENTITY_B2 : "many-to-many-identifying"
+    ENTITY_A3 ||..o| ENTITY_B3 : "one-to-zero-or-one-non-identifying"
+    ENTITY_A4 }|..o{ ENTITY_B4 : "one-or-more-to-many-non-identifying"

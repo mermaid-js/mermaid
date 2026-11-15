@@ -1,5 +1,106 @@
+import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
+
+/**
+ * Cycling per-container colour for composite states and concurrency regions.
+ *
+ * Only the containers are painted. A plain state is a step in the machine rather than a
+ * distinct participant, and `classDef` / `style` is already how colour carries meaning
+ * there -- the same line flowchart draws between its subgraphs and its nodes.
+ *
+ * The treatment follows the swimlane header: the palette's border colour on the outline,
+ * its background tint behind the title strip, and the theme's own `compositeBackground`
+ * left on the body. Tinting the body as well would stack tint on tint once composites
+ * nest, and nesting is exactly where the colours have to stay separable.
+ *
+ * `redux-dark-color` ships a border palette and an empty background palette, so on that
+ * theme the `fill` declarations are omitted entirely and only the outlines take colour --
+ * the same outlines-only treatment it gives ER, requirement and sequence.
+ *
+ * Not `!important`: a state's own `classDef` / `style` has to keep winning over the theme.
+ */
+const genColor = (options) => {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
+    return '';
+  }
+  // `look` is validated before it reaches the selector -- see `safeLook`.
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
+  let sections = '';
+
+  // One rule per slot `dataFetcher` can hand out; `stampColorSlot` wraps at the palette
+  // length, so those are exactly `0 .. borderColorArray.length - 1`.
+  for (let i = 0; i < paletteSlotCount(borderColorArray); i++) {
+    const borderColor = borderColorArray[i];
+    const tint = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
+    sections += `
+
+    /* The title strip: \`rect.outer\` spans the whole composite and \`rect.inner\` covers
+       the body, so what stays visible of \`outer\` is the band behind the label. */
+    ${slot}.statediagram-cluster rect.outer {
+      stroke: ${borderColor};
+      ${tint}
+    }
+
+    ${slot}.statediagram-cluster rect.inner {
+      stroke: ${borderColor};
+    }
+
+    /* Concurrency regions. Siblings of one composite share a slot, so a divided composite
+       reads as one thing split into parts rather than as several composites. */
+    ${slot}.statediagram-cluster rect.divider {
+      stroke: ${borderColor};
+      ${tint}
+    }
+
+    /* handDrawn draws the same container as roughjs shapes rather than plain rects, so it
+       needs its own rules. \`roundedWithTitle\` and \`divider\` name those groups \`outer\`,
+       \`inner\` and \`divider\` to match the classic branch, which is what lets these
+       discriminate -- a bare \`.statediagram-cluster path\` rule reached the body as well and
+       tinted the whole composite, losing \`compositeBackground\` and diverging from what
+       classic and neo do.
+
+       roughjs emits two paths per shape and marks them: the filled shape carries
+       \`stroke="none"\` and the sketched outline carries \`fill="none"\`. Splitting on that is
+       what keeps \`fill\` off the outline -- a rough outline is open squiggles, not a closed
+       region, so filling it produces smears -- and keeps \`stroke\` off the fill shape, which
+       would otherwise gain an edge it was drawn without. */
+    ${slot}.statediagram-cluster .outer path[stroke='none'] {
+      ${tint}
+    }
+
+    ${slot}.statediagram-cluster .outer path[fill='none'] {
+      stroke: ${borderColor};
+    }
+
+    /* No \`.inner\` rule on purpose. The body shape is left entirely alone under handDrawn,
+       where a rect's \`inner\` counterpart cannot be recoloured safely: roughjs draws a
+       hachure fill as *stroked* lines, so its fill paths carry \`fill="none"\` exactly like
+       the outline and no selector separates them. An \`.inner\` stroke rule therefore
+       repainted the hatching of every alt composite in the palette colour instead of
+       leaving it on \`altBackground\`. The container still reads as palette-coloured: the
+       \`outer\` shape spans the whole composite, so its outline already frames the body. */
+
+    /* Regions split the same way, which is why \`divider\` fills solid rather than taking
+       roughjs's default hachure -- see the note on that call. Hatched, both of its paths
+       carried \`fill="none"\` and these two rules degenerated: the tint matched nothing and
+       the border rule repainted the hatching. */
+    ${slot}.statediagram-cluster .divider path[stroke='none'] {
+      ${tint}
+    }
+
+    ${slot}.statediagram-cluster .divider path[fill='none'] {
+      stroke: ${borderColor};
+    }
+    `;
+  }
+  return sections;
+};
+
 const getStyles = (options) =>
   `
+${genColor(options)}
 defs [id$="-barbEnd"] {
     fill: ${options.transitionColor};
     stroke: ${options.transitionColor};

@@ -1,0 +1,20 @@
+---
+description: >-
+  Vertical gitgraph where a cherry-pick command carries a custom tag
+  ("snapshot"), the vertical-orientation counterpart of the custom-tag
+  cherry-pick test.
+---
+gitGraph TB:
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A" tag: "snapshot"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"

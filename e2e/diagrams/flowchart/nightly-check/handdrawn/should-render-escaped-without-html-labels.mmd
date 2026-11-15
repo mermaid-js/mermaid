@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that HTML-like tags inside a node label are escaped and rendered as
+  literal text rather than interpreted as markup, when HTML labels are disabled,
+  under the hand-drawn look.
+config:
+  look: handDrawn
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+graph TD
+  a["<strong>Haiya</strong>"]-->b

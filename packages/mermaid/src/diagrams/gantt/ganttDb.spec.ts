@@ -2,6 +2,7 @@
 import dayjs from 'dayjs';
 import ganttDb from './ganttDb.js';
 import { convert } from '../../tests/util.js';
+import { log } from '../../logger.js';
 
 describe('when using the ganttDb', function () {
   beforeEach(function () {
@@ -565,5 +566,55 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].startTime.getFullYear()).toBe(2024);
     // Second task will be parsed as year 202 (fallback to new Date())
     expect(tasks[1].startTime.getFullYear()).toBe(202);
+  });
+
+  describe('when a task references a task id that does not exist', function () {
+    it('should warn about unknown ids in an "after" statement (issue #4121)', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task1', 'id1,2013-01-01,2d');
+      ganttDb.addTask('task2', 'id2,after m1,1d');
+
+      ganttDb.getTasks();
+
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('m1'));
+      warnSpy.mockRestore();
+    });
+
+    it('should warn about unknown ids in an "until" statement', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task1', 'id1,2013-01-01,until m1');
+
+      ganttDb.getTasks();
+
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('m1'));
+      warnSpy.mockRestore();
+    });
+
+    it('should not warn when every referenced id exists', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task1', 'id1,2013-01-01,2d');
+      ganttDb.addTask('task2', 'id2,after id1,1d');
+
+      ganttDb.getTasks();
+
+      expect(warnSpy).not.toHaveBeenCalled();
+      warnSpy.mockRestore();
+    });
+
+    it('should warn when a milestone is declared without a duration (issue #4121)', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      // Without a duration, `m1` is parsed as the duration instead of as the id
+      ganttDb.addTask('M1', 'milestone, 2023-01-01, m1');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].endTime).toEqual(tasks[0].startTime);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('m1'));
+      warnSpy.mockRestore();
+    });
   });
 });

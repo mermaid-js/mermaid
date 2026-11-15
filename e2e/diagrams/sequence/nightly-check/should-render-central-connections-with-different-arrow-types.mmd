@@ -1,0 +1,19 @@
+---
+description: >-
+  Classic-look sequence diagram exercising the central-connection marker
+  (`()`) across the different arrow head/line styles: solid open, dotted
+  open, solid cross, dotted cross, and a plain solid arrow.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  Alice ()->>() Bob: Solid open arrow
+  Alice ()-->>() Bob: Dotted open arrow
+  Alice ()-x() Bob: Solid cross
+  Alice ()--x() Bob: Dotted cross
+  Alice ()->() Bob: Solid arrow

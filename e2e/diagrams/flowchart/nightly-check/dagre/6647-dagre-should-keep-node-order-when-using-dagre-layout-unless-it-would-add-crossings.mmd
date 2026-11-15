@@ -1,0 +1,13 @@
+---
+description:
+  Regression test verifying that dagre preserves the source order of sibling
+  nodes fanned out via the & shorthand unless doing so would introduce
+  additional edge crossings, in which case it may reorder them.
+config:
+  layout: dagre
+---
+flowchart TB
+  a --> a1 & a2 & a3 & a4
+  b --> b1 & b2
+  b2 --> b3
+  b1 --> b4

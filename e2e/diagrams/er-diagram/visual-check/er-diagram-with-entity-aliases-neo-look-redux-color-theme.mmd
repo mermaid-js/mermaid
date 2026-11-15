@@ -1,0 +1,22 @@
+---
+description: >-
+  ER diagram covering entity name aliases (bare identifier and quoted-string
+  forms) across three related entities, rendered under the "neo" look with the
+  "redux-color" theme.
+config:
+  look: neo
+  theme: redux-color
+---
+erDiagram
+    p[Person] {
+        varchar(64) firstName
+        varchar(64) lastName
+    }
+    c["Customer Account"] {
+        varchar(128) email
+    }
+    o[Order] {
+        int orderNumber
+    }
+    p ||--o| c : has
+    c ||--o{ o : places

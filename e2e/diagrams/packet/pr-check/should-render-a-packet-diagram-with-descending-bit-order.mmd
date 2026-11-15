@@ -1,0 +1,17 @@
+---
+description: >-
+  Packet diagram of a small 16-bit status register (DATA/TYPE/EN/RESERVED
+  fields), configured with `bitOrder: descending` and `bitsPerRow: 16`,
+  testing the descending bit-numbering layout option.
+title: "Status Register"
+config:
+  packet:
+    showBits: true
+    bitOrder: descending
+    bitsPerRow: 16
+---
+packet
+  0-7: "DATA"
+  8-11: "TYPE"
+  12: "EN"
+  13-15: "RESERVED"

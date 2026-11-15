@@ -1,0 +1,10 @@
+agentflow-beta TB
+  check["Tests pass?"]@{ shape: decision }
+  ship["Ship it"]@{ shape: action }
+  fix["Fix the build"]@{ shape: task }
+  logs["Build logs"]@{ shape: refdoc }
+
+  check -- yes --> ship
+  check -- no --> fix
+  fix --x check
+  fix -.- logs

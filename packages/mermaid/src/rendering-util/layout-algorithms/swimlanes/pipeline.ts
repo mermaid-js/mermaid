@@ -8,12 +8,14 @@ import { makeProperLayering } from './phase2.dummies.js';
 import { orderLayers } from './phase3.ordering.js';
 import { assignCoordinates } from './phase4.coordinates.js';
 import { LAYERING } from './config.js';
+import { AUTOMATIC_LANE_ORDERING_RESTARTS, optimizeTopLaneOrder } from './laneOrdering.js';
 
 export interface LayoutOptions {
   // Layering
   compactSingleInput?: boolean; // default true for compact swimlanes
   ignoreCrossLaneEdges?: boolean;
   optimizeRanksByCrossings?: boolean;
+  automaticLaneOrdering?: boolean;
   // Coordinates
   layerGap?: number;
   nodeGap?: number;
@@ -33,6 +35,9 @@ export function sugiyamaLayout(g: Graph, opts?: LayoutOptions): LayoutResult {
   const ignoreCrossLaneEdges = opts?.ignoreCrossLaneEdges ?? true;
   const optimizeRanksByCrossings = opts?.optimizeRanksByCrossings ?? true;
   const g0 = normalizeGraph(g);
+  const laneOrder = opts?.automaticLaneOrdering
+    ? optimizeTopLaneOrder(g0, { restarts: AUTOMATIC_LANE_ORDERING_RESTARTS })
+    : undefined;
 
   // Phase 1: cycle removal
   const cycleRes = removeCycles_DFS(g0);
@@ -52,13 +57,14 @@ export function sugiyamaLayout(g: Graph, opts?: LayoutOptions): LayoutResult {
       });
   const { layering: properLayering, graphWithDummies } = makeProperLayering(layering, gAcyclic);
   // Phase 3: ordering
-  const ordered = orderLayers(properLayering, graphWithDummies);
+  const ordered = orderLayers(properLayering, graphWithDummies, { laneOrder });
 
   // Phase 4: coordinates
   const coordinates = assignCoordinates(ordered, graphWithDummies, {
     layerGap: opts?.layerGap,
     nodeGap: opts?.nodeGap,
     direction: opts?.direction,
+    laneOrder,
   });
 
   return {

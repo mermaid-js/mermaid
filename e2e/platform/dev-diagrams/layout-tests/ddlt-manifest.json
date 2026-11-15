@@ -1,0 +1,82 @@
+{
+  "fixtures": [
+    {
+      "id": "Company",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "multiple-edges",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "edge-types",
+      "profile": "flowchart-domus",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "swimlanes/commant",
+      "profile": "swimlanes",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "swimlanes/12-disagree-exits-b-c",
+      "profile": "swimlanes",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "swimlanes/13-disagree-exits-b-c-d",
+      "profile": "swimlanes",
+      "allowLevel1Failure": true
+    },
+    {
+      "id": "grid/simple",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/group-stack",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/placement-matrix-tb",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/placement-matrix-lr",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/singleton-alignments",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/stack-default",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/stack-gap-zero",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-group-member",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-outside-member",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-loops-parallel-lr",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-cell-aware-empty-cell",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-hierarchy-portals",
+      "profile": "grid"
+    }
+  ]
+}

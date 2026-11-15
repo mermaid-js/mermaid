@@ -4,7 +4,7 @@ import type {
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
 
-const id = 'wardley-beta';
+const id = 'wardley';
 
 const detector: DiagramDetector = (text) => {
   return /^\s*wardley-beta/i.test(text);

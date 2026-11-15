@@ -45,6 +45,8 @@ export const registerIconPacks = (iconLoaders: IconLoader[]) => {
   }
 };
 
+export const isIconPackRegistered = (name: string) => iconsStore.has(name) || loaderStore.has(name);
+
 const getRegisteredIconData = async (iconName: string, fallbackPrefix?: string) => {
   const data = stringToIcon(iconName, true, fallbackPrefix !== undefined);
   if (!data) {

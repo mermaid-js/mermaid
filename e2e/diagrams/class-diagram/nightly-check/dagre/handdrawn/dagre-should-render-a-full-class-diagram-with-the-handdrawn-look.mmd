@@ -1,0 +1,47 @@
+---
+description: >-
+  Comprehensive class diagram smoke test rendered under the dagre layout
+  with the hand-drawn look, covering freestanding and class-attached notes,
+  an interface stereotype, all core relationship types (inheritance,
+  aggregation, composition, dependency, association, realization) with
+  multiplicity labels, visibility markers (+/-/#) on attributes and
+  methods, and reopening a class (Class10) to add a stereotype and members.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+  layout: dagre
+---
+classDiagram
+  note "I love this diagram!
+  Do you love it?"
+  Class01 <|-- AveryLongClass : Cool
+  class Class01 {
+    &lt;&lt;interface&gt;&gt;
+  }
+  Class03 "1" *-- "*" Class04
+  Class05 "1" o-- "many" Class06
+  Class07 "1" .. "*" Class08
+  Class09 "1" --> "*" C2 : Where am i?
+  Class09 "*" --* "*" C3
+  Class09 "1" --|> "1" Class07
+  Class12 <|.. Class08
+  Class11 ..>Class12
+  Class07 : equals()
+  Class07 : Object[] elementData
+  Class01 : size()
+  Class01 : int chimp
+  Class01 : int gorilla
+  Class01 : -int privateChimp
+  Class01 : +int publicGorilla
+  Class01 : #int protectedMarmoset
+  Class08 <--> C2: Cool label
+  class Class10 {
+  int id
+  test()
+  }
+ class Class10 {
+    &lt;&lt;service&gt;&gt;
+  }
+  note for Class10 "Cool class
+  I said it's very cool class!"

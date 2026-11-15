@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 65.01249694824219,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 78.8062515258789,
+      "height": 39
+    },
+    {
+      "id": "I",
+      "width": 64.45625305175781,
+      "height": 54
+    },
+    {
+      "id": "id1",
+      "width": 80.4937515258789,
+      "height": 68.378173828125
+    },
+    {
+      "id": "Sys1",
+      "width": 90.45625305175781,
+      "height": 54
+    },
+    {
+      "id": "E",
+      "width": 68.57499694824219,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 114.57500457763672,
+      "height": 39
+    },
+    {
+      "id": "D",
+      "width": 44.3125,
+      "height": 39
+    },
+    {
+      "id": "F",
+      "width": 68.4000015258789,
+      "height": 54
+    },
+    {
+      "id": "G",
+      "width": 40.82500076293945,
+      "height": 54
+    },
+    {
+      "id": "H",
+      "width": 76.34375,
+      "height": 54
+    },
+    {
+      "id": "exit",
+      "width": 57.493751525878906,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "6c48d0063206cfac5234912c87899368ba6ac322049f04516790f550f191bf85",
+    "capturedAt": "2026-06-04T14:52:29.021Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/issue-7802-1.mmd theme=default look=classic layout=swimlane"
+  }
+}

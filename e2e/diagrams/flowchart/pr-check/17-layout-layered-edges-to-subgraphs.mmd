@@ -1,0 +1,18 @@
+---
+description:
+  Edges that start or end on a subgraph itself under the layered layout, including a
+  subgraph-to-subgraph edge. Route ends land on the cluster borders.
+config:
+  layout: layered
+---
+flowchart LR
+  client[Client] --> api
+  subgraph api [API]
+    gw[Gateway] --> auth[Auth]
+  end
+  api --> db
+  subgraph db [Storage]
+    primary[(Primary)]
+    replica[(Replica)]
+  end
+  auth --> cache[Cache]

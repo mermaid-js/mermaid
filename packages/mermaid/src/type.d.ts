@@ -9,3 +9,13 @@ declare var injected: {
    */
   profiling: boolean;
 };
+
+/**
+ * Vite's `?raw` suffix, which yields a module's own source as a string. Used by specs that
+ * assert the *shape* of a source file rather than its behaviour -- see
+ * `diagrams/sequence/palettePicking.spec.ts`.
+ */
+declare module '*?raw' {
+  const content: string;
+  export default content;
+}

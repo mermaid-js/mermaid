@@ -1,6 +1,6 @@
 import type { Graph, Layering, OrderedLayers, NodeId, Edge } from './helpers.js';
 import { buildLayerIndex, countInversions } from './phase0.helpers.js';
-import { buildTopLaneOrder, createTopLaneResolver } from './phase2.options.js';
+import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
 
 type SweepDirection = 'down' | 'up';
 
@@ -244,14 +244,22 @@ function transposeImprove(
 }
 
 // Sugiyama phase 3: lane-aware median sweeps plus adjacent transpose improvements.
-export function orderLayers(layering: Layering, gWithDummies: Graph): OrderedLayers {
+export interface OrderOptions {
+  laneOrder?: string[];
+}
+
+export function orderLayers(
+  layering: Layering,
+  gWithDummies: Graph,
+  opts?: OrderOptions
+): OrderedLayers {
   // Start with deterministic initial order per layer (preserve given order)
   const layers = layering.layers.map((l) => [...l]);
   const edges = gWithDummies.edges;
 
   // Compute lane order for lane-aware crossing minimization (Siebenhaller Lemma 4.4)
   const topLaneOf = createTopLaneResolver(gWithDummies);
-  const laneOrder = buildTopLaneOrder(gWithDummies);
+  const laneOrder = resolveTopLaneOrder(gWithDummies, opts?.laneOrder);
 
   // Perform top-down / bottom-up sweeps
   for (let s = 0; s < 3; s++) {

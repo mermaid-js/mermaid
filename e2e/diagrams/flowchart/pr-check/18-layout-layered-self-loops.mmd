@@ -1,0 +1,13 @@
+---
+description:
+  Several self-loops on one node under the layered layout. Each loop nests
+  outside the one before it and its label, instead of being drawn on top of it.
+config:
+  layout: layered
+---
+flowchart TB
+  A[Polling] --> A
+  A -->|retry| A
+  A -->|timeout| A
+  A --> B[Done]
+  B --> B

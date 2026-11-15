@@ -28,8 +28,8 @@ describe('parsing a flow chart', function () {
     expect(edges[0].text).toBe('');
   });
 
-  it('should accept swimlane as a graph keyword', function () {
-    flow.parser.parse('swimlane LR;A-->B;');
+  it('should accept swimlane-beta as a graph keyword', function () {
+    flow.parser.parse('swimlane-beta LR;A-->B;');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();

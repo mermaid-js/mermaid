@@ -86,6 +86,11 @@ treeView-beta
       <pre class="source"></pre>
       <div class="rendered">
         <pre class="mermaid">
+---
+config:
+  treeView:
+    showIcons: true
+---
 treeView-beta
 my-project/
     src/
@@ -106,18 +111,54 @@ my-project/
       <pre class="source"></pre>
       <div class="rendered">
         <pre class="mermaid">
+---
+config:
+  treeView:
+    showIcons: true
+---
 treeView-beta
 my-project/
     src/
-        App.tsx :::highlight icon(react) ## main component
+        App.tsx :::highlight icon(logos:react) ## main component
         index.js ## entry point
-        styles.css
+        styles.css icon(none)
     data/
-        model.bin icon(database)
+        model.bin icon(logos:mysql)
     .env ## environment variables
-    Dockerfile
+    Dockerfile icon(logos:docker-icon)
     package.json
-        </pre>
+</pre
+        >
+      </div>
+    </div>
+
+    <h2>File-Type Icons via Config Maps</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+---
+config:
+  treeView:
+    showIcons: true
+    defaultIconPack: material-icon-theme
+    filenameIcons:
+      Dockerfile: docker
+    extensionIcons:
+      .ts: typescript
+      .tsx: react-ts
+      .txt: none
+---
+treeView-beta
+my-project/
+    src/
+        App.tsx
+        utils.ts
+    Dockerfile
+    notes.txt
+    README.md
+</pre
+        >
       </div>
     </div>
 
@@ -178,6 +219,24 @@ treeView-beta
       </div>
     </div>
 
+    <h2>Unicode Icons in Filenames</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+treeView-beta
+🚀 rocket-app/
+    📦 packages/
+        🎨 ui/
+        🛠️ utils/
+    🧪 tests/
+    📝 README.md
+    ⚙️ config.yaml
+</pre
+        >
+      </div>
+    </div>
+
     <h2>Custom Config</h2>
     <div class="demo">
       <pre class="source"></pre>
@@ -223,6 +282,20 @@ treeView-beta
       }
 
       import mermaid from './mermaid.esm.mjs';
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'material-icon-theme',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/material-icon-theme/icons.json').then((res) =>
+              res.json()
+            ),
+        },
+      ]);
       mermaid.initialize({
         logLevel: 1,
         securityLevel: 'loose',

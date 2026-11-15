@@ -1,0 +1,36 @@
+---
+description:
+  Checks edges flowing both into and out of two sibling nested subgraphs
+  (subnet1, subnet2) using the `&` multi-node link syntax, where traffic enters
+  from an outside node (internet --> router --> subnet1 & subnet2) and exits
+  back out through another outside node (subnet1 & subnet2 --> nat -->
+  internet), forming a cycle across subgraph boundaries.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TB
+  internet
+  nat
+  router
+  lb1
+  lb2
+  compute1
+  compute2
+  subgraph project
+  router
+  nat
+  subgraph subnet1
+    compute1
+    lb1
+  end
+  subgraph subnet2
+    compute2
+    lb2
+  end
+  end
+  internet --> router
+  router --> subnet1 & subnet2
+  subnet1 & subnet2 --> nat --> internet

@@ -1,0 +1,22 @@
+---
+description:
+  Regression test for multiple parallel edges (including one labeled) between
+  two rhombus/diamond-shaped decision nodes where the source node is nested two
+  levels deep inside subgraphs, checking dagre computes correct diamond-boundary
+  intersection points for each parallel edge.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+flowchart LR
+  subgraph S2
+  subgraph s1["APA"]
+  D{"Use the editor"}
+  end
+
+  D -- Mermaid js --> I{"fa:fa-code Text"}
+  D --> I
+  D --> I
+
+  end

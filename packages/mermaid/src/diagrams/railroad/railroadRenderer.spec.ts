@@ -32,7 +32,7 @@ describe('Railroad Renderer', () => {
   });
 
   it('sets a viewBox that includes the full rendered diagram height', () => {
-    const text = `railroad-diagram
+    const text = `railroad-beta
 sign = choice(terminal("+"), terminal("-")) ;
 number = sequence(optional(nonterminal("sign")), oneOrMore(nonterminal("digit"))) ;
 list = sequence(terminal("["), optional(sequence(nonterminal("number"), zeroOrMore(sequence(terminal(","), nonterminal("number"))))), terminal("]")) ;
@@ -63,7 +63,7 @@ digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3")) ;
   });
 
   it('aligns rule markers with the centerline of tall expressions', () => {
-    const text = `railroad-diagram
+    const text = `railroad-beta
 sign = choice(terminal("+"), terminal("-")) ;
 `;
 
@@ -84,7 +84,7 @@ sign = choice(terminal("+"), terminal("-")) ;
   });
 
   it('connects centered choice alternatives from the left edge', () => {
-    const text = `railroad-diagram
+    const text = `railroad-beta
 term = choice(nonterminal("number"), sequence(terminal("("), nonterminal("expression"), terminal(")"))) ;
 `;
 
@@ -103,7 +103,7 @@ term = choice(nonterminal("number"), sequence(terminal("("), nonterminal("expres
   });
 
   it('connects centered choice alternatives to the right lane before merging', () => {
-    const text = `railroad-diagram
+    const text = `railroad-beta
 identifierPart = choice(nonterminal("letter"), terminal("_")) ;
 `;
 
@@ -126,7 +126,7 @@ identifierPart = choice(nonterminal("letter"), terminal("_")) ;
   });
 
   it('orients choice corner arcs in the direction of travel', () => {
-    const text = `railroad-diagram
+    const text = `railroad-beta
 sign = choice(terminal("+"), terminal("-")) ;
 `;
 
@@ -148,7 +148,7 @@ sign = choice(terminal("+"), terminal("-")) ;
   });
 
   it('orients repetition loop corners in the direction of travel', () => {
-    const text = `railroad-diagram
+    const text = `railroad-beta
 number = oneOrMore(nonterminal("digit")) ;
 `;
 

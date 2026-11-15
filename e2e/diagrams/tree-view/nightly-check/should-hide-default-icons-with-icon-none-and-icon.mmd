@@ -1,0 +1,14 @@
+---
+description: >-
+  Tests suppressing a node's default icon via `icon(none)` and via an empty
+  `icon()` call, alongside a sibling node with no icon annotation at all
+  (which falls back to its default icon), all with showIcons enabled.
+config:
+  treeView:
+    showIcons: true
+---
+treeView-beta
+  src/
+      index.js icon(none)
+      App.tsx icon()
+  package.json

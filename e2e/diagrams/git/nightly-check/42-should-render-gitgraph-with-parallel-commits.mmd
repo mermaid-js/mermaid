@@ -1,0 +1,23 @@
+---
+description: >-
+  Same branch structure as the parallelCommits:false test (develop and
+  feature branch off main, never merged) but with parallelCommits: true in
+  frontmatter config, testing that sibling branches' commits align in
+  parallel columns rather than by commit order.
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph
+  commit id:"1-abcdefg"
+  commit id:"2-abcdefg"
+  branch develop
+  commit id:"3-abcdefg"
+  commit id:"4-abcdefg"
+  checkout main
+  branch feature
+  commit id:"5-abcdefg"
+  commit id:"6-abcdefg"
+  checkout main
+  commit id:"7-abcdefg"
+  commit id:"8-abcdefg"

@@ -1,0 +1,13 @@
+---
+description: >-
+  Same generalization-plus-abstract-method (`*` suffix) diagram as the
+  '-without-htmllabels' sibling, but with `htmlLabels: true` set
+  explicitly, under the dagre layout.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  Class01 <|-- AveryLongClass : Cool
+  Class01 : someMethod()*

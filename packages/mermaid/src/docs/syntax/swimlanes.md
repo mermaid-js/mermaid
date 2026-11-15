@@ -1,26 +1,85 @@
 ---
+description: 'Divide a process into lanes by actor, team, or system to show who owns each step and where work is handed off.'
 title: Swimlanes Diagram Syntax
 outline: 'deep'
 ---
 
-# Swimlanes Diagram
-
-> Available since MERMAID_RELEASE_VERSION.
+# Swimlanes Diagram (v11.16.0+)
 
 ```warning
-This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+Swimlane diagrams are in beta. Diagrams start with the `swimlane-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 ```
 
 A swimlane diagram shows a process divided by responsibility. Each lane represents an actor, team, system, or phase, and the nodes inside the lane show the work that happens there. Arrows show the order of work and the handoffs between lanes.
 
 Use swimlane diagrams when the most important question is not only "what happens next?" but also "who owns this step?" They are useful for approval flows, support processes, delivery workflows, and any process where work crosses teams or systems.
 
-## Basic Example
+## Default theme and look (v12.0.0+)
 
-> The rendered examples on this page use the **Neo** look and the **Redux** theme. Out of the box, swimlanes use your configured default look and theme.
+Swimlane diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
+  subgraph Customer
+    Browse[Browse catalogue]
+    Pay[Pay]
+  end
+  subgraph Warehouse
+    Pick[Pick items]
+    Ship[Ship order]
+  end
+  subgraph Finance
+    Invoice[Raise invoice]
+  end
+  Browse --> Pay
+  Pay --> Pick
+  Pick --> Ship
+  Pay --> Invoice
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+swimlane-beta LR
+  subgraph Customer
+    Browse[Browse catalogue]
+    Pay[Pay]
+  end
+  subgraph Warehouse
+    Pick[Pick items]
+    Ship[Ship order]
+  end
+  subgraph Finance
+    Invoice[Raise invoice]
+  end
+  Browse --> Pay
+  Pay --> Pick
+  Pick --> Ship
+  Pay --> Invoice
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ swimlane: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
+## Basic Example
+
+```mermaid-example
+swimlane-beta LR
   subgraph Customer
     request[Request service]
     receive[Receive update]
@@ -45,14 +104,14 @@ swimlane LR
 
 ## Syntax
 
-A swimlane diagram starts with the `swimlane` keyword. You can optionally add a direction after the keyword.
+A swimlane diagram starts with the `swimlane-beta` keyword. You can optionally add a direction after the keyword.
 
 ```
-swimlane
+swimlane-beta
 ```
 
 ```
-swimlane LR
+swimlane-beta LR
 ```
 
 The supported directions are:
@@ -71,8 +130,10 @@ If no direction is set, the diagram uses `TB`.
 
 Use `subgraph` to create a lane. In a swimlane diagram, top-level subgraphs are rendered as swimlanes. A lane ends with `end`.
 
+A node belongs to one lane. If two lanes list the same node, it stays in the first lane and is not drawn in the second. The second lane is then removed, because it would be an empty band, but only when the shared node was the reason: the lane lost a member to an earlier lane, it has no nodes left, and no edge points at it. A lane you left empty yourself stays. A subgraph nested inside a lane is drawn as a plain box, not as a lane, and a node in it belongs to the lane around it. Both cases are reported as warnings in the log. Warnings only show when `logLevel` is `warn` or lower, and the default is `fatal`, so set it with `mermaid.initialize({ logLevel: 'warn' })` to see them.
+
 ```mermaid-example
-swimlane
+swimlane-beta
   subgraph Sales
     lead[Qualify lead]
     quote[Prepare quote]
@@ -82,7 +143,7 @@ swimlane
 You can give a lane an internal id and a display label. This is useful when the label contains spaces or when you want a stable id for styling.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph sales [Sales team]
     lead[Qualify lead]
     quote[Prepare quote]
@@ -101,7 +162,7 @@ swimlane LR
 Nodes use flowchart-style shape syntax. The id is written first, and the label is written inside the shape.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Intake
     start([Start])
     task[Do work]
@@ -139,7 +200,7 @@ For the complete shape catalog, icons, images, markdown strings, classes, and st
 Edges also use flowchart-style syntax. They can connect nodes in the same lane or across lanes.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Buyer
     choose[Choose product]
     pay[Pay invoice]
@@ -172,7 +233,7 @@ For the full edge syntax, including multi-directional arrows and minimum link le
 Use `accTitle` and `accDescr` to provide an accessible title and description.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   accTitle: Support escalation
   accDescr: A request starts with the customer, is triaged by support, and may be escalated to engineering.
 
@@ -198,7 +259,7 @@ swimlane LR
 Choose lanes that answer "who owns this step?" Avoid mixing teams, phases, and statuses in the same diagram unless that distinction is the point of the diagram.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Customer
     submit[Submit order]
     confirm[Confirm delivery]
@@ -222,7 +283,7 @@ swimlane LR
 A cross-lane arrow is where responsibility changes. Label the arrow when the handoff depends on a document, decision, message, or condition.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Applicant
     apply[Submit application]
     sign[Sign agreement]
@@ -249,7 +310,7 @@ swimlane LR
 Split a large process into several diagrams when the lanes or handoffs stop fitting in one view. A useful swimlane diagram is usually readable without tracing every arrow twice.
 
 ```mermaid-example
-swimlane TB
+swimlane-beta TB
   subgraph Intake
     collect[Collect request]
     validate[Validate details]
@@ -275,7 +336,7 @@ swimlane TB
 Use short, meaningful ids for nodes and lanes. The label can change without breaking links, styles, or later references.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph ops [Operations]
     intake[Receive request]
     plan[Plan work]
@@ -296,7 +357,7 @@ swimlane LR
 Place a decision node in the lane that owns the decision. Then route the outcomes to the lanes that act on the result.
 
 ```mermaid-example
-swimlane LR
+swimlane-beta LR
   subgraph Support
     classify{Can support solve it?}
     respond[Respond to customer]

@@ -59,6 +59,12 @@ export interface Block {
   styles?: string[];
   stylesStr?: string;
   widthInColumns?: number;
+  /**
+   * Palette slot, assigned in declaration order by `populateBlockDatabase`. Read by the
+   * renderer, stamped as `data-color-id`, and matched by the rules `styles.ts` emits.
+   * Undefined on a theme without a palette and on blocks that paint nothing.
+   */
+  colorIndex?: number;
 }
 
 export interface ClassDef {

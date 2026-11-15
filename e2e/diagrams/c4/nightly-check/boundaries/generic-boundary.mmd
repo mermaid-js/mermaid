@@ -1,0 +1,11 @@
+---
+description: >-
+  Minimal C4Context diagram exercising the generic Boundary(...) syntax
+  (with an explicit "group" type argument) wrapping a single System, as
+  opposed to the more specific Enterprise_Boundary or System_Boundary.
+---
+C4Context
+title Generic boundary
+Boundary(b, "Group", "group") {
+  System(s, "System", "inside a generic boundary")
+}

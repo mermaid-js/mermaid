@@ -1,0 +1,20 @@
+---
+description: >-
+  Hand-drawn class diagram exercising the visibility markers (private -,
+  public +, protected #) on both methods and attributes of an
+  interface-stereotyped class, rendered with htmlLabels disabled; the
+  "hd-2-2" sibling repeats this with htmlLabels enabled.
+config:
+  logLevel: 1
+  htmlLabels: false
+  look: handDrawn
+---
+classDiagram
+  Class01 <|-- AveryLongClass : Cool
+  &lt;&lt;interface&gt;&gt; Class01
+  Class01 : -privateMethod()
+  Class01 : +publicMethod()
+  Class01 : #protectedMethod()
+  Class01 : -int privateChimp
+  Class01 : +int publicGorilla
+  Class01 : #int protectedMarmoset

@@ -1,4 +1,4 @@
-import { it, describe, expect, vi, beforeEach, afterEach } from 'vitest';
+import { assert, it, describe, expect, vi, beforeEach, afterEach } from 'vitest';
 import cytoscape from 'cytoscape';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
@@ -7,8 +7,8 @@ describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {
     db = new ArchitectureDB();
-    // @ts-expect-error since type is set to undefined we will have error
-    parser.parser?.yy = db;
+    assert(parser.parser);
+    parser.parser.yy = db;
   });
 
   describe('architecture diagram definitions', () => {
@@ -193,6 +193,51 @@ describe('architecture diagrams', () => {
       expect(db.getConfigField('edgeElasticity')).toBe(0.45);
       expect(db.getConfigField('numIter')).toBe(2500);
     });
+  });
+
+  it('should throw when missing a group', async () => {
+    const str = `architecture-beta
+      group mermaidPrototypePollutionMarker(cloud)[Marker]
+      service a(server)[A] in __proto__
+      service b(server)[B] in mermaidPrototypePollutionMarker
+      a:R -- L:b`;
+    // __proto__ group does not exist.
+    await expect(parser.parse(str)).rejects.toThrow(/The service \[a]'s parent does not exist./);
+  });
+
+  it('should allow __proto__ as a group name', async () => {
+    const str = `architecture-beta
+      group __proto__(cloud)[Marker]
+      service a(server)[A] in __proto__
+      service b(server)[B] in __proto__
+      a:R -- L:b`;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(db.getGroups().map((g) => g.id)).toContain('__proto__');
+  });
+
+  it('should block proto pollution via service id', async () => {
+    const str = `architecture-beta
+      group __proto__(cloud)[P]
+      group myPrototypePollutionKey(cloud)[Real]
+      service a(server)[A] in __proto__
+      service b(server)[B] in myPrototypePollutionKey
+      a:R -- L:b`;
+
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    // GHSA-3rrr-jr9j-h3q3 happened in this function
+    const structures = db.getDataStructures();
+    expect(structures.groupAlignments.get(`"__proto__"-"myPrototypePollutionKey"`)).toBeDefined();
+    expect(Object.prototype).not.toHaveProperty('myPrototypePollutionKey');
+  });
+
+  it('should store services in the order they were added', async () => {
+    const str = `architecture-beta
+      service a(server)[A]
+      service 20(server)[B]
+      service 10(server)[C]`;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    // Old object iteration order rules sorts numeric keys first
+    expect(db.getServices().map((s) => s.id)).toEqual(['a', '20', '10']);
   });
 
   describe('align directive', () => {

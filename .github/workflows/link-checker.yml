@@ -7,17 +7,10 @@
 name: Link Checker
 
 on:
-  push:
-    branches:
-      - develop
-      - master
-  pull_request:
-    branches:
-      - master
+  # The Link Checker is disabled from running automatically. It can still be
+  # triggered manually via workflow_dispatch. To re-enable automatic runs,
+  # restore the push/pull_request/schedule triggers below.
   workflow_dispatch:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron: '30 8 * * *'
 
 permissions: # added using https://github.com/step-security/secure-repo
   contents: read

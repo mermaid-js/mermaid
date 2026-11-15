@@ -23,6 +23,7 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
   const layerGap = data4Layout.config.flowchart?.rankSpacing ?? 100;
   const ignoreCrossLaneEdges = data4Layout.config.swimlane?.ignoreCrossLaneEdges ?? true;
   const optimizeRanksByCrossings = data4Layout.config.swimlane?.optimizeRanksByCrossings ?? true;
+  const automaticLaneOrdering = data4Layout.config.swimlane?.automaticLaneOrdering ?? false;
   const direction = getSwimlaneDirection(data4Layout);
 
   const { ordered, coordinates } = sugiyamaLayout(g, {
@@ -30,6 +31,7 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
     layerGap,
     ignoreCrossLaneEdges,
     optimizeRanksByCrossings,
+    automaticLaneOrdering,
     direction,
   });
   writeBackToLayoutData(g, ordered, coordinates, { nodeGap, layerGap });

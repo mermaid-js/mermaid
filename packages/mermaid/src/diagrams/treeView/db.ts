@@ -54,7 +54,7 @@ const addNode = (
   name: string,
   nodeType: NodeType,
   cssClass?: string,
-  iconId?: string,
+  icon?: string,
   description?: string
 ) => {
   while (level <= state.records.stack[state.records.stack.length - 1].level) {
@@ -65,7 +65,7 @@ const addNode = (
     level,
     name,
     nodeType,
-    iconId,
+    icon,
     cssClass,
     description,
     children: [],

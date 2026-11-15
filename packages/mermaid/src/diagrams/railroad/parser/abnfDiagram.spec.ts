@@ -10,7 +10,7 @@ describe('ABNF Parser', () => {
   describe('Basic Parsing', () => {
     it('should parse string literal', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = "hello" ;
       `;
       void parser.parse(input);
@@ -26,7 +26,7 @@ describe('ABNF Parser', () => {
 
     it('should parse numeric value', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = %x41 ;
       `;
       void parser.parse(input);
@@ -39,7 +39,7 @@ describe('ABNF Parser', () => {
 
     it('should parse rule name reference', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = other-rule ;
       `;
       void parser.parse(input);
@@ -48,7 +48,7 @@ describe('ABNF Parser', () => {
 
     it('should parse concatenation', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = "a" "b" "c" ;
       `;
       void parser.parse(input);
@@ -61,7 +61,7 @@ describe('ABNF Parser', () => {
 
     it('should parse alternation', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = "a" / "b" / "c" ;
       `;
       void parser.parse(input);
@@ -74,7 +74,7 @@ describe('ABNF Parser', () => {
 
     it('should parse optional group', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = [ "a" ] ;
       `;
       void parser.parse(input);
@@ -83,7 +83,7 @@ describe('ABNF Parser', () => {
 
     it('should parse zero-or-more repetition', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = *"a" ;
       `;
       void parser.parse(input);
@@ -96,7 +96,7 @@ describe('ABNF Parser', () => {
 
     it('should parse one-or-more repetition', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         rule = 1*"a" ;
       `;
       void parser.parse(input);
@@ -109,7 +109,7 @@ describe('ABNF Parser', () => {
 
     it('should parse title', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         title "Test Grammar"
         rule = "a" ;
       `;
@@ -121,7 +121,7 @@ describe('ABNF Parser', () => {
   describe('Real-world Examples', () => {
     it('should parse URI-like grammar', () => {
       const input = `
-        railroad-abnf
+        railroad-abnf-beta
         title "URI"
         URI = scheme ":" hier-part ;
         scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." ) ;
@@ -143,7 +143,7 @@ describe('ABNF Parser', () => {
     });
 
     it('should throw on missing semicolon', () => {
-      expect(() => parser.parse('railroad-abnf\nrule = "a"')).toThrow();
+      expect(() => parser.parse('railroad-abnf-beta\nrule = "a"')).toThrow();
     });
   });
 });

@@ -1,0 +1,12 @@
+---
+description: >-
+  An anonymous composite block is explicitly widened to span 2 columns via
+  `block:2`, containing a single child block A, followed by a plain
+  top-level block B — verifying a composite (sub-)block can be made wider
+  than its default width using the `:N` span suffix.
+---
+block
+  block:2
+  A
+  end
+  B

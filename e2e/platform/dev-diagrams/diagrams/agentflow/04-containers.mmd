@@ -1,0 +1,12 @@
+agentflow-beta TB
+  flow team["Content Team"]
+    flow researcher["Researcher"]
+      gather["Gather sources"]@{ shape: task }
+    end
+
+    flow writer["Writer"]
+      compose["Compose draft"]@{ shape: task }
+    end
+
+    researcher --> writer
+  end

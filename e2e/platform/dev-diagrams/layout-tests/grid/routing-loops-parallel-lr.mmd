@@ -1,0 +1,20 @@
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 40
+    columnGap: 60
+---
+flowchart LR
+  Loop["Loop node"]@{ row: 1, column: 1 }
+  Source([Source])@{ row: 1, column: 2 }
+  Target([Target])@{ row: 1, column: 3 }
+  Lone["Disconnected tail"]@{ row: 2, column: 1 }
+
+  Loop --> Loop
+  Loop --> Loop
+  Loop --> Loop
+  Source --> Target
+  Source --> Target
+  Source --> Target
+  Target --> Source

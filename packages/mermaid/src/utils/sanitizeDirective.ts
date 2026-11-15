@@ -1,12 +1,42 @@
 import { configKeys } from '../defaultConfig.js';
 import { log } from '../logger.js';
+import { sanitizeGridPlacements } from './gridPlacement.js';
 
 /**
- * Sanitizes directive objects
- *
- * @param args - Directive's JSON
+ * Dictionary-style configs have arbitrary user-defined keys, so instead of
+ * checking the keys against configKeys, their values are validated against a
+ * pattern (and suspicious keys are dropped).
  */
-export const sanitizeDirective = (args: any): void => {
+const DICTIONARY_CONFIG_PATTERNS: Record<string, RegExp> = {
+  // CSS colors (sankey)
+  nodeColors: /^#[\da-f]{3,8}$|^rgb\([\d\s%,.]+\)$|^hsl\([\d\s%,.]+\)$|^[a-z]+$/i,
+  // iconify icon references (treeView filenameIcons/extensionIcons)
+  filenameIcons: /^[\w-]+(?::[\w-]+)?$/,
+  extensionIcons: /^[\w-]+(?::[\w-]+)?$/,
+};
+
+const sanitizeDictionaryConfig = (dict: Record<string, unknown>, valuePattern: RegExp): void => {
+  for (const key of Object.keys(dict)) {
+    const value = dict[key];
+    if (
+      key.startsWith('__') ||
+      key.includes('proto') ||
+      key.includes('constr') ||
+      typeof value !== 'string' ||
+      !valuePattern.test(value)
+    ) {
+      log.debug('sanitize deleting dictionary entry:', key, value);
+      delete dict[key];
+    }
+  }
+};
+
+/**
+ * Sanitizes directive values in place, removing unsupported keys and filtering CSS options.
+ * Tracks the parent section so grid placements use shape validation instead of treating authored
+ * node IDs as config keys. Invalid placement coordinates propagate as errors.
+ */
+const sanitizeDirectiveValue = (args: any, parentKey?: string): void => {
   log.debug('sanitizeDirective called with', args);
 
   // Return if not an object
@@ -16,7 +46,7 @@ export const sanitizeDirective = (args: any): void => {
 
   // Sanitize each element if an array
   if (Array.isArray(args)) {
-    args.forEach((arg) => sanitizeDirective(arg));
+    args.forEach((arg) => sanitizeDirectiveValue(arg, parentKey));
     return;
   }
 
@@ -36,20 +66,16 @@ export const sanitizeDirective = (args: any): void => {
     }
 
     // Recurse if an object, but handle dictionary-style configs specially
-    // (like nodeColors for sankey diagrams) by validating values as CSS colors
+    // (like nodeColors or filenameIcons) by validating their values instead
     if (typeof args[key] === 'object') {
-      if (key === 'nodeColors') {
-        // Validate each value is a valid CSS color
-        const colorPattern = /^#[\da-f]{3,8}$|^rgb\([\d\s%,.]+\)$|^hsl\([\d\s%,.]+\)$|^[a-z]+$/i;
-        for (const colorKey of Object.keys(args[key])) {
-          if (typeof args[key][colorKey] !== 'string' || !colorPattern.test(args[key][colorKey])) {
-            log.debug('sanitize deleting invalid color:', colorKey, args[key][colorKey]);
-            delete args[key][colorKey];
-          }
-        }
+      const valuePattern = DICTIONARY_CONFIG_PATTERNS[key];
+      if (valuePattern) {
+        sanitizeDictionaryConfig(args[key], valuePattern);
+      } else if (parentKey === 'grid' && key === 'placements') {
+        sanitizeGridPlacements(args[key]);
       } else {
         log.debug('sanitizing object', key);
-        sanitizeDirective(args[key]);
+        sanitizeDirectiveValue(args[key], key);
       }
       continue;
     }
@@ -72,6 +98,15 @@ export const sanitizeDirective = (args: any): void => {
     }
   }
   log.debug('After sanitization', args);
+};
+
+/**
+ * Sanitizes directive objects
+ *
+ * @param args - Directive's JSON
+ */
+export const sanitizeDirective = (args: any): void => {
+  sanitizeDirectiveValue(args);
 };
 
 export const sanitizeCss = (str: string): string => {

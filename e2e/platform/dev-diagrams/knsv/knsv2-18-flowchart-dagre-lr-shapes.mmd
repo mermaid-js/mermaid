@@ -1,0 +1,11 @@
+---
+config:
+  layout: dagre
+  flowchart:
+    curve: linear
+---
+flowchart LR
+    A[A] -- Mermaid js --> B[B]
+    A[A] -- Mermaid js --- B[B]
+    A@{ shape: diamond}
+    B@{ shape: diamond}

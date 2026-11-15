@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "Start",
+      "width": 95.01249694824219,
+      "height": 54
+    },
+    {
+      "id": "Process1",
+      "width": 120.96875,
+      "height": 54
+    },
+    {
+      "id": "Process2",
+      "width": 120.96875,
+      "height": 54
+    },
+    {
+      "id": "Process3",
+      "width": 120.96875,
+      "height": 54
+    },
+    {
+      "id": "Process4",
+      "width": 120.96875,
+      "height": 54
+    },
+    {
+      "id": "Process5",
+      "width": 120.96875,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "84d5000d82dff5c7df93bc1ecf5d376fe7ac87cfa7ac1ef947937fc496defe43",
+    "capturedAt": "2026-06-08T13:52:23.183Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/pebr-1-duplicate-process-in-substate-no-render.mmd theme=default look=classic layout=swimlane"
+  }
+}

@@ -1,0 +1,11 @@
+---
+config:
+  layout: grid
+---
+agentflow-beta
+  request["Receive request"]@{ shape: input, row: 1, column: 1 }
+  plan["Plan work"]@{ shape: task, row: 1, column: 2 }
+  run["Run tool"]@{ shape: tool, row: 1, column: 3 }
+  publish["Publish result"]@{ shape: action, row: 1, column: 4 }
+
+  request --> plan --> run --> publish

@@ -1,0 +1,12 @@
+sequenceDiagram
+  actor User
+  participant API
+  participant DB@{ "type" : "database" } as Database
+  Note over User: Note over a single actor
+  User ->> API: request
+  Note right of API: Note to the right
+  API ->> DB: query
+  Note over API,DB: Note spanning two participants
+  DB -->> API: rows
+  Note left of User: Note to the left
+  API -->> User: response

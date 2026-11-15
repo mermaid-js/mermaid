@@ -1,0 +1,11 @@
+---
+description: >-
+  classDiagram with three classes sharing the identical text label ('Class with text label')
+  linked by both solid and dotted relationships, verifying duplicate labels don't collide.
+---
+classDiagram
+  class C1["Class with text label"]
+  class C2["Class with text label"]
+  class C3["Class with text label"]
+  C1 --> C2
+  C3 ..> C2

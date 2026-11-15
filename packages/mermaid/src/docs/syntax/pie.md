@@ -1,3 +1,7 @@
+---
+description: 'Draw pie charts from labeled values, with optional titles, raw data display, and text positioning.'
+---
+
 # Pie chart diagrams
 
 > A pie chart (or a circle chart) is a circular statistical graphic, which is divided into slices to illustrate numerical proportion. In a pie chart, the arc length of each slice (and consequently its central angle and area), is proportional to the quantity it represents. While it is named for its resemblance to a pie which has been sliced, there are variations on the way it can be presented. The earliest known pie chart is generally credited to William Playfair's Statistical Breviary of 1801
@@ -37,15 +41,15 @@ Drawing a pie chart is really simple in mermaid.
 .
 .
 
-## Donut chart diagram (v<MERMAID_RELEASE_VERSION>+)
+## Donut chart diagram (v11.16.0+)
 
 By setting `donutHole` parameter on config, Mermaid can render Donut Chart Diagram.
 
-## Legend Position (v<MERMAID_RELEASE_VERSION>+)
+## Legend Position (v11.16.0+)
 
 By setting `legendPosition` parameter on config, you can set where the legend is positioned.
 
-## Highlight Slice (v<MERMAID_RELEASE_VERSION>+)
+## Highlight Slice (v11.16.0+)
 
 By setting `highlightSlice` parameter on config, you can highlight specific slice. You can also highlight slice by hovering on it.
 

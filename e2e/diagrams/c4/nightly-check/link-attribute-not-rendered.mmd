@@ -1,0 +1,11 @@
+---
+description: >-
+  A Person carrying a $link="https://example.com" attribute — the current
+  renderer accepts it without erroring but does not render it as a
+  clickable anchor.
+---
+C4Context
+title Link attribute (not shown by current renderer)
+Person(p, "Person", "desc", $link="https://example.com")
+System(s, "System", "desc")
+Rel(p, s, "Uses")

@@ -5,7 +5,7 @@
 Mermaid
 </h1>
 <p align="center">
-Generate diagrams from markdown-like text.
+Generate diagrams from Markdown-like text.
 <p>
 <p align="center">
   <a href="https://www.npmjs.com/package/mermaid"><img src="https://img.shields.io/npm/v/mermaid?color=ff3670&label="></a>
@@ -94,6 +94,20 @@ In our release process we rely heavily on visual regression tests using [applito
 </a>
 
 <!-- </Main description> -->
+
+## Features
+
+- **20+ Diagram Types** – Flowchart, Sequence, Class, State, ER, Gantt, Pie, Git Graph, Mindmap, Timeline, Sankey, and more
+- **Markdown-Inspired Syntax** – Write diagrams as text, no drag-and-drop required
+- **No Design Tool Needed** – Generate professional diagrams straight from code
+- **Live Editor** – Prototype instantly at [mermaid.live](https://mermaid.live)
+- **Version-Control Friendly** – Diagrams live as text, so diffs and reviews just work
+- **Native GitHub Rendering** – Mermaid code blocks render directly in Markdown on GitHub
+- **Highly Customizable** – Themes, colors, fonts, and layout directions
+- **Security First** – Built-in sanitization plus a sandboxed rendering mode
+- **Lightweight** – Small footprint, no heavy dependencies
+- **Active Community** – Frequent releases and thousands of contributors
+- **Open Source** – MIT licensed
 
 ## Examples
 
@@ -464,6 +478,10 @@ A quick note from Knut Sveidqvist:
 > _Thank you to [Tyler Long](https://github.com/tylerlong) who has been a collaborator since April 2017._
 >
 > _Thank you to the ever-growing list of [contributors](https://github.com/mermaid-js/mermaid/graphs/contributors) that brought the project this far!_
+
+<a href="https://www.blacksmith.sh/">
+  <img src="https://assets.usepylon.com/8e9111bb-c40c-46fb-b413-82f548366cbf%2F1784827274126-blacksmith-powered-wob%25281%2529.png?Expires=253370764800&Signature=nGpFqC92C3t5nm42jx5Bixizc7BYvgYmnsFvCxdDQF1NN63VR0pRQrokLvVzM720yjuhVg~lJ7PDYOQaVVOrK~qLtyLTEnULT6dJBmD1YaSUKhkll2Fkcjrr2dM5R2GLcAmL~xDoqm5nsk6FupuAslL-s1J5Z9AlMbDZxAXOg1rVn1-nwZ2rxNzOZ1V3S08FpwOMl9IlIvdhEvlj8NNka9aFEc1bfcJUVtonlDrpIL781uR7X6AWmJT1vcx-QhoQVeUIa612xmfSs3AvtDk5h-xW6NkG4rCSRlD55Vqijmt4F7njK2Z751DLo6rq2BVMzOhhu~NWJF~CAX5ZSKcGxg__&Key-Pair-Id=K3NV4LZ47N8M46" alt="CI powered by Blacksmith" width="240" />
+</a>
 
 ---
 

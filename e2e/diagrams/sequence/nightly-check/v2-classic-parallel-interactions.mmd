@@ -1,0 +1,19 @@
+---
+description: >-
+  A `par` block with two parallel branches — note the trailing dangling `and`
+  with no branch after it, reproduced faithfully from the source test's own
+  generation loop (not a transcription error).
+config:
+  look: classic
+---
+sequenceDiagram
+  participant participant0@{ "type" : "participant" }
+  participant actor1@{ "type" : "actor" }
+  participant boundary2@{ "type" : "boundary" }
+  participant control3@{ "type" : "control" }
+  par Parallel actions
+    participant0 ->> actor1: Message 0
+    and
+    boundary2 ->> control3: Message 2
+    and
+  end

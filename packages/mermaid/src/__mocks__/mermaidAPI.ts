@@ -5,15 +5,16 @@
  */
 import * as configApi from '../config.js';
 import { vi } from 'vitest';
+import type { Mock } from 'vitest';
 import { mermaidAPI as mAPI } from '../mermaidAPI.js';
 
 // original version cannot be modified since it was frozen with `Object.freeze()`
 export const mermaidAPI = {
   render: vi.fn().mockResolvedValue({
     svg: '<svg></svg>',
-  }),
+  }) as Mock,
   parse: mAPI.parse,
-  initialize: vi.fn(),
+  initialize: vi.fn() as Mock,
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,

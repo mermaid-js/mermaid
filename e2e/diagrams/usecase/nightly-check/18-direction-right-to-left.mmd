@@ -1,0 +1,18 @@
+---
+description: >-
+  The same three-step linear flow as 17-direction-bottom-up.mmd
+  (Browse -> Checkout -> Download receipt), rendered with `direction RL`
+  (right to left) instead.
+---
+usecase-beta
+    direction RL
+    %% Actors
+    actor Customer
+    Browse("Browse catalog")
+    Checkout("Checkout")
+    Receipt[Download receipt]
+
+    %% Relationships
+    Customer --> Browse
+    Browse --> Checkout
+    Checkout --> Receipt

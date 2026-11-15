@@ -1,0 +1,87 @@
+---
+config:
+  theme: redux-color
+  look: neo
+  flowchart:
+    wrappingWidth: 125
+  layout: elk
+  elk:
+      preset: legacy
+---
+flowchart LR
+  org["GitHub org: Mermaid Chart"]
+  subgraph product["Product experience"]
+    app["mermaid-chart-app\nMain web application"]
+    editor["editor\nDiagram creation and editing"]
+    ai["ai-assistant\nPrompting, generation, repair, editing"]
+    visual["visual-editor\nCanvas and visual diagram controls"]
+  end
+  subgraph core["Core diagram engine"]
+    mermaidjs["mermaid-js / mermaid\nOpen-source rendering engine"]
+    renderer["renderer-service\nServer-side diagram rendering"]
+    parser["diagram-parser\nSyntax validation and transformation"]
+  end
+  subgraph collaboration["Collaboration and accounts"]
+    auth["auth-service\nLogin, SSO, workspace access"]
+    teams["workspace-service\nTeams, permissions, org settings"]
+    comments["comments-service\nFeedback and review flows"]
+    sharing["sharing-service\nLinks, embeds, exports"]
+  end
+  subgraph content["Content and growth"]
+    marketing["marketing-site\nNew public website"]
+    docs["docs\nProduct docs and Mermaid syntax guides"]
+    templates["templates\nDiagram examples and starter content"]
+    blog["blog-content\nLaunches, guides, SEO content"]
+  end
+  subgraph integrations["Integrations"]
+    github["github-integration\nRepo, PR, and markdown workflows"]
+    slack["slack-integration\nSharing and notifications"]
+    jira["jira-integration\nIssue and workflow diagrams"]
+    api["public-api\nExternal diagram generation API"]
+  end
+  subgraph platform["Platform and infrastructure"]
+    design["design-system\nUI components, tokens, icons"]
+    analytics["analytics-pipeline\nProduct usage and funnel events"]
+    billing["billing-service\nPlans, seats, invoices"]
+    infra["infrastructure\nIaC, CI/CD, environments"]
+  end
+  org --> product
+  org --> core
+  org --> collaboration
+  org --> content
+  org --> integrations
+  org --> platform
+  app --> editor
+  app --> visual
+  app --> ai
+  editor --> mermaidjs
+  visual --> parser
+  ai --> parser
+  renderer --> mermaidjs
+  sharing --> renderer
+  docs --> mermaidjs
+  marketing --> templates
+  app --> auth
+  app --> teams
+  app --> billing
+  app --> analytics
+  github --> publicapi["public-api"]
+  slack --> sharing
+  jira --> templates
+  design --> app
+  design --> marketing
+  infra --> app
+  infra --> renderer
+  infra --> auth
+  classDef org fill:#111827,color:#ffffff,stroke:#111827
+  classDef group fill:#f9fafb,stroke:#d1d5db,color:#111827
+  classDef repo fill:#ffffff,stroke:#6b7280,color:#111827
+  class org org
+  class app,editor,ai,visual,mermaidjs,renderer,parser,auth,teams,comments,sharing,marketing,docs,templates,blog,github,slack,jira,api,design,analytics,billing,infra,publicapi repo
+  style org fill:#111827,color:#ffffff,stroke:#111827
+  style product fill:#eeeefb,stroke:#d1d5db,color:#111827
+  style core fill:#eeeefb,stroke:#d1d5db,color:#111827
+  style collaboration fill:#eeeefb,stroke:#d1d5db,color:#111827
+  style content fill:#eeeefb,stroke:#d1d5db,color:#111827
+  style integrations fill:#eeeefb,stroke:#d1d5db,color:#111827
+  style platform fill:#eeeefb,stroke:#d1d5db,color:#111827

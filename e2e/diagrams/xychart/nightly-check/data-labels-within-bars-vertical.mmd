@@ -1,0 +1,16 @@
+---
+description: >-
+  A 20-value bar chart with showDataLabel enabled, in the default vertical
+  orientation, including values that fall below the y-axis floor (500,
+  2000, 3000 against a 4000-12000 range) — checks that data labels stay
+  centered on their own bar even when some bars are clipped to zero
+  height. Horizontal counterpart: data-labels-within-bars-horizontal.mmd.
+config:
+  xyChart:
+    showDataLabel: true
+---
+xychart
+  title "Sales Revenue"
+  x-axis Months [jan,b,c]
+  y-axis "Revenue (in $)" 4000 --> 12000
+  bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 3000, 2000, 500, 2000, 3000, 11000, 5000, 6000]

@@ -1,0 +1,26 @@
+---
+description: >-
+  Verifies the `direction TB` statement in classDiagram: a Student class
+  aggregating IdCard and Bike via `--o` relations with cardinality labels.
+  Uses `flowchart.htmlLabels: false`, unlike the sibling "16b...tb-2.mmd"
+  which sets a top-level `htmlLabels: true` key instead.
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+classDiagram
+  direction TB
+  class Student {
+  -idCard : IdCard
+  }
+  class IdCard{
+  -id : int
+  -name : string
+  }
+  class Bike{
+  -id : int
+  -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides

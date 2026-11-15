@@ -3,6 +3,7 @@ import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
 import insertMarkers from '../../rendering-util/rendering-elements/markers.js';
+import { insertLookDefs } from '../../rendering-util/insertLookDefs.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { BlockDB } from './blockDB.js';
 import { layout } from './layout.js';
@@ -34,6 +35,11 @@ export const draw = async function (
     securityLevel === 'sandbox'
       ? root.select<SVGSVGElement>(`[id="${id}"]`)
       : d3select<SVGSVGElement, unknown>(`[id="${id}"]`);
+
+  // The look-specific stylesheet rules reference these by id. Block runs its own render
+  // loop rather than `rendering-util/render.ts`, so it has to ask for them: without them a
+  // `look: neo` block resolves `stroke: url(#…-gradient)` to nothing and loses its borders.
+  insertLookDefs(svg, configApi.getConfig());
 
   // Define the supported markers for the diagram
   const markers = ['point', 'circle', 'cross'];

@@ -1,0 +1,20 @@
+---
+description: >-
+  Label formatting variants — markdown-italic actor label, a literal
+  (non-markdown) label, a multi-line markdown label with a physical line
+  break, and a `#quot;`-escaped quoted label — plus two notes, one attached
+  to a use case and one to an actor, and a labelled association.
+---
+usecase-beta
+    direction LR
+    actor Reviewer("`*Reviewer*`")
+    Literal("**Literal markers**")
+    Formatted("`**Formatted label**
+    with a physical line break`")
+    Quoted("Show #quot;quoted#quot; text")
+    note for Formatted "`Requires an **active session**
+    and reviewer approval.`"
+    note for Reviewer "Starts the review workflow"
+    Reviewer -- "`opens **review form**`" --> Formatted
+    Reviewer --> Literal
+    Reviewer --> Quoted

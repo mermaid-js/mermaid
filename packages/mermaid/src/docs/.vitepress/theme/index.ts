@@ -29,7 +29,7 @@ export default {
       'layout-top': () => h(EditorSelectionModal),
     });
   },
-  enhanceApp({ app, router }: EnhanceAppContext) {
+  enhanceApp({ app, router, siteData }: EnhanceAppContext) {
     if (typeof window !== 'undefined') {
       void initPlausible();
     }
@@ -41,11 +41,11 @@ export default {
     router.onBeforeRouteChange = (to) => {
       try {
         const url = new URL(window.location.origin + to);
-        const newPath = getRedirect(url);
+        const newPath = getRedirect(url, siteData.value.base);
         if (newPath) {
           console.log(`Redirecting to ${newPath} from ${window.location.toString()}`);
           // router.go isn't loading the ID properly.
-          window.location.href = `/${newPath}`;
+          window.location.href = `${siteData.value.base}${newPath}`;
         }
       } catch (e) {
         console.error(e);

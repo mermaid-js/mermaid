@@ -10,7 +10,7 @@ describe('EBNF Parser', () => {
   describe('Basic Parsing', () => {
     it('should parse simple terminal', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = "terminal" ;
       `;
       void parser.parse(input);
@@ -26,7 +26,7 @@ describe('EBNF Parser', () => {
 
     it('should parse non-terminal reference', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = other_rule ;
       `;
       void parser.parse(input);
@@ -38,7 +38,7 @@ describe('EBNF Parser', () => {
 
     it('should parse sequence', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = "a" "b" "c" ;
       `;
       void parser.parse(input);
@@ -53,7 +53,7 @@ describe('EBNF Parser', () => {
 
     it('should parse choice', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = "a" | "b" | "c" ;
       `;
       void parser.parse(input);
@@ -68,7 +68,7 @@ describe('EBNF Parser', () => {
 
     it('should parse optional (W3C)', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = "a"? ;
       `;
       void parser.parse(input);
@@ -77,7 +77,7 @@ describe('EBNF Parser', () => {
 
     it('should parse optional (ISO)', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = [ "a" ] ;
       `;
       void parser.parse(input);
@@ -86,7 +86,7 @@ describe('EBNF Parser', () => {
 
     it('should parse repetition zero-or-more', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = "a"* ;
       `;
       void parser.parse(input);
@@ -99,7 +99,7 @@ describe('EBNF Parser', () => {
 
     it('should parse repetition one-or-more', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = "a"+ ;
       `;
       void parser.parse(input);
@@ -112,7 +112,7 @@ describe('EBNF Parser', () => {
 
     it('should parse ISO repetition', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = { "a" } ;
       `;
       void parser.parse(input);
@@ -125,7 +125,7 @@ describe('EBNF Parser', () => {
 
     it('should parse title', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         title "Test Grammar"
         rule = "a" ;
       `;
@@ -135,7 +135,7 @@ describe('EBNF Parser', () => {
 
     it('should parse special sequence', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         rule = ? special ? ;
       `;
       void parser.parse(input);
@@ -150,7 +150,7 @@ describe('EBNF Parser', () => {
   describe('Real-world Examples', () => {
     it('should parse expression grammar', () => {
       const input = `
-        railroad-ebnf
+        railroad-ebnf-beta
         title "Simple Expression"
         expression = term ( "+" term | "-" term )* ;
         term = factor ( "*" factor | "/" factor )* ;
@@ -172,7 +172,7 @@ describe('EBNF Parser', () => {
     });
 
     it('should throw on missing semicolon', () => {
-      expect(() => parser.parse('railroad-ebnf\nrule = "a"')).toThrow();
+      expect(() => parser.parse('railroad-ebnf-beta\nrule = "a"')).toThrow();
     });
   });
 });

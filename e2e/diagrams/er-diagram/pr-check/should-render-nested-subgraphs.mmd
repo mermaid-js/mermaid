@@ -1,0 +1,16 @@
+---
+description: >-
+  A subgraph ("domain") nested inside another subgraph, with CUSTOMER at
+  the outer level and ORDER inside the inner "details" subgraph, testing
+  multi-level subgraph nesting without any cross-subgraph relationships.
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph domain
+  CUSTOMER
+
+  subgraph details
+    ORDER
+  end
+  end

@@ -1,0 +1,9 @@
+%% §16 Reference Document Pattern — `-.-` reference edge to a refdoc node.
+agentflow-beta TB
+  query["query"]
+  query@{ shape: input }
+  gen_html["generate_html"]
+  style_guide["Brand Guide"]
+  style_guide@{ shape: refdoc }
+  query --> gen_html
+  gen_html -.- style_guide

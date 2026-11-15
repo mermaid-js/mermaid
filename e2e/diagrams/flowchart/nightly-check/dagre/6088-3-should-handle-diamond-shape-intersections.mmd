@@ -1,0 +1,17 @@
+---
+description: >-
+  Flat (non-nested) version of the duplicate-edge diamond-intersection test:
+  multiple parallel edges, one labeled, between two rhombus/diamond-shaped
+  decision nodes at the top level.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+flowchart LR
+  a
+  D{"Use the editor"}
+
+  D -- Mermaid js --> I{"fa:fa-code Text"}
+  D-->I
+  D-->I

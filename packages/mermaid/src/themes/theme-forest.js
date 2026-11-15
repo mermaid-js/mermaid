@@ -3,7 +3,7 @@ import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
-import { mkBorder } from './theme-helpers.js';
+import { applyOverride, mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -172,6 +172,9 @@ class Theme {
     this.clusterBkg = this.secondBkg;
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
+
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
 
     /* Gantt chart variables */
 
@@ -465,7 +468,7 @@ class Theme {
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
     keys.forEach((k) => {
-      this[k] = overrides[k];
+      this[k] = applyOverride(this[k], overrides[k]);
     });
   }
 }

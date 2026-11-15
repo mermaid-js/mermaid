@@ -1,0 +1,17 @@
+---
+description: >-
+  Verifies that a node declared inside a `global` block stays anchored at the
+  root level, outside the `flow pipeline` container, even though that
+  container references it in an edge chain.
+---
+%% Without the `global` block, referencing A inside the flow would pull it
+%% into the container. Declaring it global anchors it at root level.
+agentflow-beta TB
+
+global
+  A["Shared input"]
+end
+
+flow pipeline["Pipeline"]
+  A --> B["Process"] --> C["Publish"]
+end

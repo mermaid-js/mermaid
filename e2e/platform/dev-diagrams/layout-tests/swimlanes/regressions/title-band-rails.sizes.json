@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "TL_CA",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "TL_Ans",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "A",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "B",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "HE_CA",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "HE_Ans",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "HE_Inv",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "HE_Ans2",
+      "width": 150,
+      "height": 51
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "dd19d9d516d1783ce47f609752b3f464b798ebea5e1858a1edef5874fd7943b3",
+    "capturedAt": "2026-10-06T18:54:02.082Z",
+    "capturedFrom": "headless playwright layout-tests/swimlanes/regressions/title-band-rails.mmd dev-viewer config theme=default look=classic"
+  }
+}

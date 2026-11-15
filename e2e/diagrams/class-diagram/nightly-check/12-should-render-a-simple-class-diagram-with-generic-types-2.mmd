@@ -1,0 +1,17 @@
+---
+description: >-
+  Class with a generic type parameter (`~T~`) whose members use generic
+  container types (`List~int~ ids`, `test(List~int~ ids) List~bool~`)
+  alongside plain array types, to check nested generic-type rendering.
+  Uses a top-level `htmlLabels: true` config key.
+config:
+  logLevel: 1
+  htmlLabels: true
+---
+classDiagram
+  class Class10~T~ {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }

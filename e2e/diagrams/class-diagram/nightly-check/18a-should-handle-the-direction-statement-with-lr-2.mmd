@@ -1,0 +1,24 @@
+---
+description: >-
+  Verifies the `direction LR` statement in classDiagram: a Student class
+  aggregating IdCard and Bike via `--o` relations with cardinality
+  labels. Uses a top-level `htmlLabels: true` config key.
+config:
+  logLevel: 1
+  htmlLabels: true
+---
+classDiagram
+  direction LR
+  class Student {
+  -idCard : IdCard
+  }
+  class IdCard{
+  -id : int
+  -name : string
+  }
+  class Bike{
+  -id : int
+  -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides

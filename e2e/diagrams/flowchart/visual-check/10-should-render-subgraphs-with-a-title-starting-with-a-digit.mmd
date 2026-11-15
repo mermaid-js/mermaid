@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that a subgraph whose id/title begins with a numeral (2Two) is parsed
+  and rendered as a subgraph label rather than being misinterpreted as a numeric
+  literal.
+config:
+  fontFamily: courier
+---
+graph TB
+  subgraph 2Two
+  a1-->a2
+  end

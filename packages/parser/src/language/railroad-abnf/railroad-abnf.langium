@@ -64,7 +64,7 @@ interface AbnfOptionalGroup extends AbnfPrimary {
 }
 
 entry RailroadAbnf returns RailroadAbnf:
-    'railroad-abnf'
+    'railroad-abnf-beta'
     ((title=TITLE | accTitle=ACC_TITLE | accDescr=ACC_DESCR))*
     rules+=AbnfRule*
 ;

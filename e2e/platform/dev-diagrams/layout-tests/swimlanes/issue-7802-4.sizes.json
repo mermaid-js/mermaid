@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 59.568748474121094,
+      "height": 51
+    },
+    {
+      "id": "B",
+      "width": 121.3125,
+      "height": 91
+    },
+    {
+      "id": "I",
+      "width": 35.89374923706055,
+      "height": 45
+    },
+    {
+      "id": "id1",
+      "width": 83.9312515258789,
+      "height": 75.1287841796875
+    },
+    {
+      "id": "Sys1",
+      "width": 63.125,
+      "height": 45
+    },
+    {
+      "id": "E",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 150.05624389648438,
+      "height": 91
+    },
+    {
+      "id": "D",
+      "width": 94.11250305175781,
+      "height": 91
+    },
+    {
+      "id": "F",
+      "width": 40.556251525878906,
+      "height": 45
+    },
+    {
+      "id": "G",
+      "width": 42.89374923706055,
+      "height": 45
+    },
+    {
+      "id": "H",
+      "width": 46.775001525878906,
+      "height": 45
+    },
+    {
+      "id": "exit",
+      "width": 53.34375,
+      "height": 51
+    },
+    {
+      "id": "edge-label-B-C-L_B_C_0",
+      "width": 37.36249923706055,
+      "height": 21
+    },
+    {
+      "id": "edge-label-C-D-L_C_D_0",
+      "width": 37.36249923706055,
+      "height": 21
+    },
+    {
+      "id": "edge-label-D-E-L_D_E_0",
+      "width": 37.36249923706055,
+      "height": 21
+    },
+    {
+      "id": "edge-label-B-exit-L_B_exit_0",
+      "width": 56.03125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "dec5891c8b38fb6e3ae57798f8fe9dc1a60a095f127e40fdf9a514f91efbbcf6",
+    "capturedAt": "2026-06-05T08:18:05.928Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/issue-7802-4.mmd theme=default look=classic layout=swimlane"
+  }
+}

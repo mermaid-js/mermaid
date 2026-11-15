@@ -20,7 +20,7 @@ describe('Railroad parser', () => {
   };
 
   it('should parse title and accessibility metadata', () => {
-    const result = parse(`railroad-diagram
+    const result = parse(`railroad-beta
 title Example Grammar
 accTitle: Accessible Railroad
 accDescr: Railroad description
@@ -35,7 +35,7 @@ rule = terminal("a") ;`);
   });
 
   it('should parse IR function expressions', () => {
-    const result = parse(`railroad-diagram
+    const result = parse(`railroad-beta
 rule = sequence(terminal("a"), nonterminal("b")) ;`);
 
     expectNoErrorsOrAlternatives(result);
@@ -50,7 +50,7 @@ rule = sequence(terminal("a"), nonterminal("b")) ;`);
   });
 
   it('should parse choice expressions', () => {
-    const result = parse(`railroad-diagram
+    const result = parse(`railroad-beta
 rule = choice(terminal("a"), terminal("b"), terminal("c")) ;`);
 
     expectNoErrorsOrAlternatives(result);
@@ -62,7 +62,7 @@ rule = choice(terminal("a"), terminal("b"), terminal("c")) ;`);
   });
 
   it('should parse optional, oneOrMore, and zeroOrMore', () => {
-    const result = parse(`railroad-diagram
+    const result = parse(`railroad-beta
 r1 = optional(terminal("a")) ;
 r2 = oneOrMore(terminal("b")) ;
 r3 = zeroOrMore(terminal("c")) ;`);
@@ -75,7 +75,7 @@ r3 = zeroOrMore(terminal("c")) ;`);
   });
 
   it('should parse special expressions', () => {
-    const result = parse(`railroad-diagram
+    const result = parse(`railroad-beta
 rule = special("any character") ;`);
 
     expectNoErrorsOrAlternatives(result);
@@ -87,7 +87,7 @@ rule = special("any character") ;`);
   });
 
   it('should skip C-style block comments', () => {
-    const result = parse(`railroad-diagram
+    const result = parse(`railroad-beta
 /* comment before the first rule */
 rule = terminal("a") ;
 next = nonterminal("rule") ;`);
@@ -102,7 +102,7 @@ next = nonterminal("rule") ;`);
     await expect(
       parseAsync(
         'railroad',
-        `railroad-diagram
+        `railroad-beta
 rule = terminal("a")`
       )
     ).rejects.toBeInstanceOf(MermaidParseError);

@@ -1,0 +1,21 @@
+---
+description: >-
+  Vertical (TB) counterpart of release/48: same parallelCommits: true,
+  branch-B (order: 2) and branch-A structure with a merge performed on a
+  freshly created branch, but rendered top-to-bottom instead of
+  left-to-right.
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph TB:
+  commit id:"1-abcdefg"
+
+  branch branch-B order: 2
+  commit id:"2-abcdefg"
+
+  branch branch-A
+  merge main
+
+  checkout branch-B
+  merge branch-A

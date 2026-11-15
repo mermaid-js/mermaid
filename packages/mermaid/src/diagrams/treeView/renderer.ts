@@ -1,10 +1,18 @@
 import type { TreeViewDiagramConfig } from '../../config.type.js';
 import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
+import { getIconSVG, registerIconPacks } from '../../rendering-util/icons.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { ICON_PATHS } from './icons.js';
+import { getNodeIcon, treeViewIcons } from './icons.js';
 import type { D3SVGElement, Node, TreeViewDB } from './types.js';
+
+registerIconPacks([
+  {
+    name: treeViewIcons.prefix,
+    icons: treeViewIcons,
+  },
+]);
 
 const ICON_SIZE = 14;
 const ICON_GAP = 4;
@@ -17,29 +25,28 @@ interface RenderInfo {
   centerY: number;
 }
 
-/**
- * Inject <defs> with all referenced icon symbols into the SVG.
- */
-const injectIconDefs = (svg: D3SVGElement<SVGSVGElement>, root: Node, diagramId: string) => {
-  const usedIcons = new Set<string>();
+const resolveNodeIcons = async (root: Node, config: Required<TreeViewDiagramConfig>) => {
+  const nodeIcons: { icon: string; node: Node }[] = [];
   const collect = (node: Node) => {
-    if (node.iconId && node.iconId !== 'none') {
-      usedIcons.add(node.iconId);
+    const icon = getNodeIcon(node, config);
+    if (icon) {
+      nodeIcons.push({ icon, node });
     }
     node.children.forEach(collect);
   };
   collect(root);
 
-  const defs = svg.append('defs');
-  for (const iconId of usedIcons) {
-    const path = ICON_PATHS[iconId] ?? ICON_PATHS.file;
-    defs
-      .append('symbol')
-      .attr('id', `tv-icon-${diagramId}-${iconId}`)
-      .attr('viewBox', '0 0 24 24')
-      .append('path')
-      .attr('d', path);
-  }
+  const resolvedIcons = await Promise.all(
+    nodeIcons.map(async ({ icon, node }) => ({
+      id: node.id,
+      svg: await getIconSVG(icon, {
+        height: ICON_SIZE,
+        width: ICON_SIZE,
+      }),
+    }))
+  );
+
+  return new Map(resolvedIcons.map(({ id, svg }) => [id, svg]));
 };
 
 const positionLabel = (
@@ -48,7 +55,7 @@ const positionLabel = (
   node: Node,
   domElem: D3SVGElement<SVGGElement>,
   config: Required<TreeViewDiagramConfig>,
-  diagramId: string
+  iconSVGs: Map<number, string>
 ): RenderInfo => {
   const nodeGroup = domElem.append('g');
   let cssClasses = 'treeView-node-label';
@@ -59,18 +66,16 @@ const positionLabel = (
     cssClasses += ` ${node.cssClass}`;
   }
 
-  // Icon — skip if iconId is 'none' or showIcons is disabled
+  // Explicit icon() annotations always render; defaults only when showIcons is on
   const iconOffset = ICON_SIZE + ICON_GAP;
-  const showIcon = config.showIcons !== false && node.iconId && node.iconId !== 'none';
-  if (showIcon) {
+  const icon = getNodeIcon(node, config);
+  const showIcon = icon !== undefined;
+  if (icon) {
     nodeGroup
-      .append('use')
-      .attr('xlink:href', `#tv-icon-${diagramId}-${node.iconId}`)
-      .attr('x', x + config.paddingX)
-      .attr('y', y + config.paddingY)
-      .attr('width', ICON_SIZE)
-      .attr('height', ICON_SIZE)
-      .attr('class', 'treeView-node-icon');
+      .append('g')
+      .attr('class', 'treeView-node-icon')
+      .attr('transform', `translate(${x + config.paddingX}, ${y + config.paddingY})`)
+      .html(iconSVGs.get(node.id) ?? '');
   }
 
   // Label text
@@ -126,7 +131,7 @@ const drawTree = (
   elem: D3SVGElement<SVGGElement>,
   root: Node,
   config: Required<TreeViewDiagramConfig>,
-  diagramId: string
+  iconSVGs: Map<number, string>
 ) => {
   let totalHeight = 0;
   let totalWidth = 0;
@@ -139,7 +144,7 @@ const drawTree = (
     depth: number
   ) => {
     const indent = depth * (config.rowIndent + config.paddingX);
-    const info = positionLabel(indent, totalHeight, node, elem, config, diagramId);
+    const info = positionLabel(indent, totalHeight, node, elem, config, iconSVGs);
     renderInfos.push(info);
     const { height, width } = node.BBox!;
     positionLine(
@@ -210,7 +215,7 @@ const drawTree = (
   return { totalHeight, totalWidth };
 };
 
-const draw: DrawDefinition = (text, id, _ver, diagObj) => {
+const draw: DrawDefinition = async (text, id, _ver, diagObj) => {
   log.debug('Rendering treeView diagram\n' + text);
 
   const db = diagObj.db as TreeViewDB;
@@ -219,15 +224,11 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
 
   const svg = selectSvgElement(id);
 
-  // Inject icon definitions (scoped to diagramId to avoid duplicates)
-  if (config.showIcons !== false) {
-    injectIconDefs(svg, root, id);
-  }
-
   const treeElem = svg.append('g');
   treeElem.attr('class', 'tree-view');
 
-  const { totalHeight, totalWidth } = drawTree(treeElem, root, config, id);
+  const iconSVGs = await resolveNodeIcons(root, config);
+  const { totalHeight, totalWidth } = drawTree(treeElem, root, config, iconSVGs);
   /* -${config.lineThickness/2} is required for a line with x coordinate = 0
      as there is overflow to the left due to the line being centered */
   svg.attr('viewBox', `-${config.lineThickness / 2} 0 ${totalWidth} ${totalHeight}`);

@@ -6,21 +6,9 @@ import type {
 
 const id = 'flowchart-v2';
 
-const detector: DiagramDetector = (txt, config) => {
-  if (config?.flowchart?.defaultRenderer === 'dagre-d3') {
-    return false;
-  }
-
-  if (config?.flowchart?.defaultRenderer === 'elk') {
-    config.layout = 'elk';
-  }
-
-  // If we have configured to use dagre-wrapper then we should return true in this function for graph code thus making it use the new flowchart diagram
-  if (/^\s*graph/.test(txt) && config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
-    return true;
-  }
-  return /^\s*flowchart/.test(txt);
-};
+// `graph` and `flowchart` both render with the unified flowchart. Which layout runs is
+// decided by the `layout` option, not by the diagram id.
+const detector: DiagramDetector = (txt) => /^\s*(graph|flowchart)/.test(txt);
 
 const loader: DiagramLoader = async () => {
   const { diagram } = await import('./flowDiagram.js');

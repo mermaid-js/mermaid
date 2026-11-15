@@ -1,0 +1,17 @@
+---
+description: >-
+  Regression test for issue #7572: root node "A" uses the default
+  (rectangular) shape rather than a circle, with six flat children under
+  it, verifying edges stay correctly connected to a non-circular root
+  shape under the tidy-tree layout.
+config:
+  layout: tidy-tree
+---
+mindmap
+  A
+      B
+      C
+      D
+      E
+      F
+      G

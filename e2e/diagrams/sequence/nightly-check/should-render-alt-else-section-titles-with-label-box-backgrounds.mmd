@@ -1,0 +1,21 @@
+---
+description: >-
+  An `alt` block with three branches (Command A/B/C) nested inside an `opt`
+  block, styled with custom `themeCSS` overriding the `.loopText` and
+  `.labelBox` classes, checking that alt/else section title label boxes
+  pick up the custom background and text color.
+config:
+  themeCSS: '.loopText { fill: #ffffff !important; } .labelBox { fill: red !important; }'
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  opt Outer
+  alt Command A
+    Alice->>Bob: Request A
+  else Command B
+    Alice->>Bob: Request B
+  else Command C
+    Alice->>Bob: Request C
+  end
+  end
