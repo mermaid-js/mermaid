@@ -151,3 +151,29 @@ export function emptyLaneOverlap(layout: LayoutData, vertical = false): number {
   }
   return deepest;
 }
+
+/**
+ * The smallest distance along x between a node and the edge of its top-level lane, over every
+ * node: how much padding the tightest node keeps. Negative when a node leaves its lane.
+ */
+export function smallestLaneInset(layout: LayoutData): number {
+  let smallest = Number.POSITIVE_INFINITY;
+  for (const node of layout.nodes) {
+    if (node.isGroup || node.isEdgeLabel || !node.parentId) {
+      continue;
+    }
+    const laneId = topLaneIdOf(layout, node);
+    if (laneId === undefined) {
+      continue;
+    }
+    const box = extentOf(node);
+    const span = extentOf(nodeById(layout, laneId));
+    smallest = Math.min(smallest, box.left - span.left, span.right - box.right);
+  }
+  return smallest;
+}
+
+/** The deepest overlap between any two top-level lanes along x; zero when none overlap. */
+export function deepestLaneOverlap(layout: LayoutData): number {
+  return Math.max(0, -Math.min(0, ...laneSeams(layout)));
+}

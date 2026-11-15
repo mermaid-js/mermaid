@@ -72,6 +72,18 @@ function topLaneHorizontalPadding(lane: Node): number {
   return Math.max(lane.padding ?? MIN_TOP_LANE_HORIZONTAL_PADDING, MIN_TOP_LANE_HORIZONTAL_PADDING);
 }
 
+/**
+ * The gap between the nodes of neighbouring lanes in TB and BT: twice the node spacing, but at
+ * least the padding both lanes keep around their nodes, so lanes touch instead of overlapping.
+ */
+export function topLaneGap(nodes: readonly Node[], nodeSpacing: number): number {
+  const model = buildLaneModel([...nodes]);
+  const paddings = nodes
+    .filter((node) => node.isGroup && model.isLane(node.id))
+    .map(topLaneHorizontalPadding);
+  return Math.max(2 * nodeSpacing, 2 * Math.max(0, ...paddings));
+}
+
 function assignTopLaneTitleRect(lane: Node): void {
   const { x, y, width, height } = lane;
   const contentTop = (lane as { swimlaneContentTop?: unknown }).swimlaneContentTop;

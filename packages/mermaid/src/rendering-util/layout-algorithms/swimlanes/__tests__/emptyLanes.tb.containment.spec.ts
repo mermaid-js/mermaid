@@ -5,6 +5,7 @@ import { fuzzCase, layoutFuzzCase } from './emptyLaneFuzz.js';
 import {
   DEFAULT_NODE_SPACING,
   emptyLaneOverlap,
+  deepestLaneOverlap,
   extentOf,
   laneOrderLeftToRight,
   laneSeams,
@@ -12,6 +13,7 @@ import {
   nodeById,
   nodeLanesReordered,
   nodesOutsideTheirLane,
+  smallestLaneInset,
   type LayoutOptions,
 } from './emptyLaneHarness.js';
 
@@ -31,6 +33,8 @@ const EMPTY_FIRST_AUTO_ORDER_SEED = 2059;
 // the first populated lane in declared order reaches under the empty first lane.
 const EMPTY_LANE_OVERLAP_SEEDS = [1045, 1046, 1064];
 const OVERLAP_TOLERANCE = 0.5;
+// The least padding a lane keeps around its nodes.
+const MIN_LANE_PADDING = 20;
 const AUTO_ORDER_SPACINGS = [TIGHT_NODE_SPACING, DEFAULT_NODE_SPACING, 50];
 // Lanes may touch or overlap, but not part: a seam wider than this is a gap.
 const SEAM_TOLERANCE = 0.5;
@@ -206,9 +210,16 @@ describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own 
           const layout = await layoutFuzzCase(fuzz, nodeSpacing);
           const outside = nodesOutsideTheirLane(layout);
           const lanes = laneOrderLeftToRight(layout);
-          if (outside.length > 0 || lanes.join() !== fuzz.order.join()) {
+          const overlap = deepestLaneOverlap(layout);
+          const inset = smallestLaneInset(layout);
+          if (
+            outside.length > 0 ||
+            lanes.join() !== fuzz.order.join() ||
+            overlap > OVERLAP_TOLERANCE ||
+            inset < MIN_LANE_PADDING - OVERLAP_TOLERANCE
+          ) {
             failures.push(
-              `seed ${fuzz.seed}: ${outside.length} outside, lanes ${lanes.join(' ')}\n${fuzz.source}`
+              `seed ${fuzz.seed}: ${outside.length} outside, lanes ${lanes.join(' ')}, overlap ${overlap}, inset ${inset}\n${fuzz.source}`
             );
           }
         }
@@ -277,7 +288,7 @@ describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own 
 
   describe.each(['TB', 'BT'])('%s, random diagrams with automaticLaneOrdering on', (direction) => {
     it.each(AUTO_ORDER_SPACINGS)(
-      'nodeSpacing %d: every node is inside its lane, no gap opens and no empty lane overlaps another',
+      'nodeSpacing %d: every node is inside its lane, no gap opens and no lanes overlap',
       async (nodeSpacing) => {
         const failures: string[] = [];
         let reordered = 0;
@@ -291,10 +302,16 @@ describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own 
           reordered += nodeLanesReordered(layout, fuzz.order) ? 1 : 0;
           const outside = nodesOutsideTheirLane(layout);
           const widest = Math.max(...laneSeams(layout));
-          const overlap = emptyLaneOverlap(layout);
-          if (outside.length > 0 || widest > SEAM_TOLERANCE || overlap > OVERLAP_TOLERANCE) {
+          const overlap = Math.max(emptyLaneOverlap(layout), deepestLaneOverlap(layout));
+          const inset = smallestLaneInset(layout);
+          if (
+            outside.length > 0 ||
+            widest > SEAM_TOLERANCE ||
+            overlap > OVERLAP_TOLERANCE ||
+            inset < MIN_LANE_PADDING - OVERLAP_TOLERANCE
+          ) {
             failures.push(
-              `seed ${fuzz.seed}: ${outside.length} outside, widest gap ${widest}, empty lane overlap ${overlap}\n${fuzz.source}`
+              `seed ${fuzz.seed}: ${outside.length} outside, widest gap ${widest}, lane overlap ${overlap}, inset ${inset}\n${fuzz.source}`
             );
           }
         }
