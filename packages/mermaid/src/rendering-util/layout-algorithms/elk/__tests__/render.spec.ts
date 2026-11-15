@@ -697,6 +697,20 @@ describe('straightenEdgeTerminals label projection (#8292)', () => {
     ]);
   });
 
+  it('keeps the jog when extending the segment after the moved run would add a crossing', () => {
+    const edge = { id: 'e1', points: pts };
+    const obstacle = {
+      id: 'e2',
+      points: [
+        { x: 399, y: 118 },
+        { x: 401, y: 118 },
+      ],
+    };
+
+    expect(straightenEdgeTerminals([edge, obstacle])).toEqual([]);
+    expect(edge.points).toEqual(pts);
+  });
+
   it('projects a label sitting on the moved run onto the new route', () => {
     const edge = { id: 'e1', points: pts, x: 300, y: 119.5 } as any;
     const [{ runs }] = straightenEdgeTerminals([edge]);
