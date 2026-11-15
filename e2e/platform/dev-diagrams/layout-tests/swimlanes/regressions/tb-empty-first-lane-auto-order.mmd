@@ -6,8 +6,8 @@ config:
     automaticLaneOrdering: true
 ---
 %% An empty first lane, with automatic ordering putting "Left" left of "Hub" and a node spacing
-%% so tight that the two already overlap: the empty lane starts at the right edge of "Left",
-%% not under it.
+%% below 40: the empty lane starts at the right edge of "Left", not under it, and no lane overlaps
+%% another.
 swimlane-beta TB
   subgraph L0[Empty]
   end

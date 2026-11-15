@@ -1,0 +1,15 @@
+---
+config:
+  flowchart:
+    nodeSpacing: 10
+---
+%% Two lanes with a node each and a node spacing below 40: the nodes are 20px from the lane
+%% borders on either side, so the two lanes touch instead of overlapping.
+swimlane-beta TB
+  subgraph L1[Hub]
+    a
+  end
+  subgraph L2[Right]
+    c
+  end
+  a --> c
