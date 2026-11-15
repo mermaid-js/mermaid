@@ -211,6 +211,10 @@ const getStyles = (options: FlowChartStyleOptions) =>
     p {
       background-color: ${options.edgeLabelBackground};
     }
+    /* Labels with math wrap each line in a <div> instead of a <p> */
+    > div {
+      background-color: ${options.edgeLabelBackground};
+    }
     rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
