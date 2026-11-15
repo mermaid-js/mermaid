@@ -17,7 +17,7 @@ import {
   type LayoutOptions,
 } from './emptyLaneHarness.js';
 
-// Below about 20, the lane width solve leaves neighbouring lanes overlapping.
+// Below 20, the node spacing is less than the padding two neighbouring lanes need between them.
 const TIGHT_NODE_SPACING = 10;
 const SPACINGS = [TIGHT_NODE_SPACING, 20, 50];
 // Each fuzz test lays out this many diagrams, from seeds FUZZ_SEED upwards. A diagram costs 20 to
@@ -29,8 +29,8 @@ const FUZZ_SEED = 8754;
 // A random diagram whose first lane is empty, and where automatic ordering puts the second lane
 // left of the third.
 const EMPTY_FIRST_AUTO_ORDER_SEED = 2059;
-// Random diagrams in which, at nodeSpacing 10 with automatic ordering, a lane that stands left of
-// the first populated lane in declared order reaches under the empty first lane.
+// Random diagrams with an empty first lane, in which automatic ordering puts a lane left of the
+// first populated lane in declared order, run at nodeSpacing 10.
 const EMPTY_LANE_OVERLAP_SEEDS = [1045, 1046, 1064];
 const OVERLAP_TOLERANCE = 0.5;
 // The least padding a lane keeps around its nodes.
@@ -152,8 +152,7 @@ describe('Swimlanes: an empty lane in TB and BT keeps every node inside its own 
     });
   });
 
-  it('a narrow lane under the edge of its wider neighbour stays after the empty lane', async () => {
-    // Wide lane padding and narrow nodes put the centre of Warehouse left of the right edge of Sales.
+  it('with a wide lane padding and narrow nodes, the lanes still follow the empty lane in order', async () => {
     const options: LayoutOptions = {
       ...tight,
       nodeWidth: () => NARROW_NODE_WIDTH,

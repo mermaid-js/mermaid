@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix(swimlane): an empty first lane no longer overlaps another lane in TB and BT when `automaticLaneOrdering` puts that lane left of the first lane that has nodes and the node spacing is below 20
+fix(swimlane): in TB and BT, neighbouring lanes no longer overlap and every node keeps its lane padding when the node spacing is below 20, including an empty first lane with `automaticLaneOrdering`
