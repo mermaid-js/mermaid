@@ -51,7 +51,13 @@ describe('when using mermaid and ', () => {
   });
 
   describe('when using #run', () => {
-    it.each([
+    it.each<{
+      name: string;
+      html: string;
+      text: string;
+      className?: string;
+      tagName?: string;
+    }>([
       {
         // Generated with Highlight.js 11.11.1, using its JavaScript grammar.
         name: 'real Highlight.js output with escaped HTML and entities',
