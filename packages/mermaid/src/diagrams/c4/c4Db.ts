@@ -643,21 +643,21 @@ export const updateLayoutConfig = function (
   c4ShapeInRowParam: ParserAttribute,
   c4BoundaryInRowParam: ParserAttribute
 ) {
-  let c4ShapeInRowValue = c4ShapeInRow;
-  let c4BoundaryInRowValue = c4BoundaryInRow;
+  // A named attribute (`$c4BoundaryInRow="1"`) applies to the setting it names,
+  // whichever slot it arrives in; a positional value applies to its own slot.
+  const values: Record<string, string | undefined> = {};
+  const slots = ['c4ShapeInRow', 'c4BoundaryInRow'] as const;
+  [c4ShapeInRowParam, c4BoundaryInRowParam].forEach((param, index) => {
+    if (typeof param === 'object' && param !== null) {
+      const [key, value] = Object.entries(param)[0];
+      values[key] = value;
+    } else if (param !== undefined) {
+      values[slots[index]] = param;
+    }
+  });
 
-  if (typeof c4ShapeInRowParam === 'object') {
-    const value = Object.values(c4ShapeInRowParam)[0];
-    c4ShapeInRowValue = parseInt(value);
-  } else {
-    c4ShapeInRowValue = parseInt(c4ShapeInRowParam);
-  }
-  if (typeof c4BoundaryInRowParam === 'object') {
-    const value = Object.values(c4BoundaryInRowParam)[0];
-    c4BoundaryInRowValue = parseInt(value);
-  } else {
-    c4BoundaryInRowValue = parseInt(c4BoundaryInRowParam);
-  }
+  const c4ShapeInRowValue = parseInt(values.c4ShapeInRow ?? '');
+  const c4BoundaryInRowValue = parseInt(values.c4BoundaryInRow ?? '');
 
   if (c4ShapeInRowValue >= 1) {
     c4ShapeInRow = c4ShapeInRowValue;
