@@ -1,4 +1,4 @@
-import type { C4, C4Element } from '@mermaid-js/parser';
+import type { C4, C4Element, C4Relationship } from '@mermaid-js/parser';
 import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
@@ -6,21 +6,65 @@ import { populateCommonDb } from '../common/populateCommonDb.js';
 import { C4BetaDB } from './db.js';
 import type { C4Arrow } from './types.js';
 
-const addElement = (db: C4BetaDB, element: C4Element, parentId?: string) => {
-  db.addElement({
-    id: element.id,
-    kind: element.kind,
-    name: element.name,
-    description: element.description,
-    technology: element.technology,
-    instances: element.instances,
-    tags: [...element.tags],
-    parentId,
-  });
+/** The 1-based line of a statement in the diagram text. */
+const lineOf = (node: { $cstNode?: { range: { start: { line: number } } } }): number =>
+  (node.$cstNode?.range.start.line ?? 0) + 1;
+
+/**
+ * Adds the element and its children to the db. An id that is already declared is an error
+ * naming both lines, and the element is left out; its children join the element that has the id.
+ */
+const addElement = (
+  db: C4BetaDB,
+  element: C4Element,
+  declared: Map<string, number>,
+  errors: string[],
+  parentId?: string
+) => {
+  const first = declared.get(element.id);
+  if (first) {
+    errors.push(
+      `c4-beta: the id "${element.id}" is declared twice, at line ${first} and at line ${lineOf(element)}. Every element needs its own id.`
+    );
+  } else {
+    declared.set(element.id, lineOf(element));
+    db.addElement({
+      id: element.id,
+      kind: element.kind,
+      name: element.name,
+      description: element.description,
+      technology: element.technology,
+      instances: element.instances,
+      tags: [...element.tags],
+      parentId,
+    });
+  }
   for (const child of element.children) {
-    addElement(db, child, element.id);
+    addElement(db, child, declared, errors, element.id);
   }
 };
+
+/** Adds the relationship as written. */
+const addRelationship = (db: C4BetaDB, relationship: C4Relationship) => {
+  db.addRelationship({
+    sourceId: relationship.sourceId,
+    targetId: relationship.targetId,
+    arrow: relationship.arrow as C4Arrow,
+    description: relationship.description,
+    technology: relationship.technology,
+    step: relationship.step,
+    tags: [...relationship.tags],
+  });
+};
+
+/** One message for each end of the relationship that is no element. */
+const unknownEnds = (relationship: C4Relationship, declared: Map<string, number>): string[] =>
+  [relationship.sourceId, relationship.targetId]
+    .filter((id) => !declared.has(id))
+    .map(
+      (id) =>
+        `c4-beta: the relationship "${relationship.sourceId} ${relationship.arrow} ${relationship.targetId}" at line ${lineOf(relationship)} names "${id}", which is no element. Declare it with a statement such as person ${id} "Name".`
+    );
 
 export const populateDb = (ast: C4, db: C4BetaDB) => {
   populateCommonDb(ast, db);
@@ -30,8 +74,10 @@ export const populateDb = (ast: C4, db: C4BetaDB) => {
   if (ast.direction) {
     db.setDirection(ast.direction);
   }
+  const declared = new Map<string, number>();
+  const errors: string[] = [];
   for (const element of ast.elements) {
-    addElement(db, element);
+    addElement(db, element, declared, errors);
   }
   for (const style of ast.styles) {
     db.addStyle(
@@ -40,16 +86,19 @@ export const populateDb = (ast: C4, db: C4BetaDB) => {
     );
   }
   for (const relationship of ast.relationships) {
-    db.addRelationship({
-      sourceId: relationship.sourceId,
-      targetId: relationship.targetId,
-      arrow: relationship.arrow as C4Arrow,
-      description: relationship.description,
-      technology: relationship.technology,
-      step: relationship.step,
-      tags: [...relationship.tags],
-    });
+    errors.push(...unknownEnds(relationship, declared));
+    addRelationship(db, relationship);
   }
+  if (errors.length > 0) {
+    throw new Error(errors.join('\n'));
+  }
+};
+
+/** Parses the diagram text into the db: the header, the grammar, then the checks across lines. */
+export const parseC4Beta = async (input: string, db: C4BetaDB): Promise<void> => {
+  const ast: C4 = await parse('c4', input);
+  log.debug(ast);
+  populateDb(ast, db);
 };
 
 export const parser: ParserDefinition = {
@@ -58,14 +107,12 @@ export const parser: ParserDefinition = {
     yy: undefined,
   },
   parse: async (input: string): Promise<void> => {
-    const ast: C4 = await parse('c4', input);
-    log.debug(ast);
     const db = parser.parser?.yy;
     if (!(db instanceof C4BetaDB)) {
       throw new Error(
         'parser.parser?.yy was not a C4BetaDB. This is due to a bug within Mermaid, please report this issue at https://github.com/mermaid-js/mermaid/issues.'
       );
     }
-    populateDb(ast, db);
+    await parseC4Beta(input, db);
   },
 };

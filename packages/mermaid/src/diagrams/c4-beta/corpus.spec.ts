@@ -1,13 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parse } from '@mermaid-js/parser';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { log } from '../../logger.js';
 import { EXPECTED } from './corpus/expected.js';
 import type { WarningKind } from './corpus/expected.js';
 import { C4BetaDB } from './db.js';
-import { populateDb } from './parser.js';
+import { parseC4Beta } from './parser.js';
 
 const CORPUS = join(import.meta.dirname, 'corpus');
 
@@ -29,7 +28,7 @@ const summarize = async (text: string) => {
   const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
   try {
     const db = new C4BetaDB();
-    populateDb(await parse('c4', text), db);
+    await parseC4Beta(text, db);
     const boundaries = db.getBoundaryIds();
     const { edges } = db.getData();
     return {
@@ -64,12 +63,9 @@ const summarize = async (text: string) => {
 const NOT_YET: Record<string, string> = {
   'b05-empty-braces-and-group': 'row 11: an empty group draws a frame',
   'b06-four-arrows': 'row 6: `a <-- c` is stored as `c --> a`; and `---` is not on this branch',
+  'b25-step-outside-dynamic': 'row 8: `N:` outside `dynamic` gives a warning',
   'b10-direction-legend-acc': '`legend` is not on this branch',
   'b16-arrow-without-spaces': 'row 1: an id never contains `--`; and `---` is not on this branch',
-  'b18-keyword-ids': 'row 5: an unknown relation end is an error at parse',
-  'b19-unknown-end': 'row 5: an unknown relation end is an error at parse',
-  'b20-duplicate-id': 'row 4: a duplicate id is an error naming both lines',
-  'b25-step-outside-dynamic': 'row 8: `N:` outside `dynamic` gives a warning',
 };
 
 describe('c4-beta shared probes', () => {

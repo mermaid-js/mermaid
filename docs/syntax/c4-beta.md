@@ -82,7 +82,7 @@ softwareSystem mainframe "Mainframe Banking System" :::external
 
 ### Nesting and boundaries
 
-Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary. An element cannot be declared inside an element with the same id; the diagram is rejected with an error naming the id:
+Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary. Every id is declared once, anywhere in the diagram, nested or not. A second declaration is an error naming the id and both lines (`the id "api" is declared twice, at line 4 and at line 9`):
 
 ```mermaid
 c4-beta container
@@ -142,6 +142,8 @@ softwareSystem partner "Partner System" :::external
 core --> partner : "Pushes settlement records to" "JSON/HTTPS"
 partner --> core : "Returns settlement confirmations to" "JSON/HTTPS"
 ```
+
+Both ends of a relationship must be declared elements, wherever the relationship sits in the text; an unknown end is an error at parse time, naming the end and its line, and no part of the diagram is drawn.
 
 Label each relationship with a specific verb phrase that explains _why_ the interaction exists ("Pushes settlement records to", "Reads customer profiles from"). Avoid bare labels such as "Uses": they describe a dependency, not an interaction, and make the diagram harder to read.
 
