@@ -285,6 +285,18 @@ describe('c4-beta db', () => {
         expect(edges[0].pattern).toBe('dashed');
       });
 
+      it('should take a color name where a hex color goes', async () => {
+        await populate(`c4-beta context
+          style hot fill:red, stroke:#fff, color:white
+          softwareSystem a "A" :::hot
+        `);
+        expect(db.getData().nodes[0].cssStyles?.slice(-3)).toEqual([
+          'fill: red',
+          'stroke: #fff',
+          'color: white',
+        ]);
+      });
+
       it('should add tag classes even for tags without styles', async () => {
         await populate(`c4-beta context
           softwareSystem a "A" :::critical

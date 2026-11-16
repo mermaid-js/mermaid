@@ -400,13 +400,13 @@ style <tag> key:value (, key:value)*
 
 Supported keys:
 
-| Key      | Applies to                 | Values                         |
-| -------- | -------------------------- | ------------------------------ |
-| `fill`   | elements                   | hex color (`#rgb` / `#rrggbb`) |
-| `stroke` | elements and relationships | hex color                      |
-| `color`  | elements and relationships | hex color (text color)         |
-| `shape`  | elements                   | `cylinder`                     |
-| `line`   | relationships              | `solid`, `dashed`, `dotted`    |
+| Key      | Applies to                 | Values                                                              |
+| -------- | -------------------------- | ------------------------------------------------------------------- |
+| `fill`   | elements                   | a color: hex (`#rgb` / `#rrggbb`) or a CSS color name such as `red` |
+| `stroke` | elements and relationships | a color, as for `fill`                                              |
+| `color`  | elements and relationships | a color, as for `fill` (the text color)                             |
+| `shape`  | elements                   | `cylinder`                                                          |
+| `line`   | relationships              | `solid`, `dashed`, `dotted`                                         |
 
 Tag styles are applied after the built-in element colors, so they override them. Each tag also adds a `c4-tag-<name>` CSS class for theming with `classDefs` or custom CSS.
 
