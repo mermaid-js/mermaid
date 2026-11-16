@@ -464,3 +464,16 @@ A `title` line sets the diagram title:
 ```
 title Internet Banking System - System Context
 ```
+
+### Warnings
+
+Some mistakes are not errors: the diagram still draws, and mermaid logs a warning. A warning is shown in the browser console once `logLevel` is `warn` or lower (for example `mermaid.initialize({ logLevel: 'warn' })`); the default level hides it. These are warned about:
+
+- an element kind that is unexpected for the declared diagram kind, such as a `component` in a `context` diagram
+- a technology given to a `person` or a `softwareSystem`, which are black boxes and have none: it is dropped
+- `instances` on anything but a `deploymentNode`: it is dropped
+- a step number `N:` on a relationship outside a `dynamic` diagram: it is ignored
+- a relationship between two boundaries
+- a `style` key or value that is not supported: it is ignored
+
+Everything else that is wrong, such as a duplicate id or a relationship to an element that is not declared, is an error and the diagram is not drawn.

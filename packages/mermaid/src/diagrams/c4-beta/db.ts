@@ -205,6 +205,11 @@ export class C4BetaDB implements DiagramDB {
         `c4-beta: relationship "${text}" connects two clusters; relationships should connect leaf elements`
       );
     }
+    if (relationship.step !== undefined && this.kind !== 'dynamic') {
+      log.warn(
+        `c4-beta: step "${relationship.step}:" on relationship "${text}" is ignored; steps only apply to dynamic diagrams`
+      );
+    }
   }
 
   public getData(): LayoutData {

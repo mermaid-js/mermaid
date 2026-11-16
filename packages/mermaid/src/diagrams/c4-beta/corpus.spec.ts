@@ -62,8 +62,7 @@ const summarize = async (text: string) => {
  */
 const NOT_YET: Record<string, string> = {
   'b05-empty-braces-and-group': 'row 11: an empty group draws a frame',
-  'b06-four-arrows': 'the `---` arrow is not on this branch',
-  'b25-step-outside-dynamic': 'row 8: `N:` outside `dynamic` gives a warning',
+  'b06-four-arrows': 'row 6: `a <-- c` is stored as `c --> a`; and `---` is not on this branch',
   'b10-direction-legend-acc': '`legend` is not on this branch',
   'b16-arrow-without-spaces': 'row 1: an id never contains `--`; and `---` is not on this branch',
 };

@@ -650,4 +650,43 @@ group g "G" {
       });
     });
   });
+
+  describe('warnings for dropped input', () => {
+    const warnings = async (text: string) => {
+      const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      await populate(text);
+      db.getData();
+      const messages = warn.mock.calls.map(([message]) => String(message));
+      warn.mockRestore();
+      return messages;
+    };
+
+    it('should warn about a step outside a dynamic diagram, and not inside one', async () => {
+      const outside = await warnings(
+        'c4-beta context\nperson a "A"\nperson b "B"\n7: a --> b : "Calls"'
+      );
+      expect(outside).toEqual([
+        'c4-beta: step "7:" on relationship "a --> b" is ignored; steps only apply to dynamic diagrams',
+      ]);
+      db.clear();
+      const inside = await warnings(
+        'c4-beta dynamic\nperson a "A"\nperson b "B"\n7: a --> b : "Calls"'
+      );
+      expect(inside).toEqual([]);
+    });
+
+    it('should warn about a technology on a person and a software system', async () => {
+      const messages = await warnings(
+        'c4-beta context\nperson p "P" "Pays." "Browser"\nsoftwareSystem s "S" "Sells." "Java"'
+      );
+      expect(messages.filter((message) => message.includes('is ignored'))).toHaveLength(2);
+    });
+
+    it('should warn about instances on an element that is not a deployment node', async () => {
+      const messages = await warnings('c4-beta deployment\ncontainer c "C" instances "3"');
+      expect(messages).toEqual([
+        'c4-beta: instances "3" on container "c" is ignored; instances only apply to deploymentNode elements',
+      ]);
+    });
+  });
 });
