@@ -1,0 +1,11 @@
+---
+description: >-
+  Per-message `wrap:` prefix forcing a long message to wrap when sent from
+  an `actor`-shaped participant to a database-shaped participant, alongside
+  a short unwrapped message for contrast.
+---
+sequenceDiagram
+  actor Alice
+  participant Bob@{ "type" : "database" }
+  Alice->>Bob: I'm short
+  Bob->>Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be

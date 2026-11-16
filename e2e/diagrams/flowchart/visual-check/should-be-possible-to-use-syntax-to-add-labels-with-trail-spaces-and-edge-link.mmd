@@ -1,0 +1,12 @@
+---
+description: >-
+  Verifies that an edge (A --> B) fanning out via the '&' multi-node syntax into
+  a chain mixing bracket labels and @{ label: ... } shape-data syntax still
+  parses correctly even with irregular whitespace, including extra spaces before
+  '&', a stray space before the colon in 'label : "for E"', and trailing
+  whitespace at the end of the line, alongside a separately declared @{label:
+  ...} node on its own line.
+---
+flowchart TD
+  A["A"] --> B["for B"] &    C@{ label: "for c"} & E@{label : "for E"}  
+  D@{label: "for D"}

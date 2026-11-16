@@ -1,0 +1,29 @@
+---
+description: >-
+  Hand-drawn look classDiagram using dot-notation namespace names
+  (Company.Engineering.Backend/Frontend/Engineering) to express a nested namespace
+  hierarchy, with a class in the parent namespace relating to classes in the child
+  namespaces.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  namespace Company.Engineering.Backend {
+  class Developer {
+    +writeCode()
+  }
+  }
+  namespace Company.Engineering.Frontend {
+  class Designer {
+    +createMockup()
+  }
+  }
+  namespace Company.Engineering {
+  class TechLead {
+    +planSprint()
+  }
+  }
+  TechLead --> Developer : leads
+  TechLead --> Designer : leads

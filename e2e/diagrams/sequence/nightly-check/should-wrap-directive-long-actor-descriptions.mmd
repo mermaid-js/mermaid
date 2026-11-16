@@ -1,0 +1,11 @@
+---
+description: >-
+  Global `wrap: true` directive applied to a participant whose aliased
+  display name (`as ...`) is itself an extremely long string, to confirm
+  actor-box labels wrap rather than overflow.
+---
+%%{init: {'config': {'wrap': true }}}%%
+sequenceDiagram
+  participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  A->>Bob: Hola
+  Bob-->A: Pasten !

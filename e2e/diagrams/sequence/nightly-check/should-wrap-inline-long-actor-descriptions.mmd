@@ -1,0 +1,12 @@
+---
+description: >-
+  Per-participant inline `wrap:` prefix (rather than a global directive)
+  applied to an aliased actor's very long display name, to confirm the
+  actor-box label wraps; frontmatter only sets logLevel.
+config:
+  logLevel: 0
+---
+sequenceDiagram
+  participant A as wrap:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  A->>Bob: Hola
+  Bob-->A: Pasten !

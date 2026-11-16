@@ -1,0 +1,24 @@
+---
+description: >-
+  Every edge animation variant side by side — `animate: true`,
+  `animation: fast`, `animation: slow`, and `animate: false` — each on its
+  own named edge from a shared actor.
+---
+usecase-beta
+    direction LR
+
+    actor Operator
+    A("Animate true")
+    B("Fast animation")
+    C("Slow animation")
+    D("Animation disabled")
+
+    Operator trueEdge@--> A
+    Operator fastEdge@--> B
+    Operator slowEdge@--> C
+    Operator offEdge@--> D
+
+    trueEdge@{ animate: true }
+    fastEdge@{ animation: fast }
+    slowEdge@{ animation: slow }
+    offEdge@{ animate: false }

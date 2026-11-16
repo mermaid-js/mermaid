@@ -1,0 +1,17 @@
+---
+description: >-
+  Legacy v1 state diagram with a linear chain from State1 branching out to
+  four sibling states, each transition carrying its own text label
+  (Transition 1-5), exercising labeled-edge rendering.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*] --> State1
+  State1 --> State2 : Transition 1
+  State1 --> State3 : Transition 2
+  State1 --> State4 : Transition 3
+  State1 --> State5 : Transition 4
+  State2 --> State3 : Transition 5
+  State1 --> [*]

@@ -1,0 +1,23 @@
+---
+description:
+  Verifies that self-loop edges render correctly when the flowchart or an
+  enclosing subgraph uses a non-default direction (LR, and subgraphs with
+  direction BT and RL), ensuring the loop geometry adapts to each layout
+  direction rather than only working in the default top-to-bottom flow.
+config:
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+flowchart LR
+  A[LR loop] --> A
+  subgraph B[BT subgraph]
+  direction BT
+  B1[BT loop] --> B1
+  end
+  subgraph C[RL subgraph]
+  direction RL
+  C1[RL loop] --> C1
+  end
+  A --> B1
+  B1 --> C1

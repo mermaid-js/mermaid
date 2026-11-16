@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that when htmlLabels is enabled, an HTML tag embedded in a node label
+  (<strong>Haiya</strong>) is rendered as actual markup (bold text) rather than
+  escaped, connected via a thick edge.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  a["<strong>Haiya</strong>"]===>b

@@ -1,0 +1,14 @@
+---
+config:
+  layout: grid
+  grid:
+    columnGap: 300
+    placements:
+      Draft: { row: 1, column: 1 }
+      Review: { row: 1, column: 2 }
+      Published: { row: 2, column: 2 }
+---
+stateDiagram-v2
+  Draft --> Review
+  Review --> Published
+  Review --> Draft : changes requested

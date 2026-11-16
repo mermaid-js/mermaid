@@ -1,0 +1,13 @@
+---
+description: >-
+  Attribute types carrying an explicit length parameter, with htmlLabels
+  disabled under the elk layout.
+config:
+  layout: elk
+  htmlLabels: false
+---
+erDiagram
+    CLUSTER {
+      varchar(99) name
+      string(255) description
+    }

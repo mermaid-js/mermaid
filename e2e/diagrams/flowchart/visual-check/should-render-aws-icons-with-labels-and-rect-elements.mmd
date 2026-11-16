@@ -1,0 +1,12 @@
+---
+description: >-
+  Verifies that icon-shaped nodes using the AWS icon pack (via @{ icon:
+  "aws:..." } shape data) render correctly with a custom label overriding the
+  icon's default name, chained together with plain edges.
+---
+flowchart TB
+  Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch", label: "CloudWatch" }
+  Route53@{ icon: "aws:arch-amazon-route-53", label: "Route 53" }
+  EKS@{ icon: "aws:arch-amazon-eks-cloud", label: "EKS Cloud" }
+  Cloudwatch --> Route53
+  Route53 --> EKS

@@ -1,0 +1,20 @@
+---
+description: >-
+  classDiagram with an inheritance relationship where the child class name is a backtick-
+  quoted identifier containing an embedded newline (split across 'Du' / 'ck'), with both
+  parent and child classes carrying members.
+---
+classDiagram
+  Animal <|-- `Du
+  ck`
+  Animal : +int age
+  Animal : +String gender
+  Animal: +isMammal()
+  Animal: +mate()
+  class `Du
+  ck` {
+  +String beakColor
+  +String featherColor
+  +swim()
+  +quack()
+  }

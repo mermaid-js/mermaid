@@ -1,0 +1,21 @@
+---
+description: >-
+  A message and a note rendered with distinct actor/message/note font families,
+  sizes, and note alignment all set via config.
+config:
+  look: classic
+  sequence:
+    actorFontFamily: courier
+    actorFontSize: 14
+    messageFontFamily: Arial
+    messageFontSize: 12
+    noteFontFamily: times
+    noteFontSize: 16
+    noteAlign: left
+---
+sequenceDiagram
+  participant participant0@{ "type" : "participant" }
+  participant actor1@{ "type" : "actor" }
+  participant boundary2@{ "type" : "boundary" }
+  participant0 ->> actor1: Regular message
+  Note right of actor1: Regular note

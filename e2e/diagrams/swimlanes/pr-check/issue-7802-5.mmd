@@ -1,0 +1,44 @@
+---
+description: >-
+  Regression fixture for issue #7802: same decision-diamond layout as
+  issue-7802-4.mmd, but only C's "Disagree" edge to Exit is active — B
+  and D are commented out.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+subgraph X1
+  A(Start)
+  B{{B------}}
+  I[I]
+  id1[(Database)]
+end
+subgraph X3
+  Sys1
+  E
+end
+subgraph X2
+  C{{C------------}}
+  D{{D}}
+  F
+  G@{ shape: notch-pent }
+  H
+  exit(Exit)
+end
+  A --> Sys1
+  --> B
+  -->|Agree| C
+  -->|Agree| D
+  -->|Agree| E
+  --> F
+  --> G
+  --> H[H-]
+  --> I
+  --> exit
+
+%% odd behaviors with belows line
+%%   B -->|Disagree| exit
+   C -->|Disagree| exit
+%%   D -->|Disagree| exit

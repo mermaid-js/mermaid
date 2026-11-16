@@ -1,0 +1,26 @@
+---
+description: >-
+  Every participant type chained in sequence, rendered under the classic look
+  with custom diagram margins.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant participant0@{ "type" : "participant" }
+  participant actor1@{ "type" : "actor" }
+  participant boundary2@{ "type" : "boundary" }
+  participant control3@{ "type" : "control" }
+  participant entity4@{ "type" : "entity" }
+  participant database5@{ "type" : "database" }
+  participant collections6@{ "type" : "collections" }
+  participant queue7@{ "type" : "queue" }
+  participant0 ->> actor1: Message 0
+  actor1 ->> boundary2: Message 1
+  boundary2 ->> control3: Message 2
+  control3 ->> entity4: Message 3
+  entity4 ->> database5: Message 4
+  database5 ->> collections6: Message 5
+  collections6 ->> queue7: Message 6

@@ -1,5 +1,11 @@
 # @mermaid-js/parser
 
+## 2.0.1
+
+### Patch Changes
+
+- [#8333](https://github.com/mermaid-js/mermaid/pull/8333) [`8afd83c`](https://github.com/mermaid-js/mermaid/commit/8afd83c9fd7a4b9dfdc08cd620fbf38978bb7982) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: upgrade the parser to langium 4.4 / chevrotain 13 so bundles no longer include `lodash-es@4.17.23`
+
 ## 2.0.0
 
 ### Major Changes

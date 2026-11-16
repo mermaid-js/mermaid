@@ -1,3 +1,7 @@
+---
+description: 'Visualize the bit-level structure of network packets and protocol headers by defining fields over bit ranges.'
+---
+
 # Packet Diagram (v11.0.0+)
 
 ## Introduction
@@ -70,7 +74,7 @@ title UDP Packet
 - **Ranges**: Each line after the title represents a different field in the packet. The range (e.g., `0-15`) indicates the bit positions in the packet.
 - **Field Description**: A brief description of what the field represents, enclosed in quotes.
 
-### Bit Numbering Order (v<MERMAID_RELEASE_VERSION>+)
+### Bit Numbering Order (v12.0.0+)
 
 Rows are numbered from their lowest bit on the left up to their highest bit on the right, which suits network packets. Hardware registers are conventionally drawn the other way round, with the most significant bit on the left and bit 0 on the right. Set `bitOrder: descending` to mirror every row:
 

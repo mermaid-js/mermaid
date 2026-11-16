@@ -1,0 +1,32 @@
+---
+description: >-
+  Dagre-layout class diagram where namespaces are nested syntactically
+  (namespace blocks written inside another namespace block, e.g.
+  `namespace Platform { namespace Auth {...} namespace Data {...} }`)
+  rather than via dot-notation, with a Gateway class delegating to classes
+  in each nested namespace.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  namespace Platform {
+  namespace Auth {
+    class UserService {
+      +login()
+      +logout()
+    }
+  }
+  namespace Data {
+    class Repository {
+      +find()
+      +save()
+    }
+  }
+  class Gateway {
+    +route()
+  }
+  }
+  Gateway --> UserService : delegates
+  Gateway --> Repository : delegates

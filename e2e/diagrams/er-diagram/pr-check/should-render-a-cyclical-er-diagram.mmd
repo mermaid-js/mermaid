@@ -1,0 +1,12 @@
+---
+description: >-
+  Three entities (A, B, C) linked in a cycle via identical identifying
+  one-to-many "likes" relationships (A to B, B to C, C to A), verifying the
+  renderer handles a cyclical relationship graph without layout errors.
+config:
+  logLevel: 1
+---
+erDiagram
+  A ||--|{ B : likes
+  B ||--|{ C : likes
+  C ||--|{ A : likes

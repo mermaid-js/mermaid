@@ -1,5 +1,6 @@
 import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph, FlowText } from './types.js';
+import flow from './parser/flowParser.js';
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -200,14 +201,14 @@ describe('flow db collapsible subgraphs', () => {
     addVertex('A');
     addVertex('B');
     flowDb.addSubGraph({ text: 'sub1' }, ['A', 'B'], { text: 'My Group', type: 'text' });
-    attachMeta('sub1', ' algorithm: elk.box ');
+    attachMeta('sub1', ' algorithm: elk.box, note: ignored ');
 
     const { nodes } = flowDb.getData();
     const sub = nodes.find((n) => n.id === 'sub1');
     expect(sub?.isGroup).toBe(true);
     // Without this the `@{ algorithm: … }` a user writes on a flowchart
     // subgraph never reached the layout engine.
-    expect(sub?.metadata).toMatchObject({ algorithm: 'elk.box' });
+    expect(sub?.metadata).toEqual({ algorithm: 'elk.box' });
   });
 
   it('renders a collapsed subgraph as a single collapsedGroup node and hides its members', () => {
@@ -277,6 +278,59 @@ describe('flow db collapsible subgraphs', () => {
     expect(nodes.find((n) => n.id === 'A')).toBeUndefined();
     // C --> A redirects all the way to the outer collapsed node
     expect(edges.find((e) => e.start === 'C' && e.end === 'outer')).toBeDefined();
+  });
+});
+
+describe('flow db metadata propagation', () => {
+  it('forwards only grid metadata on emitted leaf nodes', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      A@{ row: 2, column: 3, horizontalAlign: left, verticalAlign: bottom, note: "kept" }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const node = nodes.find((item: { id: string }) => item.id === 'A');
+    expect(node?.metadata).toEqual({
+      row: 2,
+      column: 3,
+      horizontalAlign: 'left',
+      verticalAlign: 'bottom',
+    });
+  });
+
+  it('preserves inline grid metadata for node ids beginning with double underscores', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      __start@{ row: 2, column: 3 }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const node = nodes.find((item: { id: string }) => item.id === '__start');
+    expect(node?.metadata).toEqual({
+      row: 2,
+      column: 3,
+    });
+  });
+
+  it('strips prototype-shaped metadata keys before forwarding them', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      A@{
+        row: 1
+        __proto__:
+          polluted: true
+        constructor: "drop"
+      }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const metadata =
+      nodes.find((item: { id: string; metadata?: Record<string, unknown> }) => item.id === 'A')
+        ?.metadata ?? {};
+    expect(metadata).toMatchObject({ row: 1 });
+    expect(Object.keys(metadata)).not.toContain('__proto__');
+    expect(Object.keys(metadata)).not.toContain('constructor');
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
   });
 });
 
@@ -384,5 +438,153 @@ describe('flow db subgraph colour slots', () => {
     const { nodes } = flowDb.getData();
     expect(nodes.find((n) => n.id === 'A')?.colorIndex).toBeUndefined();
     expect(nodes.find((n) => n.id === 'only')?.colorIndex).toBe(0);
+  });
+});
+
+describe('flow db repeated subgraph ids (issue #8326)', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+    flowDb.setGen('gen-2');
+    flow.parser.yy = flowDb;
+  });
+
+  const parse = (text: string) => flow.parser.parse(text);
+  const subGraphIds = () => flowDb.getSubGraphs().map((sg) => sg.id);
+  const subGraph = (id: string) => flowDb.getSubGraphs().find((sg) => sg.id === id);
+
+  it('merges a repeated subgraph id into a single subgraph', () => {
+    parse('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend');
+
+    expect(subGraphIds()).toEqual(['S']);
+    expect(subGraph('S')?.nodes).toEqual(['x', 'y']);
+  });
+
+  it('keeps the title of the first declaration', () => {
+    parse('flowchart LR\nsubgraph S [First]\n  x\nend\nsubgraph S [Second]\n  y\nend');
+
+    expect(subGraphIds()).toEqual(['S']);
+    expect(subGraph('S')?.title).toBe('First');
+  });
+
+  it('produces a single group node in getData with both members parented to it', () => {
+    parse('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend');
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.find((n) => n.id === 'S')?.isGroup).toBe(true);
+    expect(nodes.find((n) => n.id === 'x')?.parentId).toBe('S');
+    expect(nodes.find((n) => n.id === 'y')?.parentId).toBe('S');
+    const ids = nodes.map((n) => n.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('applies a class set after a repeated declaration to the merged subgraph', () => {
+    parse(
+      'flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend\nclassDef hot fill:#f00\nclass S hot'
+    );
+
+    expect(subGraph('S')?.classes).toContain('hot');
+    expect(flowDb.getData().nodes.find((n) => n.id === 'S')?.cssClasses).toContain('hot');
+  });
+
+  it.each([
+    [
+      'after the repeated declaration',
+      'flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend\nS@{ view: collapsed }',
+    ],
+    [
+      'between the two declarations',
+      'flowchart LR\nsubgraph S\n  x\nend\nS@{ view: collapsed }\nsubgraph S\n  y\nend',
+    ],
+  ])('collapses a repeated subgraph when its collapsed metadata comes %s', (_, text) => {
+    parse(text);
+
+    expect(subGraph('S')?.metadata).toEqual({ view: 'collapsed' });
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.find((n) => n.id === 'S')?.shape).toBe('collapsedGroup');
+    expect(nodes.find((n) => n.id === 'x')).toBeUndefined();
+    expect(nodes.find((n) => n.id === 'y')).toBeUndefined();
+  });
+
+  it('flattens a subgraph redeclared inside its own body instead of creating a cycle', () => {
+    parse('flowchart LR\nsubgraph S\n  subgraph S\n    x\n  end\n  y\nend');
+
+    expect(subGraphIds()).toEqual(['S']);
+    const members = subGraph('S')?.nodes ?? [];
+    expect(members).not.toContain('S');
+    expect(members).toEqual(expect.arrayContaining(['x', 'y']));
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.filter((n) => n.parentId === n.id)).toEqual([]);
+    expect(nodes.find((n) => n.id === 'x')?.parentId).toBe('S');
+    expect(nodes.find((n) => n.id === 'y')?.parentId).toBe('S');
+  });
+
+  it('merges an empty first declaration with a later one containing a nested subgraph', () => {
+    parse('flowchart LR\nsubgraph S\nend\nsubgraph S\n  subgraph T\n    y\n  end\nend');
+
+    expect([...subGraphIds()].sort()).toEqual(['S', 'T']);
+    expect(subGraph('S')?.nodes).toEqual(['T']);
+    expect(subGraph('T')?.nodes).toEqual(['y']);
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.find((n) => n.id === 'T')?.parentId).toBe('S');
+    expect(nodes.find((n) => n.id === 'y')?.parentId).toBe('T');
+  });
+
+  it('keeps distinct and anonymous subgraphs separate', () => {
+    parse(
+      'flowchart LR\nsubgraph A\n  a\nend\nsubgraph B\n  b\nend\nsubgraph "Same Title"\n  c\nend\nsubgraph "Same Title"\n  d\nend'
+    );
+
+    const sgs = flowDb.getSubGraphs();
+    expect(sgs).toHaveLength(4);
+    expect(subGraph('A')?.nodes).toEqual(['a']);
+    expect(subGraph('B')?.nodes).toEqual(['b']);
+    expect(subGraph('subGraph2')?.nodes).toEqual(['c']);
+    expect(subGraph('subGraph3')?.nodes).toEqual(['d']);
+  });
+});
+
+describe('flow db keys only a diagram with pools may set', () => {
+  const build = (meta?: string) => {
+    const flowDb = new FlowDB();
+    const add = (id: string) =>
+      flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+    ['A', 'B', 'C'].forEach(add);
+    flowDb.addSubGraph({ text: 'P' }, ['L1', 'L2'], { text: 'Company', type: 'text' });
+    flowDb.addSubGraph({ text: 'L1' }, ['A', 'B'], { text: 'Sales', type: 'text' });
+    flowDb.addSubGraph({ text: 'L2' }, ['C'], { text: 'Ops', type: 'text' });
+    if (meta) {
+      const [id, ...rest] = meta.split('|');
+      flowDb.addVertex(
+        id,
+        undefined as unknown as FlowText,
+        undefined,
+        [],
+        [],
+        '',
+        {},
+        rest.join('|')
+      );
+    }
+    return flowDb.getData().nodes;
+  };
+
+  it.each([
+    ['laneRole', 'P|laneRole: pool'],
+    ['laneIndex', 'L1|laneIndex: 1'],
+    ['drawnExtent', 'L1|drawnExtent: { width: 5, height: 5 }'],
+  ])('drops %s from the metadata of a subgraph', (_key, meta) => {
+    expect(build(meta)).toEqual(build());
+  });
+
+  it('keeps the other keys a subgraph is given', () => {
+    const nodes = build('L1|laneRole: pool\nalgorithm: elk.box');
+    expect(nodes.find((n) => n.id === 'L1')?.metadata).toEqual({ algorithm: 'elk.box' });
   });
 });

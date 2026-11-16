@@ -1,0 +1,26 @@
+---
+description:
+  Fully interconnects the anchor, lean-r, lean-l, trap-t, and trap-b node shapes
+  (every shape linked to every other) under the 'neo' theme with the 'neo' look,
+  verifying this batch of 5 shapes renders correctly and stays visually distinct
+  under this theme/look combination.
+config:
+  look: "neo"
+  theme: "neo"
+---
+flowchart TB
+  n00@{ shape: anchor, label: 'This is a label for anchor shape' }
+  n11@{ shape: lean-r, label: 'This is a label for lean-r shape' }
+  n22@{ shape: lean-l, label: 'This is a label for lean-l shape' }
+  n33@{ shape: trap-t, label: 'This is a label for trap-t shape' }
+  n44@{ shape: trap-b, label: 'This is a label for trap-b shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n00 --> n44
+  n11 --> n22
+  n11 --> n33
+  n11 --> n44
+  n22 --> n33
+  n22 --> n44
+  n33 --> n44

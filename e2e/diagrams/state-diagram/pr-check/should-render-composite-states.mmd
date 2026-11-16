@@ -1,0 +1,21 @@
+---
+description: >-
+  Legacy v1 state diagram with a top-level state (NotShooting) that fans
+  out to three sibling states and also contains its own nested
+  start-transition and self-loop, including a long non-ASCII transition
+  label ("öong öong öong") to exercise text wrapping.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*] --> NotShooting: Pacifist
+  NotShooting --> A
+  NotShooting --> B
+  NotShooting --> C
+
+  state NotShooting {
+  [*] --> Idle: Yet another long long öong öong öong label
+  Idle --> Configuring : EvConfig
+  Configuring --> Idle : EvConfig  EvConfig EvConfig  EvConfig EvConfig
+  }

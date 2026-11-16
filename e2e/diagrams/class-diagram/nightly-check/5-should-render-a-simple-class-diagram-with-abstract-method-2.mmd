@@ -1,0 +1,12 @@
+---
+description: >-
+  Renders an abstract method (`someMethod()*`, trailing asterisk) on a
+  class inheriting from another via `<|--`, with a top-level
+  `htmlLabels: true` config key.
+config:
+  logLevel: 1
+  htmlLabels: true
+---
+classDiagram
+  Class01 <|-- AveryLongClass : Cool
+  Class01 : someMethod()*

@@ -1,0 +1,26 @@
+---
+description:
+  Fully interconnects the text, card, lin-rect, diamond, and hexagon node shapes
+  (every shape linked to every other) under the 'neo-dark' theme with the 'neo'
+  look, verifying this batch of 5 shapes renders correctly and stays visually
+  distinct under this theme/look combination.
+config:
+  look: "neo"
+  theme: "neo-dark"
+---
+flowchart TB
+  n00@{ shape: text, label: 'This is a label for text shape' }
+  n11@{ shape: card, label: 'This is a label for card shape' }
+  n22@{ shape: lin-rect, label: 'This is a label for lin-rect shape' }
+  n33@{ shape: diamond, label: 'This is a label for diamond shape' }
+  n44@{ shape: hexagon, label: 'This is a label for hexagon shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n00 --> n44
+  n11 --> n22
+  n11 --> n33
+  n11 --> n44
+  n22 --> n33
+  n22 --> n44
+  n33 --> n44

@@ -12,7 +12,7 @@ Note that practitioners of ER modelling almost always refer to _entity types_ si
 
 Mermaid can render ER diagrams
 
-```mermaid-example
+```mermaid
 ---
 title: Order example
 ---
@@ -22,7 +22,7 @@ erDiagram
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
 ```
 
-```mermaid
+```mermaid-example
 ---
 title: Order example
 ---
@@ -38,7 +38,7 @@ Relationships between entities are represented by lines with end markers represe
 
 ER diagrams can be used for various purposes, ranging from abstract logical models devoid of any implementation details, through to physical models of relational database tables. It can be useful to include attribute definitions on ER diagrams to aid comprehension of the purpose and meaning of entities. These do not necessarily need to be exhaustive; often a small subset of attributes is enough. Mermaid allows them to be defined in terms of their _type_ and _name_.
 
-```mermaid-example
+```mermaid
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
@@ -58,7 +58,7 @@ erDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
@@ -86,11 +86,13 @@ Entity relationship diagrams use the `redux-color` theme and the `neo` look by d
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
 
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
+
 The same diagram, drawn both ways:
 
 ### With the defaults
 
-```mermaid-example
+```mermaid
 erDiagram
   CUSTOMER ||--o{ ORDER : places
   ORDER ||--|{ LINE_ITEM : contains
@@ -113,7 +115,7 @@ erDiagram
   }
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
   CUSTOMER ||--o{ ORDER : places
   ORDER ||--|{ LINE_ITEM : contains
@@ -141,7 +143,7 @@ erDiagram
 Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
 in a diagram's front matter draws it the way Mermaid did before:
 
-```mermaid-example
+```mermaid
 ---
 config:
   theme: default
@@ -170,7 +172,7 @@ erDiagram
   }
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   theme: default
@@ -234,12 +236,12 @@ Only the `first-entity` part of a statement is mandatory. This makes it possible
 
 Entity names, relationships, and attributes all support unicode text.
 
-```mermaid-example
+```mermaid
 erDiagram
     "This ❤ Unicode"
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     "This ❤ Unicode"
 ```
@@ -248,12 +250,12 @@ erDiagram
 
 Markdown formatting and text is also supported.
 
-```mermaid-example
+```mermaid
 erDiagram
     "This **is** _Markdown_"
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     "This **is** _Markdown_"
 ```
@@ -308,12 +310,6 @@ Relationships may be classified as either _identifying_ or _non-identifying_ and
 |      to       |   _identifying_   |
 | optionally to | _non-identifying_ |
 
-```mermaid-example
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    PERSON }o..o{ NAMED-DRIVER : is
-```
-
 ```mermaid
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
@@ -321,12 +317,18 @@ erDiagram
 ```
 
 ```mermaid-example
+erDiagram
+    CAR ||--o{ NAMED-DRIVER : allows
+    PERSON }o..o{ NAMED-DRIVER : is
+```
+
+```mermaid
 erDiagram
     CAR 1 to zero or more NAMED-DRIVER : allows
     PERSON many(0) optionally to 0+ NAMED-DRIVER : is
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     CAR 1 to zero or more NAMED-DRIVER : allows
     PERSON many(0) optionally to 0+ NAMED-DRIVER : is
@@ -336,7 +338,7 @@ erDiagram
 
 Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. The attributes are rendered inside the entity boxes. For example:
 
-```mermaid-example
+```mermaid
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -352,7 +354,7 @@ erDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -374,7 +376,7 @@ The `type` values must begin with an alphabetic character and may contain digits
 
 Attribute `type` values may end with `?` to indicate an optional or nullable type.
 
-```mermaid-example
+```mermaid
 erDiagram
     PERSON {
         string firstName
@@ -383,7 +385,7 @@ erDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     PERSON {
         string firstName
@@ -396,7 +398,7 @@ erDiagram
 
 An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name. Alias names follow all of the same rules as entity names.
 
-```mermaid-example
+```mermaid
 erDiagram
     p[Person] {
         string firstName
@@ -408,7 +410,7 @@ erDiagram
     p ||--o| a : has
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     p[Person] {
         string firstName
@@ -424,7 +426,7 @@ erDiagram
 
 Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key (markdown formatting and unicode is not supported for keys). To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`). A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
-```mermaid-example
+```mermaid
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -448,7 +450,7 @@ erDiagram
     MANUFACTURER only one to zero or more CAR : makes
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -478,7 +480,7 @@ The direction statement declares the direction of the diagram.
 
 This declares that the diagram is oriented from top to bottom (`TB`). This can be reversed to be oriented from bottom to top (`BT`).
 
-```mermaid-example
+```mermaid
 erDiagram
     direction TB
     CUSTOMER ||--o{ ORDER : places
@@ -499,7 +501,7 @@ erDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     direction TB
     CUSTOMER ||--o{ ORDER : places
@@ -522,7 +524,7 @@ erDiagram
 
 This declares that the diagram is oriented from left to right (`LR`). This can be reversed to be oriented from right to left (`RL`).
 
-```mermaid-example
+```mermaid
 erDiagram
     direction LR
     CUSTOMER ||--o{ ORDER : places
@@ -543,7 +545,7 @@ erDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     direction LR
     CUSTOMER ||--o{ ORDER : places
@@ -586,7 +588,7 @@ end
 
 An example below:
 
-```mermaid-example
+```mermaid
 erDiagram
     subgraph title1
         CUSTOMER
@@ -609,7 +611,7 @@ erDiagram
     end
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     subgraph title1
         CUSTOMER
@@ -636,14 +638,14 @@ A subgraph always has an `id`, and optionally a `title`.
 
 If the subgraph name is a single word, it is used as both id and title:
 
-```mermaid-example
+```mermaid
 erDiagram
     subgraph title1
         CUSTOMER
     end
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     subgraph title1
         CUSTOMER
@@ -652,14 +654,14 @@ erDiagram
 
 If the subgraph identifier contains more than one word, it must be written in `quotes`. In this case, the quoted value is used both as the id and the title.
 
-```mermaid-example
+```mermaid
 erDiagram
     subgraph "Customer Domain"
         CUSTOMER
     end
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     subgraph "Customer Domain"
         CUSTOMER
@@ -668,14 +670,14 @@ erDiagram
 
 You can also set an explicit id for the subgraph.
 
-```mermaid-example
+```mermaid
 erDiagram
     subgraph id1 [title 1]
         CUSTOMER
     end
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     subgraph id1 [title 1]
         CUSTOMER
@@ -695,7 +697,7 @@ erDiagram
 
 It is also possible to define relationships to and from subgraphs.
 
-```mermaid-example
+```mermaid
 erDiagram
     subgraph title1
         A1 ||--|| A2 : links
@@ -714,7 +716,7 @@ erDiagram
     title2 ||--|| C2 : links
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     subgraph title1
         A1 ||--|| A2 : links
@@ -737,7 +739,7 @@ erDiagram
 
 A subgraph can define its own layout direction.
 
-```mermaid-example
+```mermaid
 erDiagram
     direction LR
     subgraph TOP
@@ -756,7 +758,7 @@ erDiagram
     B1 ||--|| B2 : links
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     direction LR
     subgraph TOP
@@ -779,14 +781,14 @@ erDiagram
 
 It is possible to apply specific styles such as a thicker border or a different background color to a node.
 
-```mermaid-example
+```mermaid
 erDiagram
     id1||--||id2 : label
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     id1||--||id2 : label
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
@@ -836,7 +838,7 @@ Multiple classes can be attached at the same time as well:
 
 A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
 
-```mermaid-example
+```mermaid
 erDiagram
     direction TB
     CAR:::someclass {
@@ -854,7 +856,7 @@ erDiagram
     classDef someclass fill:#f96
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     direction TB
     CAR:::someclass {
@@ -874,7 +876,7 @@ erDiagram
 
 This form can be used when declaring relationships between entities:
 
-```mermaid-example
+```mermaid
 erDiagram
     CAR {
         string registrationNumber
@@ -894,7 +896,7 @@ erDiagram
     classDef foobar stroke:#00f
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     CAR {
         string registrationNumber
@@ -930,7 +932,7 @@ If a class is named default it will be assigned to all classes without specific 
 
 > **Note:** Custom styles from style or other class statements take priority and will overwrite the default styles. (e.g. The `default` class gives nodes a background color of pink but the `blue` class will give that node a background color of blue if applied.)
 
-```mermaid-example
+```mermaid
 erDiagram
     CAR {
         string registrationNumber
@@ -951,7 +953,7 @@ erDiagram
     classDef foobar stroke:#00f
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     CAR {
         string registrationNumber
@@ -989,7 +991,7 @@ config:
 
 Your Mermaid code should be similar to the following:
 
-```mermaid-example
+```mermaid
 ---
 title: Order example
 config:
@@ -1001,7 +1003,7 @@ erDiagram
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
 ```
 
-```mermaid
+```mermaid-example
 ---
 title: Order example
 config:

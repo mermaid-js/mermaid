@@ -1,0 +1,12 @@
+---
+description:
+  Checks that chained edge definitions (a --> b --> c) parse and render as a
+  linear sequence of nodes, under the hand-drawn look.
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  a --> b --> c

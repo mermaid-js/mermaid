@@ -1,4 +1,12 @@
+---
+description: 'Describe system behavior with UML actors, use cases, system boundaries, and include/extend relationships.'
+---
+
 # Use case diagrams (12.0.0+)
+
+```warning
+Use case diagrams are in beta. Diagrams start with the `usecase-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
 
 Use case diagrams show how actors interact with a system and its use cases. Start a diagram with the `usecase-beta` keyword. Put each statement on its own physical line.
 
@@ -21,6 +29,8 @@ Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direct
 Use case diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
+
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
 
 The same diagram, drawn both ways:
 
@@ -272,6 +282,8 @@ Checkout ..> : include Payment
 ApplyCoupon ..> : extend Checkout
 ApplyCoupon --|> Checkout
 ```
+
+Include and extend relationships display the UML labels `«include»` and `«extend»`. The input syntax remains `..> : include` and `..> : extend`.
 
 For include, the source use case includes the target use case. For extend, the source use case extends the target base use case. Generalization points from the specialized actor or use case to the general actor or use case. Include and extend require use case endpoints. Generalization requires two actors or two use cases.
 

@@ -1,0 +1,25 @@
+---
+description:
+  An entity relationship diagram under the layered layout, with cardinality
+  markers on both ends, identifying and non-identifying relationships,
+  relationship labels and attribute tables.
+config:
+  layout: layered
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE-ITEM : contains
+  PRODUCT ||--o{ LINE-ITEM : "ordered in"
+  CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+  CUSTOMER {
+    string name
+    string email PK
+  }
+  ORDER {
+    int id PK
+    date placed
+  }
+  PRODUCT {
+    string sku PK
+    float price
+  }

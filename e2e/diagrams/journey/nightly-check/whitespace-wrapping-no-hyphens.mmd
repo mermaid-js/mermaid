@@ -1,0 +1,15 @@
+---
+description: >-
+  A single task with a long, multi-word actor label ("Gustavo Fring is
+  played by Giancarlo Esposito and is a character in Breaking Bad."),
+  rendered with journey.maxLabelWidth set to 200 — checks that text with
+  whitespace to wrap on never gets hyphenated.
+config:
+  journey:
+    maxLabelWidth: 200
+    useMaxWidth: true
+---
+journey
+  title Whitespace Test
+  section Test
+    TextWithSpaces: 5: Gustavo Fring is played by Giancarlo Esposito and is a character in Breaking Bad.

@@ -1,0 +1,45 @@
+---
+description: >-
+  Decision diamonds B and C both have "Disagree" exits routing directly to
+  the Exit node, testing edge routing when multiple decision points share
+  an exit target. Uses the redux theme and neo look. Companion to
+  13-disagree-exits-b-c-d.mmd.
+config:
+  theme: redux
+  look: neo
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+subgraph X1
+  A(Start)
+  B{{B------}}
+  I[I]
+  id1[(Database)]
+end
+subgraph X3
+  Sys1
+  E
+end
+subgraph X2
+  C{{C------------}}
+  D{{D}}
+  F
+  G@{ shape: notch-pent }
+  H
+  exit(Exit)
+end
+  A --> Sys1
+  --> B
+  -->|Agree| C
+  -->|Agree| D
+  -->|Agree| E
+  --> F
+  --> G
+  --> H[H-]
+  --> I
+  --> exit
+
+  B -->|Disagree| exit
+  C -->|Disagree| exit

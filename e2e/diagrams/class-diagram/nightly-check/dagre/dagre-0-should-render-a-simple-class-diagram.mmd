@@ -1,0 +1,16 @@
+---
+description: >-
+  Baseline class diagram under the dagre layout: four classes connected by
+  plain association links (`--`), one carrying an "Inheritance" label,
+  forming a small diamond-shaped graph.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+
+  classA -- classB : Inheritance
+  classA -- classC : link
+  classC -- classD : link
+  classB -- classD

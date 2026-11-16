@@ -1,0 +1,20 @@
+---
+description: >-
+  ER diagram covering key markers (PK, UK, FK) each paired with an attribute
+  comment, rendered under the "neo" look with the "redux" theme.
+config:
+  look: neo
+  theme: redux
+---
+erDiagram
+    AUTHOR {
+        string name PK "Primary identifier"
+        string email UK "Unique email"
+    }
+    BOOK {
+        string isbn PK "Book identifier"
+        string title "Book title"
+        string author FK "Author reference"
+        float price "Book price"
+    }
+    AUTHOR ||--|{ BOOK : writes

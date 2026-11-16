@@ -1,0 +1,20 @@
+---
+description: >-
+  Class with generic-collection/array-typed members styled via the
+  `cssClass "Class10" exClass2` statement (CSS class applied by name to an
+  already-declared class) under the dagre layout, as opposed to the
+  inline `:::` shorthand used in the '-14' sibling.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  class Class10 {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }
+
+  cssClass "Class10" exClass2

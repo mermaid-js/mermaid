@@ -1,0 +1,21 @@
+---
+description:
+  Fully interconnects the rounded, rect, start, and stop node shapes (every
+  shape linked to every other) under the 'neo-dark' theme with the 'neo' look,
+  verifying this batch of 4 shapes renders correctly and stays visually distinct
+  under this theme/look combination.
+config:
+  look: "neo"
+  theme: "neo-dark"
+---
+flowchart TB
+  n00@{ shape: rounded, label: 'This is a label for rounded shape' }
+  n11@{ shape: rect, label: 'This is a label for rect shape' }
+  n22@{ shape: start, label: 'This is a label for start shape' }
+  n33@{ shape: stop, label: 'This is a label for stop shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n11 --> n22
+  n11 --> n33
+  n22 --> n33

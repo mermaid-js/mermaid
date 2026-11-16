@@ -3,6 +3,7 @@ import type { InternalHelpers } from '../internals.js';
 import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
 import { insertLookDefs } from './insertLookDefs.js';
+import { placeQueuedStepBadges } from './rendering-elements/edgeStepAnimation.js';
 import type { LayoutData } from './types.js';
 import { ELK_ALGORITHMS } from './layout-algorithms/elk/algorithms.js';
 
@@ -70,6 +71,10 @@ const elkLayoutLoaders = (): LayoutLoaderDefinition[] => {
 };
 
 // TODO: Should we load dagre without lazy loading?
+/**
+ * Registers built-in layout names without eagerly importing their implementations.
+ * Large-feature loaders are omitted from tiny builds.
+ */
 const registerDefaultLayoutLoaders = () => {
   registerLayoutLoaders([
     {
@@ -79,6 +84,17 @@ const registerDefaultLayoutLoaders = () => {
     {
       name: 'swimlane',
       loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
+    },
+    // Register the public name here, but keep the implementation behind the same lazy boundary as
+    // other optional layouts so importing Mermaid does not eagerly initialize grid internals.
+    {
+      name: 'grid',
+      loader: async () => await import('./layout-algorithms/grid/index.js'),
+    },
+    // Small and dependency-free, so it ships in the tiny build too.
+    {
+      name: 'layered',
+      loader: async () => await import('./layout-algorithms/layered/render.js'),
     },
     // elkjs is ~1.6 MB of source, so it is excluded from the tiny build along
     // with the other large features. `getRegisteredLayoutAlgorithm` then falls
@@ -116,9 +132,11 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
 
   insertLookDefs(svg, data4Layout.config);
 
-  return layoutRenderer.render(data4Layout, svg, internalHelpers, {
+  const result = await layoutRenderer.render(data4Layout, svg, internalHelpers, {
     algorithm: layoutDefinition.algorithm,
   });
+  placeQueuedStepBadges(svg.node());
+  return result;
 };
 
 /** Always registered, so the fallback chain can always end. */

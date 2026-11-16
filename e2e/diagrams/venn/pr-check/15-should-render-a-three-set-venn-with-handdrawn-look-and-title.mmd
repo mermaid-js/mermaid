@@ -1,0 +1,20 @@
+---
+description: >-
+  A three-set venn (Frontend, Backend, DevOps) with all pairwise unions plus
+  the triple union, rendered under `look: handDrawn` with a fixed
+  handDrawnSeed and courier font, and a diagram `title` — combines
+  hand-drawn styling with a title on top of a full 3-set overlap.
+config:
+  look: handDrawn
+  handDrawnSeed: 1
+  fontFamily: courier
+---
+venn-beta
+  title HandDrawn Skills
+  set Frontend
+  set Backend
+  set DevOps
+  union Frontend, Backend
+  union Backend, DevOps
+  union Frontend, DevOps
+  union Frontend, Backend, DevOps

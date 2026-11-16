@@ -1,0 +1,42 @@
+---
+description: >-
+  A combined, realistic ordering-system diagram exercising most features
+  together — accTitle/block accDescr, a hollow business actor with a
+  stereotype, a package-type system boundary, stereotyped/classDef'd use
+  cases, a json node, a note, a named animated edge, and an include
+  relationship with an inline style override.
+---
+usecase-beta
+  direction LR
+  accTitle: Online ordering use cases
+  accDescr {
+    A customer places an order through the storefront.
+    Staff review the order and inspect its data.
+  }
+
+  actor Customer("Customer")
+  actor Staff("Order staff")@{ type: hollow, business: true } &lt;&lt;Employee&gt;&gt;
+  systemBoundary ordering["Ordering System"]@{ type: package }:::system
+    Browse("Browse products")
+    Checkout("Checkout") &lt;&lt;Core&gt;&gt;:::critical
+    Payment("Process payment")
+    Review[Review order]
+  end
+  json OrderData@{
+    "status": "pending",
+    "items": [{ "name": "Book", "quantity": 1 }],
+    "total": 29.95
+  }:::data
+  note for Checkout "`Validates the **cart** before payment`"
+
+  Customer starts@-- "places order" ---> Checkout
+  Customer --> Browse
+  Checkout pays@..> : include Payment
+  Staff --> Review
+  Review --> OrderData
+
+  classDef system stroke:#c8a02a,stroke-width:2px
+  classDef critical stroke:#c33,stroke-width:3px
+  classDef data stroke:#3572a5
+  starts@{ animation: fast }
+  style pays stroke:#6b46c1,stroke-width:2px

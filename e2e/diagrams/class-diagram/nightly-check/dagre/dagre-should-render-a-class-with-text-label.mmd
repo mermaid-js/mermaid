@@ -1,0 +1,14 @@
+---
+description: >-
+  Minimal version of the text-label case: a class with a custom quoted text
+  label (`C1["Class 1 with text label"]`) and an association, but without
+  the interface annotation or members that the sibling
+  '-members-and-annotation' file adds, under the dagre layout.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  class C1["Class 1 with text label"]
+  C1 -->  C2

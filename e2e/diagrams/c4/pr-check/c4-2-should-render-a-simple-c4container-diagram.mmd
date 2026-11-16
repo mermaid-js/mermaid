@@ -1,0 +1,18 @@
+---
+description: >-
+  Basic C4Container diagram: a System_Ext and a Person tagged with
+  $tags="v1.0", a Container_Boundary wrapping a single Container, and two
+  Rel relationships connecting them.
+---
+C4Container
+  title Container diagram for Internet Banking System
+
+  System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system", $tags="v1.0")
+  Person(customer, Customer, "A customer of the bank, with personal bank accounts", $tags="v1.0")
+
+  Container_Boundary(c1, "Internet Banking") {
+  Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to customers via their web browser")
+  }
+
+  Rel(customer, spa, "Uses", "HTTPS")
+  Rel(email_system, customer, "Sends e-mails to")

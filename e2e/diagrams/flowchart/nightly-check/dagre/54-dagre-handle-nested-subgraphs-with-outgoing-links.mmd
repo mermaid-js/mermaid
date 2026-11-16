@@ -1,0 +1,20 @@
+---
+description:
+  Verifies that a node first introduced via an edge inside a subgraph (rather
+  than inside a nested child subgraph) is treated as a sibling member of that
+  outer subgraph, with dagre correctly laying out an edge from a deeply nested
+  child to that sibling.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  subgraph  main
+  subgraph subcontainer
+    subcontainer-child
+  end
+   subcontainer-child--> subcontainer-sibling
+  end

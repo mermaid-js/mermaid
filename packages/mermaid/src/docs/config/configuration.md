@@ -1,3 +1,7 @@
+---
+description: 'How Mermaid configuration works: defaults, site config via initialize, and per-diagram frontmatter config, and how they are merged.'
+---
+
 # Configuration
 
 When mermaid starts, configuration is extracted to determine a configuration to be used for a diagram. There are 3 sources for configuration:

@@ -1,0 +1,17 @@
+---
+description: >-
+  A top-level labeled block ("Hello") is followed by a sub-block with its
+  own `columns 3` statement laying out four labeled blocks ("to", "the",
+  "World", "World") across two internal rows — verifying a `columns`
+  statement scoped to a sub-block is respected independently of the outer
+  (default single-column) layout.
+---
+block
+  id1["Hello"]
+  block
+  columns 3
+  id2["to"]
+  id3["the"]
+  id4["World"]
+  id5["World"]
+  end

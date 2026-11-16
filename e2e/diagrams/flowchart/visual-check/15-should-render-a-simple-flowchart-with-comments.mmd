@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a `%%` comment line placed between edge statements is correctly
+  ignored by the parser and does not disrupt rendering of the surrounding
+  flowchart.
+config:
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  %% this is a comment
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

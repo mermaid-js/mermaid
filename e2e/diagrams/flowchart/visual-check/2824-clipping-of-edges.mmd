@@ -1,0 +1,16 @@
+---
+description: >-
+  Regression test for issue #2824 verifying that edges converging on a shared
+  node in a small triangular connection pattern (A→B, A→C, B→C) render fully
+  without their paths or arrowheads being visually clipped where multiple edges
+  meet a node.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  A --> B
+  A --> C
+  B --> C

@@ -1,5 +1,6 @@
 // cspell:ignore Hegemann Kandinsky Siebenhaller
 import type { Edge, Node } from '../../../types.js';
+import { EDGE_ROUTING } from '../config.js';
 import {
   classifyThreeSegmentRoute,
   collectRealNodeBounds,
@@ -21,6 +22,42 @@ interface PointLite {
 interface LabelDim {
   w: number;
   h: number;
+}
+
+/**
+ * True when another edge already ends or starts on the same face of `nodeId`
+ * within an arrowhead of `end`. `axis` runs along the face.
+ */
+function crowdsFaceNeighbour(
+  edges: Edge[],
+  edge: Edge,
+  nodeId: string,
+  { cx, cy }: { cx: number; cy: number },
+  end: PointLite,
+  axis: 'x' | 'y'
+): boolean {
+  const centre = { x: cx, y: cy };
+  const across = axis === 'x' ? 'y' : 'x';
+  const faceSide = Math.sign(end[across] - centre[across]);
+  for (const other of edges) {
+    if (other === edge || other.isLayoutOnly || !other.points?.length) {
+      continue;
+    }
+    const attached = [
+      ...(other.end === nodeId ? [other.points.at(-1)!] : []),
+      ...(other.start === nodeId ? [other.points[0]] : []),
+    ];
+    if (
+      attached.some(
+        (p) =>
+          Math.sign(p[across] - centre[across]) === faceSide &&
+          Math.abs(p[axis] - end[axis]) < EDGE_ROUTING.MIN_ARROWHEAD_SPACING
+      )
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function pairKey(a: string, b: string): string {
@@ -159,6 +196,8 @@ export function straightenCollinearSiblingDetours(edges: Edge[], nodes: Node[]):
     const labelShift = labelClearanceFor(edge, srcId, dstId, shiftAxis);
     const effectiveShift = labelShift > PORT_SHIFT ? labelShift : PORT_SHIFT;
     const deltas = [0, effectiveShift, -effectiveShift];
+    // A line that would sit too close to a sibling's arrowhead is the last resort.
+    let crowded: PointLite[] | undefined;
     for (const delta of deltas) {
       const shiftedSrc = { ...targetSrc };
       const shiftedDst = { ...targetDst };
@@ -190,8 +229,21 @@ export function straightenCollinearSiblingDetours(edges: Edge[], nodes: Node[]):
         continue;
       }
 
-      edge.points = [shiftedSrc, shiftedDst];
+      const rescued = [shiftedSrc, shiftedDst];
+      if (
+        crowdsFaceNeighbour(edges, edge, srcId, srcInfo, shiftedSrc, shiftAxis) ||
+        crowdsFaceNeighbour(edges, edge, dstId, dstInfo, shiftedDst, shiftAxis)
+      ) {
+        crowded ??= rescued;
+        continue;
+      }
+
+      edge.points = rescued;
+      crowded = undefined;
       break;
+    }
+    if (crowded) {
+      edge.points = crowded;
     }
   }
 }

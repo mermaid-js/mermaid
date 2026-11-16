@@ -1,0 +1,20 @@
+---
+description:
+  Exercises many flowchart edge syntax variants together (differing dash/dot
+  counts, bidirectional arrows, thick and dotted lines, and both prefix- and
+  infix-style labels), checking that dagre lays out edges of varying rendered
+  length correctly.
+config:
+  layout: dagre
+---
+flowchart TD
+  L1 --- L2
+  L2 --- C
+  M1 ---> C
+  R1 .-> R2
+  R2 <.-> C
+  C -->|Label 1| E1
+  C <-- Label 2 ---> E2
+  C ----> E3
+  C <-...-> E4
+  C ======> E5

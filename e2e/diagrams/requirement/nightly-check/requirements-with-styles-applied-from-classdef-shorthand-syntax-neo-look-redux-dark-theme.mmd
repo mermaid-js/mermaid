@@ -1,0 +1,23 @@
+---
+description: >-
+  Requirement diagram covering a requirement and an element styled via the
+  inline `:::className` shorthand, rendered under the "neo" look with the
+  "redux-dark" theme.
+config:
+  look: neo
+  theme: redux-dark
+---
+requirementDiagram
+    requirement req_b:::blue {
+        id: 2
+        text: req B with shorthand class.
+        risk: high
+        verifymethod: test
+    }
+    element elem_b {
+        type: service
+    }
+    elem_b - verifies -> req_b
+    classDef bold font-weight:bold
+    classDef blue stroke:lightblue,color:#0000FF
+    elem_b:::bold

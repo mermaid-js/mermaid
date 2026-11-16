@@ -1,0 +1,15 @@
+---
+description: >-
+  Container-less chain (no `flow` block) covering the five basic node shapes —
+  input, task, tool, refdoc, action — with a dotted reference link from the task
+  to the refdoc.
+---
+agentflow-beta LR
+  brief["Brief"]@{ shape: input }
+  draft["Draft copy"]@{ shape: task }
+  spellcheck["spell_check"]@{ shape: tool }
+  guide["Style guide"]@{ shape: refdoc }
+  publish["Publish"]@{ shape: action }
+
+  brief --> draft --> spellcheck --> publish
+  draft -.- guide

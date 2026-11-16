@@ -1,0 +1,47 @@
+---
+description: >-
+  Regression fixture for issue #7802: same decision-diamond layout as
+  12-disagree-exits-b-c.mmd, but only B's "Disagree" edge to Exit is
+  active — C and D's disagree edges are commented out, reproducing an
+  edge case around enabling only the first disagree edge.
+config:
+  theme: redux
+  look: neo
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+subgraph X1
+  A(Start)
+  B{{B------}}
+  I[I]
+  id1[(Database)]
+end
+subgraph X3
+  Sys1
+  E
+end
+subgraph X2
+  C{{C------------}}
+  D{{D}}
+  F
+  G@{ shape: notch-pent }
+  H
+  exit(Exit)
+end
+  A --> Sys1
+  --> B
+  -->|Agree| C
+  -->|Agree| D
+  -->|Agree| E
+  --> F
+  --> G
+  --> H[H-]
+  --> I
+  --> exit
+
+%% odd behaviors with belows line
+   B -->|Disagree| exit
+%%   C -->|Disagree| exit
+%%   D -->|Disagree| exit

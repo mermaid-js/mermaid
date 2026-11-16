@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that the `flowchart.rankSpacing` config option, provided here as the
+  string value '100', controls the vertical spacing between ranks in a top-down
+  flowchart.
+config:
+  flowchart:
+    rankSpacing: '100'
+  fontFamily: courier
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  %% this is a comment
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

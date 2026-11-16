@@ -1,0 +1,21 @@
+---
+description: >-
+  State diagram composite-container colouring: a user-styled composite (Split,
+  via classDef+class) that also has concurrent regions, next to an unrelated
+  composite (Neighbour) — verifies the styling opt-out covers the regions too
+  without shifting neighbouring colours. Rendered under the "redux-dark" theme.
+config:
+  theme: redux-dark
+---
+stateDiagram-v2
+    classDef pinned fill:#111827,stroke:#F59E0B,color:#F9FAFB
+    state Split {
+      [*] --> Left
+      --
+      [*] --> Right
+    }
+    Split --> Neighbour
+    state Neighbour {
+      [*] --> After
+    }
+    class Split pinned

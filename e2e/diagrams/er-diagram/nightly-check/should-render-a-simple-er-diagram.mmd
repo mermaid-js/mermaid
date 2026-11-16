@@ -1,0 +1,11 @@
+---
+description: >-
+  Baseline smoke test: a minimal two-relationship ER diagram (CUSTOMER
+  places ORDER, ORDER contains LINE-ITEM) using standard one-to-many and
+  identifying one-to-many cardinalities, with no other feature under test.
+config:
+  logLevel: 1
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE-ITEM : contains

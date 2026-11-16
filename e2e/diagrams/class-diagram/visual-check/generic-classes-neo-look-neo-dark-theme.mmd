@@ -1,0 +1,20 @@
+---
+description: >-
+  Class diagram covering generic type parameters (~T~) on class names, rendered
+  under the "neo" look with the "neo-dark" theme.
+config:
+  htmlLabels: true
+  look: neo
+  theme: neo-dark
+---
+classDiagram
+  class Class01~T~
+  Class01 : size()
+  Class01 : int chimp
+  Class01 : int gorilla
+  Class08 <--> C2: Cool label
+  class Class10~T~ {
+    &lt;&lt;service&gt;&gt;
+    int id
+    test()
+  }

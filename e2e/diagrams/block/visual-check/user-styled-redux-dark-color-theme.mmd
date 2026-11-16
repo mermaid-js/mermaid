@@ -1,0 +1,19 @@
+---
+description: >-
+  Two sibling containers under the "redux-dark-color" redux colour theme, one of
+  them ("mine") given an explicit `style` override — verifies explicit user
+  styling keeps winning over the palette (style becomes an inline attribute;
+  palette rules aren't !important).
+config:
+  theme: redux-dark-color
+  look: neo
+---
+block-beta
+  columns 1
+  block:palette
+    a["Palette"]
+  end
+  block:mine
+    b["Mine"]
+  end
+  style mine fill:#00ff00,stroke:#0000ff

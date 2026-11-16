@@ -1,0 +1,26 @@
+---
+description: >-
+  Student/IdCard/Bike composition diagram (`--o`) with the explicit
+  `direction TB` statement, under the dagre layout; one of four sibling
+  files ('16b'/'17a'/'17b'/'18a') exercising each of the four `direction`
+  values (TB/BT/RL/LR) on the same diagram.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  direction TB
+  class Student {
+  -idCard : IdCard
+  }
+  class IdCard{
+  -id : int
+  -name : string
+  }
+  class Bike{
+  -id : int
+  -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides

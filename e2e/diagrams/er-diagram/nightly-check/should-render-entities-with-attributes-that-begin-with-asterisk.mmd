@@ -1,0 +1,21 @@
+---
+description: >-
+  BOOK and STORE entities each declare an "int *id" attribute where the
+  asterisk precedes the attribute name rather than appearing as a separate
+  key annotation, checking that a leading-asterisk attribute name is parsed
+  correctly.
+config:
+  loglevel: 1
+---
+erDiagram
+  BOOK {
+  int         *id
+  string      name
+  varchar(99) summary
+  }
+  BOOK }o..o{ STORE : soldBy
+  STORE {
+  int         *id
+  string      name
+  varchar(50) address
+  }

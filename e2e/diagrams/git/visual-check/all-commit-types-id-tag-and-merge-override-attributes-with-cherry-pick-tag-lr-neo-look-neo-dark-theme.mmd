@@ -1,0 +1,21 @@
+---
+description: >-
+  Gitgraph covering all three commit types (NORMAL/REVERSE/HIGHLIGHT), an
+  id+type+tag combined on one commit, a merge with id/tag/type override, and a
+  cherry-pick carrying a tag, rendered under the "neo" look with the "neo-dark"
+  theme.
+config:
+  look: neo
+  theme: neo-dark
+---
+gitGraph
+  commit id: "init" tag: "v0.1"
+  branch develop
+  checkout develop
+  commit id: "feat" type: HIGHLIGHT tag: "feature-done"
+  commit id: "fix" type: REVERSE
+  checkout main
+  commit id: "hotfix" tag: "patch"
+  merge develop id: "merge-dev" type: REVERSE tag: "v1.0"
+  commit id: "post-merge"
+  cherry-pick id: "feat" tag: "cherry"

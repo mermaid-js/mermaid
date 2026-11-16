@@ -1,3 +1,7 @@
+---
+description: 'How to add a new diagram type to Mermaid as a plugin: write a Langium grammar, database, renderer, and styles, then register and test it.'
+---
+
 # Adding a New Diagram/Chart 📊
 
 A diagram type in Mermaid is a plugin. You write a parser, a database, a renderer, and a styles

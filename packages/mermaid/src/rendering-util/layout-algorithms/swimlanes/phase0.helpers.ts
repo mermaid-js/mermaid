@@ -62,11 +62,20 @@ export function buildInDegreeMap(g: Graph): Map<NodeId, number> {
   return indeg;
 }
 
-export function sortedZeroInDegreeNodes(indeg: Map<NodeId, number>): NodeId[] {
-  return [...indeg.entries()]
+export function sortedZeroInDegreeNodes(g: Graph, indeg: Map<NodeId, number>): NodeId[] {
+  const sorted = [...indeg.entries()]
     .filter(([, degree]) => degree === 0)
     .map(([id]) => id)
     .sort((a, b) => a.localeCompare(b));
+
+  // Nodes without any edge are unconstrained, so sorting them by ID is arbitrary and
+  // reorders a lane of unconnected nodes alphabetically (#8355). Refill their slots in
+  // source order (`indeg` is keyed in `g.nodes` order) and leave every other node in place.
+  const linked = new Set(g.edges.flatMap((e) => [e.src, e.dst]));
+  const isUnconnected = (id: NodeId) => !linked.has(id) && !g.nodeById.get(id)?.isGroup;
+  const unconnected = [...indeg.keys()].filter((id) => indeg.get(id) === 0 && isUnconnected(id));
+  let next = 0;
+  return sorted.map((id) => (isUnconnected(id) ? unconnected[next++] : id));
 }
 
 export function buildPredecessorSuccessorMaps(
@@ -148,7 +157,7 @@ export function isAcyclic(g: Graph): boolean {
 // Topological sort (Kahn). Returns null if cycles exist.
 export function topoSortIfAcyclic(g: Graph): NodeId[] | null {
   const indeg = buildInDegreeMap(g);
-  const queue = sortedZeroInDegreeNodes(indeg);
+  const queue = sortedZeroInDegreeNodes(g, indeg);
   const order: NodeId[] = [];
   const adj = buildSortedSuccessorMap(g);
 

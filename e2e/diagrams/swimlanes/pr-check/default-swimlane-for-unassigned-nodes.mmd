@@ -1,0 +1,16 @@
+---
+description: >-
+  Same synthetic default lane setup (a Loose node with no explicit
+  subgraph, feeding into OwnedLane), rendered with the default theme and
+  look — checks that nodes without an explicit subgraph are grouped into
+  a default swimlane.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph OwnedLane
+    A[Owned node]
+  end
+  Loose[Loose node] --> A

@@ -1,0 +1,21 @@
+---
+description:
+  Verifies that the entry node of a cyclic flow (stockholm, which is fed by a
+  back-edge from end_decision when the answer is 'No') stays pinned to the top
+  of the layout via the elk.keepEntryNodeOnTop option, using the elk layout
+  engine under which this option is actually implemented.
+config:
+  layout: elk
+  elk:
+    keepEntryNodeOnTop: true
+---
+flowchart TD
+  san_francisco[Check San Francisco time]
+  stockholm[Check the current local time in Stockholm]
+  new_york[Check New York time]
+  decide[Propose a meeting slot]
+  end_decision{"End?"}
+  format_json["Format JSON"]
+  stockholm --> new_york --> san_francisco --> decide --> end_decision
+  end_decision -->|Yes| format_json
+  end_decision -->|No| stockholm

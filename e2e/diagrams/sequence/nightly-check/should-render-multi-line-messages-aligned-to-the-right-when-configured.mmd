@@ -1,0 +1,12 @@
+---
+description: >-
+  Sequence diagram with `sequence.messageAlign: right`, where each message
+  contains explicit `<br>` line breaks, verifying that multi-line message
+  text is right-aligned as configured.
+config:
+  sequence:
+    messageAlign: right
+---
+sequenceDiagram
+  Alice->>Bob: I'm short<br>but also<br>multiline
+  Bob->>Alice: Short as well<br>and also<br>multiline

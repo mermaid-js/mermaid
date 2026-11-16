@@ -1,0 +1,19 @@
+---
+description: >-
+  classDiagram-v2 with two separate dot-notation namespace blocks at different nesting
+  depths (Module and Module.SubModule) each containing one class, connected by a
+  relationship that crosses the namespace boundary.
+---
+classDiagram-v2
+namespace Company.Project.Module.SubModule {
+  class Report {
+    +generatePDF(data: List)
+    +generateCSV(data: List)
+  }
+}
+namespace Company.Project.Module {
+  class Admin {
+    +generateReport()
+  }
+}
+Admin --> Report : generates

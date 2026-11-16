@@ -1,0 +1,26 @@
+---
+description: >-
+  Gitgraph covering BT direction, the branch `order:` keyword for custom
+  ordering, mainBranchOrder: 2 (main not first), and a cherry-pick carrying a
+  tag, rendered under the "neo" look with the "redux-dark-color" theme.
+config:
+  gitGraph:
+    mainBranchOrder: 2
+  look: neo
+  theme: redux-dark-color
+---
+gitGraph BT:
+  commit id: "1"
+  branch "feature/auth" order: 1
+  branch "hotfix/bug" order: 3
+  branch "release/v2" order: 0
+  checkout "feature/auth"
+  commit id: "auth-1" type: HIGHLIGHT
+  commit id: "auth-2"
+  checkout "hotfix/bug"
+  commit id: "hf-1" type: REVERSE tag: "bugfix"
+  checkout "release/v2"
+  commit id: "rel-1" tag: "v2.0-rc1"
+  checkout main
+  merge "release/v2" id: "release-merge" tag: "v2.0"
+  cherry-pick id: "hf-1" tag: "hf-cherry"
