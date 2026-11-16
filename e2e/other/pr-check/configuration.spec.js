@@ -2,6 +2,12 @@ import { expect, test } from '@playwright/test';
 import { renderGraph, verifyScreenshot } from '../../helpers/util.ts';
 
 test.describe('Configuration', () => {
+  // Some tests here open their page directly rather than through the helpers, which show
+  // diagrams finished instead of mid entrance animation; do the same for them.
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+  });
+
   test.describe('arrowMarkerAbsolute', () => {
     test('should handle default value false of arrowMarkerAbsolute', async ({ page }, testInfo) => {
       await renderGraph(

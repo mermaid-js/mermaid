@@ -95,6 +95,18 @@ export interface MermaidConfig {
    */
   handDrawnSeed?: number;
   /**
+   * Builds the diagram up when it is first shown: each edge draws itself from its source to its
+   * target, and each node fades in once the edge leading to it gets there.
+   *
+   * Applies to sequence diagrams, where the messages draw themselves one after another down the
+   * page, to gantt charts, where the task bars grow in from the left one after another, and to
+   * diagrams drawn with the shared layout renderer, such as flowcharts and state, class and ER
+   * diagrams. The animation is skipped for viewers who prefer reduced motion.
+   * Set to `false` to show the whole diagram at once.
+   *
+   */
+  entranceAnimation?: boolean;
+  /**
    * Defines which layout algorithm to use for rendering the diagram.
    *
    * Defaults to `elk`, which is bundled with mermaid. The `tiny` build omits

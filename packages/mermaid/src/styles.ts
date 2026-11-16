@@ -1,5 +1,6 @@
 import type { FlowChartStyleOptions } from './diagrams/flowchart/styles.js';
 import { log } from './logger.js';
+import { EDGE_DRAW_MS, NODE_FADE_MS } from './rendering-util/entranceAnimation.js';
 import type { DiagramStylesProvider } from './diagram-api/types.js';
 
 const themes: Record<string, DiagramStylesProvider> = {};
@@ -65,6 +66,50 @@ const getStyles = (
     stroke-dashoffset: 900;
     animation: dash 20s linear infinite;
     stroke-linecap: round;
+  }
+  /* Entrance animation, see rendering-util/entranceAnimation.ts */
+  @keyframes entrance-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes entrance-draw {
+    from {
+      stroke-dashoffset: 1;
+      stroke-opacity: 0;
+    }
+    5% {
+      stroke-opacity: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+      stroke-opacity: 1;
+    }
+  }
+  @keyframes entrance-grow {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  & .entrance-draw {
+    fill: none;
+    stroke: white;
+    stroke-linecap: round;
+    stroke-dasharray: 1 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    & .entrance-fade {
+      animation: entrance-fade ${NODE_FADE_MS}ms ease-out var(--entrance-delay, 0ms) backwards;
+    }
+    & .entrance-grow {
+      animation: entrance-grow ${EDGE_DRAW_MS}ms ease-out var(--entrance-delay, 0ms) backwards;
+    }
+    & .entrance-draw {
+      animation: entrance-draw ${EDGE_DRAW_MS}ms ease-in-out var(--entrance-delay, 0ms) backwards;
+    }
   }
   /* Classes common for multiple diagrams */
 

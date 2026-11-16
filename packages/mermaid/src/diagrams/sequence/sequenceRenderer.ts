@@ -12,6 +12,7 @@ import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import { PARTICIPANT_TYPE } from './sequenceDb.js';
+import { applySequenceEntranceAnimation } from '../../rendering-util/entranceAnimation.js';
 
 let conf = {};
 
@@ -1470,6 +1471,10 @@ export const draw = async function (_text: string, id: string, _version: string,
       ' ' +
       (height + extraVertForTitle + extraHeightForNeoActors)
   );
+
+  if (getConfig().entranceAnimation && diagram.node) {
+    applySequenceEntranceAnimation(diagram.node());
+  }
 
   log.debug(`models:`, bounds.models);
 };

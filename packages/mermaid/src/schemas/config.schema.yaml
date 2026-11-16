@@ -76,6 +76,18 @@ properties:
       Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
     type: number
     default: 0
+  entranceAnimation:
+    description: |
+      Builds the diagram up when it is first shown: each edge draws itself from its source to its
+      target, and each node fades in once the edge leading to it gets there.
+
+      Applies to sequence diagrams, where the messages draw themselves one after another down the
+      page, to gantt charts, where the task bars grow in from the left one after another, and to
+      diagrams drawn with the shared layout renderer, such as flowcharts and state, class and ER
+      diagrams. The animation is skipped for viewers who prefer reduced motion.
+      Set to `false` to show the whole diagram at once.
+    type: boolean
+    default: true
   layout:
     $ref: '#/$defs/BaseDiagramConfig/properties/layout'
     description: |

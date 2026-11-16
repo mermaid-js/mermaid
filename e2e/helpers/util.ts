@@ -148,6 +148,11 @@ export const openURLAndVerifyRendering = async (
   });
 
   await startCoverage(page);
+  // Diagrams build themselves up when shown (`entranceAnimation`); with reduced motion they
+  // appear finished at once, so assertions and screenshots never catch them half drawn.
+  // Set per page: setting `reducedMotion` for the whole context changes how Chrome draws some
+  // arrowheads, so screenshots would no longer match ones taken without it.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(url);
 
   // Prefer the explicit rendered flag from viewer.js; fall back to SVG visibility.

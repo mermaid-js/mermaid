@@ -28,6 +28,7 @@ import {
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { applyGanttEntranceAnimation } from '../../rendering-util/entranceAnimation.js';
 
 dayjs.extend(dayjsDuration);
 
@@ -197,6 +198,10 @@ export const draw = function (text, id, version, diagObj) {
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
+
+  if (getConfig().entranceAnimation) {
+    applyGanttEntranceAnimation(svg.node());
+  }
 
   /**
    * @param tasks
