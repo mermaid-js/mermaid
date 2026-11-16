@@ -106,27 +106,7 @@ export class C4BetaDB implements DiagramDB {
   private kind: C4DiagramKind = 'context';
 
   public addElement(element: C4BetaElement) {
-    if (this.isDeclaredInsideSameId(element)) {
-      throw new Error(
-        `c4-beta: the id "${element.id}" is declared inside an element with the same id. Every element needs its own id.`
-      );
-    }
     this.elements.push(element);
-  }
-
-  // Elements are added parent first, so every ancestor is already stored.
-  // The most recent element with an id is the one that opened the enclosing block.
-  private isDeclaredInsideSameId(element: C4BetaElement): boolean {
-    const visited = new Set<string>();
-    let ancestorId = element.parentId;
-    while (ancestorId !== undefined && !visited.has(ancestorId)) {
-      if (ancestorId === element.id) {
-        return true;
-      }
-      visited.add(ancestorId);
-      ancestorId = this.elements.findLast((candidate) => candidate.id === ancestorId)?.parentId;
-    }
-    return false;
   }
 
   public addRelationship(relationship: C4BetaRelationship) {
@@ -135,6 +115,19 @@ export class C4BetaDB implements DiagramDB {
 
   public getElements(): C4BetaElement[] {
     return this.elements;
+  }
+
+  /**
+   * The ids of the elements drawn as boundary clusters: an element that contains other
+   * elements, and every group and deployment node, even an empty one.
+   */
+  public getBoundaryIds(): Set<string> {
+    return new Set(
+      this.elements.flatMap((element) => [
+        ...(element.kind === 'deploymentNode' || element.kind === 'group' ? [element.id] : []),
+        ...(element.parentId === undefined ? [] : [element.parentId]),
+      ])
+    );
   }
 
   public getRelationships(): C4BetaRelationship[] {
@@ -205,6 +198,20 @@ export class C4BetaDB implements DiagramDB {
     }
   }
 
+  private warnAboutRelationship(relationship: C4BetaRelationship, boundaryIds: Set<string>) {
+    const text = `${relationship.sourceId} ${relationship.arrow} ${relationship.targetId}`;
+    if (boundaryIds.has(relationship.sourceId) && boundaryIds.has(relationship.targetId)) {
+      log.warn(
+        `c4-beta: relationship "${text}" connects two clusters; relationships should connect leaf elements`
+      );
+    }
+    if (relationship.step !== undefined && this.kind !== 'dynamic') {
+      log.warn(
+        `c4-beta: step "${relationship.step}:" on relationship "${text}" is ignored; steps only apply to dynamic diagrams`
+      );
+    }
+  }
+
   public getData(): LayoutData {
     const config = getConfig();
     const nodes: Node[] = [];
@@ -212,14 +219,7 @@ export class C4BetaDB implements DiagramDB {
 
     this.validateElements();
 
-    // Any element containing other elements is rendered as a boundary cluster.
-    // Deployment nodes are always clusters, even when they are empty.
-    const boundaryIds = new Set(
-      this.elements.flatMap((element) => [
-        ...(element.kind === 'deploymentNode' ? [element.id] : []),
-        ...(element.parentId === undefined ? [] : [element.parentId]),
-      ])
-    );
+    const boundaryIds = this.getBoundaryIds();
 
     for (const element of this.elements) {
       if (boundaryIds.has(element.id)) {
@@ -299,11 +299,7 @@ export class C4BetaDB implements DiagramDB {
     // the same N). Auto-numbering then resumes from the highest number used + 1.
     let maxStep = 0;
     this.relationships.forEach((relationship, index) => {
-      if (boundaryIds.has(relationship.sourceId) && boundaryIds.has(relationship.targetId)) {
-        log.warn(
-          `c4-beta: relationship "${relationship.sourceId} ${relationship.arrow} ${relationship.targetId}" connects two clusters; relationships should connect leaf elements`
-        );
-      }
+      this.warnAboutRelationship(relationship, boundaryIds);
       let step: number | undefined;
       if (this.kind === 'dynamic') {
         step = relationship.step ?? maxStep + 1;
@@ -337,8 +333,8 @@ export class C4BetaDB implements DiagramDB {
         labelpos: 'c',
         classes: classes.join(' '),
         style,
-        arrowTypeStart: relationship.arrow === '-->' ? 'none' : 'arrow_point',
-        arrowTypeEnd: relationship.arrow === '<--' ? 'none' : 'arrow_point',
+        arrowTypeStart: relationship.arrow === '<-->' ? 'arrow_point' : 'none',
+        arrowTypeEnd: 'arrow_point',
         arrowheadStyle: 'fill: #333',
         thickness: 'normal',
         pattern,
