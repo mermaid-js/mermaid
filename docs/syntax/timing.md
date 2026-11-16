@@ -176,7 +176,9 @@ timingDiagram-beta
 ```
 
 Run lengths must be positive integers. Values hold for their full segment and transitions happen at
-segment boundaries.
+segment boundaries. After a sequence ends, its final value holds through the end of the shared
+timeline. Bus and state segments include a tooltip with their value, even when the segment is too
+narrow to display a text label.
 
 ## Absolute-time transitions
 

@@ -60,6 +60,7 @@ export interface DiagramDB {
   bindFunctions?: (element: Element) => void;
   setErrorMessage?: (message: string) => void;
   getErrorMessage?: () => string | undefined;
+  validate?: () => void;
 
   /**
    * Opt in to source-faithful parsing.

@@ -147,7 +147,9 @@ const drawBoxedSegments = (
     group
       .append('polygon')
       .attr('class', `timing-${kind}-segment${valueClass(segment.value)}`)
-      .attr('points', segmentPolygon(segment, geometry, top, bottom));
+      .attr('points', segmentPolygon(segment, geometry, top, bottom))
+      .append('title')
+      .text(String(segment.value));
     const width = geometry.x(segment.end) - geometry.x(segment.start);
     if (width >= 18) {
       group

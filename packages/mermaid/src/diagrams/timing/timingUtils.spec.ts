@@ -49,7 +49,7 @@ describe('timing diagram timeline utilities', () => {
       )
     ).toEqual([
       { value: 'A', duration: 2, start: 0, end: 2 },
-      { value: 'B', duration: 3, start: 2, end: 5 },
+      { value: 'B', duration: 8, start: 2, end: 10 },
     ]);
 
     expect(
@@ -71,6 +71,20 @@ describe('timing diagram timeline utilities', () => {
   it('creates readable ticks for small and large ranges', () => {
     expect(niceTicks(8)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
     expect(niceTicks(300)).toEqual([0, 50, 100, 150, 200, 250, 300]);
+  });
+
+  it.each(['binary', 'bus', 'state', 'analog'] as const)(
+    'holds the last %s sequence value without mutating its declared duration',
+    (type) => {
+      const lane = signal({ type, sequence: [{ value: 1, duration: 8 }] });
+      expect(positionSegments(lane, 32)).toEqual([{ value: 1, duration: 32, start: 0, end: 32 }]);
+      expect(positionSegments(lane, 8)).toEqual([{ value: 1, duration: 8, start: 0, end: 8 }]);
+      expect(lane.sequence).toEqual([{ value: 1, duration: 8 }]);
+    }
+  );
+
+  it('does not invent values for an empty lane', () => {
+    expect(positionSegments(signal({}), 32)).toEqual([]);
   });
 
   it('rejects timelines whose arithmetic overflows', () => {

@@ -2,6 +2,33 @@ import { expect, test } from '@playwright/test';
 import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 test.describe('timing diagram', () => {
+  test('holds short sequences and preserves narrow field labels', async ({ page }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `timingDiagram-beta
+      clock CLK : period 16
+      binary EN
+      bus FIELD
+      EN : 0, 1
+      FIELD : SOF, RTR, IDE, r0, ACK, DEL, Idle`,
+      { screenshot: false }
+    );
+    const axisEnd = await page.locator('.timing-clock').getAttribute('d');
+    const lastWaveEnd = await page.locator('.timing-binary').last().getAttribute('x2');
+    expect(axisEnd).toContain(`H ${lastWaveEnd}`);
+    await expect(page.locator('.timing-bus-segment title')).toHaveText([
+      'SOF',
+      'RTR',
+      'IDE',
+      'r0',
+      'ACK',
+      'DEL',
+      'Idle',
+    ]);
+    await expect(page.locator('.timing-bus-label')).toHaveText('Idle');
+  });
+
   test('renders digital, state, bus, and analog lanes', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,

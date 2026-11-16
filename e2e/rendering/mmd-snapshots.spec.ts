@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   assertUniqueSnapshotNames,
   buildFixtureTree,
@@ -39,6 +39,9 @@ const FIXED_CLOCKS: Record<string, string> = {
   // tick marks, clear of both the task-start edge and any task boundary.
   'gantt/pr-check/should-render-a-gantt-diagram-with-a-vert-tag.mmd': '1010-10-10T00:00:01.500Z',
 };
+
+// Fixtures that select the layered layout in their frontmatter config.
+const USES_LAYERED_LAYOUT = /^\s*layout:\s*layered\b/m;
 
 const fixedClockFor = (relativePath: string): string | undefined =>
   FIXED_CLOCKS[relativePath] ?? FIXED_CLOCKS[relativePath.split('/')[0]];
@@ -88,6 +91,11 @@ const registerFixtureNode = (node: FixtureTree): void => {
       await imgSnapshotTest(page, testInfo, source, {
         screenshotPath: `diagrams/${relativePath.replace(/\.mmd$/i, '')}`,
       });
+      if (USES_LAYERED_LAYOUT.test(source)) {
+        // A layered failure falls back to dagre with only a warning; without this check the
+        // baseline would quietly record dagre's drawing.
+        await expect(page.locator('svg[data-layout-fallback]')).toHaveCount(0);
+      }
     });
   }
 };

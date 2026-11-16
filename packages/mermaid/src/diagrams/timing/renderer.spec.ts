@@ -27,6 +27,33 @@ const createDiagram = (
   }) as unknown as Diagram;
 
 describe('timing diagram renderer', () => {
+  it.each(['bus', 'state'] as const)('preserves narrow %s values in tooltips', async (type) => {
+    document.body.innerHTML = '<svg id="narrow-labels"></svg>';
+    await draw(
+      '',
+      'narrow-labels',
+      '1.0',
+      createDiagram([
+        {
+          id: 'FIELD',
+          label: 'Field',
+          type,
+          events: [],
+          sequence: [
+            { value: 'SOF', duration: 1 },
+            { value: '<unsafe>', duration: 1 },
+            { value: 'CRC', duration: 58 },
+          ],
+        },
+      ])
+    );
+    const segments = document.querySelectorAll(`.timing-${type}-segment`);
+    expect(segments[0].querySelector('title')?.textContent).toBe('SOF');
+    expect(segments[1].querySelector('title')?.textContent).toBe('<unsafe>');
+    expect(segments[1].querySelector('unsafe')).toBeNull();
+    expect(document.querySelectorAll(`.timing-${type}-label`)).toHaveLength(1);
+  });
+
   it('clamps short lanes to a readable height', async () => {
     document.body.innerHTML = '<svg id="short-lane"></svg>';
     await draw(
@@ -114,6 +141,12 @@ describe('timing diagram renderer', () => {
     expect(document.querySelectorAll('.timing-bus-segment')).toHaveLength(2);
     expect(document.querySelectorAll('.timing-state-segment')).toHaveLength(2);
     expect(document.querySelector('.timing-analog')).not.toBeNull();
+    // The clock extends the shared timeline to 8; shorter sequences hold their last value.
+    expect(document.querySelectorAll('.timing-binary')[1].getAttribute('x2')).toBe('736');
+    expect(document.querySelectorAll('.timing-bus-segment')[1].getAttribute('points')).toContain(
+      '736,'
+    );
+    expect(document.querySelector('.timing-analog')?.getAttribute('d')).toMatch(/L 736 /);
     expect(document.querySelectorAll('.timing-grid-line').length).toBeGreaterThan(1);
     expect(document.querySelector('#timing')?.getAttribute('viewBox')).toMatch(/^0 0 /);
   });

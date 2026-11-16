@@ -34,15 +34,19 @@ export const calculateTimelineEnd = (signals: readonly TimingSignal[]): number =
   return timelineEnd;
 };
 
-/** Place explicit-duration sequences or hold each event until the next transition. */
+/** Place transitions and hold the final value through the end of the shared timeline. */
 export const positionSegments = (
   signal: TimingSignal,
   timelineEnd: number
 ): PositionedTimingSegment[] => {
   if (signal.sequence.length > 0) {
     let cursor = 0;
-    return signal.sequence.map((segment) => {
+    return signal.sequence.map((segment, index) => {
       const positioned = { ...segment, start: cursor, end: cursor + segment.duration };
+      if (index === signal.sequence.length - 1) {
+        positioned.end = Math.max(positioned.end, timelineEnd);
+        positioned.duration = positioned.end - positioned.start;
+      }
       cursor = positioned.end;
       return positioned;
     });

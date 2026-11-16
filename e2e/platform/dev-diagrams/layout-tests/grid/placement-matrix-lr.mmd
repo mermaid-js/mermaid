@@ -1,0 +1,18 @@
+---
+config:
+  layout: grid
+  grid:
+    columns: 3
+    rowGap: 32
+    columnGap: 36
+---
+flowchart LR
+  A["Short"]@{ row: 1, column: 1 }
+  B["Row only wide label"]@{ row: 1 }
+  C["Column only"]@{ column: 3 }
+  D["Auto one"]
+  E["Auto two"]
+  F["Sparse tall<br/>node"]@{ row: 9, column: 7 }
+  G["Disconnected"]
+
+  A --> D
