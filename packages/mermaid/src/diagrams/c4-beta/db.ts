@@ -119,12 +119,12 @@ export class C4BetaDB implements DiagramDB {
 
   /**
    * The ids of the elements drawn as boundary clusters: an element that contains other
-   * elements, and every deployment node, even an empty one.
+   * elements, and every group and deployment node, even an empty one.
    */
   public getBoundaryIds(): Set<string> {
     return new Set(
       this.elements.flatMap((element) => [
-        ...(element.kind === 'deploymentNode' ? [element.id] : []),
+        ...(element.kind === 'deploymentNode' || element.kind === 'group' ? [element.id] : []),
         ...(element.parentId === undefined ? [] : [element.parentId]),
       ])
     );

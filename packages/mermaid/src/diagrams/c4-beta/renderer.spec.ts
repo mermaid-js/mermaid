@@ -95,6 +95,18 @@ spa --> db : "Reads from"
     expect(svg).toContain('JavaScript');
   });
 
+  jsdomIt('should render an empty group as a boundary with its title', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-empty-group',
+      `c4-beta container
+group team "Team Kestrel"
+container worker "Worker"
+`
+    );
+    expect(svg).toContain('c4-boundary');
+    expect(svg).toContain('Team Kestrel');
+  });
+
   jsdomIt('should number relationships in dynamic diagrams', async () => {
     const { svg } = await mermaidAPI.render(
       'c4beta-render-3',

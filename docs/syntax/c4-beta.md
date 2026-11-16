@@ -83,7 +83,7 @@ softwareSystem mainframe "Mainframe Banking System" :::external
 
 ### Nesting and boundaries
 
-Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary. Every id is declared once, anywhere in the diagram, nested or not. A second declaration is an error naming the id and both lines (`the id "api" is declared twice, at line 4 and at line 9`):
+Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary, and so is every `group`, even one with no children: it draws a frame round its title. Every id is declared once, anywhere in the diagram, nested or not. A second declaration is an error naming the id and both lines (`the id "api" is declared twice, at line 4 and at line 9`):
 
 ```mermaid
 c4-beta container

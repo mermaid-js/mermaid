@@ -511,6 +511,16 @@ describe('c4-beta db', () => {
         expect(api?.shape).toBe('rect');
       });
 
+      it('should draw an empty group as a boundary, with a frame round its title', async () => {
+        await populate(`c4-beta container
+          group team "Team Kestrel"
+          container worker "Worker"
+        `);
+        const team = db.getData().nodes.find((node) => node.id === 'team');
+        expect(team).toMatchObject({ isGroup: true, label: 'Team Kestrel' });
+        expect(team?.cssClasses).toBe('c4-boundary');
+      });
+
       it('should warn about relationships connecting two clusters', async () => {
         const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
         await populate(`c4-beta deployment
