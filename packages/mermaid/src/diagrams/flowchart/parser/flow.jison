@@ -14,6 +14,7 @@
 %x dir
 %x vertex
 %x text
+%x btext
 %x ellipseText
 %x trapText
 %x edgeText
@@ -271,18 +272,27 @@ that id.
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
                       return 'UNICODE_TEXT';
 
+/* A bracket group inside a label (`text`/`btext` states) is lexed in the
+   dedicated `btext` state, mirroring `text` but without the multi-character
+   closers: `]]` inside a group must lex as SQE + SQE (close the group, then
+   close the node) instead of SUBROUTINEEND, e.g. `A[Pick item [fragile]]`. */
 <text>"|"             { this.popState(); return 'PIPE'; }
+<btext>"|"            { this.popState(); return 'PIPE'; }
 <*>"|"                { this.pushState("text"); return 'PIPE'; }
 
 <text>")"             { this.popState(); return 'PE'; }
+<btext>")"            { this.popState(); return 'PE'; }
 <*>"("                { this.pushState("text"); return 'PS'; }
 
 <text>"]"            { this.popState(); return 'SQE'; }
-<*>"["                { this.pushState("text"); return 'SQS'; }
+<btext>"]"           { this.popState(); return 'SQE'; }
+<*>"["                { this.pushState("btext"); return 'SQS'; }
 
 <text>(\})            { this.popState(); return 'DIAMOND_STOP' }
+<btext>(\})           { this.popState(); return 'DIAMOND_STOP' }
 <*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
 <text>[^\[\]\(\)\{\}\|\"]+    return "TEXT";
+<btext>[^\[\]\(\)\{\}\|\"]+   return "TEXT";
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
@@ -607,7 +617,12 @@ styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 /* Token lists */
 idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
 
-textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
+textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT
+    | SQS text SQE
+    { $$ = '[' + $text.text + ']'; }
+    | SQS SQE
+    { $$ = '[]'; }
+    ;
 
 textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK ;
 
