@@ -312,6 +312,13 @@ describe('ELK arrowheads on one side of a node', () => {
       data.nodes.push({ id: 'row', isGroup: true, label: 'Row', padding: 8, dir: 'LR' });
       expect(spreadsPorts(data)).toBe(true);
     });
+
+    // A node whose parent is not among the nodes never becomes an ELK node.
+    it('skips a crowded node that has no ELK node', () => {
+      const data = fanIn({ inputs: 4 });
+      data.nodes.find((node: { id: string }) => node.id === 'Hub').parentId = 'missing';
+      expect(() => buildElkGraphFromLayoutData(data, buildContext)).not.toThrow();
+    });
   });
 });
 
