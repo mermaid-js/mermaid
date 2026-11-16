@@ -1,0 +1,13 @@
+---
+description:
+  The same kind of plain flowchart under the layered layout, left to right, with
+  a longer link (minLen) and a self-loop.
+config:
+  layout: layered
+---
+flowchart LR
+  a[Request] --> b{Cached?}
+  b -->|hit| c((Return))
+  b -->|miss| d[Fetch]
+  d ---> c
+  d --> d

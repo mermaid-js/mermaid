@@ -283,6 +283,35 @@ describe('grid layout core', () => {
   });
 
   it.each([
+    { rowOffset: -100, columnOffset: -50 },
+    { rowOffset: -1, columnOffset: -1 },
+    { rowOffset: 123, columnOffset: 11 },
+  ])(
+    'preserves geometry and routes after translating tracks by ($rowOffset, $columnOffset)',
+    ({ rowOffset, columnOffset }) => {
+      const build = (rowOffset: number, columnOffset: number) => {
+        const data = layout([
+          group('g', 'Group', undefined, { row: 1 + rowOffset, column: 1 + columnOffset }),
+          leaf('a', 40, 20, { row: 1 + rowOffset, column: 1 + columnOffset }, 'g'),
+          leaf('stack', 60, 30, { row: 1 + rowOffset, column: 1 + columnOffset }, 'g'),
+          leaf('b', 60, 30, { row: 100 + rowOffset, column: 50 + columnOffset }, 'g'),
+          leaf('peer', 40, 20, { row: 100 + rowOffset, column: 50 + columnOffset }),
+        ]);
+        data.edges.push({ id: 'a-b', start: 'a', end: 'b' } as Edge);
+        return data;
+      };
+      const original = build(0, 0);
+      const translated = build(rowOffset, columnOffset);
+
+      runGridLayoutCore(original);
+      runGridLayoutCore(translated);
+
+      expect(geometrySnapshot(translated.nodes)).toEqual(geometrySnapshot(original.nodes));
+      expect(translated.edges[0].points).toEqual(original.edges[0].points);
+    }
+  );
+
+  it.each([
     {
       name: 'invalid coordinates',
       code: 'GRID_INVALID_COORDINATE',
@@ -290,7 +319,7 @@ describe('grid layout core', () => {
         layout([
           group('g', 'Group'),
           leaf('member', 60, 30, { row: 1, column: 1 }, 'g'),
-          leaf('bad', 40, 20, { row: 0, column: 1 }),
+          leaf('bad', 40, 20, { row: 0.5, column: 1 }),
         ]),
     },
     {

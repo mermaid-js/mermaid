@@ -4,6 +4,7 @@ import {
   applyLineJumpsToSvg,
   findEdgeIntersections,
   isStraightPath,
+  normalizeLineHops,
   processEdgesWithJumps,
   type EdgeGeom,
   type LineJumpConfig,
@@ -17,6 +18,21 @@ const ARC_CONFIG: LineJumpConfig = {
 };
 
 describe('lineJump', () => {
+  describe('normalizeLineHops', () => {
+    it.each([
+      { value: false, expected: false },
+      { value: 'arc', expected: 'arc' },
+      { value: 'gap', expected: 'gap' },
+      { value: true, expected: 'arc' },
+      { value: undefined, expected: 'arc' },
+      { value: 'foo', expected: 'arc' },
+      { value: null, expected: 'arc' },
+      { value: 0, expected: 'arc' },
+    ])('normalizes $value to $expected', ({ value, expected }) => {
+      expect(normalizeLineHops(value)).toBe(expected);
+    });
+  });
+
   describe('findEdgeIntersections', () => {
     it('detects a single perpendicular crossing and assigns the jump to the horizontal edge', () => {
       const edges: EdgeGeom[] = [

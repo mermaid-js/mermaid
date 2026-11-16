@@ -32,9 +32,15 @@ import {
 import rough from 'roughjs';
 import { resolveEdgeCornerRadius } from '../edgeCornerRadius.js';
 import createLabel from './createLabel.js';
-import { addEdgeMarkers } from './edgeMarker.ts';
+import {
+  addEdgeMarkers,
+  drawsMarginMarkers,
+  edgeClassStyles,
+  isAnimatedEdge,
+} from './edgeMarker.ts';
 import { clipOrthogonalEndpointsToNodeOutlines } from './orthogonalEdgeClipping.js';
-import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
+import { curveKind, isAxisTaggedRoute, markerTrim, routePath } from './routePath.ts';
+import { styles2String } from './shapes/handDrawnShapeStyles.js';
 
 /**
  * Resolve the effective curve type for an edge.
@@ -724,19 +730,18 @@ export const insertEdge = function (
   let pointsHasChanged = false;
   const tail = startNode;
   var head = endNode;
-  const edgeClassStyles = [];
-  for (const key in edge.cssCompiledStyles) {
-    if (isLabelStyle(key)) {
-      continue;
-    }
-    edgeClassStyles.push(edge.cssCompiledStyles[key]);
-  }
+  const classStyles = edgeClassStyles(edge);
+
+  // A layout that hands over axis-tagged route points has placed the ends itself, so the
+  // route is drawn as given by `routePath` and is not clipped at all. This is chosen by the
+  // data, not the layout name.
+  const axisRoute = isAxisTaggedRoute(points);
 
   // Specialized clipping is selected by edge metadata rather than layout name so any orthogonal
   // router can preserve its bends. Exactly one policy runs; clipping twice destroys owned ports.
-  if (edge.portClipping === 'outline-orthogonal' && !skipIntersect) {
+  if (!axisRoute && edge.portClipping === 'outline-orthogonal' && !skipIntersect) {
     points = clipOrthogonalEndpointsToNodeOutlines(points, tail, head);
-  } else if (layout === 'swimlane') {
+  } else if (!axisRoute && layout === 'swimlane') {
     // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
     // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
     // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
@@ -788,21 +793,21 @@ export const insertEdge = function (
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipIntersect) {
+  } else if (!axisRoute && head.intersect && tail.intersect && !skipIntersect) {
     // Original clipping for layouts that do not own their final boundary ports.
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
   const pointsStr = btoa(JSON.stringify(points));
-  if (edge.toCluster) {
+  if (edge.toCluster && !axisRoute) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
     points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
 
     pointsHasChanged = true;
   }
 
-  if (edge.fromCluster) {
+  if (edge.fromCluster && !axisRoute) {
     log.debug(
       'from cluster abc88',
       clusterDb.get(edge.fromCluster),
@@ -816,8 +821,9 @@ export const insertEdge = function (
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
-  // Routers can opt out when their points already encode every terminal and corner invariant.
-  if (edgeCurveType !== 'rounded' && !edge.skipCornerFix) {
+  // Routers can opt out when their points already encode every terminal and corner invariant;
+  // an axis-tagged route always does.
+  if (edgeCurveType !== 'rounded' && !axisRoute && !edge.skipCornerFix) {
     lineData = fixCorners(lineData);
   }
   let curve = curveLinear;
@@ -896,8 +902,14 @@ export const insertEdge = function (
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
-  let linePath =
-    edgeCurveType === 'rounded'
+  let linePath = axisRoute
+    ? routePath(
+        lineData,
+        curveKind(edgeCurveType),
+        markerTrim(edge.arrowTypeStart),
+        markerTrim(edge.arrowTypeEnd)
+      ).d
+    : edgeCurveType === 'rounded'
       ? generateRoundedPath(
           applyMarkerOffsetsToPoints(lineData, edge),
           // Resolve here instead of in a layout so rounded rendering stays generic.
@@ -942,7 +954,7 @@ export const insertEdge = function (
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
   } else {
-    const stylesFromClasses = edgeClassStyles.join(';');
+    const stylesFromClasses = classStyles.join(';');
     const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
 
     const pathStyle =
@@ -968,8 +980,7 @@ export const insertEdge = function (
     // Possible fix to remove eslint-disable-next-line
     //strokeColor = /stroke:([^;]+)/.exec(pathStyle)?.[1];
 
-    animatedEdge =
-      edge.animate === true || !!edge.animation || stylesFromClasses.includes('animation');
+    animatedEdge = isAnimatedEdge(edge);
     const pathNode = svgPath.node();
     const len = typeof pathNode.getTotalLength === 'function' ? pathNode.getTotalLength() : 0;
     const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
@@ -1048,7 +1059,7 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  const useMargin = !animatedEdge && edge?.look === 'neo';
+  const useMargin = drawsMarginMarkers(edge);
   addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, useMargin, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];

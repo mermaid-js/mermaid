@@ -516,7 +516,11 @@ export class GridEdgeRoutingSession {
             endpointOverlayScratch.get(plan.lcaContainerId)!,
             options,
             pairRoutes.get(plan.pairKey) ?? [],
-            { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
+            {
+              index: this.occupancyFor(plan.lcaContainerId),
+              pairKey: plan.pairKey,
+              prioritizeEndpointCandidates: this.prepared.coordinatedEndpointIds.has(edge.id),
+            }
           )
         : useSparseLca
           ? sparseContainerSegment(
@@ -539,7 +543,10 @@ export class GridEdgeRoutingSession {
                 plan.source.finalKind === 'item' && plan.source.chain.length > 1
                   ? this.alternativePairedPortals(sourceFinal, false)
                   : [],
-              plan.bundleSize > 1
+              plan.bundleSize > 1,
+              this.modes.overlapAvoidanceEnabled
+                ? { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
+                : undefined
             )
           : validatedCompatibilitySegment(
               edge.id,

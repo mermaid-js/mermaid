@@ -32,6 +32,58 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('D');
   });
 
+  it('should allow a space between a node id and its shape data', function () {
+    flow.parser.parse(`flowchart TB
+      D @{ shape: rounded }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+  });
+
+  it('should allow a tab between a node id and its shape data', function () {
+    flow.parser.parse(`flowchart TB
+      D\t@{ shape: circle }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('circle');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+  });
+
+  it('should allow a space between an edge endpoint and its shape data', function () {
+    flow.parser.parse(`flowchart TB
+      A --> B @{ shape: circle }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+    expect(data4Layout.nodes[0].label).toEqual('A');
+    expect(data4Layout.nodes[1].shape).toEqual('circle');
+    expect(data4Layout.nodes[1].label).toEqual('B');
+    expect(data4Layout.edges.length).toBe(1);
+  });
+
+  it('should allow a space before shape data in an & chain', function () {
+    flow.parser.parse(`flowchart TB
+      D @{ shape: rounded } & E @{ shape: circle }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].shape).toEqual('circle');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
+
+  it('should reject a newline between a node id and its shape data', function () {
+    expect(() => {
+      flow.parser.parse(`flowchart TB
+      D
+@{ shape: rounded }`);
+    }).toThrow(/Parse error/);
+  });
+
   it('should handle basic shape data statements with &', function () {
     const res = flow.parser.parse(`flowchart TB
       D@{ shape: rounded } & E`);

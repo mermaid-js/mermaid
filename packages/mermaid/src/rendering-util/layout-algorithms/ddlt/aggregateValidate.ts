@@ -85,3 +85,17 @@ export function combineValidateLayoutResults(
     byCase,
   };
 }
+
+/**
+ * Number of hard-constraint issues of each type across a batch of `validateLayout` runs, keyed
+ * by issue type in sorted order. Every issue `validateLayout` reports is a Level 1 violation.
+ */
+export function countIssuesByType(items: NamedValidateResult[]): Record<string, number> {
+  const counts = new Map<string, number>();
+  for (const { result } of items) {
+    for (const issue of result.issues) {
+      counts.set(issue.type, (counts.get(issue.type) ?? 0) + 1);
+    }
+  }
+  return Object.fromEntries([...counts.entries()].sort(([a], [b]) => a.localeCompare(b)));
+}
