@@ -1,0 +1,21 @@
+---
+config:
+  layout: grid
+  flowchart:
+    htmlLabels: false
+  grid:
+    rowGap: 32
+    columnGap: 48
+---
+flowchart TB
+  Above["Incoming request"]@{ row: 1, column: 2 }
+  Left["Retry policy"]@{ row: 2, column: 1 }
+  Retry["Retry operation"]@{ row: 2, column: 2 }
+  Right["Record attempt"]@{ row: 2, column: 3 }
+  Below["Completed request"]@{ row: 3, column: 2 }
+
+  Above --> Retry
+  Left --> Retry
+  Retry --> Right
+  Retry --> Below
+  Retry -->|Retry after backoff when the external dependency is unavailable| Retry
