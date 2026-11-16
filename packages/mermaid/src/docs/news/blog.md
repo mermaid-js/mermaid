@@ -1,3 +1,7 @@
+---
+description: 'Articles from the Mermaid Chart blog about diagramming, new Mermaid features, integrations, and tips for diagrams as code.'
+---
+
 # Blog
 
 ## [The Essential Guide to Mermaid Chart Plugin for VS Code [08/2025]](https://mermaid.ai/blog/posts/the-essential-guide-to-mermaid-chart-plugin-for-vs-code-08-2025)

@@ -264,7 +264,7 @@ const relationshipVisuals = (
         arrowTypeStart: 'none',
         arrowTypeEnd: 'arrow_point',
         pattern: 'dotted',
-        label: relationship.type,
+        label: `«${relationship.type}»`,
         labelType: 'text',
       };
     case 'generalization':

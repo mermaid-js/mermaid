@@ -50,7 +50,7 @@ tf 03 evt ItemAdded
 
 rendering to
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -58,7 +58,7 @@ tf 02 cmd AddItem
 tf 03 evt ItemAdded
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -88,7 +88,7 @@ It is possible to provide data examples for individual Time Frames. An Inline Da
 
 Compact version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -96,7 +96,7 @@ tf 02 cmd AddItem { description: string }
 tf 03 evt ItemAdded { description: string }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -106,7 +106,7 @@ tf 03 evt ItemAdded { description: string }
 
 Relaxed version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -114,7 +114,7 @@ timeframe 02 command AddItem { description: string }
 timeframe 03 event ItemAdded { description: string }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -130,7 +130,7 @@ In case the same entity is repeated you need to uniquely identify the data block
 
 Compact version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -158,7 +158,7 @@ data ItemAdded {
 }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -188,7 +188,7 @@ data ItemAdded {
 
 Relaxed version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -216,7 +216,7 @@ data ItemAdded {
 }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -252,7 +252,7 @@ A reset frame stops the inferred relation from the preceding frame. You can stil
 
 Compact version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -265,7 +265,7 @@ tf 06 cmd ChangeInventory
 tf 07 evt Cart.InventoryChanged
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -280,7 +280,7 @@ tf 07 evt Cart.InventoryChanged
 
 Relaxed version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -293,7 +293,7 @@ timeframe 06 command ChangeInventory
 timeframe 07 event Cart.InventoryChanged
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -308,7 +308,7 @@ timeframe 07 event Cart.InventoryChanged
 
 For example, this read model receives input from `ItemAdded` without inferring a relation from `OtherUI`:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 evt ItemAdded
@@ -316,7 +316,7 @@ tf 02 ui OtherUI
 rf 03 rmo CartItems ->> 01
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 evt ItemAdded
@@ -328,7 +328,7 @@ rf 03 rmo CartItems ->> 01
 
 There are situations where you need to specify multiple relations for an entity. For example when a **Read Model** is built of multiple **Events**. You can use `->>` token for that.
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 rf 02 evt CartCreated
@@ -338,7 +338,7 @@ rf 05 evt CartCleared
 tf 01 rmo CartUI ->> 02 ->> 03 ->> 04 ->> 05
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 rf 02 evt CartCreated
@@ -354,7 +354,7 @@ This chapter briefly summarizes each Event Modeling pattern.
 
 ### State Change
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -362,7 +362,7 @@ tf 02 cmd AddItem
 tf 03 evt ItemAdded
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -372,7 +372,7 @@ tf 03 evt ItemAdded
 
 ### State View
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 03 evt ItemAdded
@@ -380,7 +380,7 @@ tf 02 rmo CartItems
 tf 04 ui CartUI
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 03 evt ItemAdded
@@ -390,7 +390,7 @@ tf 04 ui CartUI
 
 ### Translation
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 03 evt External.InventoryChanged
@@ -399,7 +399,7 @@ tf 04 cmd ChangeInventory
 tf 05 evt Cart.InventoryChanged
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 03 evt External.InventoryChanged
@@ -452,14 +452,14 @@ Inventory.InventoryChanged
 
 **Namespace** is the first part before the `.` of the Entity Identifier. Each combination of the Namespace and Entity type forms new Swimlane. The order how they are specified in the text definition specifies the order of the Swimlanes in the diagram.
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 rf 01 evt Inventory.InventoryChanged
 rf 02 evt External.InventoryChanged
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 rf 01 evt Inventory.InventoryChanged

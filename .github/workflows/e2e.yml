@@ -218,10 +218,11 @@ jobs:
           #   - anything else (develop, in practice): "run pr tests" gates
           #     the pr-check tier only, as before.
           # Both labels default to on for a freshly-opened PR (see the
-          # ensure-pr-tier-label / ensure-release-label jobs, which add them
-          # on 'opened'); PR_ACTION=opened is treated the same as the label
-          # being present so the very first run isn't skipped by a race with
-          # those jobs' API calls. Later pushes (synchronize) read the label
+          # ensure-pr-tier-label / ensure-release-label jobs in
+          # pr-default-labels.yml, which add them on 'opened'); PR_ACTION=opened
+          # is treated the same as the label being present so the very first
+          # run isn't skipped by a race with those jobs' API calls. Later
+          # pushes (synchronize) read the label
           # as it stands at push time, so removing it before pushing again
           # does skip e2e, per design.
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ] && [ "$IS_UPSTREAM_REPO" = "true" ]; then
@@ -335,88 +336,14 @@ jobs:
             echo "[detect-scope] Cannot scope — full suite."
           fi
 
-  # Upstream-only: makes the "run pr tests" label default-on for every
-  # freshly-opened PR (GitHub has no native default-label-on-PR feature).
-  # Runs once per PR (action == 'opened'); removing the label afterward is a
-  # deliberate opt-out and this job never re-adds it. continue-on-error
-  # covers a PR opened from a fork-of-a-fork, whose GITHUB_TOKEN is read-only.
-  ensure-pr-tier-label:
-    if: >-
-      ${{
-        github.repository == 'mermaid-js/mermaid' &&
-        github.event_name == 'pull_request' &&
-        github.event.action == 'opened'
-      }}
-    runs-on: ubuntu-slim
-    permissions:
-      pull-requests: write
-    steps:
-      - name: Add default "run pr tests" label
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        continue-on-error: true
-        with:
-          script: |
-            const label = 'run pr tests';
-            const { owner, repo } = context.repo;
-            const issue_number = context.payload.pull_request.number;
-            try {
-              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
-            } catch (error) {
-              if (error.status !== 404) {
-                throw error;
-              }
-              // Label doesn't exist in the repo yet — create it, then retry once.
-              await github.rest.issues.createLabel({
-                owner,
-                repo,
-                name: label,
-                color: '0e8a16',
-                description: "Scopes this PR's e2e run to the pr/ tier (default on)",
-              });
-              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
-            }
-
-  # Upstream-only: makes the "run release test" label default-on for every
-  # freshly-opened PR targeting master (the release-readiness gate — see the
-  # PR_BASE_REF branch in detect-scope). Same pattern as ensure-pr-tier-label
-  # above, scoped to master-bound PRs only.
-  ensure-release-label:
-    if: >-
-      ${{
-        github.repository == 'mermaid-js/mermaid' &&
-        github.event_name == 'pull_request' &&
-        github.event.action == 'opened' &&
-        github.event.pull_request.base.ref == 'master'
-      }}
-    runs-on: ubuntu-slim
-    permissions:
-      pull-requests: write
-    steps:
-      - name: Add default "run release test" label
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        continue-on-error: true
-        with:
-          script: |
-            const label = 'run release test';
-            const { owner, repo } = context.repo;
-            const issue_number = context.payload.pull_request.number;
-            try {
-              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
-            } catch (error) {
-              if (error.status !== 404) {
-                throw error;
-              }
-              // Label doesn't exist in the repo yet — create it, then retry once.
-              await github.rest.issues.createLabel({
-                owner,
-                repo,
-                name: label,
-                color: 'b60205',
-                description:
-                  'Gates the pr-check + nightly-check tiers (not visual-check) on PRs targeting master (default on)',
-              });
-              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
-            }
+  # The "ensure-pr-tier-label" / "ensure-release-label" jobs that used to live
+  # here moved to pr-default-labels.yml, on pull_request_target instead of
+  # pull_request — a fork PR's pull_request-triggered GITHUB_TOKEN is always
+  # read-only (not just for a fork-of-a-fork, as the old comment here assumed),
+  # so the label-add silently failed for every external contributor's PR,
+  # masked by this job's own continue-on-error. pull_request_target gets the
+  # full permissions actually declared, safely, since that job never checks
+  # out or runs any code from the PR itself.
 
   e2e:
     # Skip the entire e2e job when only docs/ignorable files changed.
@@ -476,7 +403,7 @@ jobs:
           echo '' >> "$GITHUB_STEP_SUMMARY"
           pnpm exec tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY" || echo '_Bundle size baseline unavailable (snapshot cache miss)._' >> "$GITHUB_STEP_SUMMARY"
 
-      # Rebuild the served bundle with inline source maps so the Playwright run
+      # Rebuild the served bundle with linked source maps so the Playwright run
       # can collect native V8 coverage and map it back to source (no
       # instrumentation). Gated to runs whose coverage is uploaded.
       - name: Build coverage bundle for e2e coverage
@@ -645,7 +572,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p e2e/argos-baseline
-          cp -r e2e/sheets/. e2e/argos-baseline/
+          # Sheets are only built when GROUP_ARGOS_IMAGES is 'true'.
+          if [ -d e2e/sheets ]; then cp -r e2e/sheets/. e2e/argos-baseline/; fi
           cp -r e2e/screenshots/. e2e/argos-baseline/
 
           # Round-robin the leaf directories (those that directly hold images)
@@ -692,7 +620,7 @@ jobs:
       # Argos's single-request finalize body limit (HTTP 413, "request entity
       # too large") when uploaded unsplit.
       - name: Upload individual screenshots to Argos
-        if: env.GROUP_ARGOS_IMAGES != 'true'
+        if: env.GROUP_ARGOS_IMAGES != 'true' && env.ARGOS_UPLOAD_BOTH != 'true'
         env:
           ARGOS_SUBSET: true
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}

@@ -201,14 +201,14 @@ describe('flow db collapsible subgraphs', () => {
     addVertex('A');
     addVertex('B');
     flowDb.addSubGraph({ text: 'sub1' }, ['A', 'B'], { text: 'My Group', type: 'text' });
-    attachMeta('sub1', ' algorithm: elk.box ');
+    attachMeta('sub1', ' algorithm: elk.box, note: ignored ');
 
     const { nodes } = flowDb.getData();
     const sub = nodes.find((n) => n.id === 'sub1');
     expect(sub?.isGroup).toBe(true);
     // Without this the `@{ algorithm: … }` a user writes on a flowchart
     // subgraph never reached the layout engine.
-    expect(sub?.metadata).toMatchObject({ algorithm: 'elk.box' });
+    expect(sub?.metadata).toEqual({ algorithm: 'elk.box' });
   });
 
   it('renders a collapsed subgraph as a single collapsedGroup node and hides its members', () => {
@@ -278,6 +278,59 @@ describe('flow db collapsible subgraphs', () => {
     expect(nodes.find((n) => n.id === 'A')).toBeUndefined();
     // C --> A redirects all the way to the outer collapsed node
     expect(edges.find((e) => e.start === 'C' && e.end === 'outer')).toBeDefined();
+  });
+});
+
+describe('flow db metadata propagation', () => {
+  it('forwards only grid metadata on emitted leaf nodes', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      A@{ row: 2, column: 3, horizontalAlign: left, verticalAlign: bottom, note: "kept" }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const node = nodes.find((item: { id: string }) => item.id === 'A');
+    expect(node?.metadata).toEqual({
+      row: 2,
+      column: 3,
+      horizontalAlign: 'left',
+      verticalAlign: 'bottom',
+    });
+  });
+
+  it('preserves inline grid metadata for node ids beginning with double underscores', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      __start@{ row: 2, column: 3 }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const node = nodes.find((item: { id: string }) => item.id === '__start');
+    expect(node?.metadata).toEqual({
+      row: 2,
+      column: 3,
+    });
+  });
+
+  it('strips prototype-shaped metadata keys before forwarding them', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      A@{
+        row: 1
+        __proto__:
+          polluted: true
+        constructor: "drop"
+      }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const metadata =
+      nodes.find((item: { id: string; metadata?: Record<string, unknown> }) => item.id === 'A')
+        ?.metadata ?? {};
+    expect(metadata).toMatchObject({ row: 1 });
+    expect(Object.keys(metadata)).not.toContain('__proto__');
+    expect(Object.keys(metadata)).not.toContain('constructor');
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
   });
 });
 
@@ -494,5 +547,44 @@ describe('flow db repeated subgraph ids (issue #8326)', () => {
     expect(subGraph('B')?.nodes).toEqual(['b']);
     expect(subGraph('subGraph2')?.nodes).toEqual(['c']);
     expect(subGraph('subGraph3')?.nodes).toEqual(['d']);
+  });
+});
+
+describe('flow db keys only a diagram with pools may set', () => {
+  const build = (meta?: string) => {
+    const flowDb = new FlowDB();
+    const add = (id: string) =>
+      flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+    ['A', 'B', 'C'].forEach(add);
+    flowDb.addSubGraph({ text: 'P' }, ['L1', 'L2'], { text: 'Company', type: 'text' });
+    flowDb.addSubGraph({ text: 'L1' }, ['A', 'B'], { text: 'Sales', type: 'text' });
+    flowDb.addSubGraph({ text: 'L2' }, ['C'], { text: 'Ops', type: 'text' });
+    if (meta) {
+      const [id, ...rest] = meta.split('|');
+      flowDb.addVertex(
+        id,
+        undefined as unknown as FlowText,
+        undefined,
+        [],
+        [],
+        '',
+        {},
+        rest.join('|')
+      );
+    }
+    return flowDb.getData().nodes;
+  };
+
+  it.each([
+    ['laneRole', 'P|laneRole: pool'],
+    ['laneIndex', 'L1|laneIndex: 1'],
+    ['drawnExtent', 'L1|drawnExtent: { width: 5, height: 5 }'],
+  ])('drops %s from the metadata of a subgraph', (_key, meta) => {
+    expect(build(meta)).toEqual(build());
+  });
+
+  it('keeps the other keys a subgraph is given', () => {
+    const nodes = build('L1|laneRole: pool\nalgorithm: elk.box');
+    expect(nodes.find((n) => n.id === 'L1')?.metadata).toEqual({ algorithm: 'elk.box' });
   });
 });

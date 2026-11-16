@@ -1,3 +1,7 @@
+---
+description: 'Draw bar and line charts with categorical or numeric x-axes, titles, horizontal or vertical orientation, and theming.'
+---
+
 # XY Chart
 
 > In the context of mermaid-js, the XY chart is a comprehensive charting module that encompasses various types of charts that utilize both x-axis and y-axis for data representation. Presently, it includes two fundamental chart types: the bar chart and the line chart. These charts are designed to visually display and analyze data that involve two numerical variables.

@@ -1,27 +1,27 @@
 ---
+description: 'Mermaid is a JavaScript diagramming and charting tool that renders Markdown-inspired text definitions into flowcharts, sequence diagrams, Gantt charts and more.'
 layout: home
 sidebar: false
 
 title: Mermaid
 titleTemplate: Diagramming and charting tool
 hero:
-  name: <span class="home-header">Mermaid.js now lives</span>
-  text: at <a href="https://Mermaid.ai/open-source?utm_medium=hero&utm_campaign=variant_a&utm_source=mermaid_js" class="home-link">mermaid.ai</a>
-  tagline: One home for the open-source library and the platform built around it. More resources for the project, a clearer path for contributors, and a team committed to keeping Mermaid open, always.
+  name: <span class="home-header">Mermaid is going on a diet</span>
+  tagline: '<strong>A v13 proof of concept that is DOM-free and plugin-based, so you pick only the pieces you need. A flowchart-only bundle is about 100 kB (min+gzip) and renders about 50× faster than v12, aiming for 100×, with the same syntax.</strong><br><br>Getting there means trade-offs between size and features, and between speed and layout quality. Should v13 be this rewrite, or gradual updates? Help us decide.'
 
   image:
     light: /hero-chart.svg
     dark: /hero-chart-dark.svg
     alt: Mermaid diagram
   actions:
-    - theme: brand
-      text: Try Editor
-      link: https://mermaid.live/edit
+    - theme: alt
+      text: Join the discussion →
+      link: https://github.com/orgs/mermaid-js/discussions/8685
       target: _blank
       rel: external
-    - theme: alt
-      text: Get started
-      link: https://mermaid.ai/open-source/intro/
+    - theme: brand
+      text: Try the alpha →
+      link: /intro/v13-alpha
 
 features:
   - icon:

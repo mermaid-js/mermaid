@@ -22,7 +22,7 @@ Unknown words and misspellings will break a diagram, while parameters silently f
 
 **Example** : The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
 
-```mermaid-example
+```mermaid
 erDiagram
           CUSTOMER }|..|{ DELIVERY-ADDRESS : has
           CUSTOMER ||--o{ ORDER : places
@@ -34,7 +34,7 @@ erDiagram
           PRODUCT ||--o{ ORDER-ITEM : "ordered in"
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
           CUSTOMER }|..|{ DELIVERY-ADDRESS : has
           CUSTOMER ||--o{ ORDER : places
@@ -52,13 +52,13 @@ The [Getting Started](./getting-started.md) section can also provide some practi
 
 One should **beware the use of some words or symbols** that can break diagrams. These words or symbols are few and often only affect specific types of diagrams. The table below will continuously be updated.
 
-| Diagram Breakers                                                                     | Reason                                                                  | Solution                                          |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------- |
-| **Comments**                                                                         |                                                                         |                                                   |
-| [`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968)                      | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
-| **Flow-Charts**                                                                      |                                                                         |                                                   |
-| 'end'                                                                                | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
-| [Nodes inside Nodes](../syntax/flowchart.md?id=special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
+| Diagram Breakers                                                                  | Reason                                                                  | Solution                                          |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------- |
+| **Comments**                                                                      |                                                                         |                                                   |
+| [`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968)                   | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
+| **Flow-Charts**                                                                   |                                                                         |                                                   |
+| 'end'                                                                             | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
+| [Nodes inside Nodes](../syntax/flowchart.md#special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
 
 ## Mermaid Live Editor
 
@@ -88,7 +88,7 @@ Frontmatter is the term for adding YAML metadata at the start of code. This allo
 
 Frontmatter uses YAML syntax. It requires any indentation to be consistent and settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram.
 
-```mermaid-example
+```mermaid
 ---
 title: Frontmatter Example
 displayMode: compact
@@ -104,7 +104,7 @@ gantt
         House : 1986, 3y
 ```
 
-```mermaid
+```mermaid-example
 ---
 title: Frontmatter Example
 displayMode: compact
@@ -148,7 +148,7 @@ Note that the `neo` look paints node strokes with a gradient when the active the
 
 You can select a look by adding the look parameter in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid-example
+```mermaid
 ---
 config:
   look: handDrawn
@@ -160,7 +160,7 @@ flowchart LR
   B -->|No| D[Stop]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   look: handDrawn
@@ -189,7 +189,7 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 You can specify the layout algorithm directly in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: elk
@@ -202,7 +202,7 @@ flowchart TB
   B -->|No| D[Stop]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk

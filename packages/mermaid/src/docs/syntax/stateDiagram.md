@@ -1,3 +1,7 @@
+---
+description: 'Model state machines with states, transitions, composite states, choice, fork and join, concurrency, and notes.'
+---
+
 # State diagrams
 
 > "A state diagram is a type of diagram used in computer science and related fields to describe the behavior of systems.
@@ -44,6 +48,8 @@ the **Crash** state. There is no transition from **Still** to **Crash**. (You ca
 State diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
+
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
 
 The same diagram, drawn both ways:
 

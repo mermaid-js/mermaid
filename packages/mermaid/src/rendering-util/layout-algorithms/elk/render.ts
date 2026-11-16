@@ -10,6 +10,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
+import { orderNestedEdgeEnds } from './nestedEdgeOrder.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
@@ -725,6 +726,7 @@ export function buildElkGraphFromLayoutData(
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
+  orderEdgesByNesting(elkGraph, parentLookupDb);
   applyCyclicEntryConstraint(data4Layout, nodeDb);
 
   return { elkGraph, nodeDb, parentLookupDb };
@@ -746,6 +748,18 @@ function reverseSubgraphFeedbackEdges(elkGraph: { edges: any[] }, parentLookupDb
       edge.layoutReversed = true;
     }
   });
+}
+
+/**
+ * Hand ELK an edge from inside a subgraph before the edge from that subgraph's border when both
+ * share their other end, so ELK's model order does not cross them (see `orderNestedEdgeEnds`).
+ */
+function orderEdgesByNesting(elkGraph: { edges: any[] }, parentLookupDb: TreeData): void {
+  const order = orderNestedEdgeEnds(
+    elkGraph.edges.map((edge) => ({ source: edge.sources[0], target: edge.targets[0] })),
+    parentLookupDb
+  );
+  elkGraph.edges = order.map((index) => elkGraph.edges[index]);
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
@@ -1877,7 +1891,9 @@ const labelBox = (center: P, size: { width: number; height: number }): Box => ({
  * runs onto the port's row, and that run can land in a lane something else
  * already occupies. Trading a barely-visible step for a new crossing is a bad
  * deal, so an edge that would cause one is left exactly as ELK routed it. So is
- * one that would leave ELK's reserved label lane for a label over an edge (#8368).
+ * one that would leave ELK's reserved label lane for a label over an edge (#8368)
+ * or over another edge's label, as the two labels of a bidirectional pair would
+ * when both runs close in on their port rows.
  *
  * Returns, for each edge whose points changed, the run(s) that moved, so the
  * caller can carry the edge's main label along with the specific run it sat
@@ -1898,6 +1914,8 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
       !!box && route.some((p, i) => i < route.length - 1 && segmentHitsBox(p, route[i + 1], box))
     );
   };
+  const overlaps = (a: (typeof labels)[number], b: (typeof labels)[number]) =>
+    !!a && !!b && boxesOverlap(labelBox(a.centre, a.size), labelBox(b.centre, b.size));
   const changed: { edge: Edge; runs: StraightenedRun[] }[] = [];
 
   for (const [index, edge] of edges.entries()) {
@@ -1920,6 +1938,8 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
     // Net counts, as for crossings: label-over-edge pairs in either direction.
     let coveredBefore = 0;
     let coveredAfter = 0;
+    // A label landing on another label is never worth it, whatever it clears.
+    let collides = false;
     for (const [other, route] of routes.entries()) {
       if (other === index || route.length < 2) {
         continue;
@@ -1929,8 +1949,9 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
       coveredBefore += Number(covers(route, label)) + Number(covers(original, labels[other]));
       coveredAfter +=
         Number(covers(route, candidateLabel)) + Number(covers(candidate, labels[other]));
+      collides ||= overlaps(candidateLabel, labels[other]) && !overlaps(label, labels[other]);
     }
-    if (after > before || coveredAfter > coveredBefore) {
+    if (after > before || coveredAfter > coveredBefore || collides) {
       continue;
     }
 
@@ -2166,9 +2187,9 @@ export function separateOppositeEdgeLabels(edges: Edge[]): void {
       continue;
     }
     const [a, b] = bucket;
-    // Labels drawn at meaningfully different heights are not actually
-    // competing for the same horizontal space, however close their x may be.
-    if (Math.abs(a.y! - b.y!) > Math.max(a.height ?? 0, b.height ?? 0)) {
+    // Labels whose boxes do not share any height are not actually competing
+    // for the same horizontal space, however close their x may be.
+    if (Math.abs(a.y! - b.y!) >= ((a.height ?? 0) + (b.height ?? 0)) / 2) {
       continue;
     }
     const required = a.width! / 2 + b.width! / 2 + OPPOSITE_LABEL_MIN_GAP;

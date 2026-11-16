@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "Order",
+      "width": 94.03125,
+      "height": 135
+    },
+    {
+      "id": "LineItem",
+      "width": 98.3203125,
+      "height": 114
+    },
+    {
+      "id": "Customer",
+      "width": 140.3515625,
+      "height": 114
+    },
+    {
+      "id": "Payment",
+      "width": 98.71875,
+      "height": 141
+    },
+    {
+      "id": "CardPayment",
+      "width": 114.265625,
+      "height": 81
+    },
+    {
+      "id": "note0",
+      "width": 147.40625,
+      "height": 33
+    },
+    {
+      "id": "interface0",
+      "width": 70.390625,
+      "height": 45
+    },
+    {
+      "id": "edge-label-Customer-Order-id_Customer_Order_1",
+      "width": 40.46875,
+      "height": 21
+    },
+    {
+      "id": "group-title-Shop",
+      "width": 32.703125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "ccd413a4bba49ede7832d177719feb7f3384a819e0e4b80c78ba0441cd82d800",
+    "capturedAt": "2026-11-03T13:59:17.499Z",
+    "capturedFrom": "browser-dev layout-tests/layered/class.mmd layout=layered theme=default look=classic"
+  }
+}

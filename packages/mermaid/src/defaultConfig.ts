@@ -40,6 +40,11 @@ const config: RequiredDeep<MermaidConfig> = {
     keepEntryNodeOnTop: false,
     orientFeedbackEdges: true,
   },
+  // The schema's nested defaults only apply to sections listed here, so `configKeys` (and with
+  // it a `layered:` directive) finds this one.
+  layered: {
+    edgeRouting: 'rounded',
+  },
   themeCSS: undefined,
 
   // add non-JSON default config values

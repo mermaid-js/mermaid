@@ -33,6 +33,7 @@ import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import { profiler } from './profiler.js';
 import { preprocessDiagram } from './preprocess.js';
+import { escapeCssIdentifier } from './rendering-util/rendering-elements/edgeStepAnimation.js';
 import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
 import type {
@@ -485,13 +486,21 @@ const renderDiagram = async function (
     profiler.start('render');
   }
 
-  const processed = processAndSetConfigs(text);
+  let processed: ReturnType<typeof processAndSetConfigs> | undefined;
+  let preprocessingError: unknown;
+  try {
+    processed = processAndSetConfigs(text);
+  } catch (error) {
+    // Defer the error until the SVG exists, using only the site's configuration.
+    preprocessingError = error;
+    configApi.reset();
+  }
   // Keep the DiagramCode object, not just the cleaned string: diagrams that
   // report source positions need `withComments` and `frontmatterLineOffset`,
   // and dropping them here silently disabled that on the render path while
   // `parse()` still had them.
-  let code: DiagramCode = processed.code;
-  text = code.cleaned;
+  let code: DiagramCode | undefined = processed?.code;
+  text = code?.cleaned ?? text;
 
   const config = configApi.getConfig();
   log.debug(config);
@@ -504,7 +513,7 @@ const renderDiagram = async function (
     code = { raw: text, cleaned: text };
   }
 
-  const idSelector = `#${id}` as const;
+  const idSelector = `#${escapeCssIdentifier(id)}` as const;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
@@ -574,6 +583,9 @@ const renderDiagram = async function (
   let parseEncounteredException;
 
   try {
+    if (!processed || !code) {
+      throw preprocessingError;
+    }
     diag = injected.profiling
       ? await profiler.span('parse', () => Diagram.fromText(code, { title: processed.title }))
       : await Diagram.fromText(code, { title: processed.title });

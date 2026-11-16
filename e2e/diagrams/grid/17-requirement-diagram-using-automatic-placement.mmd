@@ -1,0 +1,20 @@
+---
+config:
+  layout: grid
+  grid:
+    columnGap: 200
+---
+requirementDiagram
+  requirement checkout {
+    id: 1
+    text: "Customers can complete an order"
+    risk: high
+    verifymethod: test
+  }
+
+  element storefront {
+    type: service
+    docref: "checkout"
+  }
+
+  storefront - satisfies -> checkout

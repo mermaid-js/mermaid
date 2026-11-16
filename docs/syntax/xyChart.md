@@ -12,7 +12,7 @@
 
 ## Example
 
-```mermaid-example
+```mermaid
 xychart
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -21,7 +21,7 @@ xychart
     line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
 ```
 
-```mermaid
+```mermaid-example
 xychart
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -102,7 +102,7 @@ A bar chart offers the capability to graphically depict bars.
 
 Named line and bar plots are automatically shown in a legend. Unnamed plots are omitted from the legend.
 
-```mermaid-example
+```mermaid
 xychart-beta
   title "An Example Chart"
   x-axis ["90d", "60d", "30d", "7d", "1d", "Current"]
@@ -112,7 +112,7 @@ xychart-beta
   line "p95" [112.2, 75.3, 103.0, 177.0, 180.2, 109.4]
 ```
 
-```mermaid
+```mermaid-example
 xychart-beta
   title "An Example Chart"
   x-axis ["90d", "60d", "30d", "7d", "1d", "Current"]
@@ -200,7 +200,7 @@ config:
 
 To set the color for lines and bars, use the `plotColorPalette` parameter. Colors in the palette will correspond sequentially to the elements in your chart (e.g., first bar/line will use the first color specified in the palette).
 
-```mermaid-example
+```mermaid
 ---
 config:
   themeVariables:
@@ -221,7 +221,7 @@ bar [15,25,20,30]
 line [5,15,25,35]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   themeVariables:
@@ -246,7 +246,7 @@ line [5,15,25,35]
 
 To show the value corresponding to a bar specify `showDataLabel: true`.
 
-```mermaid-example
+```mermaid
 ---
 config:
     xyChart:
@@ -259,7 +259,7 @@ xychart
     bar [12,2,20,25,17,24]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
     xyChart:
@@ -274,7 +274,7 @@ xychart
 
 Labels are shown within the bar by default. To show the labels outside the bar, specify `showDataLabelOutsideBar: true`.
 
-```mermaid-example
+```mermaid
 ---
 config:
     xyChart:
@@ -288,7 +288,7 @@ xychart
     bar [12,2,20,25,17,24]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
     xyChart:
@@ -306,7 +306,7 @@ xychart
 
 Each data point in a `line` can optionally include a quoted string label after the numeric value. Labels render above points in vertical orientation, or to the right in horizontal orientation, using the line's stroke color.
 
-```mermaid-example
+```mermaid
 xychart
     title "Smallest AI models scoring above 60% on MMLU"
     x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
@@ -314,7 +314,7 @@ xychart
     line [540 "PaLM", 65 "LLaMA-65B", 34 "Llama 2 34B", 7 "Mistral 7B", 3.8 "Phi-3-mini"]
 ```
 
-```mermaid
+```mermaid-example
 xychart
     title "Smallest AI models scoring above 60% on MMLU"
     x-axis "Date" ["Apr 2022", "Feb 2023", "Jul 2023", "Sep 2023", "Apr 2024"]
@@ -324,7 +324,7 @@ xychart
 
 Labels are optional per point — you can mix labeled and unlabeled values:
 
-```mermaid-example
+```mermaid
 xychart
     title "Quarterly Performance"
     x-axis [Q1, Q2, Q3, Q4]
@@ -332,7 +332,7 @@ xychart
     line [25 "Launch", 45, 72, 90 "Target Hit"]
 ```
 
-```mermaid
+```mermaid-example
 xychart
     title "Quarterly Performance"
     x-axis [Q1, Q2, Q3, Q4]
@@ -347,7 +347,7 @@ Existing syntax without labels continues to work unchanged.
 
 ## Example on config and theme
 
-```mermaid-example
+```mermaid
 ---
 config:
     xyChart:
@@ -366,7 +366,7 @@ xychart
     line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
     xyChart:
