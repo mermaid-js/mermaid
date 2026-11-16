@@ -137,6 +137,19 @@ export class C4BetaDB implements DiagramDB {
     return this.elements;
   }
 
+  /**
+   * The ids of the elements drawn as boundary clusters: an element that contains other
+   * elements, and every deployment node, even an empty one.
+   */
+  public getBoundaryIds(): Set<string> {
+    return new Set(
+      this.elements.flatMap((element) => [
+        ...(element.kind === 'deploymentNode' ? [element.id] : []),
+        ...(element.parentId === undefined ? [] : [element.parentId]),
+      ])
+    );
+  }
+
   public getRelationships(): C4BetaRelationship[] {
     return this.relationships;
   }
@@ -212,14 +225,7 @@ export class C4BetaDB implements DiagramDB {
 
     this.validateElements();
 
-    // Any element containing other elements is rendered as a boundary cluster.
-    // Deployment nodes are always clusters, even when they are empty.
-    const boundaryIds = new Set(
-      this.elements.flatMap((element) => [
-        ...(element.kind === 'deploymentNode' ? [element.id] : []),
-        ...(element.parentId === undefined ? [] : [element.parentId]),
-      ])
-    );
+    const boundaryIds = this.getBoundaryIds();
 
     for (const element of this.elements) {
       if (boundaryIds.has(element.id)) {
