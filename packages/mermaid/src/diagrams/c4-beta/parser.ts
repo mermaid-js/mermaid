@@ -5,6 +5,21 @@ import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { C4BetaDB } from './db.js';
 
+const DIAGRAM_KINDS = ['context', 'container', 'component', 'dynamic', 'deployment'];
+
+/** The words after `c4-beta` on its own line; the first one must be a diagram kind. */
+const HEADER_WORD = /^\s*c4-beta[\t ]+(\S+)/;
+
+/** Throws when the header line names something that is not a diagram kind. */
+const checkHeader = (input: string) => {
+  const word = HEADER_WORD.exec(input)?.[1];
+  if (word !== undefined && !DIAGRAM_KINDS.includes(word)) {
+    throw new Error(
+      `c4-beta: unknown diagram kind "${word}"; use ${DIAGRAM_KINDS.map((kind) => `"${kind}"`).join(', ')}. Elements and relations go on the lines after the header.`
+    );
+  }
+};
+
 /** The 1-based line of a statement in the diagram text. */
 const lineOf = (node: { $cstNode?: { range: { start: { line: number } } } }): number =>
   (node.$cstNode?.range.start.line ?? 0) + 1;
@@ -96,6 +111,7 @@ export const populateDb = (ast: C4, db: C4BetaDB) => {
 
 /** Parses the diagram text into the db: the header, the grammar, then the checks across lines. */
 export const parseC4Beta = async (input: string, db: C4BetaDB): Promise<void> => {
+  checkHeader(input);
   const ast: C4 = await parse('c4', input);
   log.debug(ast);
   populateDb(ast, db);

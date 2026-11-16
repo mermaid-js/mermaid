@@ -53,7 +53,7 @@ A diagram starts with the `c4-beta` keyword followed by an optional diagram kind
 c4-beta context | container | component | dynamic | deployment
 ```
 
-The kind defaults to `context`. The kind is advisory: every element renders in every kind, but mermaid logs a warning when an element is unexpected for the declared kind (for example a `component` in a `context` diagram).
+The kind is one of the five words above; any other word after `c4-beta` is an error that names it (`unknown diagram kind "landscape"`), and the elements start on the next line. The kind defaults to `context`. The kind is advisory: every element renders in every kind, but mermaid logs a warning when an element is unexpected for the declared kind (for example a `component` in a `context` diagram).
 
 ### Elements
 
@@ -65,6 +65,7 @@ person|softwareSystem|container|component|group|deploymentNode|infrastructureNod
 - `"Technology"` can only be given when a `"Description"` is present (use `""` for an empty description).
 - `person` elements render with the classic C4 person notation (head and body).
 - An id is made of letters, digits and `_`, joined by single `-`. It may start with a digit (`3ds`) and never contains `--`, so `a-->b` and `a --> b` read the same. Any word is an id except the words that open a statement: `title`, `accTitle`, `accDescr`, `direction` and `style`. The element kinds are ids too: `person container "A person called container"` is valid.
+- The element kinds are exactly the seven above. `system` and `node` are not kinds, and an unknown kind is an error.
 
 ```mermaid
 c4-beta container
@@ -476,4 +477,4 @@ Some mistakes are not errors: the diagram still draws, and mermaid logs a warnin
 - a relationship between two boundaries
 - a `style` key or value that is not supported: it is ignored
 
-Everything else that is wrong, such as a duplicate id or a relationship to an element that is not declared, is an error and the diagram is not drawn.
+Everything else that is wrong, such as a duplicate id, an unknown diagram kind or a relationship to an element that is not declared, is an error and the diagram is not drawn.
