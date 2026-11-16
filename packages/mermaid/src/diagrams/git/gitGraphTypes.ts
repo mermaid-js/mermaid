@@ -30,9 +30,17 @@ export interface MergeDB {
 
 export interface CherryPickDB {
   id: string;
-  targetId: string;
+  targetId?: string;
   parent: string;
   tags?: string[];
+}
+
+export interface GitGraphLink {
+  id: string;
+  link: string;
+  tooltip?: string;
+  target: '_self' | '_blank' | '_parent' | '_top';
+  type: 'commit' | 'branch' | 'tag';
 }
 
 export interface Commit {
@@ -51,7 +59,22 @@ export interface GitGraph {
   statements: Statement[];
 }
 
-export type Statement = CommitAst | BranchAst | MergeAst | CheckoutAst | CherryPickingAst;
+export type Statement =
+  | CommitAst
+  | BranchAst
+  | MergeAst
+  | CheckoutAst
+  | CherryPickingAst
+  | ClickAst;
+
+export interface ClickAst {
+  $type: 'Click';
+  id: string;
+  type: 'commit' | 'branch' | 'tag';
+  href: string;
+  tooltip?: string;
+  target?: '_self' | '_blank' | '_parent' | '_top';
+}
 
 export interface CommitAst {
   $type: 'Commit';
@@ -106,6 +129,15 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
   getCurrentBranch: () => string;
   getDirection: () => DiagramOrientation;
   getHead: () => Commit | null;
+  setLink: (
+    id: string,
+    link: string,
+    type: 'commit' | 'branch' | 'tag',
+    tooltip?: string,
+    target?: '_self' | '_blank' | '_parent' | '_top'
+  ) => void;
+  getLink: (id: string, type?: 'commit' | 'branch' | 'tag') => GitGraphLink | undefined;
+  getLinks: () => Map<string, GitGraphLink>;
 }
 
 export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
@@ -116,6 +148,13 @@ export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
   merge: (mergeDB: MergeDB) => void;
   cherryPick: (cherryPickDB: CherryPickDB) => void;
   checkout: (branch: string) => void;
+  setLink: (
+    id: string,
+    link: string,
+    type: 'commit' | 'branch' | 'tag',
+    tooltip?: string,
+    target?: '_self' | '_blank' | '_parent' | '_top'
+  ) => void;
 }
 
 export interface GitGraphDBRenderProvider extends Partial<GitGraphDB> {
@@ -129,6 +168,8 @@ export interface GitGraphDBRenderProvider extends Partial<GitGraphDB> {
   getDirection: () => DiagramOrientation;
   getHead: () => Commit | null;
   getDiagramTitle: () => string;
+  getLink: (id: string, type?: 'commit' | 'branch' | 'tag') => GitGraphLink | undefined;
+  getLinks: () => Map<string, GitGraphLink>;
 }
 
 export type DiagramOrientation = 'LR' | 'TB' | 'BT';

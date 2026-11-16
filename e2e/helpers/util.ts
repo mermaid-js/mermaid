@@ -291,7 +291,7 @@ export const verifyScreenshot = async (
 
     if (!existsSync(snapshotPath)) {
       mkdirSync(dirname(snapshotPath), { recursive: true });
-      const screenshot = await target.screenshot({ animations: 'disabled', scale: 'device' });
+      const screenshot = await target.screenshot({ animations: 'disabled', scale: 'css' });
       writeFileSync(snapshotPath, screenshot);
       return;
     }
