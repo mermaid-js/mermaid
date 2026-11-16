@@ -1,0 +1,15 @@
+---
+description: >-
+  Three actors, each with its own inline style, to check styles don't leak
+  between actors.
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Carol
+  style Alice fill:#bbf,stroke:#00f
+  style Bob fill:#fbb,stroke:#f00
+  style Carol fill:#bfb,stroke:#0f0
+  Alice->>Bob: One
+  Bob->>Carol: Two
+  Carol-->>Alice: Three

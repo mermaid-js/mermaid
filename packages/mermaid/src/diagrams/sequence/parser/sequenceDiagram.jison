@@ -14,7 +14,7 @@
 
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
-%x ID ALIAS LINE CONFIG CONFIG_DATA
+%x ID ALIAS LINE STYLE_STMT CONFIG CONFIG_DATA
 
 %x acc_title
 %x acc_descr
@@ -56,6 +56,11 @@
 "option"                                                        { this.begin('LINE'); return 'option'; }
 "break"                                                         { this.begin('LINE'); return 'break'; }
 <LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
+<STYLE_STMT>((?!\n)\s)+                                         /* skip same-line whitespace */
+<STYLE_STMT>[^\n;]*(?:";"(?![^\S\n]*(?:title|accTitle|accDescr)[^\S\n]*":")[^\S\n]*[A-Za-z-]+[^\S\n]*":"[^\n;]*)*    { /* keep ";prop:value" tails in the statement so they get sanitized */ this.popState(); return 'styleRestOfLine'; }
+classDef(?=\s)(?![^\n;]*(?:[-][-]?(?:[>]|\)|\|[\\\/]|\\\\|\/\/)|[\\\/]\|[-][-]?|(?:\\\\|\/\/)[-][-]?|[-][-]x|\s[-]x|[-]x(?=\S*[:]))[^\n;]*[:])    { this.begin('STYLE_STMT'); return 'classDef'; }
+style(?=\s)(?![^\n;]*(?:[-][-]?(?:[>]|\)|\|[\\\/]|\\\\|\/\/)|[\\\/]\|[-][-]?|(?:\\\\|\/\/)[-][-]?|[-][-]x|\s[-]x|[-]x(?=\S*[:]))[^\n;]*[:])       { this.begin('STYLE_STMT'); return 'style'; }
+class(?=\s)(?![^\n;]*(?:[-][-]?(?:[>]|\)|\|[\\\/]|\\\\|\/\/)|[\\\/]\|[-][-]?|(?:\\\\|\/\/)[-][-]?|[-][-]x|\s[-]x|[-]x(?=\S*[:]))[^\n;]*[:])       { this.begin('STYLE_STMT'); return 'class'; }
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
@@ -188,6 +193,9 @@ statement
   | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+	| 'classDef' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+(\S[\s\S]*)$/); if(m) { yy.addClass(m[1], [m[2]]); } $$ = []; }
+	| 'style' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+(\S[\s\S]*)$/); $$ = m ? {type: 'applyStyle', actor: m[1], styleStr: [m[2]]} : []; }
+	| 'class' styleRestOfLine { var m = $2.split(';')[0].trim().match(/^(\S[\s\S]*?)\s+(\S+)$/); $$ = m ? {type: 'applyClass', actor: m[1], className: m[2]} : []; }
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});

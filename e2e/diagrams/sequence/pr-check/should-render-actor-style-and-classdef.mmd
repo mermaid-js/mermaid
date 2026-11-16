@@ -1,0 +1,13 @@
+---
+description: >-
+  Happy path for actor styling: a classDef attached to one actor via the
+  class keyword, and an inline style on another actor.
+---
+sequenceDiagram
+  classDef highlighted fill:#f9f,stroke:#333,stroke-width:2px
+  participant Alice
+  participant Bob
+  class Alice highlighted
+  style Bob fill:#bbf,stroke:#00f
+  Alice->>Bob: Hello
+  Bob-->>Alice: Hi back

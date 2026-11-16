@@ -1,0 +1,12 @@
+---
+description: >-
+  One classDef attached to two actors with a comma-separated class statement.
+---
+sequenceDiagram
+  classDef important fill:#fbb,stroke:#f00,stroke-width:3px
+  participant Alice
+  participant Bob
+  participant Carol
+  class Alice,Carol important
+  Alice->>Bob: Hello
+  Bob->>Carol: Forwarding

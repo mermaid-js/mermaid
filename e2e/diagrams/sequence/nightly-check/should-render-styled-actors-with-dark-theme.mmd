@@ -1,0 +1,14 @@
+---
+description: >-
+  classDef and inline actor styles under the "dark" theme via an in-body
+  %%{init}%% directive.
+---
+%%{init: {'theme': 'dark'}}%%
+sequenceDiagram
+  classDef highlighted fill:#665,stroke:#fa0,stroke-width:2px
+  participant Alice
+  participant Bob
+  class Alice highlighted
+  style Bob fill:#446,stroke:#88f
+  Alice->>Bob: Hello in dark mode
+  Bob-->>Alice: Hi back
