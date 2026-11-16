@@ -117,6 +117,18 @@ spa --> db : "Reads from"
     expect(svg).toContain('JavaScript');
   });
 
+  jsdomIt('should render an empty group as a boundary with its title', async () => {
+    const { svg } = await mermaidAPI.render(
+      'c4beta-render-empty-group',
+      `c4-beta container
+group team "Team Kestrel"
+container worker "Worker"
+`
+    );
+    expect(svg).toContain('c4-boundary');
+    expect(svg).toContain('Team Kestrel');
+  });
+
   jsdomIt('should number relationships in dynamic diagrams', async () => {
     const { svg } = await mermaidAPI.render(
       'c4beta-render-3',
@@ -213,12 +225,12 @@ deploymentNode ec2 "EC2" "" "Ubuntu" instances "4" {
     expect(svg).toContain('x4');
   });
 
-  jsdomIt('should refuse to render an element nested in an element with the same id', async () => {
+  jsdomIt('should refuse to render an element whose id is declared twice', async () => {
     await expect(
       mermaidAPI.render(
         'c4beta-render-same-id',
         'c4-beta context\ngroup g "G" {\n  group g "G" {\n  }\n}'
       )
-    ).rejects.toThrow('c4-beta: the id "g" is declared inside an element with the same id.');
+    ).rejects.toThrow('c4-beta: the id "g" is declared twice, at line 2 and at line 3.');
   });
 });

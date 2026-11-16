@@ -33,7 +33,7 @@ A diagram starts with the `c4-beta` keyword followed by an optional diagram kind
 c4-beta context | container | component | dynamic | deployment
 ```
 
-The kind defaults to `context`. The kind is advisory: every element renders in every kind, but mermaid logs a warning when an element is unexpected for the declared kind (for example a `component` in a `context` diagram).
+The kind is one of the five words above; any other word after `c4-beta` is an error that names it (`unknown diagram kind "landscape"`), and the elements start on the next line. The kind defaults to `context`. The kind is advisory: every element renders in every kind, but mermaid logs a warning when an element is unexpected for the declared kind (for example a `component` in a `context` diagram).
 
 ### Elements
 
@@ -44,6 +44,8 @@ person|softwareSystem|container|component|group|deploymentNode|infrastructureNod
 - `:::external` is a built-in convention tag that marks an element as outside the system under discussion. It renders the element in grey by default; override the look with a `style external ...` statement (see [Tags and styling](#tags-and-styling)).
 - `"Technology"` can only be given when a `"Description"` is present (use `""` for an empty description).
 - `person` elements render with the classic C4 person notation (head and body).
+- An id is made of letters, digits and `_`, joined by single `-`. It may start with a digit (`3ds`) and never contains `--`, so `a-->b` and `a --> b` read the same. Any word is an id except the words that open a statement: `title`, `accTitle`, `accDescr`, `direction` and `style`. The element kinds are ids too: `person container "A person called container"` is valid.
+- The element kinds are exactly the seven above. `system` and `node` are not kinds, and an unknown kind is an error.
 
 ```mermaid-example
 c4-beta container
@@ -54,7 +56,7 @@ softwareSystem mainframe "Mainframe Banking System" :::external
 
 ### Nesting and boundaries
 
-Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary. An element cannot be declared inside an element with the same id; the diagram is rejected with an error naming the id:
+Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary, and so is every `group`, even one with no children: it draws a frame round its title. Every id is declared once, anywhere in the diagram, nested or not. A second declaration is an error naming the id and both lines (`the id "api" is declared twice, at line 4 and at line 9`):
 
 ```mermaid-example
 c4-beta container
@@ -74,7 +76,7 @@ api --> db : "Reads from and writes to" "SQL/TCP"
 
 ### Relationships
 
-In the C4 model every line is a **unidirectional**, specifically-labelled relationship that captures intent and direction of the interaction. Prefer `-->` (and `<--` when you want to point the other way):
+In the C4 model every line is a **unidirectional**, specifically-labelled relationship that captures intent and direction of the interaction. Prefer `-->` (and `<--` when you want to point the other way; `a <-- c` is the relationship `c --> a`, so the layout ranks `c` before `a`):
 
 ```
 (N:)? <sourceId> --> <targetId> (: "Description" ("Technology")?)? (:::tag)*
@@ -89,6 +91,8 @@ softwareSystem partner "Partner System" :::external
 core --> partner : "Pushes settlement records to" "JSON/HTTPS"
 partner --> core : "Returns settlement confirmations to" "JSON/HTTPS"
 ```
+
+Both ends of a relationship must be declared elements, wherever the relationship sits in the text; an unknown end is an error at parse time, naming the end and its line, and no part of the diagram is drawn.
 
 Label each relationship with a specific verb phrase that explains _why_ the interaction exists ("Pushes settlement records to", "Reads customer profiles from"). Avoid bare labels such as "Uses": they describe a dependency, not an interaction, and make the diagram harder to read.
 
@@ -234,13 +238,13 @@ style <tag> key:value (, key:value)*
 
 Supported keys:
 
-| Key      | Applies to                 | Values                         |
-| -------- | -------------------------- | ------------------------------ |
-| `fill`   | elements                   | hex color (`#rgb` / `#rrggbb`) |
-| `stroke` | elements and relationships | hex color                      |
-| `color`  | elements and relationships | hex color (text color)         |
-| `shape`  | elements                   | `cylinder`                     |
-| `line`   | relationships              | `solid`, `dashed`, `dotted`    |
+| Key      | Applies to                 | Values                                                              |
+| -------- | -------------------------- | ------------------------------------------------------------------- |
+| `fill`   | elements                   | a color: hex (`#rgb` / `#rrggbb`) or a CSS color name such as `red` |
+| `stroke` | elements and relationships | a color, as for `fill`                                              |
+| `color`  | elements and relationships | a color, as for `fill` (the text color)                             |
+| `shape`  | elements                   | `cylinder`                                                          |
+| `line`   | relationships              | `solid`, `dashed`, `dotted`                                         |
 
 Tag styles are applied after the built-in element colors, so they override them. Each tag also adds a `c4-tag-<name>` CSS class for theming with `classDefs` or custom CSS.
 
@@ -277,3 +281,16 @@ A `title` line sets the diagram title:
 ```
 title Internet Banking System - System Context
 ```
+
+### Warnings
+
+Some mistakes are not errors: the diagram still draws, and mermaid logs a warning. A warning is shown in the browser console once `logLevel` is `warn` or lower (for example `mermaid.initialize({ logLevel: 'warn' })`); the default level hides it. These are warned about:
+
+- an element kind that is unexpected for the declared diagram kind, such as a `component` in a `context` diagram
+- a technology given to a `person` or a `softwareSystem`, which are black boxes and have none: it is dropped
+- `instances` on anything but a `deploymentNode`: it is dropped
+- a step number `N:` on a relationship outside a `dynamic` diagram: it is ignored
+- a relationship between two boundaries
+- a `style` key or value that is not supported: it is ignored
+
+Everything else that is wrong, such as a duplicate id, an unknown diagram kind or a relationship to an element that is not declared, is an error and the diagram is not drawn.
