@@ -64,6 +64,7 @@ person|softwareSystem|container|component|group|deploymentNode|infrastructureNod
 - `:::external` is a built-in convention tag that marks an element as outside the system under discussion. It renders the element in grey by default; override the look with a `style external ...` statement (see [Tags and styling](#tags-and-styling)).
 - `"Technology"` can only be given when a `"Description"` is present (use `""` for an empty description).
 - `person` elements render with the classic C4 person notation (head and body).
+- An id is made of letters, digits and `_`, joined by single `-`. It may start with a digit (`3ds`) and never contains `--`, so `a-->b` and `a --> b` read the same. Any word is an id except the words that open a statement: `title`, `accTitle`, `accDescr`, `direction` and `style`. The element kinds are ids too: `person container "A person called container"` is valid.
 
 ```mermaid
 c4-beta container

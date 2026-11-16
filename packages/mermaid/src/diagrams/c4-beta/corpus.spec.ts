@@ -62,12 +62,10 @@ const summarize = async (text: string) => {
  * "prototype oddities" table it waits on; fixing the row removes its entry.
  */
 const NOT_YET: Record<string, string> = {
-  'b03-kind-keywords-as-ids': 'row 3: any word but the six statement words is an id',
   'b05-empty-braces-and-group': 'row 11: an empty group draws a frame',
   'b06-four-arrows': 'row 6: `a <-- c` is stored as `c --> a`; and `---` is not on this branch',
   'b10-direction-legend-acc': '`legend` is not on this branch',
   'b16-arrow-without-spaces': 'row 1: an id never contains `--`; and `---` is not on this branch',
-  'b17-digit-leading-id': 'row 2: ids may start with a digit',
   'b18-keyword-ids': 'row 5: an unknown relation end is an error at parse',
   'b19-unknown-end': 'row 5: an unknown relation end is an error at parse',
   'b20-duplicate-id': 'row 4: a duplicate id is an error naming both lines',
