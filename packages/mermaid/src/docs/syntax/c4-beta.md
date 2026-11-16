@@ -75,7 +75,7 @@ api --> db : "Reads from and writes to" "SQL/TCP"
 
 ### Relationships
 
-In the C4 model every line is a **unidirectional**, specifically-labelled relationship that captures intent and direction of the interaction. Prefer `-->` (and `<--` when you want to point the other way):
+In the C4 model every line is a **unidirectional**, specifically-labelled relationship that captures intent and direction of the interaction. Prefer `-->` (and `<--` when you want to point the other way; `a <-- c` is the relationship `c --> a`, so the layout ranks `c` before `a`):
 
 ```
 (N:)? <sourceId> --> <targetId> (: "Description" ("Technology")?)? (:::tag)*

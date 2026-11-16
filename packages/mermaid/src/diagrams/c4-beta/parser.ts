@@ -4,7 +4,6 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { C4BetaDB } from './db.js';
-import type { C4Arrow } from './types.js';
 
 /** The 1-based line of a statement in the diagram text. */
 const lineOf = (node: { $cstNode?: { range: { start: { line: number } } } }): number =>
@@ -44,12 +43,13 @@ const addElement = (
   }
 };
 
-/** Adds the relationship as written. */
+/** Adds the relationship. `a <-- b` is stored as `b --> a`, so ranks follow the meaning. */
 const addRelationship = (db: C4BetaDB, relationship: C4Relationship) => {
+  const reversed = relationship.arrow === '<--';
   db.addRelationship({
-    sourceId: relationship.sourceId,
-    targetId: relationship.targetId,
-    arrow: relationship.arrow as C4Arrow,
+    sourceId: reversed ? relationship.targetId : relationship.sourceId,
+    targetId: reversed ? relationship.sourceId : relationship.targetId,
+    arrow: relationship.arrow === '<-->' ? '<-->' : '-->',
     description: relationship.description,
     technology: relationship.technology,
     step: relationship.step,

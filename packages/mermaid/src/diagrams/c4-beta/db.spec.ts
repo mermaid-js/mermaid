@@ -619,4 +619,35 @@ group g "G" {
       expect(db.getRelationships()).toHaveLength(1);
     });
   });
+
+  describe('a relationship written with <--', () => {
+    it('should be stored from the right-hand end, as a --> arrow', async () => {
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\na <-- c : "Is called by"');
+      const [relationship] = db.getRelationships();
+      expect(relationship).toMatchObject({ sourceId: 'c', targetId: 'a', arrow: '-->' });
+    });
+
+    it('should draw the arrowhead at the left-hand end, the same as c --> a', async () => {
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\na <-- c');
+      const reversed = db.getData().edges[0];
+      db.clear();
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\nc --> a');
+      const direct = db.getData().edges[0];
+      expect(reversed).toMatchObject({
+        start: direct.start,
+        end: direct.end,
+        arrowTypeStart: direct.arrowTypeStart,
+        arrowTypeEnd: direct.arrowTypeEnd,
+      });
+    });
+
+    it('should keep <--> as a bidirectional relationship', async () => {
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\na <--> c');
+      expect(db.getRelationships()[0]).toMatchObject({
+        sourceId: 'a',
+        targetId: 'c',
+        arrow: '<-->',
+      });
+    });
+  });
 });
