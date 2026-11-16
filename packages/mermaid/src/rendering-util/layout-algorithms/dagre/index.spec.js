@@ -55,6 +55,27 @@ const expectFinitePaths = (paths) => {
 };
 
 describe('getEdgesToRender', () => {
+  it.each(['flowchart', 'flowchart-v2'])(
+    'keeps %s leaf self-loops on their own rank without synthetic nodes',
+    (type) => {
+      const { graph } = prepareLayoutForDagre({
+        type,
+        direction: 'TB',
+        config: {},
+        nodes: [{ id: 'A', width: 80, height: 40 }],
+        edges: [
+          { id: 'loop-one', start: 'A', end: 'A', label: 'one' },
+          { id: 'loop-two', start: 'A', end: 'A', label: 'two' },
+        ],
+      });
+
+      expect(graph.nodes()).toEqual(['A']);
+      expect(graph.edges()).toHaveLength(2);
+      expect(graph.edge('A', 'A', 'loop-one').label).toBe('one');
+      expect(graph.edge('A', 'A', 'loop-two').label).toBe('two');
+    }
+  );
+
   beforeAll(async () => {
     await mermaid.registerExternalDiagrams([]);
     mermaid.initialize({
@@ -63,6 +84,22 @@ describe('getEdgesToRender', () => {
       flowchart: { htmlLabels: false },
       logLevel: 5,
     });
+  });
+
+  it('retains the segmented workaround for self-loops on compound nodes', () => {
+    const { graph } = prepareLayoutForDagre({
+      type: 'flowchart',
+      direction: 'TB',
+      config: {},
+      nodes: [
+        { id: 'group', isGroup: true },
+        { id: 'A', parentId: 'group' },
+      ],
+      edges: [{ id: 'loop', start: 'group', end: 'group', label: 'again' }],
+    });
+    expect(graph.nodes()).toContain('group---group---1');
+    expect(graph.nodes()).toContain('group---group---2');
+    expect(graph.edges()).toHaveLength(3);
   });
 
   it('copies DAGRE node and edge layout back onto LayoutData', () => {
