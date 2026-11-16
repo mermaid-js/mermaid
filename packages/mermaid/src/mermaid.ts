@@ -171,13 +171,30 @@ const runThrowsErrors = async function (
 
     // Highlighters escape the source before adding their markup.
     const highlightingSelector = [
-      '.hljs, [class^="hljs-"], [class*=" hljs-"]',
+      '.hljs',
       'span.token.keyword, span.token.punctuation',
-      'code[class^="language-"] span, code[class*=" language-"] span',
       'span.line > span[style]',
     ].join(', ');
     const highlighted =
-      element.matches(highlightingSelector) || element.querySelector(highlightingSelector) !== null;
+      element.matches(highlightingSelector) ||
+      element.querySelector(highlightingSelector) !== null ||
+      [element, ...element.querySelectorAll('[class], span')].some((node) => {
+        if ([...node.classList].some((className) => className.startsWith('hljs-'))) {
+          return true;
+        }
+        if (!node.matches('span')) {
+          return false;
+        }
+        for (let ancestor = node.parentElement; ancestor; ancestor = ancestor.parentElement) {
+          if (
+            ancestor.matches('code') &&
+            [...ancestor.classList].some((className) => className.startsWith('language-'))
+          ) {
+            return true;
+          }
+        }
+        return false;
+      });
     txt = highlighted ? (element.textContent ?? '') : utils.entityDecode(element.innerHTML);
 
     // transforms the html to pure text

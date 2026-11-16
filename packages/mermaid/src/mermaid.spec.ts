@@ -90,6 +90,24 @@ describe('when using mermaid and ', () => {
         html: '<code class="extra language-mermaid"><span class="token">graph TD;</span>\nA--&gt;B;</code>',
         text: 'graph TD;\nA-->B;',
       },
+      ...['\t', '\n', '\r', '\f'].flatMap((separator) => [
+        {
+          name: `HTML whitespace ${JSON.stringify(separator)} before a root Highlight.js token`,
+          className: `mermaid${separator}hljs-keyword`,
+          html: '<span>graph</span> TD;\nA--&gt;B;',
+          text: 'graph TD;\nA-->B;',
+        },
+        {
+          name: `HTML whitespace ${JSON.stringify(separator)} before a nested Highlight.js token`,
+          html: `<span class="extra${separator}hljs-keyword">graph</span> TD;\nA--&gt;B;`,
+          text: 'graph TD;\nA-->B;',
+        },
+        {
+          name: `HTML whitespace ${JSON.stringify(separator)} before a language token`,
+          html: `<code class="extra${separator}language-mermaid"><span class="token">graph TD;</span>\nA--&gt;B;</code>`,
+          text: 'graph TD;\nA-->B;',
+        },
+      ]),
       {
         name: 'Shiki line spans with inline styles',
         html: '<code><span class="line"><span style="color:#CF222E">graph</span><span style="color:#24292F"> TD;</span></span>\n<span class="line"><span style="color:#24292F">A--&gt;B;</span></span></code>',
@@ -151,6 +169,37 @@ describe('when using mermaid and ', () => {
 
       expect(mermaidAPI.render).toHaveBeenCalledExactlyOnceWith(expect.any(String), text, node);
     });
+
+    it.each(
+      [' ', '\t', '\n', '\r', '\f'].flatMap((separator) =>
+        ['span', 'div'].map((tagName) => ({ separator, tagName }))
+      )
+    )(
+      'should detect a language wrapper outside a selected $tagName with separator $separator',
+      async ({ separator, tagName }) => {
+        const host = document.createElement('pre');
+        const code = document.createElement('code');
+        code.className = `extra${separator}language-mermaid`;
+        const node = document.createElement(tagName);
+        node.className = 'mermaid';
+        node.innerHTML = '<span class="token">graph</span> TD;\nA--&gt;B;';
+        code.appendChild(node);
+        host.appendChild(code);
+        document.body.appendChild(host);
+
+        try {
+          await mermaid.run({ nodes: [node] });
+
+          expect(mermaidAPI.render).toHaveBeenCalledExactlyOnceWith(
+            expect.any(String),
+            'graph TD;\nA-->B;',
+            node
+          );
+        } finally {
+          host.remove();
+        }
+      }
+    );
 
     it('should accept single node', async () => {
       const node = document.createElement('div');
