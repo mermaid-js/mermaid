@@ -560,6 +560,44 @@ C --> C`
     }
   });
 
+  it('renders nested numeric-id subgraphs with an edge out of the inner cluster (#7609)', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      // Numeric cluster ids sort before their parents in graphlib's node map, so
+      // the cluster is extracted first and its nested subgraphs must still be
+      // reached by the extractor. Without the fix this throws
+      // "Cannot set properties of undefined (setting 'rank')" in dagre.
+      const { svg } = await mermaidAPI.render(
+        'numeric-subgraph-test',
+        `%%{init: {'flowchart': {'layout': 'dagre'}}}%%
+        flowchart LR
+        subgraph outer["outer"]
+          subgraph 1["inner"]
+            external
+            subgraph sub["sub"]
+              internal
+            end
+          end
+        end
+        sub-->external`
+      );
+      const dom = new JSDOM(svg);
+      const clusters = [...dom.window.document.querySelectorAll('.cluster')];
+
+      expect(clusters).toHaveLength(3);
+      expect(clusters.map((cluster) => cluster.id)).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('numeric-subgraph-test-outer'),
+          expect.stringContaining('numeric-subgraph-test-1'),
+          expect.stringContaining('numeric-subgraph-test-sub'),
+        ])
+      );
+    } finally {
+      restoreDom();
+    }
+  });
+
   it('renders a recursive ER relationship as one logical self-loop path', async () => {
     const restoreDom = setupDom();
 
