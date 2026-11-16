@@ -329,7 +329,12 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
         ?.map((s) => `${s}`)
         .join('; ');
       shapeSvg.selectAll('path').attr('style', strokeStyles ?? '');
-      shapeSvg.selectAll('.row-rect-even path').attr('style', nodeStyles);
+      // Apply the user's fill to both row parities. Odd rows were left on the
+      // theme's rowOdd colour, so an explicit `fill:` only recoloured half the
+      // entity while `color:` still applied to every label -- see #7852. The
+      // REDUX_THEMES branch above already styles every path, so this keeps the
+      // two paths consistent.
+      shapeSvg.selectAll('.row-rect-even path, .row-rect-odd path').attr('style', nodeStyles);
     }
   }
 
