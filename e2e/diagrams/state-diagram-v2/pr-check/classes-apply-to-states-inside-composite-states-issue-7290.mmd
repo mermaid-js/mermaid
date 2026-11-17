@@ -1,0 +1,16 @@
+---
+description: >-
+  Regression test for issue #7290: a classDef applied with `:::` and with a
+  `class` statement to states inside a composite state is rendered with the
+  same styles as a top-level state using the same class.
+---
+stateDiagram-v2
+  state A {
+    a:::badEvent --> b
+    b --> c
+    class c badEvent
+  }
+
+  B:::badEvent --> [*]
+
+  classDef badEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
