@@ -70,6 +70,7 @@ GENERICTYPE
 grammr
 graphtype
 halign
+hljs
 iife
 instrumenter
 interp
