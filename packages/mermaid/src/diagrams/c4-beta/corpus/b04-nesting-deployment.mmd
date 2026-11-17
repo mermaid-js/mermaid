@@ -1,0 +1,8 @@
+c4-beta deployment
+deploymentNode dc "Data centre" "" "Linux" {
+    infrastructureNode lb "Load balancer" "Routes requests." "nginx"
+    deploymentNode web "web" "" "Ubuntu" instances "2..4" {
+        container app "Shop API" "Serves orders." "Kotlin"
+    }
+}
+lb --> app : "Forwards requests to" "HTTPS"
