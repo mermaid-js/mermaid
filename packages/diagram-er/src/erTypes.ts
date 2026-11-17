@@ -1,0 +1,52 @@
+import type { EntityBoxData } from '@mermaid-js/core/rendering-util/rendering-elements/shapes/erBox.js';
+
+export interface EntityNode extends EntityBoxData {
+  id: string;
+  /** Authored entity name used by placement maps; `id` remains the generated rendering identity. */
+  placementId: string;
+  label: string;
+  attributes: Attribute[];
+  alias: string;
+  shape: string;
+  look?: string;
+  cssClasses?: string;
+  cssStyles?: string[];
+  cssCompiledStyles?: string[];
+  labelType?: string;
+}
+
+export interface Attribute {
+  type: string;
+  name: string;
+  keys: ('PK' | 'FK' | 'UK')[];
+  comment: string;
+}
+
+export interface Relationship {
+  entityA: string;
+  roleA: string;
+  entityB: string;
+  relSpec: RelSpec;
+}
+
+export interface RelSpec {
+  cardA: string;
+  cardB: string;
+  relType: string;
+}
+
+export interface EntityClass {
+  id: string;
+  styles: string[];
+  textStyles: string[];
+}
+
+export interface ErSubGraph {
+  classes: string[];
+  cssStyles?: string[];
+  dir?: string;
+  id: string;
+  labelType: string;
+  nodes: string[];
+  title: string;
+}

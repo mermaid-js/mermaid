@@ -1,0 +1,179 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type * as d3 from 'd3';
+import type { SetOptional, SetRequired } from 'type-fest';
+import type { Diagram } from '../Diagram.js';
+import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
+
+export type DiagramOrientation = 'LR' | 'TB' | 'BT';
+
+export interface DiagramMetadata {
+  title?: string;
+  config?: MermaidConfig;
+}
+
+/**
+ * Preprocessed code produced by `preprocessDiagram`. Diagrams that set
+ * {@link DiagramDB.preserveCommentsWhenParsing} are parsed from `withComments`
+ * and receive `frontmatterLineOffset`; all other diagrams are parsed from
+ * `cleaned` and behave exactly as before.
+ */
+export interface DiagramCode {
+  /** Original source text, untouched. */
+  raw: string;
+  /** Fully processed text: CRLF normalised, frontmatter removed, directives removed, comments stripped. */
+  cleaned: string;
+  /** Text after frontmatter/directive removal but before comment cleanup. */
+  withComments?: string;
+  /** Number of lines occupied by YAML frontmatter (0 if none). */
+  frontmatterLineOffset?: number;
+}
+
+export interface InjectUtils {
+  _log: any;
+  _setLogLevel: any;
+  _getConfig: any;
+  _sanitizeText: any;
+  _setupGraphViewbox: any;
+  _commonDb: any;
+  /** @deprecated as directives will be pre-processed since https://github.com/mermaid-js/mermaid/pull/4759 */
+  _parseDirective: any;
+}
+
+/**
+ * Generic Diagram DB that may apply to any diagram type.
+ */
+export interface DiagramDB {
+  // config
+  getConfig?: () => BaseDiagramConfig | undefined;
+
+  // db
+  clear?: () => void;
+  setDiagramTitle?: (title: string) => void;
+  getDiagramTitle?: () => string;
+  setAccTitle?: (title: string) => void;
+  getAccTitle?: () => string;
+  setAccDescription?: (description: string) => void;
+  getAccDescription?: () => string;
+  getDirection?: () => string | undefined;
+  setDirection?: (dir: DiagramOrientation) => void;
+  setDisplayMode?: (title: string) => void;
+  setDiagramId?: (svgElementId: string) => void;
+  bindFunctions?: (element: Element) => void;
+  setErrorMessage?: (message: string) => void;
+  getErrorMessage?: () => string | undefined;
+  validate?: () => void;
+
+  /**
+   * Opt in to source-faithful parsing.
+   *
+   * When `true`, `Diagram.fromText` parses the text with `%%` comments still in
+   * place ({@link DiagramCode.withComments}) instead of the comment-stripped
+   * {@link DiagramCode.cleaned}, so parser positions line up with the source the
+   * author wrote. Only diagrams that report source positions need this; every
+   * other diagram leaves it unset and parses `cleaned` as before.
+   */
+  readonly preserveCommentsWhenParsing?: boolean;
+
+  /**
+   * Receives the number of lines occupied by YAML frontmatter, which the parser
+   * never sees. Diagrams that report source positions add this to their parser
+   * line numbers so the positions refer to the original source.
+   */
+  setFrontmatterLineOffset?: (offset: number) => void;
+}
+
+/**
+ * DiagramDB with fields that is required for all new diagrams.
+ */
+export type DiagramDBBase<T extends BaseDiagramConfig> = {
+  getConfig: () => Required<T>;
+} & SetRequired<
+  DiagramDB,
+  | 'clear'
+  | 'getAccTitle'
+  | 'getDiagramTitle'
+  | 'getAccDescription'
+  | 'setAccDescription'
+  | 'setAccTitle'
+  | 'setDiagramTitle'
+>;
+
+// This is what is returned from getClasses(...) methods.
+// It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
+// It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
+export interface DiagramStyleClassDef {
+  id: string;
+  /**
+   * The styles to apply to the class for HTML rendering.
+   * These are expected to be CSS property declarations without a trailing semicolon, e.g. `color: red`.
+   */
+  styles?: string[];
+  /**
+   * The styles to apply to `<tspan>` elements with the given class.
+   */
+  textStyles?: string[];
+}
+
+export interface DiagramRenderer {
+  draw: DrawDefinition;
+  getClasses?: (
+    text: string,
+    diagram: Pick<DiagramDefinition, 'db'>
+  ) => Map<string, DiagramStyleClassDef>;
+}
+
+export interface DiagramDefinition {
+  db: DiagramDB;
+  renderer: DiagramRenderer;
+  parser: ParserDefinition;
+  styles?: any;
+  init?: (config: MermaidConfig) => void;
+  injectUtils?: (
+    _log: InjectUtils['_log'],
+    _setLogLevel: InjectUtils['_setLogLevel'],
+    _getConfig: InjectUtils['_getConfig'],
+    _sanitizeText: InjectUtils['_sanitizeText'],
+    _setupGraphViewbox: InjectUtils['_setupGraphViewbox'],
+    _commonDb: InjectUtils['_commonDb'],
+    /** @deprecated as directives will be pre-processed since https://github.com/mermaid-js/mermaid/pull/4759 */
+    _parseDirective: InjectUtils['_parseDirective']
+  ) => void;
+}
+
+export interface ExternalDiagramDefinition {
+  id: string;
+  detector: DiagramDetector;
+  loader: DiagramLoader;
+}
+
+export type DetectorRecord = SetOptional<Omit<ExternalDiagramDefinition, 'id'>, 'loader'>;
+export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
+export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
+
+/**
+ * Type for function draws diagram in the tag with id: id based on the graph definition in text.
+ *
+ * @param text - The text of the diagram.
+ * @param id - The id of the diagram which will be used as a DOM element id.
+ * @param version - MermaidJS version from package.json.
+ * @param diagramObject - A standard diagram containing the DB and the text and type etc of the diagram.
+ */
+export type DrawDefinition = (
+  text: string,
+  id: string,
+  version: string,
+  diagramObject: Diagram
+) => void | Promise<void>;
+
+export interface ParserDefinition {
+  parse: (text: string) => void | Promise<void>;
+  parser?: { yy: DiagramDB };
+}
+
+export type HTML = d3.Selection<HTMLIFrameElement, unknown, Element | null, unknown>;
+
+export type SVG = d3.Selection<SVGSVGElement, unknown, Element | null, unknown>;
+
+export type SVGGroup = d3.Selection<SVGGElement, unknown, Element | null, unknown>;
+
+export type DiagramStylesProvider = (options?: any, svgId?: string) => string;

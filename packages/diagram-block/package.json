@@ -1,0 +1,50 @@
+{
+  "name": "@mermaid-js/diagram-block",
+  "version": "12.3.0",
+  "description": "The block diagram for mermaid",
+  "module": "dist/mermaid-diagram-block.core.mjs",
+  "types": "./dist/blockDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/blockDetector.ts",
+      "types": "./dist/blockDetector.d.ts",
+      "import": "./dist/mermaid-diagram-block.core.mjs",
+      "default": "./dist/mermaid-diagram-block.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-block"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "d3": "^7.9.0",
+    "dagre-d3-es": "7.0.14",
+    "es-toolkit": "^1.45.1",
+    "khroma": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

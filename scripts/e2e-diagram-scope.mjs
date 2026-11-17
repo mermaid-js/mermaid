@@ -19,7 +19,7 @@
  *
  * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
- *   const spec = detectScope(['packages/mermaid/src/diagrams/flowchart/flowchart.ts']);
+ *   const spec = detectScope(['packages/diagram-flowchart/src/flowchart.ts']);
  *   // => 'e2e/rendering/flowchart/'
  */
 
@@ -33,7 +33,7 @@ export const SPEC_BASE_DIR = 'e2e/rendering';
 // Where the global mmd snapshot runner's fixtures live.
 export const DIAGRAMS_DIR = 'e2e/diagrams';
 
-// Source diagram folders mix kebab- and camelCase (quadrant-chart, treeView)
+// Source diagram folders mix kebab- and camelCase (e.g. treeView)
 // while the fixture folders are kebab (tree-view); compare on a canonical
 // lowercased, hyphen-stripped name.
 const canonicalName = (name) => name.toLowerCase().replace(/-/g, '');
@@ -111,25 +111,27 @@ const IGNORABLE_SUFFIXES = ['.md'];
 // ---------------------------------------------------------------------------
 const SHARED_PREFIXES = [
   // Shared diagram utilities (used by all diagram types)
-  'packages/mermaid/src/diagrams/common/',
+  'packages/core/src/diagrams/common/',
   // Shared rendering utilities (shapes, edges, layout — affects all diagrams)
-  'packages/mermaid/src/rendering-util/',
+  'packages/core/src/rendering-util/',
   // Themes (affects all visual output)
-  'packages/mermaid/src/themes/',
+  'packages/core/src/themes/',
   // Core API and config (affects all diagrams)
-  'packages/mermaid/src/config',
-  'packages/mermaid/src/mermaid',
-  'packages/mermaid/src/mermaidAPI',
-  'packages/mermaid/src/diagram-api/',
-  'packages/mermaid/src/Diagram.',
-  'packages/mermaid/src/schemas/',
+  'packages/core/src/config',
+  'packages/core/src/mermaid',
+  'packages/core/src/mermaidAPI',
+  'packages/core/src/diagram-api/',
+  'packages/core/src/Diagram.',
+  'packages/core/src/schemas/',
   // Parser package (used by multiple diagram types via Langium)
   'packages/parser/',
   // Layout engine packages
   'packages/dagre-wrapper/',
+  'packages/mermaid-layout-cose-bilkent/',
   'packages/mermaid-layout-elk/',
   'packages/mermaid-layout-tidy-tree/',
   // Plugin packages (separate bundles but tested in main suite)
+  'packages/plugin-katex/',
   'packages/mermaid-zenuml/',
   'packages/mermaid-example-diagram/',
   // Playwright: config and cross-cutting test utilities
@@ -144,8 +146,13 @@ const SHARED_PREFIXES = [
 ];
 
 // Regex: extract diagram name from paths like
-// packages/mermaid/src/diagrams/<name>/...
-const DIAGRAM_PATH_RE = /^packages\/mermaid\/src\/diagrams\/([^/]+)\//;
+// packages/core/src/diagrams/<name>/... or packages/diagram-<name>/...
+// Swimlanes lives in the flowchart package but has its own e2e tests.
+const DIAGRAM_PATH_RE =
+  /^packages\/(?:core\/src\/diagrams\/|diagram-)(?:flowchart\/src\/(?=swimlanes\/))?([^/]+)\//;
+
+// Diagram packages named differently from their e2e folders.
+const PACKAGE_E2E_NAMES = { journey: 'user-journey', quadrant: 'quadrant-chart' };
 
 // ---------------------------------------------------------------------------
 // Core detection function
@@ -197,7 +204,7 @@ export function detectScope(files, options = {}) {
     // File inside a diagram folder
     const diagramMatch = DIAGRAM_PATH_RE.exec(trimmed);
     if (diagramMatch) {
-      const name = diagramMatch[1];
+      const name = PACKAGE_E2E_NAMES[diagramMatch[1]] ?? diagramMatch[1];
       // 'common' and 'globalStyles' are shared — already caught above,
       // but guard here for safety
       if (name === 'common' || name === 'globalStyles') {

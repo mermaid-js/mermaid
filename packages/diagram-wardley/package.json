@@ -1,0 +1,47 @@
+{
+  "name": "@mermaid-js/diagram-wardley",
+  "version": "12.3.0",
+  "description": "The wardley map diagram for mermaid",
+  "module": "dist/mermaid-diagram-wardley.core.mjs",
+  "types": "./dist/wardleyDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/wardleyDetector.ts",
+      "types": "./dist/wardleyDetector.d.ts",
+      "import": "./dist/mermaid-diagram-wardley.core.mjs",
+      "default": "./dist/mermaid-diagram-wardley.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-wardley"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/parser": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

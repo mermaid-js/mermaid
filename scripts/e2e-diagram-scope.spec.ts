@@ -15,8 +15,8 @@ describe('detectScope', () => {
 
   it('scopes to a single diagram when only that diagram changed', () => {
     const result = detectScope([
-      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
-      'packages/mermaid/src/diagrams/flowchart/flowchartRenderer.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartRenderer.ts',
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
@@ -27,7 +27,7 @@ describe('detectScope', () => {
   });
 
   it('returns patterns that Playwright can compile as regular expressions', () => {
-    const result = detectScope(['packages/mermaid/src/diagrams/sequence/sequenceRenderer.ts']);
+    const result = detectScope(['packages/diagram-sequence/src/sequenceRenderer.ts']);
 
     for (const pattern of result.split(',')) {
       expect(() => new RegExp(pattern, 'gi')).not.toThrow();
@@ -37,22 +37,22 @@ describe('detectScope', () => {
   it('falls back to full suite when rendering-util is touched', () => {
     expect(
       detectScope([
-        'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
-        'packages/mermaid/src/rendering-util/edgeDetails.ts',
+        'packages/diagram-flowchart/src/flowchartDb.ts',
+        'packages/core/src/rendering-util/edgeDetails.ts',
       ])
     ).toBe('');
   });
 
   it('falls back to full suite when themes are touched', () => {
-    expect(detectScope(['packages/mermaid/src/themes/theme-default.js'])).toBe('');
+    expect(detectScope(['packages/core/src/themes/theme-default.js'])).toBe('');
   });
 
   it('falls back to full suite when config is touched', () => {
-    expect(detectScope(['packages/mermaid/src/config.ts'])).toBe('');
+    expect(detectScope(['packages/core/src/config.ts'])).toBe('');
   });
 
   it('falls back to full suite when diagrams/common is touched', () => {
-    expect(detectScope(['packages/mermaid/src/diagrams/common/commonDb.ts'])).toBe('');
+    expect(detectScope(['packages/core/src/diagrams/common/commonDb.ts'])).toBe('');
   });
 
   it('falls back to full suite when parser package is touched', () => {
@@ -67,10 +67,28 @@ describe('detectScope', () => {
     expect(detectScope(['package.json'])).toBe('');
   });
 
+  it('maps a diagram package to its differently named spec folder', () => {
+    expect(detectScope(['packages/diagram-journey/src/journeyDb.js']).split(',')).toContain(
+      `${SPEC_BASE_DIR}/user-journey/`
+    );
+  });
+
+  it('maps swimlanes inside the flowchart package to swimlanes', () => {
+    expect(
+      detectScope(['packages/diagram-flowchart/src/swimlanes/styles.ts']).split(',')
+    ).toContain(`${SPEC_BASE_DIR}/swimlanes/`);
+  });
+
+  it('maps a fixtures-only diagram package to its differently named fixtures', () => {
+    expect(detectScope(['packages/diagram-quadrant/src/quadrantDb.ts'])).toBe(
+      `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`
+    );
+  });
+
   it('combines patterns from two different diagrams', () => {
     const result = detectScope([
-      'packages/mermaid/src/diagrams/gantt/ganttDb.ts',
-      'packages/mermaid/src/diagrams/pie/pieDb.ts',
+      'packages/diagram-gantt/src/ganttDb.ts',
+      'packages/diagram-pie/src/pieDb.ts',
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
@@ -88,7 +106,7 @@ describe('detectScope', () => {
 
   it('includes the mmd runner when a fixture changes alongside a diagram source', () => {
     const result = detectScope([
-      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
       'e2e/diagrams/flowchart/new-case.mmd',
     ]);
     expect(result.split(',')).toEqual(
@@ -102,7 +120,7 @@ describe('detectScope', () => {
   it('still falls back to full suite when shared code changes alongside a fixture', () => {
     expect(
       detectScope([
-        'packages/mermaid/src/rendering-util/edgeDetails.ts',
+        'packages/core/src/rendering-util/edgeDetails.ts',
         'e2e/diagrams/flowchart/new-case.mmd',
       ])
     ).toBe('');
@@ -111,7 +129,7 @@ describe('detectScope', () => {
   it('falls back to full suite for a diagram with no spec subfolder', () => {
     // Use a custom specBaseDir that has no subfolder for 'unknownDiagram'
     expect(
-      detectScope(['packages/mermaid/src/diagrams/unknownDiagram/unknownDb.ts'], {
+      detectScope(['packages/core/src/diagrams/unknownDiagram/unknownDb.ts'], {
         specBaseDir: SPEC_BASE_DIR,
       })
     ).toBe('');
@@ -137,7 +155,7 @@ describe('detectScope', () => {
 
   it('deduplicates when diagram source and its spec subfolder both change', () => {
     const result = detectScope([
-      'packages/mermaid/src/diagrams/gantt/ganttDb.ts',
+      'packages/diagram-gantt/src/ganttDb.ts',
       `${SPEC_BASE_DIR}/gantt/gantt.spec.js`,
     ]);
     // Both point to the same subfolder — should deduplicate
@@ -183,7 +201,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
 
   it('scopes to diagram when diagram source + file in demo folder changed', () => {
     const result = detectScope([
-      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
       'demos/sequence.html',
     ]);
     expect(result.split(',')).toEqual(
@@ -196,7 +214,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
 
   it('scopes to diagram when diagram source + docs both change', () => {
     const result = detectScope([
-      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
+      'packages/diagram-flowchart/src/flowchartDb.ts',
       'packages/mermaid/src/docs/syntax/flowchart.md',
     ]);
     expect(result.split(',')).toEqual(
@@ -210,7 +228,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
   it('falls back to full suite when shared code + docs both change', () => {
     expect(
       detectScope([
-        'packages/mermaid/src/rendering-util/edgeDetails.ts',
+        'packages/core/src/rendering-util/edgeDetails.ts',
         'packages/mermaid/src/docs/syntax/flowchart.md',
       ])
     ).toBe('');
@@ -226,7 +244,7 @@ describe('diagram coverage', () => {
   it('every known diagram has either a rendering spec subfolder or mmd fixtures', async () => {
     const fs = await import('fs');
 
-    const diagramsRoot = 'packages/mermaid/src/diagrams';
+    const diagramsRoot = 'packages/core/src/diagrams';
     const diagramFolders = fs
       .readdirSync(diagramsRoot, { withFileTypes: true })
       .filter((entry) => entry.isDirectory() && entry.name !== 'common')

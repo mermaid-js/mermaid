@@ -16,6 +16,10 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
     profiling: shouldProfile,
     options: packageOptions[entryName],
   } as const;
+  if (commonOptions.options.coreOnly) {
+    await build(getBuildConfig({ ...commonOptions, core: true }));
+    return;
+  }
   const buildConfigs: MermaidBuildOptions[] = [
     // package.mjs
     { ...commonOptions },
@@ -36,11 +40,11 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
       { ...iifeOptions },
       // mermaid.min.js
       { ...iifeOptions, minify: true, metafile: shouldVisualize },
-      // mermaid.tiny.min.js
+      // tiny's mermaid.tiny.js (renamed by buildTinyMermaid)
       {
         ...iifeOptions,
+        options: { name: 'mermaid.tiny', packageName: 'tiny', file: 'mermaid.ts' },
         minify: true,
-        includeLargeFeatures: false,
         metafile: shouldVisualize,
         sourcemap: false,
       }
@@ -81,25 +85,25 @@ const handler = (e) => {
   process.exit(1);
 };
 
-const buildTinyMermaid = async () => {
-  await mkdir('./packages/tiny/dist', { recursive: true });
-  await rename(
-    './packages/mermaid/dist/mermaid.tiny.min.js',
-    './packages/tiny/dist/mermaid.tiny.js'
-  );
-  // Copy version from mermaid's package.json to tiny's package.json
+// Tiny's build inlines its version (`injected.version`), so sync it first.
+const syncTinyVersion = async () => {
   const mermaidPkg = JSON.parse(await readFile('./packages/mermaid/package.json', 'utf8'));
   const tinyPkg = JSON.parse(await readFile('./packages/tiny/package.json', 'utf8'));
   tinyPkg.version = mermaidPkg.version;
-
   await writeFile('./packages/tiny/package.json', JSON.stringify(tinyPkg, null, 2) + '\n');
+};
+
+const buildTinyMermaid = async () => {
+  await rename('./packages/tiny/dist/mermaid.tiny.min.js', './packages/tiny/dist/mermaid.tiny.js');
   await cp('./packages/mermaid/CHANGELOG.md', './packages/tiny/CHANGELOG.md');
   await cp('./packages/mermaid/THIRD_PARTY_NOTICES', './packages/tiny/THIRD_PARTY_NOTICES');
+  await cp('./packages/mermaid/THIRD_PARTY_NOTICES', './packages/core/THIRD_PARTY_NOTICES');
 };
 
 const main = async () => {
   await generateLangium();
   await mkdir('stats', { recursive: true });
+  await syncTinyVersion();
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   // it should build `parser` before `mermaid` because it's a dependency
   for (const pkg of packageNames) {

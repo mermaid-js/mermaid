@@ -1,0 +1,18 @@
+{
+  "detectiveOptions": {
+    "ts": {
+      "skipTypeImports": true
+    },
+    "es6": {
+      "skipTypeImports": true
+    }
+  },
+  "fileExtensions": [
+    "js",
+    "ts"
+  ],
+  "excludeRegExp": [
+    "node_modules"
+  ],
+  "tsConfig": "./tsconfig.json"
+}

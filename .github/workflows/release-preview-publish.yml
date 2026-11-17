@@ -36,8 +36,8 @@ jobs:
       - name: Install Json
         run: npm i json@11.0.0 --global
 
-      # Shared by every publish step below, so all three packages carry the same
-      # preview version and can be installed as a matching set.
+      # Shared by every publish step below, so every package carries the same
+      # preview version and they can be installed as a matching set.
       - name: Compute preview version
         id: preview
         run: |
@@ -53,12 +53,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish mermaid
-        working-directory: ./packages/mermaid
+      # Published before `mermaid`, so that `pnpm pack` pins mermaid's
+      # `workspace:^` dependency on core to this preview version.
+      - name: Publish core
+        working-directory: ./packages/core
         run: |
           npm version --no-git-tag-version --allow-same-version "$VERSION"
-          json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
-          json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
+          json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
           # We don't publish a separate `@mermaid-js/parser` so bundle it instead
           json -I -f package.json -e 'this.bundleDependencies??=[]' -e 'this.bundleDependencies.push("@mermaid-js/parser")'
           pnpm pack
@@ -66,32 +67,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
-          # Prevent `npm publish` from failing if the docs verification fails.
-          ONLY_WARN_ON_VERIFY_ERROR: 'true'
 
-      # `@mermaid-js/layout-elk` and `@mermaid-js/tiny` are already scoped to the
+      # The diagrams, layouts, plugins and `@mermaid-js/tiny` are scoped to the
       # org, so unlike `mermaid` they need no rename. Publishing them alongside
-      # lets a preview be exercised the way users combine them: ELK bundled in
-      # mermaid, and ELK registered onto the tiny build, which omits it.
-      - name: Publish layout-elk and tiny
+      # lets a preview be exercised the way users combine them: bundled in
+      # mermaid, and registered onto the tiny build, which omits them.
+      - name: Publish layouts, plugins and tiny
         run: |
           # Every package is attempted even after one fails, and the step fails
           # at the end. Under `bash -e` a failing subshell aborted the loop, so
           # `tiny` was never attempted while `layout-elk` was being refused —
           # its own publishability stayed unknown across every failed run.
           failed=''
-          for pkg in mermaid-layout-elk tiny; do
+          for pkg in $(cd packages && ls -d diagram-*) mermaid-layout-cose-bilkent mermaid-layout-elk plugin-katex tiny; do
             (
               cd "packages/$pkg"
               npm version --no-git-tag-version --allow-same-version "$VERSION"
               json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
-              # The preview `mermaid` is published under a different name
-              # (`@mermaid-js/mermaid`), so a `mermaid` peer range can never be
-              # satisfied by a preview install. Drop it rather than emit an
-              # unmet-peer warning on every install.
-              json -I -f package.json -e 'delete this.peerDependencies'
+              # We don't publish a separate `@mermaid-js/parser` so bundle it instead
+              json -I -f package.json -e 'if (this.dependencies?.["@mermaid-js/parser"]) { this.bundleDependencies??=[]; this.bundleDependencies.push("@mermaid-js/parser") }'
               pnpm pack
-              # Both packages must stay *public* in the org's GitHub Packages
+              # These packages must stay *public* in the org's GitHub Packages
               # settings. While they were `internal`, this step failed with
               # `403 permission_denied: write_package`; `@mermaid-js/mermaid`
               # published from the same job and the same `GITHUB_TOKEN` because
@@ -107,3 +103,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
+
+      # After the diagrams, layouts and plugins, so that `pnpm pack` pins mermaid's
+      # dependencies on them to this preview version.
+      - name: Publish mermaid
+        working-directory: ./packages/mermaid
+        run: |
+          npm version --no-git-tag-version --allow-same-version "$VERSION"
+          json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
+          json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
+          pnpm pack
+          npm publish --tag preview *.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.preview.outputs.version }}
+          # Prevent `npm publish` from failing if the docs verification fails.
+          ONLY_WARN_ON_VERIFY_ERROR: 'true'

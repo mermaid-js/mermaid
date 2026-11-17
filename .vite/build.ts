@@ -78,7 +78,6 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     },
     define: {
       'import.meta.vitest': 'undefined',
-      'injected.includeLargeFeatures': 'true',
       'injected.profiling': 'false',
       'injected.version': `'0.0.0'`,
     },
@@ -101,7 +100,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 
   if (watch && config.build) {
     config.build.watch = {
-      include: ['packages/mermaid-example-diagram/src/**', 'packages/mermaid/src/**'],
+      include: ['packages/mermaid-example-diagram/src/**', 'packages/core/src/**'],
     };
   }
 

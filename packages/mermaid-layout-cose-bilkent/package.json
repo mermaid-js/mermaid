@@ -1,0 +1,52 @@
+{
+  "name": "@mermaid-js/layout-cose-bilkent",
+  "version": "0.0.0",
+  "description": "cose-bilkent layout engine for mermaid",
+  "module": "dist/mermaid-layout-cose-bilkent.core.mjs",
+  "types": "./dist/plugin.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/plugin.ts",
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/mermaid-layout-cose-bilkent.core.mjs",
+      "default": "./dist/mermaid-layout-cose-bilkent.core.mjs"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "cose-bilkent",
+    "mermaid",
+    "layout"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/mermaid-layout-cose-bilkent"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "cytoscape": "^3.34.0",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

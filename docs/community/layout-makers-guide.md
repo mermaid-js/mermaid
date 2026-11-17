@@ -105,7 +105,7 @@ So write the core as one exported function, and have both the browser and your t
 
 The examples from here on build a layout called `simple-grid`. Mermaid ships a production `grid` layout under `rendering-util/layout-algorithms/grid/`; the snippets here stay intentionally minimal and pedagogical so you can focus on the layout-maker contract rather than production complexity.
 
-Put the algorithm in `packages/mermaid/src/rendering-util/layout-algorithms/<name>/`. This one arranges leaf nodes in a grid and connects them with straight lines:
+Put the algorithm in `packages/core/src/rendering-util/layout-algorithms/<name>/`. This one arranges leaf nodes in a grid and connects them with straight lines:
 
 ```ts
 // layout-algorithms/simple-grid/layoutCore.ts
@@ -151,7 +151,7 @@ That renders. It is also wrong in most of the ways a layout can be wrong.
 
 ## Registering the layout
 
-The layouts that ship with Mermaid are listed in `registerDefaultLayoutLoaders()` in `packages/mermaid/src/rendering-util/render.ts`. Add one entry for yours:
+The layouts that ship with Mermaid are listed in `registerDefaultLayoutLoaders()` in `packages/core/src/rendering-util/render.ts`. Add one entry for yours:
 
 ```ts
 registerLayoutLoaders([
@@ -165,7 +165,7 @@ registerLayoutLoaders([
 ]);
 ```
 
-The loader is lazy, so the code only downloads when a diagram asks for it. `cose-bilkent` is registered the same way but wrapped in a check on `includeLargeFeatures`, which is how a layout stays out of the tiny build. Users then select the layout by the name you registered:
+The loader is lazy, so the code only downloads when a diagram asks for it. Large layouts, like ELK and `cose-bilkent`, live in their own packages instead: the `mermaid` entry (`packages/mermaid/src/mermaid.ts`) registers them, and the tiny entry leaves them out. Users then select the layout by the name you registered:
 
 ```text
 ---
@@ -385,16 +385,16 @@ Three shapes of test cover most needs. A tiny inline geometry test, where you bu
 ```bash
 # The sweep, with the aggregate report
 pnpm exec vitest run \
-  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts
+  packages/core/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts
 
 # Just the aggregate line
 pnpm exec vitest run \
-  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts \
+  packages/core/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts \
   2>&1 | grep 'DDLT-AGG'
 
 # One fixture while iterating
 pnpm exec vitest run -t "1-simple" \
-  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/
+  packages/core/src/rendering-util/layout-algorithms/ddlt/
 ```
 
 The report gives `total`, `avg`, `min`, and `invalid`, then one row per fixture with its score and issue types. Read it as a work queue: the lowest row is where the next improvement is. `ORTHO_TEST_DEBUG=1` in front of the command turns the layout logger from `fatal` up to `debug`, which helps when a row fails for reasons the report does not explain.

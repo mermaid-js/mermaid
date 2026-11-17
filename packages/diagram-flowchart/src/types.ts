@@ -1,0 +1,108 @@
+import type { ShapeID } from '@mermaid-js/core/rendering-util/rendering-elements/shapes.js';
+import type { NodeMetaData } from '@mermaid-js/core/types.js';
+
+/**
+ * Valid `type` args to `yy.addVertex` taken from
+ * `packages/diagram-flowchart/src/parser/flow.jison`
+ */
+export type FlowVertexTypeParam =
+  | undefined
+  | 'square'
+  | 'doublecircle'
+  | 'circle'
+  | 'ellipse'
+  | 'stadium'
+  | 'subroutine'
+  | 'rect'
+  | 'cylinder'
+  | 'round'
+  | 'diamond'
+  | 'hexagon'
+  | 'odd'
+  | 'trapezoid'
+  | 'inv_trapezoid'
+  | 'lean_right'
+  | 'lean_left';
+
+export interface FlowVertex {
+  classes: string[];
+  dir?: string;
+  domId: string;
+  haveCallback?: boolean;
+  id: string;
+  labelType: 'markdown' | 'string' | 'text';
+  link?: string;
+  linkTarget?: string;
+  props?: any;
+  styles: string[];
+  text?: string;
+  type?: ShapeID | FlowVertexTypeParam;
+  icon?: string;
+  form?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  assetWidth?: number;
+  assetHeight?: number;
+  defaultWidth?: number;
+  imageAspectRatio?: number;
+  constraint?: 'on' | 'off';
+  /** Sanitized authored metadata retained until getData selects layout-owned fields. */
+  metadata?: NodeMetaData;
+}
+
+export interface FlowText {
+  text: string;
+  type: 'text';
+}
+
+export interface FlowEdge {
+  isUserDefinedId: boolean;
+  start: string;
+  end: string;
+  interpolate?: string;
+  type?: string;
+  stroke?: 'normal' | 'thick' | 'invisible' | 'dotted';
+  style?: string[];
+  length?: number;
+  text: string;
+  labelType: 'markdown' | 'string' | 'text';
+  classes: string[];
+  id?: string;
+  animation?: 'fast' | 'slow';
+  animate?: boolean;
+  step?: number;
+}
+
+export interface FlowClass {
+  id: string;
+  styles: string[];
+  textStyles: string[];
+}
+
+export interface FlowSubGraph {
+  classes: string[];
+  dir?: string;
+  id: string;
+  labelType: string;
+  nodes: string[];
+  title: string;
+  /**
+   * Optional `@{ ... }` metadata attached to the subgraph via a
+   * `subGraphId@{ ... }` statement, e.g. `{ view: 'collapsed' }`.
+   */
+  metadata?: NodeMetaData;
+}
+
+/** A node a subgraph listed but lost to an earlier, unrelated subgraph that lists it too. */
+export interface DroppedSubGraphMember {
+  node: string;
+  keptBy: string;
+  droppedFrom: string;
+}
+
+export interface FlowLink {
+  length?: number;
+  stroke: string;
+  type: string;
+  text?: string;
+}

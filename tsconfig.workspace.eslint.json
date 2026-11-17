@@ -1,0 +1,24 @@
+{
+  // One program for core and the packages built from it, so that ESLint loads core's
+  // types once rather than once per package.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "customConditions": ["mermaid-source"],
+    "types": ["vite/client", "vitest/importMeta", "vitest/globals"]
+  },
+  "include": [
+    "packages/core/src",
+    "packages/core/scripts",
+    "packages/core/.lintstagedrc.mjs",
+    "packages/mermaid/src/*.ts",
+    "packages/mermaid/src/tests",
+    "packages/mermaid/scripts",
+    "packages/mermaid/.lintstagedrc.mjs",
+    "packages/tiny/src",
+    "packages/diagram-*/src",
+    "packages/mermaid-layout-cose-bilkent/src",
+    "packages/mermaid-layout-elk/src",
+    "packages/plugin-katex/src"
+  ]
+}

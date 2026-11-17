@@ -1,0 +1,49 @@
+{
+  "name": "@mermaid-js/diagram-agentflow",
+  "version": "12.3.0",
+  "description": "The agentflow diagram for mermaid",
+  "module": "dist/mermaid-diagram-agentflow.core.mjs",
+  "types": "./dist/afDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/afDetector.ts",
+      "types": "./dist/afDetector.d.ts",
+      "import": "./dist/mermaid-diagram-agentflow.core.mjs",
+      "default": "./dist/mermaid-diagram-agentflow.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-agentflow"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "d3": "^7.9.0",
+    "dompurify": "^3.4.17",
+    "khroma": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

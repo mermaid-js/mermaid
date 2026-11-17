@@ -107,6 +107,7 @@ NODECOUNT
 NODIR
 nonterminal
 NSTR
+outbase
 outdir
 Qcontrolx
 QSTR

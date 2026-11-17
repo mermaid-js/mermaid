@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { LayoutLoaderDefinition } from 'mermaid';
-
-import elkPluginUntyped from '../dist/mermaid-layout-elk.core.mjs';
-
-const elkPlugin: LayoutLoaderDefinition[] = elkPluginUntyped;
+import elkPlugin from './plugin.js';
 
 describe('elkPlugin', () => {
   it('should be defined', () => {
@@ -11,7 +7,7 @@ describe('elkPlugin', () => {
   });
 
   it('should add to mermaid', async () => {
-    const { default: mermaid } = await import('mermaid');
+    const { default: mermaid } = await import('@mermaid-js/core');
     mermaid.registerLayoutLoaders(elkPlugin);
   });
 
@@ -22,5 +18,13 @@ describe('elkPlugin', () => {
 
     const algorithm = await elkLayout.loader();
     expect(algorithm).toHaveProperty('render');
+  });
+
+  it('maps the bare elk name to the layered algorithm', () => {
+    const algorithms = Object.fromEntries(
+      elkPlugin.map(({ name, algorithm }) => [name, algorithm])
+    );
+    expect(algorithms.elk).toBe('elk.layered');
+    expect(algorithms['elk.mrtree']).toBe('elk.mrtree');
   });
 });

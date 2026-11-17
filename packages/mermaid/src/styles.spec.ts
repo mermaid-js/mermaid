@@ -4,35 +4,11 @@ import { vi } from 'vitest';
 import { validate } from 'csstree-validator';
 import { compile, serialize, stringify } from 'stylis';
 
-import { getConfig } from './config.js';
-import theme from './themes/index.js';
-
-/**
- * Import the getStyles function from each diagram.
- *
- * Unfortunately, we can't use the `diagrams/*?/*Detector.ts` functions,
- * because many of the diagrams have a circular dependency import error
- * (they import mermaidAPI.js, which imports diagramOrchestrator.js, which causes a loop)
- */
-import c4 from './diagrams/c4/styles.js';
-import classDiagram from './diagrams/class/styles.js';
-import flowchart from './diagrams/flowchart/styles.js';
-import er from './diagrams/er/styles.js';
-import git from './diagrams/git/styles.js';
-import gantt from './diagrams/gantt/styles.js';
-import pie from './diagrams/pie/pieStyles.js';
-import requirement from './diagrams/requirement/styles.js';
-import sequence from './diagrams/sequence/styles.js';
-import state from './diagrams/state/styles.js';
-import journey from './diagrams/user-journey/styles.js';
-import timeline from './diagrams/timeline/styles.js';
-import mindmap from './diagrams/mindmap/styles.js';
-import packet from './diagrams/packet/styles.js';
-import block from './diagrams/block/styles.js';
-import treeView from './diagrams/treeView/styles.js';
-import radar from './diagrams/radar/styles.js';
-import venn from './diagrams/venn/styles.js';
-import themes from './themes/index.js';
+import { getConfig } from '@mermaid-js/core/config.js';
+import { detectors } from '@mermaid-js/core/diagram-api/detectType.js';
+import getStyles, { addStylesForDiagram } from '@mermaid-js/core/styles.js';
+import themes from '@mermaid-js/core/themes/index.js';
+import './mermaid.js';
 
 function checkValidStylisCSSStyleSheet(stylisString: string) {
   const cssString = serialize(compile(`#my-svg-id{${stylisString}}`), stringify);
@@ -62,65 +38,37 @@ function checkValidStylisCSSStyleSheet(stylisString: string) {
   }
 }
 
-describe('styles', () => {
-  beforeEach(() => {
-    // resets the styles added to addStylesForDiagram()
-    vi.resetModules();
+// TODO: ishikawa uses `dominant-baseline: baseline`, which isn't valid CSS.
+const lazyDiagrams = Object.entries(detectors).flatMap(([id, { loader }]) =>
+  loader && id !== 'ishikawa' ? [{ id, loader }] : []
+);
+
+describe('getStyles', () => {
+  test('should return a valid style for an empty type', () => {
+    const diagramType = 'my-custom-mocked-type-with-no-styles';
+    addStylesForDiagram(diagramType, vi.fn().mockReturnValue(''));
+
+    const styles = getStyles(diagramType, '', getConfig().themeVariables, '');
+
+    checkValidStylisCSSStyleSheet(styles);
   });
 
-  describe('getStyles', () => {
-    test('should return a valid style for an empty type', async () => {
-      const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
-
-      const diagramType = 'my-custom-mocked-type-with-no-styles';
-      const myTypeGetStylesFunc = vi.fn().mockReturnValue('');
-
-      addStylesForDiagram(diagramType, myTypeGetStylesFunc);
-
-      const styles = getStyles(diagramType, '', getConfig().themeVariables, '');
-
-      checkValidStylisCSSStyleSheet(styles);
+  /**
+   * Test CSS for each diagram type and each theme.
+   */
+  describe.each(lazyDiagrams)('for diagram $id', ({ id, loader }) => {
+    beforeAll(async () => {
+      const { diagram } = await loader();
+      addStylesForDiagram(id, diagram.styles);
     });
 
-    /**
-     * Test CSS for each diagram type and each theme.
-     */
-    for (const themeId of Object.keys(theme) as (keyof typeof theme)[]) {
-      for (const [diagramId, getDiagramStyles] of Object.entries({
-        c4,
-        classDiagram,
-        er,
-        flowchart,
-        gantt,
-        git,
-        journey,
-        mindmap,
-        pie,
-        requirement,
-        sequence,
-        state,
-        block,
-        timeline,
-        packet,
-        treeView,
-        radar,
-        venn,
-      })) {
-        test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
-          const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
+    test.each(Object.keys(themes) as (keyof typeof themes)[])(
+      'should return a valid style for theme %s',
+      (themeId) => {
+        const styles = getStyles(id, '', themes[themeId].getThemeVariables(), '');
 
-          addStylesForDiagram(diagramId, getDiagramStyles);
-          const styles = getStyles(
-            diagramId,
-            '',
-            // @ts-expect-error This will probably be broken until we create a proper Themes type.
-            themes[themeId].getThemeVariables(),
-            ''
-          );
-
-          checkValidStylisCSSStyleSheet(styles);
-        });
+        checkValidStylisCSSStyleSheet(styles);
       }
-    }
+    );
   });
 });

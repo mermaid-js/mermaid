@@ -1,0 +1,57 @@
+import { getConfig } from '@mermaid-js/core/diagram-api/diagramAPI.js';
+import type { DiagramStyleClassDef } from '@mermaid-js/core/diagram-api/types.js';
+import { log } from '@mermaid-js/core/logger.js';
+import { getDiagramElement } from '@mermaid-js/core/rendering-util/insertElementsForSize.js';
+import { getRegisteredLayoutAlgorithm, render } from '@mermaid-js/core/rendering-util/render.js';
+import { setupViewPortForSVG } from '@mermaid-js/core/rendering-util/setupViewPortForSVG.js';
+import type { LayoutData } from '@mermaid-js/core/rendering-util/types.js';
+import utils from '@mermaid-js/core/utils.js';
+
+export const getClasses = function (
+  text: string,
+  diagramObj: any
+): Map<string, DiagramStyleClassDef> {
+  return diagramObj.db.getClasses();
+};
+
+export const draw = async function (text: string, id: string, _version: string, diag: any) {
+  log.info('REF0:');
+  log.info('Drawing state diagram (v2)', id);
+  const { securityLevel, flowchart: conf, layout } = getConfig();
+
+  // Set the diagram ID for DOM element uniqueness across multiple diagrams
+  diag.db.setDiagramId(id);
+
+  // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
+  // into the Layout data format
+  log.debug('Before getData: ');
+  const data4Layout = diag.db.getData() as LayoutData;
+  log.debug('Data: ', data4Layout);
+  // Create the root SVG
+  const svg = getDiagramElement(id, securityLevel);
+  const direction = diag.db.getDirection();
+
+  data4Layout.type = diag.type;
+  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
+  data4Layout.direction = direction;
+  data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
+  data4Layout.rankSpacing = conf?.rankSpacing || 50;
+  data4Layout.markers = ['point', 'circle', 'cross'];
+
+  data4Layout.diagramId = id;
+  log.debug('REF1:', data4Layout);
+  await render(data4Layout, svg);
+  const padding = data4Layout.config.flowchart?.diagramPadding ?? 8;
+  utils.insertTitle(
+    svg,
+    'flowchartTitleText',
+    conf?.titleTopMargin || 0,
+    diag.db.getDiagramTitle()
+  );
+  setupViewPortForSVG(svg, padding, 'flowchart', conf?.useMaxWidth || false);
+};
+
+export default {
+  getClasses,
+  draw,
+};

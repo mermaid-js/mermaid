@@ -1,0 +1,136 @@
+import type { SVG } from '../diagram-api/types.js';
+import type { InternalHelpers } from '../internals.js';
+import { internalHelpers } from '../internals.js';
+import { log } from '../logger.js';
+import { insertLookDefs } from './insertLookDefs.js';
+import { placeQueuedStepBadges } from './rendering-elements/edgeStepAnimation.js';
+import type { LayoutData } from './types.js';
+
+// console.log('MUST be removed, this only for keeping dev server working');
+// import tmp from './layout-algorithms/dagre/index.js';
+
+export interface RenderOptions {
+  algorithm?: string;
+}
+
+export interface LayoutAlgorithm {
+  render(
+    layoutData: LayoutData,
+    svg: SVG,
+    helpers: InternalHelpers,
+    options?: RenderOptions
+  ): Promise<void>;
+}
+
+export type LayoutLoader = () => Promise<LayoutAlgorithm>;
+export interface LayoutLoaderDefinition {
+  name: string;
+  loader: LayoutLoader;
+  algorithm?: string;
+}
+
+// Prototype-less: `layout` is settable from frontmatter, and on a plain object a value of
+// `__proto__` or `toString` would pass a membership test and reach `loader()` as a TypeError.
+const layoutAlgorithms: Record<string, LayoutLoaderDefinition> = Object.create(null);
+
+export const registerLayoutLoaders = (loaders: LayoutLoaderDefinition[]) => {
+  for (const loader of loaders) {
+    layoutAlgorithms[loader.name] = loader;
+  }
+};
+
+/**
+ * Look up a registered layout by name.
+ *
+ * @internal Not part of the public API; it exists so the registration of the
+ * built-in layouts can be asserted on directly.
+ */
+export const getLayoutLoaderDefinition = (name: string): LayoutLoaderDefinition => {
+  const definition = layoutAlgorithms[name];
+  if (!definition) {
+    throw new Error(`Unknown layout algorithm: ${name}`);
+  }
+  return definition;
+};
+
+// TODO: Should we load dagre without lazy loading?
+/**
+ * Registers built-in layout names without eagerly importing their implementations.
+ */
+const registerDefaultLayoutLoaders = () => {
+  registerLayoutLoaders([
+    {
+      name: 'dagre',
+      loader: async () => await import('./layout-algorithms/dagre/index.js'),
+    },
+    {
+      name: 'swimlane',
+      loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
+    },
+    // Register the public name here, but keep the implementation behind the same lazy boundary as
+    // other optional layouts so importing Mermaid does not eagerly initialize grid internals.
+    {
+      name: 'grid',
+      loader: async () => await import('./layout-algorithms/grid/index.js'),
+    },
+    // Small and dependency-free, so it ships in the tiny build too.
+    {
+      name: 'layered',
+      loader: async () => await import('./layout-algorithms/layered/render.js'),
+    },
+  ]);
+};
+
+registerDefaultLayoutLoaders();
+
+export const render = async (data4Layout: LayoutData, svg: SVG) => {
+  if (!Object.hasOwn(layoutAlgorithms, data4Layout.layoutAlgorithm)) {
+    throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
+  }
+
+  // Prefix all node domIds with the diagram's SVG element ID to ensure uniqueness
+  // across multiple diagrams on the same page.
+  if (data4Layout.diagramId) {
+    for (const node of data4Layout.nodes) {
+      const originalDomId = node.domId || node.id;
+      node.domId = `${data4Layout.diagramId}-${originalDomId}`;
+    }
+  }
+
+  const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
+  const layoutRenderer = await layoutDefinition.loader();
+
+  insertLookDefs(svg, data4Layout.config);
+
+  const result = await layoutRenderer.render(data4Layout, svg, internalHelpers, {
+    algorithm: layoutDefinition.algorithm,
+  });
+  placeQueuedStepBadges(svg.node());
+  return result;
+};
+
+/** Always registered, so the fallback chain can always end. */
+const LAST_RESORT_LAYOUT = 'dagre';
+
+/**
+ * Get the registered layout algorithm, falling back when it is not available -- `elk` and
+ * `cose-bilkent` aren't always registered (the tiny build omits them), so a diagram
+ * type may name either as its default. `fallback` may itself be absent, so `dagre` closes the chain.
+ */
+export const getRegisteredLayoutAlgorithm = (
+  algorithm = '',
+  { fallback = LAST_RESORT_LAYOUT } = {}
+) => {
+  if (Object.hasOwn(layoutAlgorithms, algorithm)) {
+    return algorithm;
+  }
+  for (const candidate of [fallback, LAST_RESORT_LAYOUT]) {
+    if (Object.hasOwn(layoutAlgorithms, candidate)) {
+      log.warn(`Layout algorithm ${algorithm} is not registered. Using ${candidate} as fallback.`);
+      return candidate;
+    }
+  }
+  throw new Error(
+    `Neither layout algorithm ${algorithm}, ${fallback}, nor ${LAST_RESORT_LAYOUT} is registered.`
+  );
+};

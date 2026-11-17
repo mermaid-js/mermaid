@@ -12,8 +12,8 @@ const META_PATH = `${REPORT_DIR}/mermaid-esm-min.meta.json`;
 const JSON_PATH = `${REPORT_DIR}/swimlanes-js-size.json`;
 const MARKDOWN_PATH = `${REPORT_DIR}/swimlanes-js-size.md`;
 const BASELINE_PATH = `${REPORT_DIR}/swimlanes-js-size.baseline.json`;
-const SWIMLANE_INPUT_ROOT = 'src/rendering-util/layout-algorithms/swimlanes/';
-const SWIMLANE_FS_ROOT = 'packages/mermaid/src/rendering-util/layout-algorithms/swimlanes';
+const SWIMLANE_INPUT_ROOT = '../core/src/rendering-util/layout-algorithms/swimlanes/';
+const SWIMLANE_FS_ROOT = 'packages/core/src/rendering-util/layout-algorithms/swimlanes';
 
 interface CliOptions {
   baselinePath: string;
@@ -190,7 +190,7 @@ const summarizeMetafile = async (metafile: Metafile): Promise<SwimlaneSizeSummar
       }
       const row = rowsByFile.get(inputPath) ?? {
         file: inputPath.slice(SWIMLANE_INPUT_ROOT.length),
-        fsPath: `packages/mermaid/${inputPath}`,
+        fsPath: `packages/core/${inputPath.slice('../core/'.length)}`,
         sourceBytes: metafile.inputs[inputPath]?.bytes ?? 0,
         minifiedBytesInOutput: 0,
       };
@@ -218,7 +218,7 @@ const summarizeMetafile = async (metafile: Metafile): Promise<SwimlaneSizeSummar
 
   return {
     generatedAt: new Date().toISOString(),
-    entry: 'packages/mermaid/src/mermaid.ts',
+    entry: 'packages/core/src/mermaid.ts',
     metafile: META_PATH,
     report: MARKDOWN_PATH,
     chunk: {

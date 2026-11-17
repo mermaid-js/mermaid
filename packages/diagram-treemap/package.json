@@ -1,0 +1,48 @@
+{
+  "name": "@mermaid-js/diagram-treemap",
+  "version": "12.3.0",
+  "description": "The treemap diagram for mermaid",
+  "module": "dist/mermaid-diagram-treemap.core.mjs",
+  "types": "./dist/detector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/detector.ts",
+      "types": "./dist/detector.d.ts",
+      "import": "./dist/mermaid-diagram-treemap.core.mjs",
+      "default": "./dist/mermaid-diagram-treemap.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-treemap"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/parser": "workspace:^",
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

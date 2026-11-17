@@ -1,0 +1,48 @@
+{
+  "name": "@mermaid-js/diagram-er",
+  "version": "12.3.0",
+  "description": "The entity relationship diagram for mermaid",
+  "module": "dist/mermaid-diagram-er.core.mjs",
+  "types": "./dist/erDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/erDetector.ts",
+      "types": "./dist/erDetector.d.ts",
+      "import": "./dist/mermaid-diagram-er.core.mjs",
+      "default": "./dist/mermaid-diagram-er.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-er"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "d3": "^7.9.0",
+    "khroma": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

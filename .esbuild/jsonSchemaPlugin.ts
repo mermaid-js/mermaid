@@ -1,5 +1,5 @@
 import type { JSONSchemaType } from 'ajv/dist/2019.js';
-import type { MermaidConfig } from '../packages/mermaid/src/config.type.js';
+import type { MermaidConfig } from '../packages/core/src/config.type.js';
 import { readFile } from 'node:fs/promises';
 import { getDefaults, getSchema, loadSchema } from '../.build/jsonSchema.js';
 

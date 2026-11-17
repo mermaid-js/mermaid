@@ -1,186 +1,78 @@
-import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
-import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
-import { expect } from 'vitest';
+import { JSDOM } from 'jsdom';
+import { describe, expect } from 'vitest';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import { ensureNodeFromSelector, jsdomIt } from '@mermaid-js/core/tests/util.js';
+import './mermaid.js';
+
+// Diagram types whose parsers support accTitle/accDescr. Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
+// We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different from what is put in the diagram text (ex: in -v2 diagrams)
+const diagramTypesAndExpectations = [
+  // { textDiagramType: 'C4Context', expectedType: 'c4' }, TODO : setAccTitle not called in C4 jison parser
+  { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+  { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
+  { textDiagramType: 'erDiagram', expectedType: 'er' },
+  { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
+  { textDiagramType: 'flowchart', expectedType: 'flowchart-v2' },
+  { textDiagramType: 'gitGraph', expectedType: 'gitGraph' },
+  { textDiagramType: 'gantt', expectedType: 'gantt' },
+  { textDiagramType: 'journey', expectedType: 'journey' },
+  { textDiagramType: 'pie', expectedType: 'pie' },
+  { textDiagramType: 'packet', expectedType: 'packet' },
+  { textDiagramType: 'packet-beta', expectedType: 'packet' },
+  {
+    textDiagramType: 'xychart-beta',
+    expectedType: 'xychart',
+    content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
+  },
+  {
+    textDiagramType: 'xychart',
+    expectedType: 'xychart',
+    content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
+  },
+  { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
+  { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
+  { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+  { textDiagramType: 'treeView-beta', expectedType: 'treeView' },
+  { textDiagramType: 'radar-beta', expectedType: 'radar' },
+  { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
+];
 
 describe('accessibility', () => {
-  describe('setA11yDiagramInfo', () => {
-    jsdomIt('should set svg element role to "graphics-document document"', ({ svg }) => {
-      setA11yDiagramInfo(svg, 'flowchart');
-      const svgNode = ensureNodeFromSelector('svg');
-      expect(svgNode.getAttribute('role')).toBe('graphics-document document');
-    });
+  const id = 'mermaid-fauxId';
+  const a11yTitle = 'a11y title';
+  const a11yDescr = 'a11y description';
 
-    jsdomIt('should set aria-roledescription to the diagram type', ({ svg }) => {
-      setA11yDiagramInfo(svg, 'flowchart');
-      const svgNode = ensureNodeFromSelector('svg');
-      expect(svgNode.getAttribute('aria-roledescription')).toBe('flowchart');
-    });
+  diagramTypesAndExpectations.forEach((testedDiagram) => {
+    describe(`${testedDiagram.textDiagramType}`, () => {
+      const diagramType = testedDiagram.textDiagramType;
+      const content = testedDiagram.content || '';
+      const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n${content}`;
+      const expectedDiagramType = testedDiagram.expectedType;
 
-    jsdomIt('should not set aria-roledescription if the diagram type is empty', ({ svg }) => {
-      setA11yDiagramInfo(svg, '');
-      const svgNode = ensureNodeFromSelector('svg');
-      expect(svgNode.getAttribute('aria-roledescription')).toBeNull();
-    });
-  });
-
-  describe('addSVGa11yTitleDescription', () => {
-    const givenId = 'theBaseId';
-
-    describe('with svg d3 object', () => {
-      it('should do nothing if there is no insert defined', () => {
-        const noInsertSvg = {
-          attr: vi.fn(),
-        };
-        const noInsertAttrSpy = vi.spyOn(noInsertSvg, 'attr').mockReturnValue(noInsertSvg);
-        addSVGa11yTitleDescription(noInsertSvg, 'some title', 'some desc', givenId);
-        expect(noInsertAttrSpy).not.toHaveBeenCalled();
-      });
-
-      describe('with a11y title', () => {
-        const a11yTitle = 'a11y title';
-
-        describe('with a11y description', () => {
-          const a11yDesc = 'a11y description';
-
-          jsdomIt('should set aria-labelledby to the title id inserted as a child', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            expect(svgNode.getAttribute('aria-labelledby')).toBe(`chart-title-${givenId}`);
-          });
-
-          jsdomIt(
-            'should set aria-describedby to the description id inserted as a child',
-            ({ svg }) => {
-              addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-              const svgNode = ensureNodeFromSelector('svg');
-              expect(svgNode.getAttribute('aria-describedby')).toBe(`chart-desc-${givenId}`);
-            }
-          );
-
-          jsdomIt(
-            'should insert title tag as the first child with the text set to the accTitle given',
-            ({ svg }) => {
-              addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-              const svgNode = ensureNodeFromSelector('svg');
-              const titleNode = ensureNodeFromSelector('title', svgNode);
-              expect(titleNode?.innerHTML).toBe(a11yTitle);
-            }
-          );
-
-          jsdomIt(
-            'should insert desc tag as the 2nd child with the text set to accDescription given',
-            ({ svg }) => {
-              addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-              const svgNode = ensureNodeFromSelector('svg');
-              const descNode = ensureNodeFromSelector('desc', svgNode);
-              expect(descNode?.innerHTML).toBe(a11yDesc);
-            }
-          );
-        });
-
-        describe(`without a11y description`, {}, () => {
-          const a11yDesc = undefined;
-
-          jsdomIt('should set aria-labelledby to the title id inserted as a child', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            expect(svgNode.getAttribute('aria-labelledby')).toBe(`chart-title-${givenId}`);
-          });
-
-          jsdomIt('should not set aria-describedby', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            expect(svgNode.getAttribute('aria-describedby')).toBeNull();
-          });
-
-          jsdomIt(
-            'should insert title tag as the first child with the text set to the accTitle given',
-            ({ svg }) => {
-              addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-              const svgNode = ensureNodeFromSelector('svg');
-              const titleNode = ensureNodeFromSelector('title', svgNode);
-              expect(titleNode?.innerHTML).toBe(a11yTitle);
-            }
-          );
-
-          jsdomIt('should not insert description tag', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            const descNode = svgNode.querySelector('desc');
-            expect(descNode).toBeNull();
-          });
-        });
-      });
-
-      describe('without a11y title', () => {
-        const a11yTitle = undefined;
-
-        describe('with a11y description', () => {
-          const a11yDesc = 'a11y description';
-
-          jsdomIt('should not set aria-labelledby', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            expect(svgNode.getAttribute('aria-labelledby')).toBeNull();
-          });
-
-          jsdomIt('should not insert title tag', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            const titleNode = svgNode.querySelector('title');
-            expect(titleNode).toBeNull();
-          });
-
-          jsdomIt(
-            'should set aria-describedby to the description id inserted as a child',
-            ({ svg }) => {
-              addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-              const svgNode = ensureNodeFromSelector('svg');
-              expect(svgNode.getAttribute('aria-describedby')).toBe(`chart-desc-${givenId}`);
-            }
-          );
-
-          jsdomIt(
-            'should insert desc tag as the 2nd child with the text set to accDescription given',
-            ({ svg }) => {
-              addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-              const svgNode = ensureNodeFromSelector('svg');
-              const descNode = ensureNodeFromSelector('desc', svgNode);
-              expect(descNode?.innerHTML).toBe(a11yDesc);
-            }
-          );
-        });
-
-        describe('without a11y description', () => {
-          const a11yDesc = undefined;
-
-          jsdomIt('should not set aria-labelledby', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            expect(svgNode.getAttribute('aria-labelledby')).toBeNull();
-          });
-
-          jsdomIt('should not set aria-describedby', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            expect(svgNode.getAttribute('aria-describedby')).toBeNull();
-          });
-
-          jsdomIt('should not insert title tag', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            const titleNode = svgNode.querySelector('title');
-            expect(titleNode).toBeNull();
-          });
-
-          jsdomIt('should not insert  description tag', ({ svg }) => {
-            addSVGa11yTitleDescription(svg, a11yTitle, a11yDesc, givenId);
-            const svgNode = ensureNodeFromSelector('svg');
-            const descNode = svgNode.querySelector('desc');
-            expect(descNode).toBeNull();
-          });
-        });
-      });
+      jsdomIt(
+        'should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription',
+        async () => {
+          const { svg } = await mermaidAPI.render(id, diagramText);
+          const dom = new JSDOM(svg);
+          const svgNode = ensureNodeFromSelector('svg', dom.window.document);
+          const descNode = ensureNodeFromSelector('desc', svgNode);
+          const titleNode = ensureNodeFromSelector('title', svgNode);
+          expect(svgNode.getAttribute('aria-roledescription')).toBe(expectedDiagramType);
+          expect(svgNode.getAttribute('aria-describedby')).toBe(`chart-desc-${id}`);
+          expect(descNode.getAttribute('id')).toBe(`chart-desc-${id}`);
+          expect(descNode.innerHTML).toBe(a11yDescr);
+          expect(titleNode.innerHTML).toBe(a11yTitle);
+        }
+      );
     });
   });
+});
+
+jsdomIt('escapes an id starting with a digit in the scoped styles', async () => {
+  const { svg } = await mermaidAPI.render('02_test', 'erDiagram\n  A ||--o{ B : has');
+
+  const dom = new JSDOM(svg);
+  const styleNode = ensureNodeFromSelector('style', dom.window.document);
+  expect(styleNode.innerHTML).toMatch(/^#\\30 2_test{/);
+  expect(styleNode.innerHTML).not.toContain('#02_test');
 });

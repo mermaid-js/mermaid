@@ -1,6 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "plugin": ["typedoc-plugin-markdown"],
+  "name": "mermaid",
   "readme": "none",
   "githubPages": false,
   "sourceLinkTemplate": "https://github.com/mermaid-js/mermaid/blob/{gitRevision}/{path}#L{line}",

@@ -15,6 +15,7 @@
 - [AsyncIconLoader](interfaces/AsyncIconLoader.md)
 - [DetailedError](interfaces/DetailedError.md)
 - [ExternalDiagramDefinition](interfaces/ExternalDiagramDefinition.md)
+- [Katex](interfaces/Katex.md)
 - [LayoutData](interfaces/LayoutData.md)
 - [LayoutLoaderDefinition](interfaces/LayoutLoaderDefinition.md)
 - [Mermaid](interfaces/Mermaid.md)

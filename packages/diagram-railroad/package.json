@@ -1,0 +1,47 @@
+{
+  "name": "@mermaid-js/diagram-railroad",
+  "version": "12.3.0",
+  "description": "The railroad diagrams (railroad, EBNF, ABNF and PEG) for mermaid",
+  "module": "dist/mermaid-diagram-railroad.core.mjs",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/mermaid-diagram-railroad.core.mjs",
+      "default": "./dist/mermaid-diagram-railroad.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-railroad"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "@mermaid-js/parser": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

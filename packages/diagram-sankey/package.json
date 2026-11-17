@@ -1,0 +1,49 @@
+{
+  "name": "@mermaid-js/diagram-sankey",
+  "version": "12.3.0",
+  "description": "The sankey diagram for mermaid",
+  "module": "dist/mermaid-diagram-sankey.core.mjs",
+  "types": "./dist/sankeyDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/sankeyDetector.ts",
+      "types": "./dist/sankeyDetector.d.ts",
+      "import": "./dist/mermaid-diagram-sankey.core.mjs",
+      "default": "./dist/mermaid-diagram-sankey.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-sankey"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "d3": "^7.9.0",
+    "d3-sankey": "^0.12.3"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/d3-sankey": "^0.12.5"
+  },
+  "files": [
+    "dist"
+  ]
+}

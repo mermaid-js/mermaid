@@ -1,11 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./",
-    "noEmit": true,
+    "rootDir": "./src",
     "outDir": "./dist",
     "types": ["vitest/importMeta", "vitest/globals"]
   },
-  "include": ["./src/**/*.ts", "./src/**/*.d.ts"],
-  "typeRoots": ["./src/types"]
+  "include": ["./src/**/*.ts"]
 }

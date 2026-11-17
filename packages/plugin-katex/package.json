@@ -1,0 +1,47 @@
+{
+  "name": "@mermaid-js/plugin-katex",
+  "version": "0.0.0",
+  "description": "KaTeX math rendering for mermaid",
+  "module": "dist/mermaid-plugin-katex.core.mjs",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/mermaid-plugin-katex.core.mjs",
+      "default": "./dist/mermaid-plugin-katex.core.mjs"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "katex",
+    "math",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/plugin-katex"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^",
+    "katex": "^0.18.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

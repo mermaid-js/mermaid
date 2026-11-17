@@ -5,10 +5,13 @@
  * file's.
  */
 import { beforeEach, describe, expect, it } from 'vitest';
-import * as configApi from './config.js';
-import erStyles from './diagrams/er/styles.js';
-import { mermaidAPI } from './mermaidAPI.js';
-import themes from './themes/index.js';
+import * as configApi from '@mermaid-js/core/config.js';
+import { mermaidAPI } from '@mermaid-js/core/mermaidAPI.js';
+import themes from '@mermaid-js/core/themes/index.js';
+import './mermaid.js';
+import { stylesOf } from './tests/stylesOf.js';
+
+const erStyles = await stylesOf('er');
 
 /** What mermaid renders with when neither the user nor the diagram type says otherwise. */
 const GLOBAL_DEFAULT_THEME = 'default';
@@ -97,7 +100,7 @@ describe('default theme', () => {
     });
 
     it('emits palette CSS, not just palette variables', async () => {
-      // Where a name/variables disagreement would show: `er/styles.ts` gates on the name,
+      // Where a name/variables disagreement would show: the ER stylesheet gates on the name,
       // so a stale one leaves the palette in the variables and absent from the CSS.
       const config = await configFor('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
       const css = erStyles({

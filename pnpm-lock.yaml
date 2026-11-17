@@ -268,13 +268,7 @@ importers:
         specifier: ^9.0.4
         version: 9.0.4(debug@4.4.3)
 
-  packages/examples:
-    devDependencies:
-      mermaid:
-        specifier: workspace:*
-        version: link:../mermaid
-
-  packages/mermaid:
+  packages/core:
     dependencies:
       '@braintree/sanitize-url':
         specifier: ^7.1.2
@@ -288,27 +282,12 @@ importers:
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
-      '@upsetjs/venn.js':
-        specifier: ^2.0.0
-        version: 2.0.0
       chevrotain:
         specifier: ~13.2.0
         version: 13.2.0
-      cytoscape:
-        specifier: ^3.34.0
-        version: 3.34.0
-      cytoscape-cose-bilkent:
-        specifier: ^4.1.0
-        version: 4.1.0(cytoscape@3.34.0)
-      cytoscape-fcose:
-        specifier: ^2.2.0
-        version: 2.2.0(cytoscape@3.34.0)
       d3:
         specifier: ^7.9.0
         version: 7.9.0
-      d3-sankey:
-        specifier: ^0.12.3
-        version: 0.12.3
       dagre-d3-es:
         specifier: 7.0.14
         version: 7.0.14
@@ -318,15 +297,9 @@ importers:
       dompurify:
         specifier: 3.4.17
         version: 3.4.17
-      elkjs:
-        specifier: ^0.12.0
-        version: 0.12.0
       es-toolkit:
         specifier: ^1.45.1
         version: 1.45.1
-      katex:
-        specifier: ^0.18.0
-        version: 0.18.11
       khroma:
         specifier: ^2.1.0
         version: 2.1.0
@@ -343,21 +316,9 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
     devDependencies:
-      '@adobe/jsonschema2md':
-        specifier: ^8.0.11
-        version: 8.0.11
       '@iconify/types':
         specifier: ^2.0.0
         version: 2.0.0
-      '@types/cytoscape':
-        specifier: ^3.21.9
-        version: 3.21.9
-      '@types/cytoscape-fcose':
-        specifier: ^2.2.5
-        version: 2.2.5
-      '@types/d3-sankey':
-        specifier: ^0.12.5
-        version: 0.12.5
       '@types/d3-scale':
         specifier: ^4.0.9
         version: 4.0.9
@@ -373,12 +334,6 @@ importers:
       '@types/jsdom':
         specifier: ^21.1.7
         version: 21.1.7
-      '@types/katex':
-        specifier: ^0.16.8
-        version: 0.16.8
-      '@types/micromatch':
-        specifier: ^4.0.10
-        version: 4.0.10
       '@types/stylis':
         specifier: ^4.2.7
         version: 4.2.7
@@ -388,6 +343,626 @@ importers:
       canvas:
         specifier: ^3.2.3
         version: 3.2.3
+      fastdom:
+        specifier: 1.0.12
+        version: 1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87)
+      jsdom:
+        specifier: ^26.1.0
+        version: 26.1.0(canvas@3.2.3)
+      json-schema-to-typescript:
+        specifier: ^15.0.4
+        version: 15.0.4
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
+      typescript:
+        specifier: ~5.7.3
+        version: 5.7.3
+
+  packages/diagram-agentflow:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dompurify:
+        specifier: 3.4.17
+        version: 3.4.17
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-architecture:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+      cytoscape:
+        specifier: ^3.34.0
+        version: 3.34.0
+      cytoscape-fcose:
+        specifier: ^2.2.0
+        version: 2.2.0(cytoscape@3.34.0)
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@iconify/types':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@types/cytoscape-fcose':
+        specifier: ^2.2.5
+        version: 2.2.5
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-block:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dagre-d3-es:
+        specifier: 7.0.14
+        version: 7.0.14
+      es-toolkit:
+        specifier: ^1.45.1
+        version: 1.45.1
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-c4:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-class:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dompurify:
+        specifier: 3.4.17
+        version: 3.4.17
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-cynefin:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+
+  packages/diagram-er:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-eventmodeling:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-flowchart:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dompurify:
+        specifier: 3.4.17
+        version: 3.4.17
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-gantt:
+    dependencies:
+      '@braintree/sanitize-url':
+        specifier: ^7.1.2
+        version: 7.1.2
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dayjs:
+        specifier: ^1.11.21
+        version: 1.11.21
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-gitgraph:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-info:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+
+  packages/diagram-ishikawa:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      roughjs:
+        specifier: ^4.6.6
+        version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
+
+  packages/diagram-journey:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-kanban:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+
+  packages/diagram-mindmap:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
+
+  packages/diagram-packet:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+
+  packages/diagram-pie:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
+
+  packages/diagram-quadrant:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-radar:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+
+  packages/diagram-railroad:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-requirement:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+
+  packages/diagram-sankey:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      d3-sankey:
+        specifier: ^0.12.3
+        version: 0.12.3
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+      '@types/d3-sankey':
+        specifier: ^0.12.5
+        version: 0.12.5
+
+  packages/diagram-sequence:
+    dependencies:
+      '@braintree/sanitize-url':
+        specifier: ^7.1.2
+        version: 7.1.2
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-state:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      dompurify:
+        specifier: 3.4.17
+        version: 3.4.17
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-timeline:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-treemap:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-treeview:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+    devDependencies:
+      '@iconify/types':
+        specifier: ^2.0.0
+        version: 2.0.0
+
+  packages/diagram-usecase:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      chevrotain:
+        specifier: ~13.2.0
+        version: 13.2.0
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-venn:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@upsetjs/venn.js':
+        specifier: ^2.0.0
+        version: 2.0.0
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      khroma:
+        specifier: ^2.1.0
+        version: 2.1.0
+      roughjs:
+        specifier: ^4.6.6
+        version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-wardley:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/parser':
+        specifier: workspace:^
+        version: link:../parser
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/diagram-xychart:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+    devDependencies:
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+
+  packages/examples:
+    devDependencies:
+      mermaid:
+        specifier: workspace:*
+        version: link:../mermaid
+
+  packages/mermaid:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/diagram-agentflow':
+        specifier: workspace:^
+        version: link:../diagram-agentflow
+      '@mermaid-js/diagram-architecture':
+        specifier: workspace:^
+        version: link:../diagram-architecture
+      '@mermaid-js/diagram-block':
+        specifier: workspace:^
+        version: link:../diagram-block
+      '@mermaid-js/diagram-c4':
+        specifier: workspace:^
+        version: link:../diagram-c4
+      '@mermaid-js/diagram-class':
+        specifier: workspace:^
+        version: link:../diagram-class
+      '@mermaid-js/diagram-cynefin':
+        specifier: workspace:^
+        version: link:../diagram-cynefin
+      '@mermaid-js/diagram-er':
+        specifier: workspace:^
+        version: link:../diagram-er
+      '@mermaid-js/diagram-eventmodeling':
+        specifier: workspace:^
+        version: link:../diagram-eventmodeling
+      '@mermaid-js/diagram-flowchart':
+        specifier: workspace:^
+        version: link:../diagram-flowchart
+      '@mermaid-js/diagram-gantt':
+        specifier: workspace:^
+        version: link:../diagram-gantt
+      '@mermaid-js/diagram-gitgraph':
+        specifier: workspace:^
+        version: link:../diagram-gitgraph
+      '@mermaid-js/diagram-info':
+        specifier: workspace:^
+        version: link:../diagram-info
+      '@mermaid-js/diagram-ishikawa':
+        specifier: workspace:^
+        version: link:../diagram-ishikawa
+      '@mermaid-js/diagram-journey':
+        specifier: workspace:^
+        version: link:../diagram-journey
+      '@mermaid-js/diagram-kanban':
+        specifier: workspace:^
+        version: link:../diagram-kanban
+      '@mermaid-js/diagram-mindmap':
+        specifier: workspace:^
+        version: link:../diagram-mindmap
+      '@mermaid-js/diagram-packet':
+        specifier: workspace:^
+        version: link:../diagram-packet
+      '@mermaid-js/diagram-pie':
+        specifier: workspace:^
+        version: link:../diagram-pie
+      '@mermaid-js/diagram-quadrant':
+        specifier: workspace:^
+        version: link:../diagram-quadrant
+      '@mermaid-js/diagram-radar':
+        specifier: workspace:^
+        version: link:../diagram-radar
+      '@mermaid-js/diagram-railroad':
+        specifier: workspace:^
+        version: link:../diagram-railroad
+      '@mermaid-js/diagram-requirement':
+        specifier: workspace:^
+        version: link:../diagram-requirement
+      '@mermaid-js/diagram-sankey':
+        specifier: workspace:^
+        version: link:../diagram-sankey
+      '@mermaid-js/diagram-sequence':
+        specifier: workspace:^
+        version: link:../diagram-sequence
+      '@mermaid-js/diagram-state':
+        specifier: workspace:^
+        version: link:../diagram-state
+      '@mermaid-js/diagram-timeline':
+        specifier: workspace:^
+        version: link:../diagram-timeline
+      '@mermaid-js/diagram-treemap':
+        specifier: workspace:^
+        version: link:../diagram-treemap
+      '@mermaid-js/diagram-treeview':
+        specifier: workspace:^
+        version: link:../diagram-treeview
+      '@mermaid-js/diagram-usecase':
+        specifier: workspace:^
+        version: link:../diagram-usecase
+      '@mermaid-js/diagram-venn':
+        specifier: workspace:^
+        version: link:../diagram-venn
+      '@mermaid-js/diagram-wardley':
+        specifier: workspace:^
+        version: link:../diagram-wardley
+      '@mermaid-js/diagram-xychart':
+        specifier: workspace:^
+        version: link:../diagram-xychart
+      '@mermaid-js/layout-cose-bilkent':
+        specifier: workspace:^
+        version: link:../mermaid-layout-cose-bilkent
+      '@mermaid-js/layout-elk':
+        specifier: workspace:^
+        version: link:../mermaid-layout-elk
+      '@mermaid-js/plugin-katex':
+        specifier: workspace:^
+        version: link:../plugin-katex
+    devDependencies:
+      '@adobe/jsonschema2md':
+        specifier: ^8.0.11
+        version: 8.0.11
+      '@types/jsdom':
+        specifier: ^21.1.7
+        version: 21.1.7
+      '@types/micromatch':
+        specifier: ^4.0.10
+        version: 4.0.10
+      '@types/stylis':
+        specifier: ^4.2.7
+        version: 4.2.7
       chokidar:
         specifier: 3.6.0
         version: 3.6.0
@@ -397,9 +972,6 @@ importers:
       csstree-validator:
         specifier: ^4.0.1
         version: 4.0.1
-      fastdom:
-        specifier: 1.0.12
-        version: 1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87)
       globby:
         specifier: ^14.1.0
         version: 14.1.0
@@ -412,9 +984,6 @@ importers:
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0(canvas@3.2.3)
-      json-schema-to-typescript:
-        specifier: ^15.0.4
-        version: 15.0.4
       micromatch:
         specifier: ^4.0.8
         version: 4.0.8
@@ -439,9 +1008,9 @@ importers:
       start-server-and-test:
         specifier: ^2.1.5
         version: 2.1.5
-      type-fest:
-        specifier: ^4.41.0
-        version: 4.41.0
+      stylis:
+        specifier: ^4.3.6
+        version: 4.3.6
       typedoc:
         specifier: ^0.28.20
         version: 0.28.20(typescript@5.7.3)
@@ -486,33 +1055,43 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
 
-  packages/mermaid-layout-elk:
+  packages/mermaid-layout-cose-bilkent:
     dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      cytoscape:
+        specifier: ^3.34.0
+        version: 3.34.0
+      cytoscape-cose-bilkent:
+        specifier: ^4.1.0
+        version: 4.1.0(cytoscape@3.34.0)
       d3:
         specifier: ^7.9.0
         version: 7.9.0
-      dagre-d3-es:
-        specifier: 7.0.14
-        version: 7.0.14
-      dayjs:
-        specifier: ^1.11.21
-        version: 1.11.21
-      dompurify:
-        specifier: 3.4.17
-        version: 3.4.17
-      elkjs:
-        specifier: ^0.12.0
-        version: 0.12.0
-      katex:
-        specifier: ^0.18.0
-        version: 0.18.11
     devDependencies:
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
-      mermaid:
+
+  packages/mermaid-layout-elk:
+    dependencies:
+      '@mermaid-js/core':
         specifier: workspace:^
-        version: link:../mermaid
+        version: link:../core
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
+      elkjs:
+        specifier: ^0.12.0
+        version: 0.12.0
+    devDependencies:
+      '@mermaid-js/diagram-flowchart':
+        specifier: workspace:^
+        version: link:../diagram-flowchart
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
 
   packages/mermaid-layout-tidy-tree:
     dependencies:
@@ -520,6 +1099,9 @@ importers:
         specifier: ^7.9.0
         version: 7.9.0
     devDependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -634,7 +1216,110 @@ importers:
         specifier: ~4.4.0
         version: 4.4.0
 
-  packages/tiny: {}
+  packages/plugin-katex:
+    dependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      katex:
+        specifier: ^0.18.0
+        version: 0.18.11
+
+  packages/tiny:
+    devDependencies:
+      '@mermaid-js/core':
+        specifier: workspace:^
+        version: link:../core
+      '@mermaid-js/diagram-agentflow':
+        specifier: workspace:^
+        version: link:../diagram-agentflow
+      '@mermaid-js/diagram-block':
+        specifier: workspace:^
+        version: link:../diagram-block
+      '@mermaid-js/diagram-c4':
+        specifier: workspace:^
+        version: link:../diagram-c4
+      '@mermaid-js/diagram-class':
+        specifier: workspace:^
+        version: link:../diagram-class
+      '@mermaid-js/diagram-cynefin':
+        specifier: workspace:^
+        version: link:../diagram-cynefin
+      '@mermaid-js/diagram-er':
+        specifier: workspace:^
+        version: link:../diagram-er
+      '@mermaid-js/diagram-eventmodeling':
+        specifier: workspace:^
+        version: link:../diagram-eventmodeling
+      '@mermaid-js/diagram-flowchart':
+        specifier: workspace:^
+        version: link:../diagram-flowchart
+      '@mermaid-js/diagram-gantt':
+        specifier: workspace:^
+        version: link:../diagram-gantt
+      '@mermaid-js/diagram-gitgraph':
+        specifier: workspace:^
+        version: link:../diagram-gitgraph
+      '@mermaid-js/diagram-info':
+        specifier: workspace:^
+        version: link:../diagram-info
+      '@mermaid-js/diagram-ishikawa':
+        specifier: workspace:^
+        version: link:../diagram-ishikawa
+      '@mermaid-js/diagram-journey':
+        specifier: workspace:^
+        version: link:../diagram-journey
+      '@mermaid-js/diagram-kanban':
+        specifier: workspace:^
+        version: link:../diagram-kanban
+      '@mermaid-js/diagram-packet':
+        specifier: workspace:^
+        version: link:../diagram-packet
+      '@mermaid-js/diagram-pie':
+        specifier: workspace:^
+        version: link:../diagram-pie
+      '@mermaid-js/diagram-quadrant':
+        specifier: workspace:^
+        version: link:../diagram-quadrant
+      '@mermaid-js/diagram-radar':
+        specifier: workspace:^
+        version: link:../diagram-radar
+      '@mermaid-js/diagram-railroad':
+        specifier: workspace:^
+        version: link:../diagram-railroad
+      '@mermaid-js/diagram-requirement':
+        specifier: workspace:^
+        version: link:../diagram-requirement
+      '@mermaid-js/diagram-sankey':
+        specifier: workspace:^
+        version: link:../diagram-sankey
+      '@mermaid-js/diagram-sequence':
+        specifier: workspace:^
+        version: link:../diagram-sequence
+      '@mermaid-js/diagram-state':
+        specifier: workspace:^
+        version: link:../diagram-state
+      '@mermaid-js/diagram-timeline':
+        specifier: workspace:^
+        version: link:../diagram-timeline
+      '@mermaid-js/diagram-treemap':
+        specifier: workspace:^
+        version: link:../diagram-treemap
+      '@mermaid-js/diagram-treeview':
+        specifier: workspace:^
+        version: link:../diagram-treeview
+      '@mermaid-js/diagram-usecase':
+        specifier: workspace:^
+        version: link:../diagram-usecase
+      '@mermaid-js/diagram-venn':
+        specifier: workspace:^
+        version: link:../diagram-venn
+      '@mermaid-js/diagram-wardley':
+        specifier: workspace:^
+        version: link:../diagram-wardley
+      '@mermaid-js/diagram-xychart':
+        specifier: workspace:^
+        version: link:../diagram-xychart
 
   tests/release-verification:
     devDependencies:
@@ -3907,9 +4592,6 @@ packages:
   '@types/cytoscape-fcose@2.2.5':
     resolution: {integrity: sha512-FaM6MM5zC4Yh72E60vkpbM4tstJS90wj3u1Vq/SMiK/MShhLaMd17QkmR39S14aUWdfNSlUEfx/g/XkDdFmXDA==}
 
-  '@types/cytoscape@3.21.9':
-    resolution: {integrity: sha512-JyrG4tllI6jvuISPjHK9j2Xv/LTbnLekLke5otGStjFluIyA9JjgnvgZrSBsp8cEDpiTjwgZUZwpPv8TSBcoLw==}
-
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
 
@@ -4085,9 +4767,6 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/katex@0.16.8':
-    resolution: {integrity: sha512-trgaNyfU+Xh2Tc+ABIb44a5AYUpicB3uwirOioeOkNPPbmgRNtcWyDeeFRzjPZENO9Vq8gvVqfhaaXWLlevVwg==}
-
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
 
@@ -4135,9 +4814,6 @@ packages:
 
   '@types/node@18.19.124':
     resolution: {integrity: sha512-hY4YWZFLs3ku6D2Gqo3RchTd9VRCcrjqp/I0mmohYeUVA5Y8eCXKJEasHxLAJVZRJuQogfd1GiJ9lgogBgKeuQ==}
-
-  '@types/node@22.18.3':
-    resolution: {integrity: sha512-gTVM8js2twdtqM+AE2PdGEe9zGQY4UvmFjan9rZcVb6FGdStfjWoWejdmy4CfWVO9rh5MiYQGZloKAGkJt8lMw==}
 
   '@types/node@22.20.1':
     resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}
@@ -5679,10 +6355,6 @@ packages:
     resolution: {integrity: sha512-3xFyVSTYrYa/QJzLfzsCRMkMXqOsytP8E26DuGrVMJQoLPFmbOXNNtnMu4wrtr17QVloxpvutW77U4vb2L/LDQ==}
     engines: {node: '>=20'}
     hasBin: true
-
-  css-tree@3.1.0:
-    resolution: {integrity: sha512-0eW44TGN5SQXU1mWSkKwFstI/22X2bG1nYzZTYMAWjylYURhse752YgbE4Cx46AC+bAvI+/dYTPRk1LqSUnu6w==}
-    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
 
   css-tree@3.2.1:
     resolution: {integrity: sha512-X7sjQzceUhu1u7Y/ylrRZFU2FS6LRiFVp6rKLPg23y3x3c3DOKAwuXGDp+PAGjh6CSnCjYeAul8pcT8bAl+lSA==}
@@ -8004,9 +8676,6 @@ packages:
   mdast-util-to-string@4.0.0:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
 
-  mdn-data@2.12.2:
-    resolution: {integrity: sha512-IEn+pegP1aManZuckezWCO+XZQDplx1366JoVhTpMpBB1sPey/SbveZQUosKiKiGYjg1wH4pMlNgXbCiYgihQA==}
-
   mdn-data@2.27.1:
     resolution: {integrity: sha512-9Yubnt3e8A0OKwxYSXyhLymGW4sCufcLG6VdiDdUGVkPhpqLxlvP5vl1983gQjJl3tqbrM731mjaZaP68AgosQ==}
 
@@ -8655,10 +9324,6 @@ packages:
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
-
-  picomatch@2.3.1:
-    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
-    engines: {node: '>=8.6'}
 
   picomatch@2.3.2:
     resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
@@ -14234,8 +14899,6 @@ snapshots:
     dependencies:
       cytoscape: 3.34.0
 
-  '@types/cytoscape@3.21.9': {}
-
   '@types/d3-array@3.2.2': {}
 
   '@types/d3-axis@3.0.6':
@@ -14449,13 +15112,11 @@ snapshots:
 
   '@types/jsdom@21.1.7':
     dependencies:
-      '@types/node': 22.18.3
+      '@types/node': 22.20.1
       '@types/tough-cookie': 4.0.5
       parse5: 7.3.0
 
   '@types/json-schema@7.0.15': {}
-
-  '@types/katex@0.16.8': {}
 
   '@types/keyv@3.1.4':
     dependencies:
@@ -14506,10 +15167,6 @@ snapshots:
   '@types/node@18.19.124':
     dependencies:
       undici-types: 5.26.5
-
-  '@types/node@22.18.3':
-    dependencies:
-      undici-types: 6.21.0
 
   '@types/node@22.20.1':
     dependencies:
@@ -15390,9 +16047,9 @@ snapshots:
     optionalDependencies:
       ajv: 8.18.0
 
-  ajv-formats@2.1.1(ajv@8.18.0):
+  ajv-formats@2.1.1(ajv@8.20.0):
     optionalDependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
   ajv-formats@3.0.1(ajv@8.18.0):
     optionalDependencies:
@@ -15403,9 +16060,9 @@ snapshots:
       ajv: 8.20.0
     optional: true
 
-  ajv-keywords@5.1.0(ajv@8.18.0):
+  ajv-keywords@5.1.0(ajv@8.20.0):
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
       fast-deep-equal: 3.1.3
 
   ajv@6.14.0:
@@ -16335,11 +16992,6 @@ snapshots:
       semver: 7.7.3
       tinyglobby: 0.2.15
 
-  css-tree@3.1.0:
-    dependencies:
-      mdn-data: 2.12.2
-      source-map-js: 1.2.1
-
   css-tree@3.2.1:
     dependencies:
       mdn-data: 2.27.1
@@ -16355,7 +17007,7 @@ snapshots:
   csstree-validator@4.0.1:
     dependencies:
       clap: 3.1.1
-      css-tree: 3.1.0
+      css-tree: 3.2.1
       enhanced-resolve: 5.18.3
 
   csstype@3.2.3: {}
@@ -19188,8 +19840,6 @@ snapshots:
     dependencies:
       '@types/mdast': 4.0.4
 
-  mdn-data@2.12.2: {}
-
   mdn-data@2.27.1: {}
 
   mdurl@1.0.1: {}
@@ -19424,7 +20074,7 @@ snapshots:
   micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
-      picomatch: 2.3.1
+      picomatch: 2.3.2
 
   mime-db@1.52.0: {}
 
@@ -19939,8 +20589,6 @@ snapshots:
   perfect-debounce@2.1.0: {}
 
   picocolors@1.1.1: {}
-
-  picomatch@2.3.1: {}
 
   picomatch@2.3.2: {}
 
@@ -20575,9 +21223,9 @@ snapshots:
   schema-utils@4.3.2:
     dependencies:
       '@types/json-schema': 7.0.15
-      ajv: 8.18.0
-      ajv-formats: 2.1.1(ajv@8.18.0)
-      ajv-keywords: 5.1.0(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-formats: 2.1.1(ajv@8.20.0)
+      ajv-keywords: 5.1.0(ajv@8.20.0)
 
   search-insights@2.17.3: {}
 

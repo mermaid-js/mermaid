@@ -51,7 +51,7 @@ type CapturedSizesEntry = {
 };
 
 // Shape of the render profiler exposed by mermaid dev/profiling builds as
-// `window.__mermaidProfiler` (see packages/mermaid/src/profiler.ts).
+// `window.__mermaidProfiler` (see packages/core/src/profiler.ts).
 type ProfileSpanLike = { name: string; duration: number; children: ProfileSpanLike[] };
 type ProfileRecordLike = {
   label: string;
@@ -128,7 +128,7 @@ type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane', 'grid'];
 
 // Phases emitted by the profiler tree, in display order. "total" is taken from
-// the root `render` span. See packages/mermaid/src/profiler.ts.
+// the root `render` span. See packages/core/src/profiler.ts.
 const PROFILE_PHASES = ['parse', 'prepare', 'measure', 'layout', 'paint', 'serialize'] as const;
 
 // One render's normalized per-phase durations + total.

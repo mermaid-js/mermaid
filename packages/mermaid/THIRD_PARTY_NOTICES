@@ -4,18 +4,18 @@ Third-party notices for mermaid
 Pele
 ----
 
-The `layered` layout engine in src/rendering-util/layout-algorithms/layered/ and its edge path
-builder in src/rendering-util/rendering-elements/ are ported from mermaid-v13
+The `layered` layout engine in packages/core/src/rendering-util/layout-algorithms/layered/ and its edge path
+builder in packages/core/src/rendering-util/rendering-elements/ are ported from mermaid-v13
 (packages/core/src/layout/ and packages/diagram-flowchart/src/render/edges.ts), which ported them
 from, or based them on, Pele (https://github.com/obsidianmd/pele). Each file's header says where
 it came from. Pele is used under the MIT License:
 
-  src/rendering-util/layout-algorithms/layered/compound.ts
-  src/rendering-util/layout-algorithms/layered/index.ts
-  src/rendering-util/layout-algorithms/layered/layered.ts
-  src/rendering-util/layout-algorithms/layered/types.ts
-  src/rendering-util/rendering-elements/routeGeometry.ts
-  src/rendering-util/rendering-elements/routePath.ts
+  packages/core/src/rendering-util/layout-algorithms/layered/compound.ts
+  packages/core/src/rendering-util/layout-algorithms/layered/index.ts
+  packages/core/src/rendering-util/layout-algorithms/layered/layered.ts
+  packages/core/src/rendering-util/layout-algorithms/layered/types.ts
+  packages/core/src/rendering-util/rendering-elements/routeGeometry.ts
+  packages/core/src/rendering-util/rendering-elements/routePath.ts
 
 and, in the source repository only, the test files in layered/ (*.spec.ts, layered.fixtures.ts
 and validate.test-support.ts).

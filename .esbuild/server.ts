@@ -7,10 +7,10 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import path, { resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { buildTarget, packageOptions } from '../.build/common.js';
+import { buildTarget, packageOptions, type PackageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
-import { DDLT_SIZE_CAPTURE_VERSION } from '../packages/mermaid/src/rendering-util/layout-algorithms/ddlt/captureContract.js';
+import { DDLT_SIZE_CAPTURE_VERSION } from '../packages/core/src/rendering-util/layout-algorithms/ddlt/captureContract.js';
 import {
   reduceRegistryDocument,
   type RegistrySummary,
@@ -57,15 +57,12 @@ console.log('');
 
 // The dev server is never published, so always compile the render profiler in.
 // It stays a no-op until toggled on at runtime: `__mermaidProfiler.enable()`.
-const configs = Object.values(packageOptions).map(({ packageName }) =>
-  getBuildConfig({
-    ...defaultOptions,
-    minify: false,
-    core: false,
-    profiling: true,
-    options: packageOptions[packageName],
-  })
-);
+// `coreOnly` packages are bundled into their dependents from source.
+const configs = Object.values<PackageOptions>(packageOptions)
+  .filter(({ coreOnly }) => !coreOnly)
+  .map((options) =>
+    getBuildConfig({ ...defaultOptions, minify: false, core: false, profiling: true, options })
+  );
 const mermaidIIFEConfig = getBuildConfig({
   ...defaultOptions,
   minify: false,
@@ -76,20 +73,6 @@ const mermaidIIFEConfig = getBuildConfig({
 });
 configs.push(mermaidIIFEConfig);
 
-// The @mermaid-js/layout-elk package imports mermaid through its package
-// `exports`, which resolves to dist/mermaid.core.mjs — and esbuild INLINES that
-// core bundle into the elk bundle. Keep a core build context alive and rebuild
-// it before the package contexts so every layout sees current Mermaid source.
-const mermaidCoreConfig = getBuildConfig({
-  ...defaultOptions,
-  minify: false,
-  core: true,
-  profiling: true,
-  options: packageOptions.mermaid,
-});
-const mermaidCoreContext = await context(mermaidCoreConfig);
-await mermaidCoreContext.rebuild();
-
 const contexts = await Promise.all(
   configs.map(async (config) => ({ config, context: await context(config) }))
 );
@@ -99,11 +82,6 @@ const rebuildAll = async () => {
   const buildNumber = rebuildCounter++;
   const timeLabel = `Rebuild ${buildNumber} Time (total)`;
   console.time(timeLabel);
-  const coreBuildVariant = `Rebuild ${buildNumber} Time (mermaid.core esm)`;
-  console.time(coreBuildVariant);
-  await mermaidCoreContext.rebuild();
-  console.timeEnd(coreBuildVariant);
-
   await Promise.all(
     contexts.map(async ({ config, context }) => {
       const buildVariant = `Rebuild ${buildNumber} Time (${Object.keys(config.entryPoints!)[0]} ${config.format})`;

@@ -1,0 +1,1583 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import assignWithDepth from './assignWithDepth.js';
+import type { MermaidConfig } from './config.type.js';
+import mermaid from './mermaid.js';
+import mermaidAPI, {
+  appendDivSvgG,
+  cleanUpSvgCode,
+  createCssStyles,
+  createUserStyles,
+  putIntoIFrame,
+  removeExistingElements,
+} from './mermaidAPI.js';
+import * as configApi from './config.js';
+
+// --------------
+// Mocks
+//   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
+vi.mock(import('./styles.js'), async (importOriginal) => {
+  const original = await importOriginal();
+  return {
+    addStylesForDiagram: vi.fn(),
+    cssStyleSheetToString: vi.fn().mockImplementation(original.cssStyleSheetToString),
+    default: vi.fn().mockImplementation(
+      (_type, userStyles, _options) => `
+    & .edge-pattern-dashed{
+      stroke-dasharray: 3;
+    }
+
+    ${userStyles}
+    `
+    ),
+  };
+});
+
+import getStyles from './styles.js';
+
+vi.mock(import('stylis'), { spy: true });
+
+import { compile, serialize } from 'stylis';
+import { Diagram } from './Diagram.js';
+import { decodeEntities, encodeEntities } from './utils.js';
+import { toBase64 } from './utils/base64.js';
+import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
+import { JSDOM } from 'jsdom';
+import { log } from './logger.js';
+
+/**
+ * @see https://vitest.dev/guide/mocking.html Mock part of a module
+ * To investigate how to mock just some methods from a module - call the actual implementation and then mock others, e.g. so they can be spied on
+ */
+
+// -------------------------------------------------------------------------------------
+describe('mermaidAPI', () => {
+  describe('encodeEntities', () => {
+    it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
+      const text = 'style this; is ; everything :something#not-nothing; and this too;';
+      expect(encodeEntities(text)).toEqual(
+        'style this; is ; everything :something#not-nothing; and this too'
+      );
+    });
+    it('removes the ending ; from classDef [text1]:[optional word]#[text2]; with ', () => {
+      const text = 'classDef this; is ; everything :something#not-nothing; and this too;';
+      expect(encodeEntities(text)).toEqual(
+        'classDef this; is ; everything :something#not-nothing; and this too'
+      );
+    });
+
+    describe('replaces words starting with # and ending with ;', () => {
+      const testStr = 'Hello #there;';
+
+      it('removes the #', () => {
+        const result = encodeEntities(testStr);
+        expect(result.substring(0, 7)).toEqual('Hello ﬂ');
+      });
+
+      it('prefix is ﬂ°° if is all digits', () => {
+        const result = encodeEntities('Hello #77653;');
+        expect(result.substring(6, result.length)).toEqual('ﬂ°°77653¶ß');
+      });
+
+      it('prefix is ﬂ° if is not all digits', () => {
+        const result = encodeEntities(testStr);
+        expect(result.substring(6, result.length)).toEqual('ﬂ°there¶ß');
+      });
+      it('always removes the semi-colon and ends with ¶ß', () => {
+        const result = encodeEntities(testStr);
+        expect(result.substring(result.length - 2, result.length)).toEqual('¶ß');
+      });
+    });
+
+    it('does all the replacements on the given text', () => {
+      const text =
+        'style this; is ; everything :something#not-nothing; and this too; \n' +
+        'classDef this; is ; everything :something#not-nothing; and this too; \n' +
+        'Hello #there; #andHere;#77653;';
+
+      const result = encodeEntities(text);
+      expect(result).toEqual(
+        'style this; is ; everything :something#not-nothing; and this too \n' +
+          'classDef this; is ; everything :something#not-nothing; and this too \n' +
+          'Hello ﬂ°there¶ß ﬂ°andHere¶ßﬂ°°77653¶ß'
+      );
+    });
+  });
+
+  describe('decodeEntities', () => {
+    it('replaces ﬂ°° with &#', () => {
+      expect(decodeEntities('ﬂ°°hﬂ°°iﬂ°°')).toEqual('&#h&#i&#');
+    });
+    it('replaces ﬂ° with &', () => {
+      expect(decodeEntities('ﬂ°hﬂ°iﬂ°')).toEqual('&h&i&');
+    });
+    it('replaces ¶ß with ;', () => {
+      expect(decodeEntities('¶ßh¶ßi¶ß')).toEqual(';h;i;');
+    });
+    it('runs all the replacements on the given text', () => {
+      expect(decodeEntities('¶ßﬂ°¶ßﬂ°°¶ß')).toEqual(';&;&#;');
+    });
+  });
+
+  describe('cleanUpSvgCode', () => {
+    it('replaces marker end URLs with just the anchor if not sandboxed and not useMarkerUrls', () => {
+      const markerFullUrl = 'marker-end="url(some-URI#that)"';
+      let useArrowMarkerUrls = false;
+      let isSandboxed = false;
+      let result = cleanUpSvgCode(markerFullUrl, isSandboxed, useArrowMarkerUrls);
+      expect(result).toEqual('marker-end="url(#that)"');
+
+      useArrowMarkerUrls = true;
+      result = cleanUpSvgCode(markerFullUrl, isSandboxed, useArrowMarkerUrls);
+      expect(result).toEqual(markerFullUrl); // not changed
+
+      useArrowMarkerUrls = false;
+      isSandboxed = true;
+      result = cleanUpSvgCode(markerFullUrl, isSandboxed, useArrowMarkerUrls);
+      expect(result).toEqual(markerFullUrl); // not changed
+    });
+
+    it('decodesEntities', () => {
+      // cspell:ignore brrrr
+      const result = cleanUpSvgCode('¶ß brrrr', true, true);
+      expect(result).toEqual('; brrrr');
+    });
+
+    it('replaces old style br tags with new style', () => {
+      const result = cleanUpSvgCode('<br> brrrr<br>', true, true);
+      expect(result).toEqual('<br/> brrrr<br/>');
+    });
+  });
+
+  describe('putIntoIFrame', () => {
+    const inputSvgCode = 'this is the SVG code ⛵';
+
+    it('uses the default SVG iFrame height is used if no svgElement given', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/style="(.*)height:100%(.*);"/);
+    });
+    it('default style attributes are: width: 100%, height: 100%, border: 0, margin: 0', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/style="(.*)width:100%(.*);"/);
+      expect(result).toMatch(/style="(.*)height:100%(.*);"/);
+      expect(result).toMatch(/style="(.*)border:0(.*);"/);
+      expect(result).toMatch(/style="(.*)margin:0(.*);"/);
+    });
+    it('sandbox="allow-top-navigation-by-user-activation allow-popups">', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/sandbox="allow-top-navigation-by-user-activation allow-popups">/);
+    });
+    it('msg shown is "The "iframe" tag is not supported by your browser.\\n" if iFrames are not supported in the browser', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/\s*The "iframe" tag is not supported by your browser\./);
+    });
+
+    it('sets src to base64 version of <body style="IFRAME_SVG_BODY_STYLE">svgCode<//body>', () => {
+      const base64encodedSrc = toBase64(`<body style="margin:0">${inputSvgCode}</body>`);
+      const expectedSrc = `src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}"`;
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toContain(expectedSrc);
+    });
+
+    it('uses the height and appends px from the svgElement given', () => {
+      const faux_svgElement = vi.mockObject(
+        document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      );
+      vi.spyOn(faux_svgElement.viewBox.baseVal, 'height', 'get').mockReturnValue(42);
+
+      const result = putIntoIFrame(inputSvgCode, faux_svgElement);
+      expect(result).toMatch(/style="(.*)height:42px;/);
+    });
+  });
+
+  describe('appendDivSvgG', () => {
+    // cspell:ignore dthe
+
+    jsdomIt('appends a div node', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const divNode = ensureNodeFromSelector('div');
+      const svgNode = ensureNodeFromSelector('svg', divNode);
+      ensureNodeFromSelector('g', svgNode);
+    });
+    jsdomIt('the id for the div is "d" with the id appended', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const divNode = ensureNodeFromSelector('div');
+      expect(divNode?.getAttribute('id')).toBe('dtheId');
+    });
+
+    jsdomIt('sets the style for the div if one is given', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId', 'given div style', 'given x link');
+      const divNode = ensureNodeFromSelector('div');
+      expect(divNode?.getAttribute('style')).toBe('given div style');
+    });
+
+    jsdomIt('sets the svg width to 100%', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('width')).toBe('100%');
+    });
+    jsdomIt('the svg id is the id', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('id')).toBe('theId');
+    });
+    jsdomIt('the svg xml namespace is the 2000 standard', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
+    });
+    jsdomIt('sets the  svg xlink if one is given', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId', 'div style', 'given x link');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('xmlns:xlink')).toBe('given x link');
+    });
+    jsdomIt('returns the given parentRoot d3 nodes', ({ body }) => {
+      expect(appendDivSvgG(body, 'theId', 'dtheId')).toEqual(body);
+    });
+  });
+
+  describe('createCssStyles', () => {
+    const serif = 'serif';
+    const sansSerif = 'sans-serif';
+    const mocked_config_with_htmlLabels: MermaidConfig = {
+      themeCSS: '.default {color: red;}',
+      fontFamily: serif,
+      altFontFamily: sansSerif,
+      htmlLabels: true,
+    };
+
+    it('gets the cssStyles from the theme', () => {
+      const styles = createCssStyles(mocked_config_with_htmlLabels, null);
+      expect(styles).toContain('.default {color: red;}');
+    });
+
+    it('gets the fontFamily from the config', () => {
+      const styles = createCssStyles(mocked_config_with_htmlLabels, new Map());
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-font-family: serif(.*)/);
+    });
+
+    it('gets the alt fontFamily from the config', () => {
+      const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
+      expect(styles).toMatch(/(.*)\n:root {--mermaid-alt-font-family: sans-serif(.*)/);
+    });
+
+    describe('there are some classDefs', () => {
+      const classDef1 = {
+        id: 'classDef1',
+        styles: ['prop: style1-1', 'prop-2: style1-2'],
+        textStyles: [],
+      };
+      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['prop: textStyle2-1'] };
+      const classDef3 = {
+        id: 'classDef3',
+        textStyles: ['prop: textStyle3-1', 'prop-2: textStyle3-2'],
+      };
+      const classDefs = { classDef1, classDef2, classDef3 };
+
+      describe('the graph supports classDefs', () => {
+        const REGEXP_SPECIALS = ['^', '$', '?', '(', '{', '[', '.', '*', '!'];
+
+        // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
+        function escapeForRegexp(str: string) {
+          const strChars = [...str]; // split into array of every char
+          const strEscaped = strChars.map((char) => {
+            if (REGEXP_SPECIALS.includes(char)) {
+              return `\\${char}`;
+            } else {
+              return char;
+            }
+          });
+          return strEscaped.join('');
+        }
+
+        // Common test expecting given styles to have .classDef1 and .classDef2 statements but not .classDef3
+        function expect_styles_matchesHtmlElements(styles: string, htmlElement: string) {
+          expect(styles).toMatch(
+            new RegExp(
+              `\\.classDef1 ${escapeForRegexp(
+                htmlElement
+              )} \\{prop: style1-1 !important; prop-2: style1-2 !important;}`
+            )
+          );
+          // no CSS styles are created if there are no styles for a classDef
+          expect(styles).not.toMatch(
+            new RegExp(`\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ style(.*) !important; }`)
+          );
+          expect(styles).not.toMatch(
+            new RegExp(`\\.classDef3 ${escapeForRegexp(htmlElement)} \\{ style(.*) !important; }`)
+          );
+        }
+
+        // Common test expecting given textStyles to have .classDef2 and .classDef3 statements but not .classDef1
+        function expect_textStyles_matchesHtmlElements(textStyles: string, htmlElement: string) {
+          expect(textStyles).toMatch(
+            new RegExp(
+              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{prop: textStyle2-1 !important;}`
+            )
+          );
+          expect(textStyles).toMatch(
+            new RegExp(
+              `\\.classDef3 ${escapeForRegexp(
+                htmlElement
+              )} \\{prop: textStyle3-1 !important; prop-2: textStyle3-2 !important;}`
+            )
+          );
+
+          // no CSS styles are created if there are no textStyles for a classDef
+          expect(textStyles).not.toMatch(
+            new RegExp(
+              `\\.classDef1 ${escapeForRegexp(htmlElement)} \\{ textStyle(.*) !important; }`
+            )
+          );
+        }
+
+        // common suite and tests to verify that the right styles are created with the right htmlElements
+        function expect_correct_styles_with_htmlElements(mocked_config: MermaidConfig) {
+          describe('creates styles for "> *" and  "span" elements', () => {
+            const htmlElements = ['> *', 'span'];
+
+            it('creates CSS styles for every style and textStyle in every classDef', () => {
+              // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
+              //   That would be a much better approach than manually checking the result
+
+              const styles = createCssStyles(mocked_config, new Map(Object.entries(classDefs)));
+              htmlElements.forEach((htmlElement) => {
+                expect_styles_matchesHtmlElements(styles, htmlElement);
+              });
+              expect_textStyles_matchesHtmlElements(styles, 'tspan');
+            });
+          });
+        }
+
+        describe('there are htmlLabels in the configuration', () => {
+          expect_correct_styles_with_htmlElements(mocked_config_with_htmlLabels);
+        });
+
+        describe('there are flowchart.htmlLabels in the configuration', () => {
+          const mocked_config_flowchart_htmlLabels: MermaidConfig = {
+            themeCSS: 'default',
+            fontFamily: 'serif',
+            altFontFamily: 'sans-serif',
+            flowchart: {
+              htmlLabels: true,
+            },
+          };
+          expect_correct_styles_with_htmlElements(mocked_config_flowchart_htmlLabels);
+        });
+
+        describe('no htmlLabels in the configuration', () => {
+          const mocked_config_no_htmlLabels: MermaidConfig = {
+            themeCSS: 'default',
+            fontFamily: 'serif',
+            altFontFamily: 'sans-serif',
+            htmlLabels: false, // Explicitly set to false
+          };
+
+          describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
+            const htmlElements = ['rect', 'polygon', 'ellipse', 'circle'];
+
+            it('creates CSS styles for every style and textStyle in every classDef', () => {
+              // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
+
+              const styles = createCssStyles(
+                mocked_config_no_htmlLabels,
+                new Map(Object.entries(classDefs))
+              );
+              htmlElements.forEach((htmlElement) => {
+                expect_styles_matchesHtmlElements(styles, htmlElement);
+              });
+              expect_textStyles_matchesHtmlElements(styles, 'tspan');
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('createUserStyles', () => {
+    const mockConfig = {
+      themeCSS: '.default {color: red;}',
+      htmlLabels: true,
+      themeVariables: { fontFamily: 'serif' },
+    };
+
+    const classDef1 = { id: 'classDef1', styles: ['prop: style1-1'], textStyles: [] };
+
+    const divElement = document.body.appendChild(document.createElement('div'));
+
+    it('gets the css styles created', () => {
+      // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
+
+      createUserStyles(mockConfig, 'flowchart-v2', new Map([['classDef1', classDef1]]), '#someId');
+      const expectedStyles =
+        '.default {color: red;}' +
+        '\n.classDef1 > * {prop: style1-1 !important;}' +
+        '\n.classDef1 span {prop: style1-1 !important;}';
+      expect(getStyles).toHaveBeenCalledWith(
+        'flowchart-v2',
+        expectedStyles,
+        {
+          fontFamily: 'serif',
+        },
+        '#someId'
+      );
+    });
+
+    it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
+      createUserStyles(mockConfig, 'someDiagram', new Map(), '#someId');
+      expect(getStyles).toHaveBeenCalled();
+    });
+
+    it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
+      const result = createUserStyles(mockConfig, 'someDiagram', new Map(), '#someId');
+      expect(compile).toHaveBeenCalled();
+      expect(serialize).toHaveBeenCalled();
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}'
+      );
+    });
+
+    it('should sanitize CSS to avoid unbalanced braces', () => {
+      const result = createUserStyles(
+        mockConfig,
+        'someDiagram',
+        new Map(
+          Object.entries({
+            classDef1: {
+              styles: ['}*{ background-image: url("https://example.test")}'],
+              textStyles: [],
+            },
+            classDef2: {
+              styles: ['color: purple;'],
+            },
+          }).map(([id, value]) => [id, { ...value, id }])
+        ),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
+      );
+    });
+
+    it('should handle `:not(&)` selectors in the CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: ':not(&){background:green !important}',
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId :not(#someId){background:green!important;}'
+      );
+    });
+
+    it.for([
+      // test for CSS sibling components
+      ['should namespace sibling combinator', '& ~ *', '#someId #someId~*'],
+      // CSS ignores these whitespace characters
+      ['should namespace sibling combinator', '& \n\t \r \f \r\n + *', '#someId #someId+*'],
+      /*
+       * Experimental column combinator,
+       * see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Column_combinator
+       *
+       * Output whitespace will probably change once JSDOM supports it.
+       */
+      ['should namespace column combinator', '& || *', '#someId #someId || *'],
+      ['should namespace root if using unsupported declarations', '&', '#someId #someId'],
+      // child combinators and descent combinators are already namespaced
+      ['should not namespace child combinator', '& > *', '#someId>*'],
+      ['should not namespace descent combinator', '& *', '#someId *'],
+    ] as const)('%s %s to %s', ([_description, inputSelector, expectedSelector]) => {
+      const result = createUserStyles(
+        { ...mockConfig, themeCSS: `${inputSelector} { color: red; }` },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        `#someId .edge-pattern-dashed{stroke-dasharray:3;}${expectedSelector}{color:red;}`
+      );
+    });
+
+    it('should remove unsupported at-rules from user CSS', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: `
+          @import url('https://example.test/styles.css');
+          @media (max-width: 600px) {
+            * {
+              background-color: lightblue;
+            }
+          }
+          @supports selector(h2 > p) {
+            h2 > p {
+              color: red;
+            }
+          }
+          `,
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      // @import is removed, but @media and @supports are kept with their child rules namespaced
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@media (max-width: 600px){#someId *{background-color:lightblue;}}@supports selector(h2 > p){#someId h2>p{color:red;}}'
+      );
+    });
+
+    it('should not namespace keyframe rules', () => {
+      const result = createUserStyles(
+        {
+          ...mockConfig,
+          themeCSS: '@keyframes dash { to { stroke-dashoffset: 1000; } }',
+        },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}@keyframes dash{to{stroke-dashoffset:1000;}}'
+      );
+    });
+  });
+
+  describe('removeExistingElements', () => {
+    const svgId = 'svgId';
+    const tempDivId = 'tempDivId';
+    const tempIframeId = 'tempIFrameId';
+    const givenDocument = new Document();
+    const rootHtml = givenDocument.createElement('html');
+    givenDocument.append(rootHtml);
+
+    const svgElement = givenDocument.createElement('svg'); // doesn't matter what the tag is in the test
+    svgElement.id = svgId;
+    const tempDivElement = givenDocument.createElement('div'); // doesn't matter what the tag is in the test
+    tempDivElement.id = tempDivId;
+    const tempiFrameElement = givenDocument.createElement('iframe'); // doesn't matter what the tag is in the test
+    tempiFrameElement.id = tempIframeId;
+
+    it('removes an existing element with given id', () => {
+      rootHtml.appendChild(svgElement);
+      rootHtml.append(tempDivElement);
+      rootHtml.append(tempiFrameElement);
+
+      expect(givenDocument.getElementById(svgElement.id)).toEqual(svgElement);
+      expect(givenDocument.getElementById(tempDivElement.id)).toEqual(tempDivElement);
+      expect(givenDocument.getElementById(tempiFrameElement.id)).toEqual(tempiFrameElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(svgElement.id)).toBeNull();
+      expect(givenDocument.getElementById(tempDivElement.id)).toBeNull();
+      expect(givenDocument.getElementById(tempiFrameElement.id)).toBeNull();
+    });
+
+    it('removes an existing iframe element even if div element is absent', () => {
+      tempiFrameElement.append(svgElement);
+      rootHtml.append(tempiFrameElement);
+
+      expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(tempIframeId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toBeNull();
+    });
+
+    it('removes both existing div and iframe elements when both are present', () => {
+      tempDivElement.append(svgElement);
+      rootHtml.append(tempDivElement);
+      rootHtml.append(tempiFrameElement);
+
+      expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+      expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
+      expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+      removeExistingElements(givenDocument, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(tempIframeId)).toBeNull();
+      expect(givenDocument.getElementById(tempDivId)).toBeNull();
+      expect(givenDocument.getElementById(svgId)).toBeNull();
+    });
+  });
+
+  describe('initialize', () => {
+    beforeEach(() => {
+      document.body.innerHTML = '';
+      mermaidAPI.globalReset();
+    });
+
+    it('copies a literal into the configuration', () => {
+      const orgConfig: any = mermaidAPI.getConfig();
+      expect(orgConfig.testLiteral).toBe(undefined);
+
+      const testConfig: any = { testLiteral: true };
+
+      mermaidAPI.initialize(testConfig);
+      const config: any = mermaidAPI.getConfig();
+
+      expect(config.testLiteral).toBe(true);
+    });
+
+    it('copies an object into the configuration', () => {
+      const orgConfig: any = mermaidAPI.getConfig();
+      expect(orgConfig.testObject).toBe(undefined);
+
+      const object = {
+        test1: 1,
+        test2: false,
+      };
+
+      const testConfig: any = { testObject: object };
+
+      mermaidAPI.initialize(testConfig);
+
+      let config: any = mermaidAPI.getConfig();
+
+      expect(config.testObject.test1).toBe(1);
+
+      const testObjSetting: any = { testObject: { test3: true } };
+      mermaidAPI.updateSiteConfig(testObjSetting);
+      config = mermaidAPI.getConfig();
+
+      expect(config.testObject.test1).toBe(1);
+      expect(config.testObject.test2).toBe(false);
+      expect(config.testObject.test3).toBe(true);
+    });
+
+    it('resets mermaid config to global defaults', () => {
+      const config = {
+        logLevel: 0,
+        htmlLabels: false,
+      } as const;
+      mermaidAPI.initialize(config);
+      mermaidAPI.setConfig({ logLevel: 1, htmlLabels: true });
+      expect(mermaidAPI.getConfig().logLevel).toBe(1);
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(true);
+      mermaidAPI.reset();
+      expect(mermaidAPI.getConfig().logLevel).toBe(0);
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(false);
+      mermaidAPI.globalReset();
+      expect(mermaidAPI.getConfig().logLevel).toBe(5);
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(mermaidAPI.defaultConfig.htmlLabels);
+    });
+
+    it('prevents changes to site defaults (sneaky)', () => {
+      const config: any = {
+        logLevel: 0,
+      };
+      mermaidAPI.initialize(config);
+      const siteConfig = mermaidAPI.getSiteConfig();
+      expect(mermaidAPI.getConfig().logLevel).toBe(0);
+      config.secure = {
+        toString: () => {
+          mermaidAPI.initialize({ securityLevel: 'loose' });
+        },
+      };
+      expect(mermaidAPI.getConfig().secure).toEqual(mermaidAPI.getSiteConfig().secure);
+      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      mermaidAPI.reset();
+      expect(mermaidAPI.getSiteConfig()).toEqual(siteConfig);
+      expect(mermaidAPI.getConfig()).toEqual(siteConfig);
+    });
+    it('prevents clobbering global defaults (direct)', () => {
+      const config = assignWithDepth({}, mermaidAPI.defaultConfig);
+      assignWithDepth(config, { logLevel: 0 });
+
+      let error: any = { message: '' };
+      try {
+        // @ts-ignore This is a read-only property. TypeScript will not allow assignment, but regular javascript might.
+        mermaidAPI.defaultConfig = config;
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toBe(
+        "Cannot assign to read only property 'defaultConfig' of object '#<Object>'"
+      );
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
+    });
+    it('prevents changes to global defaults (direct)', () => {
+      let error: any = { message: '' };
+      try {
+        mermaidAPI.defaultConfig.logLevel = 0;
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toBe(
+        "Cannot assign to read only property 'logLevel' of object '#<Object>'"
+      );
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
+    });
+    it('prevents sneaky changes to global defaults (assignWithDepth)', () => {
+      const config = {
+        logLevel: 0,
+      };
+      let error: any = { message: '' };
+      try {
+        assignWithDepth(mermaidAPI.defaultConfig, config);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toBe(
+        "Cannot assign to read only property 'logLevel' of object '#<Object>'"
+      );
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
+    });
+  });
+
+  describe('dompurify config', () => {
+    it('allows dompurify config to be set', () => {
+      mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
+
+      expect(mermaidAPI.getConfig().dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
+    });
+  });
+
+  describe('parse', () => {
+    mermaid.parseError = undefined; // ensure it parseError undefined
+    it('throws for an invalid definition (with no mermaid.parseError() defined)', async () => {
+      expect(mermaid.parseError).toEqual(undefined);
+      await expect(
+        mermaidAPI.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowError();
+    });
+    it('throws for a nicer error for a invalid definition starting with `---`', async () => {
+      expect(mermaid.parseError).toEqual(undefined);
+      await expect(
+        mermaidAPI.parse(`
+      ---
+      title: a malformed YAML front-matter
+      `)
+      ).rejects.toThrow(
+        'Diagrams beginning with --- are not valid. ' +
+          'If you were trying to use a YAML front-matter, please ensure that ' +
+          "you've correctly opened and closed the YAML front-matter with un-indented `---` blocks"
+      );
+    });
+    it('does not throw for a valid definition', async () => {
+      await expect(
+        mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
+      ).resolves.not.toThrow();
+    });
+    it('throws for invalid definition', async () => {
+      await expect(
+        mermaidAPI.parse('this is not a mermaid diagram definition')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: this is not a mermaid diagram definition]`
+      );
+    });
+    it('returns false for invalid definition with silent option', async () => {
+      await expect(
+        mermaidAPI.parse('this is not a mermaid diagram definition', { suppressErrors: true })
+      ).resolves.toBe(false);
+    });
+    it('resolves for valid definition', async () => {
+      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
+        .toMatchInlineSnapshot(`
+        {
+          "config": {},
+          "diagramType": "flowchart-v2",
+        }
+      `);
+    });
+    it('resolves swimlanes as its own diagram type', async () => {
+      await expect(mermaidAPI.parse('swimlane-beta TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+        {
+          "config": {},
+          "diagramType": "swimlane",
+        }
+      `);
+    });
+    it('returns config when defined in frontmatter', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: base
+  flowchart:
+    htmlLabels: true
+---
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns config when defined in directive', async () => {
+      await expect(
+        mermaidAPI.parse(`%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns merged config when defined in frontmatter and directive', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: forest
+  flowchart:
+    htmlLabels: true
+---
+%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns true for valid definition with silent option', async () => {
+      await expect(
+        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
+      ).resolves.toMatchInlineSnapshot(`
+          {
+            "config": {},
+            "diagramType": "flowchart-v2",
+          }
+        `);
+    });
+
+    it.each([
+      { row: 0, column: -2 },
+      { row: -2, column: 0 },
+    ])(
+      'accepts signed grid coordinates ($row, $column) through each entry point',
+      async (placement) => {
+        const { row, column } = placement;
+        const sources = [
+          `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: ${row}, column: ${column} }`,
+          `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: { row: ${row}, column: ${column} }
+---
+flowchart TB
+  A`,
+          `%%{init: {"layout": "grid", "grid": {"placements": {"A": ${JSON.stringify(placement)}}}}}%%
+flowchart TB
+  A`,
+        ];
+
+        for (const source of sources) {
+          await expect(mermaidAPI.parse(source)).resolves.toMatchObject({
+            diagramType: 'flowchart-v2',
+          });
+        }
+
+        mermaidAPI.initialize({ layout: 'grid', grid: { placements: { A: placement } } });
+        try {
+          await expect(mermaidAPI.parse('flowchart TB\n  A')).resolves.toMatchObject({
+            diagramType: 'flowchart-v2',
+          });
+        } finally {
+          mermaidAPI.initialize({});
+        }
+      }
+    );
+
+    describe.each(['node', 'subgraph'])('inline agentflow grid coordinates on a %s', (target) => {
+      beforeEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      afterEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      const definition = (metadata: Record<string, unknown>, layout = 'grid') => {
+        const placement = JSON.stringify(metadata);
+        const body =
+          target === 'node'
+            ? `request["Receive"]@${placement}`
+            : `flow pipeline@${placement}\n  request["Receive"]\nend`;
+        return `---
+config:
+  layout: ${layout}
+---
+agentflow-beta
+${body}`;
+      };
+
+      it.each([
+        { field: 'row', value: 'first' },
+        { field: 'column', value: 'first' },
+        { field: 'row', value: 1.5 },
+        { field: 'column', value: 1.5 },
+        { field: 'row', value: null },
+        { field: 'column', value: null },
+      ])('rejects $field=$value during parsing', async ({ field, value }) => {
+        const source = definition({ [field]: value });
+        const id = target === 'node' ? 'request' : 'pipeline';
+
+        await expect(mermaidAPI.parse(source)).rejects.toMatchObject({
+          code: 'GRID_INVALID_COORDINATE',
+          details: { nodeId: id, placementId: id, field, value },
+        });
+        await expect(mermaidAPI.parse(source, { suppressErrors: true })).resolves.toBe(false);
+      });
+
+      it.each([{ row: 0, column: -2 }, { row: -2, column: 0 }, {}])(
+        'accepts signed or omitted coordinates %j with arbitrary metadata',
+        async (placement) => {
+          await expect(
+            mermaidAPI.parse(definition({ ...placement, custom: 'preserved' }))
+          ).resolves.toMatchObject({ diagramType: 'agentflow' });
+        }
+      );
+
+      it.each(['dagre', 'elk'])(
+        'does not validate grid coordinates when layout is %s',
+        async (layout) => {
+          await expect(
+            mermaidAPI.parse(definition({ row: 'first', column: 1.5 }, layout))
+          ).resolves.toMatchObject({ diagramType: 'agentflow' });
+        }
+      );
+    });
+
+    describe('unknown inline grid metadata', () => {
+      beforeEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      afterEach(() => {
+        vi.restoreAllMocks();
+        mermaidAPI.initialize({});
+      });
+
+      it.each([
+        { metadata: 'row: 1, column 2', key: 'column 2' },
+        { metadata: 'column: 1, row 2', key: 'row 2' },
+        { metadata: 'column: 3, row 1', key: 'row 1' },
+        { metadata: 'row: 1, custom: value', key: 'custom' },
+      ])(
+        'warns about "$key" during parsing without rejecting the diagram',
+        async ({ metadata, key }) => {
+          const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+          await expect(
+            mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ ${metadata} }`)
+          ).resolves.toMatchObject({ diagramType: 'flowchart-v2' });
+
+          expect(warn).toHaveBeenCalledExactlyOnceWith(
+            `Unknown metadata key "${key}" on node "A" with grid layout.`
+          );
+        }
+      );
+
+      it('warns about unknown subgraph metadata', async () => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  subgraph group
+    A
+  end
+  group@{ algorithm: elk.box, row 2 }`);
+
+        expect(warn).toHaveBeenCalledExactlyOnceWith(
+          'Unknown metadata key "row 2" on subgraph "group" with grid layout.'
+        );
+      });
+
+      it('accepts supported node and subgraph metadata alongside grid placement', async () => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  subgraph group
+    A@{ shape: rect, label: "Service", row: 1, column: 2, horizontalAlign: left, verticalAlign: top }
+  end
+  group@{ algorithm: elk.box, view: expanded, row: 0, column: -1 }`);
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+
+      it.each(['dagre', 'elk'])('does not warn about unknown metadata with %s', async (layout) => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await expect(
+          mermaidAPI.parse(`---
+config:
+  layout: ${layout}
+---
+flowchart TB
+  A@{ row: 1, column 2, custom: value }
+  subgraph group
+    B
+  end
+  group@{ row 2 }`)
+        ).resolves.toMatchObject({ diagramType: 'flowchart-v2' });
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+    });
+
+    describe.each(['inline', 'frontmatter', 'directive', 'initialize'] as const)(
+      'invalid grid coordinates from %s',
+      (entryPoint) => {
+        it.each([
+          { field: 'row', value: 'first', received: '"first" (string)' },
+          { field: 'column', value: 'first', received: '"first" (string)' },
+          { field: 'row', value: '1', received: '"1" (string)' },
+          { field: 'column', value: '1', received: '"1" (string)' },
+          { field: 'row', value: 1.5, received: '1.5 (number)' },
+          { field: 'column', value: 1.5, received: '1.5 (number)' },
+          { field: 'row', value: null, received: 'null (null)' },
+          { field: 'column', value: null, received: 'null (null)' },
+        ])('rejects $field=$received without coercion', async ({ field, value, received }) => {
+          const placement = { [field]: value };
+          const placementText = JSON.stringify(placement);
+          const diagram = 'flowchart TB\n  A';
+          const definitions = {
+            inline: `---
+config:
+  layout: grid
+---
+${diagram}@${placementText}`,
+            frontmatter: `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: ${placementText}
+---
+${diagram}`,
+            directive: `%%{init: {"layout": "grid", "grid": {"placements": {"A": ${placementText}}}}}%%
+${diagram}`,
+            initialize: diagram,
+          };
+          const expectedError = {
+            code: 'GRID_INVALID_COORDINATE',
+            message: `GRID_INVALID_COORDINATE: Invalid ${field} for placement "A": expected a safe integer; received ${received}.`,
+            details: { nodeId: 'A', placementId: 'A', field, value },
+          };
+
+          if (entryPoint === 'initialize') {
+            mermaidAPI.initialize({ layout: 'grid', grid: { placements: { A: placement } } });
+          }
+
+          try {
+            await expect(mermaidAPI.parse(definitions[entryPoint])).rejects.toMatchObject(
+              expectedError
+            );
+            await expect(
+              mermaidAPI.parse(definitions[entryPoint], { suppressErrors: true })
+            ).resolves.toBe(false);
+          } finally {
+            mermaidAPI.initialize({});
+          }
+        });
+      }
+    );
+  });
+
+  describe('render', () => {
+    // These are more like integration tests right now because nothing is mocked.
+    // But it is faster that a cypress test and there's no real reason to actually evaluate an image pixel by pixel.
+
+    // render(id, text, cb?, svgContainingElement?)
+
+    jsdomIt('shows the actual parse error message in the error diagram', async () => {
+      const edges = Array.from({ length: 501 }, (_, index) => `N${index} --> N${index + 1}`).join(
+        '\n'
+      );
+
+      await expect(
+        mermaidAPI.render('flowchart-too-many-edges', `flowchart TD\n${edges}`)
+      ).rejects.toThrow(/Edge limit exceeded/);
+
+      // the error SVG stays in the document, check that it carries the message
+      const texts = [...document.querySelectorAll('.error-text')].map(
+        (element) => element.textContent ?? ''
+      );
+      expect(texts).toContain('Syntax error in text');
+      expect(texts.some((text) => text.includes('Edge limit exceeded'))).toBe(true);
+    });
+
+    jsdomIt('shows invalid grid coordinates in the error diagram', async () => {
+      const message =
+        'GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received 0.5 (number).';
+      await expect(
+        mermaidAPI.render(
+          'flowchart-invalid-grid-coordinate',
+          `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 0.5 }`
+        )
+      ).rejects.toThrow(message);
+
+      const texts = [...document.querySelectorAll('.error-text')].map(
+        (element) => element.textContent ?? ''
+      );
+      expect(texts).toContain('Syntax error in text');
+      expect(texts.join(' ')).toContain(message);
+    });
+
+    describe.each([
+      {
+        entryPoint: 'inline',
+        source: `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 0.5 }`,
+      },
+      {
+        entryPoint: 'frontmatter',
+        source: `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: { row: 0.5 }
+---
+flowchart TB
+  A`,
+      },
+      {
+        entryPoint: 'directive',
+        source: `%%{init: {"layout": "grid", "grid": {"placements": {"A": {"row": 0.5}}}}}%%
+flowchart TB
+  A`,
+      },
+      {
+        entryPoint: 'multiple directives',
+        source: `%%{init: {"layout": "grid"}}%%
+%%{init: {"grid": {"placements": {"A": {"row": 0.5}}}}}%%
+flowchart TB
+  A`,
+      },
+    ])('invalid $entryPoint grid coordinates', ({ entryPoint, source }) => {
+      afterEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      for (const suppressErrorRendering of [false, true]) {
+        jsdomIt(`rejects with suppressErrorRendering=${suppressErrorRendering}`, async () => {
+          mermaidAPI.initialize({ theme: 'default', suppressErrorRendering });
+          if (entryPoint === 'multiple directives') {
+            await mermaidAPI.parse('%%{init: {"theme": "forest"}}%%\nflowchart TB\n  A');
+          }
+          const container = document.createElement('div');
+          document.body.append(container);
+          const message =
+            'GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received 0.5 (number).';
+
+          await expect(
+            mermaid.render('invalid-config-grid-coordinate', source, container)
+          ).rejects.toMatchObject({
+            code: 'GRID_INVALID_COORDINATE',
+            message,
+            details: { nodeId: 'A', placementId: 'A', field: 'row', value: 0.5 },
+          });
+          expect(configApi.getConfig().theme).toBe('default');
+
+          if (suppressErrorRendering) {
+            expect(container.childElementCount).toBe(0);
+          } else {
+            const texts = [...container.querySelectorAll('.error-text')].map(
+              (element) => element.textContent ?? ''
+            );
+            expect(texts).toContain('Syntax error in text');
+            expect(texts.join(' ')).toContain(message);
+          }
+        });
+      }
+    });
+  });
+
+  describe('getDiagramFromText', () => {
+    it('should clean up comments when present in diagram definition', async () => {
+      const diagram = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      %% This is a comment A -- text --> B{node}
+      A -- text --> B -- text2 --> C`
+      );
+      expect(diagram).toBeInstanceOf(Diagram);
+      expect(diagram.type).toBe('flowchart-v2');
+    });
+
+    it('should not modify db when rendering different diagrams', async () => {
+      const stateDiagram1 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+            direction LR
+            [*] --> Still
+            Still --> [*]
+            Still --> Moving
+            Moving --> Still
+            Moving --> Crash
+            Crash --> [*]`
+      );
+      const stateDiagram2 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+          direction TB
+          [*] --> Still
+          Still --> [*]
+          Still --> Moving
+          Moving --> Still
+          Moving --> Crash
+          Crash --> [*]`
+      );
+      expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
+      expect([stateDiagram1.type, stateDiagram2.type]).toEqual(['stateDiagram', 'stateDiagram']);
+      expect(stateDiagram1.db.getDirection?.()).not.toEqual(stateDiagram2.db.getDirection?.());
+
+      const flowDiagram1 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      A -- text --> B -- text2 --> C`
+      );
+      const flowDiagram2 = await mermaidAPI.getDiagramFromText(
+        `flowchart TD
+      A -- text --> B -- text2 --> C`
+      );
+      // Since flowDiagram will return new Db object each time, we can compare the db to be different.
+      expect(flowDiagram1.db).not.toBe(flowDiagram2.db);
+      expect([flowDiagram1.type, flowDiagram2.type]).toEqual(['flowchart-v2', 'flowchart-v2']);
+      expect(flowDiagram1.db.getDirection?.()).not.toEqual(flowDiagram2.db.getDirection?.());
+
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction TB
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction LR
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      // Since classDiagram will return new Db object each time, we can compare the db to be different.
+      expect(classDiagram1.db).not.toBe(classDiagram2.db);
+      expect([classDiagram1.type, classDiagram2.type]).toEqual(['classDiagram', 'classDiagram']);
+      expect(classDiagram1.db.getDirection?.()).not.toEqual(classDiagram2.db.getDirection?.());
+
+      const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+        actor A1
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+
+      // Since sequenceDiagram will return new Db object each time, we can compare the db to be different.
+      expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
+      expect([sequenceDiagram1.type, sequenceDiagram2.type]).toEqual(['sequence', 'sequence']);
+      const actorsOf = (db: unknown) => (db as { getActors(): unknown }).getActors();
+      expect(actorsOf(sequenceDiagram1.db)).not.toEqual(actorsOf(sequenceDiagram2.db));
+    });
+  });
+
+  describe('mermaidAPI config precedence', () => {
+    const id = 'mermaid-config-test';
+
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+    });
+
+    jsdomIt('renders with YAML config taking precedence over initialize config', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        flowchart: { htmlLabels: false },
+      });
+
+      const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+      const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('base');
+      expect(config.fontFamily).toBe('Courier');
+      expect(config.themeVariables.fontFamily).toBe('Courier New');
+      expect(config.themeVariables.fontSize).toBe('20px');
+      expect(config.flowchart?.htmlLabels).toBe(true);
+
+      const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+      expect(svgNode).not.toBeNull();
+    });
+
+    jsdomIt(
+      'renders with YAML themeVariables fully overriding initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+        const config = mermaidAPI.getConfig();
+
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.themeVariables.fontFamily).not.toBe('Arial');
+        expect(config.themeVariables.fontSize).not.toBe('16px');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML themeVariables overriding only provided keys and keeping others from initialize',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px', colorPrimary: '#ff0000' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.themeVariables.colorPrimary).toBe('#ff0000');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with full YAML config block taking full precedence over initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+          flowchart: { htmlLabels: false },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('base');
+        expect(config.fontFamily).toBe('Courier');
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.flowchart?.htmlLabels).toBe(true);
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables (duplicate scenario)',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+      }
+    );
+
+    jsdomIt('renders with no YAML config so initialize config is fully applied', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+      });
+
+      const diagramText = `
+flowchart TD
+  A --> B
+`;
+
+      await mermaidAPI.render(id, diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('forest');
+      expect(config.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontSize).toBe('16px');
+    });
+
+    jsdomIt(
+      'renders with empty YAML config block and falls back to initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'dark',
+          themeVariables: { fontFamily: 'Times', fontSize: '14px' },
+        });
+
+        const diagramText = `---
+config: {}
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('dark');
+        expect(config.themeVariables.fontFamily).toBe('Times');
+        expect(config.themeVariables.fontSize).toBe('14px');
+      }
+    );
+  });
+});

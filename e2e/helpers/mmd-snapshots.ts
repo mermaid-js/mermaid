@@ -22,7 +22,7 @@ export interface FixtureMetadata {
 export const fixturePath = (relativePath: string, diagramsDir = DIAGRAMS_DIR): string =>
   join(diagramsDir, relativePath);
 
-// Mirrors packages/mermaid/src/diagram-api/regexes.ts frontMatterRegex. Kept
+// Mirrors packages/core/src/diagram-api/regexes.ts frontMatterRegex. Kept
 // independent so this test helper doesn't reach into the mermaid package,
 // but must stay in sync with it.
 const FRONT_MATTER_RE = /^([^\S\n\r]*)-{3}\s*[\n\r](.*?)[\n\r]\1-{3}\s*[\n\r]+/s;

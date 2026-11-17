@@ -1,0 +1,43 @@
+{
+  "name": "@mermaid-js/diagram-requirement",
+  "version": "12.3.0",
+  "description": "The requirement diagram for mermaid",
+  "module": "dist/mermaid-diagram-requirement.core.mjs",
+  "types": "./dist/requirementDetector.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "mermaid-source": "./src/requirementDetector.ts",
+      "types": "./dist/requirementDetector.d.ts",
+      "import": "./dist/mermaid-diagram-requirement.core.mjs",
+      "default": "./dist/mermaid-diagram-requirement.core.mjs"
+    }
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "mermaid"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid",
+    "directory": "packages/diagram-requirement"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@mermaid-js/core": "workspace:^"
+  },
+  "files": [
+    "dist"
+  ]
+}

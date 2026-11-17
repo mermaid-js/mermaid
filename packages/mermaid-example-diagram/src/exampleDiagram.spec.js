@@ -8,7 +8,7 @@ import {
   getConfig,
   sanitizeText,
   setupGraphViewBox,
-} from '../../mermaid/src/diagram-api/diagramAPI.js';
+} from '../../core/src/diagram-api/diagramAPI.js';
 
 injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewBox);
 

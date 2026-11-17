@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
   "changelog": ["@changesets/changelog-github", { "repo": "mermaid-js/mermaid" }],
   "commit": false,
-  "fixed": [],
+  "fixed": [["mermaid", "@mermaid-js/core", "@mermaid-js/diagram-*"]],
   "linked": [],
   "access": "public",
   "baseBranch": "master",
