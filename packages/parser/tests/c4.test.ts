@@ -336,6 +336,8 @@ banking <--> mainframe : "Syncs with"
       'dynamic',
       'deployment',
       'instances',
+      'on',
+      'off',
       'TB',
       'LR',
     ])('should accept the word %s as an id, before an arrow and after it', (id) => {
@@ -346,7 +348,7 @@ banking <--> mainframe : "Syncs with"
       expect(result.value.relationships[0].targetId).toBe(id);
     });
 
-    it.each(['title', 'direction', 'style'])('should not accept %s as an id', (id) => {
+    it.each(['title', 'direction', 'legend', 'style'])('should not accept %s as an id', (id) => {
       expect(failed(`c4-beta\ncontainer ${id} "X"\n`)).toBe(true);
     });
 

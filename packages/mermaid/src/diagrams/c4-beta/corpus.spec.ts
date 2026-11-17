@@ -62,7 +62,6 @@ const summarize = async (text: string) => {
  */
 const NOT_YET: Record<string, string> = {
   'b06-four-arrows': 'the `---` arrow, which is not on this branch',
-  'b10-direction-legend-acc': '`legend`, which is not on this branch',
   'b16-arrow-without-spaces': 'the `---` arrow, which is not on this branch',
 };
 

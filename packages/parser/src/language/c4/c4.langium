@@ -59,7 +59,7 @@ C4Id returns string:
     C4_ID
     | 'c4-beta' | 'context' | 'container' | 'component' | 'dynamic' | 'deployment'
     | 'person' | 'softwareSystem' | 'group' | 'deploymentNode' | 'infrastructureNode'
-    | 'instances' | 'TB' | 'BT' | 'LR' | 'RL'
+    | 'instances' | 'on' | 'off' | 'TB' | 'BT' | 'LR' | 'RL'
 ;
 
 // The digits of a step, `2:`, at the start of a line. Declared before C4_ID so `2:` is a step.
