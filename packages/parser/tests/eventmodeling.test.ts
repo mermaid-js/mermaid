@@ -311,6 +311,323 @@ tf 03 evt Cart.ItemAdded
     });
   });
 
+  describe('indented data-block closing brace', () => {
+    it('should accept the closing brace indented with spaces', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  name: string
+  }
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames).toHaveLength(1);
+      expect(result.value.dataEntities).toHaveLength(1);
+      expect(result.value.dataEntities[0].name).toBe('D');
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('name: string');
+    });
+
+    it('should accept the closing brace indented with a tab', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  name: string
+\t}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('name: string');
+    });
+
+    it('should accept an indented closing brace on a note', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+note 01 {
+  remembered later
+  }
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.noteEntities).toHaveLength(1);
+      expect(result.value.noteEntities[0].dataBlockValue).toContain('remembered later');
+    });
+
+    it('should still accept a closing brace at column 0', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  name: string
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('name: string');
+    });
+
+    it('should accept a closing brace when the rest of the line is whitespace', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  name: string
+  }${'\t  '}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities).toHaveLength(1);
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('name: string');
+    });
+
+    it('should accept a closing brace at end of input', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  name: string
+  }`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('name: string');
+    });
+
+    it('should not end a block when text follows the brace on the same line', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+note 01 {
+  remembered later
+  } more text
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.noteEntities).toHaveLength(1);
+      expect(result.value.noteEntities[0].dataBlockValue).toContain('remembered later');
+      expect(result.value.noteEntities[0].dataBlockValue).toContain('} more text');
+    });
+  });
+
+  describe('quoted frame inline data', () => {
+    it('should keep an interior quote followed by whitespace inside the value', () => {
+      const result = parse(`eventmodeling
+tf 01 evt Message "Say " hello" later"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames).toHaveLength(1);
+      expect(result.value.frames[0].dataInlineValue).toBe('"Say " hello" later"');
+    });
+
+    it('should accept a quoted frame value with no interior quotes', () => {
+      const result = parse(`eventmodeling
+tf 01 evt Message "hello"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('"hello"');
+    });
+
+    it('should parse a quoted frame-data line after a %% gwt comment as EM_DATA_INLINE', () => {
+      const result = parse(`eventmodeling
+tf 01 evt Message %% gwt 12
+"hello"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames).toHaveLength(1);
+      expect(result.value.frames[0].dataInlineValue).toBe('"hello"');
+    });
+  });
+
+  describe('GWT scenario label', () => {
+    it('should accept a double-quoted label before given', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 "Add an item" given evt ItemAdded then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities).toHaveLength(1);
+      expect(result.value.gwtEntities[0].label).toBe('"Add an item"');
+      expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
+      expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
+    });
+
+    it('should accept a single-quoted label before given', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 'Add an item' given evt ItemAdded then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities[0].label).toBe("'Add an item'");
+    });
+
+    it('should stop a double-quoted label before the given clause', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 "Add item" given evt ItemAdded then evt ItemAdded %% "comment"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities).toHaveLength(1);
+      expect(result.value.gwtEntities[0].label).toBe('"Add item"');
+      expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
+      expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
+    });
+
+    it('should stop a single-quoted label before the given clause', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 'Add item' given evt ItemAdded then evt ItemAdded %% 'comment'
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities[0].label).toBe("'Add item'");
+      expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
+      expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
+    });
+
+    it.each([
+      { label: "'User's cart'", separator: ' ', comment: "'comment'" },
+      { label: '"Say " hello" later"', separator: ' ', comment: '"comment"' },
+      { label: "'User's cart'", separator: " %% 'before given'\n", comment: "'comment'" },
+      { label: '"Say "hello""', separator: ' /* "before\ngiven" */ ', comment: '"comment"' },
+      { label: "'I said 'given' to her'", separator: ' ', comment: "'comment'" },
+    ])(
+      'should preserve interior quotes in $label before $separator',
+      ({ label, separator, comment }) => {
+        const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 ${label}${separator}given evt ItemAdded then evt ItemAdded %% ${comment}
+`);
+        expect(result.lexerErrors).toHaveLength(0);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.value.gwtEntities).toHaveLength(1);
+        expect(result.value.gwtEntities[0].label).toBe(label);
+        expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
+        expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
+      }
+    );
+
+    it('should still accept quoted inline data that contains quotes', () => {
+      const result = parse(`eventmodeling
+tf 01 evt ProductCountIncrementedEvent \`json\`" { "a": { "c": true } } "
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames).toHaveLength(1);
+      expect(result.value.frames[0].dataInlineValue).toBe('" { "a": { "c": true } } "');
+    });
+
+    it('should accept a label when a comment sits between the frame id and the label', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 %% note
+"Add item" given evt ItemAdded then evt ItemAdded %% "comment"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities).toHaveLength(1);
+      expect(result.value.gwtEntities[0].label).toBe('"Add item"');
+      expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
+      expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
+    });
+  });
+
   it('should parse multiple source frames model', () => {
     const result = parse(`eventmodeling
 tf 01 evt Start

@@ -43,7 +43,7 @@ EmNoteEntity:
     'note' sourceFrame=[EmFrame:EM_FI] EmDataBlock;
 
 EmGwt:
-    'gwt' sourceFrame=[EmFrame:EM_FI] 'given' givenStatements+=EmGwtStatement+ ('when' whenStatements+=EmGwtStatement+)? 'then' thenStatements+=EmGwtStatement+;
+    'gwt' sourceFrame=[EmFrame:EM_FI] (label=EM_GWT_LABEL | label=EM_DATA_INLINE)? 'given' givenStatements+=EmGwtStatement+ ('when' whenStatements+=EmGwtStatement+)? 'then' thenStatements+=EmGwtStatement+;
 
 EmGwtStatement:
     EmModelEntityType entityIdentifier=[EmModelEntity:EM_EID];
@@ -55,7 +55,9 @@ terminal EM_ID: /[_a-zA-Z][\w_]*/;
 terminal EM_FID: /\d{1,3}/;
 
 terminal EM_DATA_INLINE: /\{(.*)\}|"(.*)"|'(.*)'/;
-terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:[\S\s]*?\r?\n)?\}(?:\r?\n|(?!\S))/;
+// The token builder finds the closing quote before 'given' and keeps frame data greedy.
+terminal EM_GWT_LABEL: /"[^"\r\n]*"|'[^'\r\n]*'/;
+terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:[\S\s]*?\r?\n)?[\t ]*\}[\t ]*(?:\r?\n|(?![\s\S]))/;
 
 terminal EM_ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
 terminal EM_ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
