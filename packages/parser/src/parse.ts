@@ -5,6 +5,7 @@ import type {
   Packet,
   Pie,
   Architecture,
+  C4,
   GitGraph,
   EventModel,
   Radar,
@@ -23,6 +24,7 @@ export type DiagramAST =
   | Packet
   | Pie
   | Architecture
+  | C4
   | GitGraph
   | EventModel
   | Radar
@@ -61,6 +63,11 @@ const initializers = {
     const { createArchitectureServices } = await import('./language/architecture/index.js');
     const parser = createArchitectureServices().Architecture.parser.LangiumParser;
     parsers.architecture = parser;
+  },
+  c4: async () => {
+    const { createC4Services } = await import('./language/c4/index.js');
+    const parser = createC4Services().C4.parser.LangiumParser;
+    parsers.c4 = parser;
   },
   gitGraph: async () => {
     const { createGitGraphServices } = await import('./language/gitGraph/index.js');
@@ -119,6 +126,7 @@ export async function parse(diagramType: 'packet', text: string): Promise<Packet
 export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'treeView', text: string): Promise<TreeView>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
+export async function parse(diagramType: 'c4', text: string): Promise<C4>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'eventmodeling', text: string): Promise<EventModel>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;

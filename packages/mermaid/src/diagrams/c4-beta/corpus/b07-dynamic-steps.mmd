@@ -1,0 +1,8 @@
+c4-beta dynamic
+container spa "Web app"
+container api "API"
+container db "Store"
+spa --> api : "Submits"
+2: api --> db : "Reads"
+2: api --> db : "Logs"
+db --> api : "Returns"
