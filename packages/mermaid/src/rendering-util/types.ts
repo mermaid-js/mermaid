@@ -92,6 +92,8 @@ interface BaseNode {
   look?: string;
   icon?: string;
   pos?: 't' | 'b';
+  /** Where a small glyph shape (UML interface ball, port) puts its caption. */
+  captionSide?: 'bottom' | 'right';
   img?: string;
   assetWidth?: number;
   assetHeight?: number;

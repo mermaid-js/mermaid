@@ -250,6 +250,41 @@ const dependency = (elem, type, id) => {
     .style('stroke-width', 0)
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
+/**
+ * UML "socket" (required interface): an open half-circle wrapping a `umlInterface` ball.
+ * The line is pulled back by `markerOffsets.socket`, so the arc apex sits on the line's
+ * end and the arc's centre lands on the ball's centre: SOCKET_RADIUS behind the apex.
+ */
+const SOCKET_RADIUS = 10;
+const socket = (elem, type, id) => {
+  const r = SOCKET_RADIUS;
+  const size = 2 * r + 4;
+  const apex = { x: size / 2, y: size / 2 };
+  const variants = [
+    // At a path start the path heads away from the ball, so the ball is behind (-x).
+    { suffix: 'socketStart', cx: apex.x - r, sweep: 1 },
+    // At a path end the path heads into the ball, so the ball is ahead (+x).
+    { suffix: 'socketEnd', cx: apex.x + r, sweep: 0 },
+  ];
+  for (const { suffix, cx, sweep } of variants) {
+    elem
+      .append('defs')
+      .append('marker')
+      .attr('id', id + '_' + type + '-' + suffix)
+      .attr('class', 'marker socket ' + type)
+      .attr('refX', apex.x)
+      .attr('refY', apex.y)
+      .attr('markerWidth', size)
+      .attr('markerHeight', size)
+      .attr('orient', 'auto')
+      .attr('markerUnits', 'userSpaceOnUse')
+      .attr('overflow', 'visible')
+      .append('path')
+      .attr('fill', 'none')
+      .attr('d', `M ${cx},${apex.y - r} A ${r},${r} 0 0 ${sweep} ${cx},${apex.y + r}`);
+  }
+};
+
 const lollipop = (elem, type, id) => {
   elem
     .append('defs')
@@ -1084,6 +1119,7 @@ const markers = {
   aggregation,
   dependency,
   lollipop,
+  socket,
   point,
   circle,
   cross,

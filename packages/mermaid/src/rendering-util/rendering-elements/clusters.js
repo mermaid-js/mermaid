@@ -804,6 +804,14 @@ const usecaseSystemBoundary = async (parent, node) => {
 
 const squareRect = rect;
 
+/**
+ * UML component diagrams reuse the use-case system boundary frame for both packages
+ * and components that act as containers (components with ports or nested children):
+ * both are a titled rectangle, optionally drawn as a tabbed package, and neither needs
+ * any geometry this shape does not already provide.
+ */
+const umlComponentGroup = usecaseSystemBoundary;
+
 const pool = (elem, node) => swimlane(elem, node, { variant: 'pool' });
 
 const shapes = {
@@ -815,6 +823,7 @@ const shapes = {
   kanbanSection,
   flowGroup,
   usecaseSystemBoundary,
+  umlComponentGroup,
   swimlane,
   pool,
 };
