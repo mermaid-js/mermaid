@@ -12,4 +12,4 @@
 
 > **SVG** = `d3.Selection`<`SVGSVGElement`, `unknown`, `Element` | `null`, `unknown`>
 
-Defined in: [packages/core/src/diagram-api/types.ts:175](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/diagram-api/types.ts#L175)
+Defined in: packages/core/src/diagram-api/types.ts:175

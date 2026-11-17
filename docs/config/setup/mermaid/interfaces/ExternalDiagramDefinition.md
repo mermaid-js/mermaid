@@ -10,7 +10,7 @@
 
 # Interface: ExternalDiagramDefinition
 
-Defined in: [packages/core/src/diagram-api/types.ts:143](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/diagram-api/types.ts#L143)
+Defined in: packages/core/src/diagram-api/types.ts:143
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: [packages/core/src/diagram-api/types.ts:143](https://github.com/merm
 
 > **detector**: `DiagramDetector`
 
-Defined in: [packages/core/src/diagram-api/types.ts:145](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/diagram-api/types.ts#L145)
+Defined in: packages/core/src/diagram-api/types.ts:145
 
 ---
 
@@ -26,7 +26,7 @@ Defined in: [packages/core/src/diagram-api/types.ts:145](https://github.com/merm
 
 > **id**: `string`
 
-Defined in: [packages/core/src/diagram-api/types.ts:144](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/diagram-api/types.ts#L144)
+Defined in: packages/core/src/diagram-api/types.ts:144
 
 ---
 
@@ -34,4 +34,4 @@ Defined in: [packages/core/src/diagram-api/types.ts:144](https://github.com/merm
 
 > **loader**: `DiagramLoader`
 
-Defined in: [packages/core/src/diagram-api/types.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/diagram-api/types.ts#L146)
+Defined in: packages/core/src/diagram-api/types.ts:146

@@ -10,7 +10,7 @@
 
 # Interface: Katex
 
-Defined in: [packages/core/src/diagrams/common/common.ts:327](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/diagrams/common/common.ts#L327)
+Defined in: packages/core/src/diagrams/common/common.ts:327
 
 The part of KaTeX's API that mermaid uses.
 
@@ -20,7 +20,7 @@ The part of KaTeX's API that mermaid uses.
 
 > **renderToString**(`tex`, `options`): `string`
 
-Defined in: [packages/core/src/diagrams/common/common.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/diagrams/common/common.ts#L328)
+Defined in: packages/core/src/diagrams/common/common.ts:328
 
 #### Parameters
 

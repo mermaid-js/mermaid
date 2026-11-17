@@ -12,4 +12,4 @@
 
 > `const` **default**: [`Mermaid`](../interfaces/Mermaid.md)
 
-Defined in: [packages/core/src/mermaid.ts:462](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/mermaid.ts#L462)
+Defined in: packages/core/src/mermaid.ts:462

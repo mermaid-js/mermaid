@@ -1027,6 +1027,90 @@ describe('straightenEdgeTerminals keeps labels off other edges (#8368)', () => {
   });
 });
 
+describe('straightenEdgeTerminals keeps the labels of a bidirectional pair apart', () => {
+  // The routes ELK produced for a one-line `A --> B` label and a two-line
+  // `B --> A` label in a larger diagram from the issue (default preset), before
+  // straightening. ELK leaves the two runs ~52px apart so the labels fit;
+  // straightening both pulls them onto the port rows, ~29px apart.
+  const forward = () => ({
+    id: 'L_A_B_0',
+    label: 'Pending records',
+    x: 2367.185691833496,
+    y: 38.324344635009766,
+    width: 152.53125,
+    height: 21,
+    points: [
+      { x: 2227.185691833496, y: 50.71622975667318 },
+      { x: 2247.185691833496, y: 50.71622975667318 },
+      { x: 2247.185691833496, y: 38.824344635009766 },
+      { x: 2487.185691833496, y: 38.824344635009766 },
+      { x: 2487.185691833496, y: 57.40767796834311 },
+      { x: 2507.185691833496, y: 57.40767796834311 },
+    ],
+  });
+  const back = () => ({
+    id: 'L_B_A_0',
+    label: 'Stores the reply or retry status',
+    x: 2367.185691833496,
+    y: 90.82434463500977,
+    width: 200,
+    height: 42,
+    points: [
+      { x: 2507.185691833496, y: 72.74101130167644 },
+      { x: 2487.185691833496, y: 72.74101130167644 },
+      { x: 2487.185691833496, y: 91.32434463500977 },
+      { x: 2247.185691833496, y: 91.32434463500977 },
+      { x: 2247.185691833496, y: 79.43245951334636 },
+      { x: 2227.185691833496, y: 79.43245951334636 },
+    ],
+  });
+
+  const straightenAndProject = (edges: any[]) => {
+    for (const { edge, runs } of straightenEdgeTerminals(edges)) {
+      const projected = projectLabelOntoStraightenedRun({ x: edge.x!, y: edge.y! }, runs);
+      if (projected) {
+        edge.x = projected.x;
+        edge.y = projected.y;
+      }
+    }
+  };
+
+  const labelsOverlap = (a: any, b: any) =>
+    Math.abs(a.x - b.x) < (a.width + b.width) / 2 &&
+    Math.abs(a.y - b.y) < (a.height + b.height) / 2;
+
+  it.each([
+    ['forward first', () => [forward(), back()]],
+    ['back first', () => [back(), forward()]],
+  ])('does not straighten one run so far that the labels collide (%s)', (_, make) => {
+    const edges = make();
+    straightenAndProject(edges);
+
+    expect(labelsOverlap(edges[0], edges[1])).toBe(false);
+    // Only one of the pair can still be straightened.
+    expect(edges[0].points).not.toEqual(make()[0].points);
+    expect(edges[1].points).toEqual(make()[1].points);
+  });
+
+  it('does not trade a route under the label for a collision with another label', () => {
+    // An unlabelled edge passes under the back label where it sits now but not
+    // where straightening would put it, so the label-over-edge count drops by
+    // as much as the label-over-label count rises.
+    const under = {
+      id: 'L_C_D_0',
+      points: [
+        { x: 2300, y: 105 },
+        { x: 2430, y: 105 },
+      ],
+    };
+    const edges = [forward(), back(), under];
+    straightenAndProject(edges);
+
+    expect(labelsOverlap(edges[0], edges[1])).toBe(false);
+    expect(edges[1].points).toEqual(back().points);
+  });
+});
+
 describe('separateOppositeEdgeLabels', () => {
   // Reproduces the shape of a real bug: two opposite-direction edges between
   // the same node pair (e.g. a stateDiagram-v2 composite state's "touch" /
@@ -1084,6 +1168,23 @@ describe('separateOppositeEdgeLabels', () => {
 
     expect(a.x).toBe(100);
     expect(b.x).toBe(110);
+  });
+
+  it('ignores a pair whose label boxes are already vertically clear', () => {
+    // A one-line and a two-line label, 40.6px apart: closer than the taller
+    // label's height, but their boxes (10.5 + 21 = 31.5 half-heights) do not
+    // touch. Pushing them sideways would only shove them into the nodes.
+    const a = edge('e1', 'A', 'B', 'Pending records', 2367, 152, { y: 50.2 });
+    const b = edge('e2', 'B', 'A', 'Stores the reply or retry status', 2367, 200, {
+      y: 90.8,
+      height: 42,
+    });
+    const edges = [a, b];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect(a.x).toBe(2367);
+    expect(b.x).toBe(2367);
   });
 
   it('ignores a node pair with more than two labelled edges', () => {

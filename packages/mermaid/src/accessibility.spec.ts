@@ -67,3 +67,12 @@ describe('accessibility', () => {
     });
   });
 });
+
+jsdomIt('escapes an id starting with a digit in the scoped styles', async () => {
+  const { svg } = await mermaidAPI.render('02_test', 'erDiagram\n  A ||--o{ B : has');
+
+  const dom = new JSDOM(svg);
+  const styleNode = ensureNodeFromSelector('style', dom.window.document);
+  expect(styleNode.innerHTML).toMatch(/^#\\30 2_test{/);
+  expect(styleNode.innerHTML).not.toContain('#02_test');
+});

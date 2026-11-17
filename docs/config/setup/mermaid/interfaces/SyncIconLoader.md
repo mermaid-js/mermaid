@@ -10,7 +10,7 @@
 
 # Interface: SyncIconLoader
 
-Defined in: [packages/core/src/rendering-util/icons.ts:13](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/rendering-util/icons.ts#L13)
+Defined in: packages/core/src/rendering-util/icons.ts:13
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: [packages/core/src/rendering-util/icons.ts:13](https://github.com/me
 
 > **icons**: `IconifyJSON`
 
-Defined in: [packages/core/src/rendering-util/icons.ts:15](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/rendering-util/icons.ts#L15)
+Defined in: packages/core/src/rendering-util/icons.ts:15
 
 ---
 
@@ -26,4 +26,4 @@ Defined in: [packages/core/src/rendering-util/icons.ts:15](https://github.com/me
 
 > **name**: `string`
 
-Defined in: [packages/core/src/rendering-util/icons.ts:14](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/rendering-util/icons.ts#L14)
+Defined in: packages/core/src/rendering-util/icons.ts:14

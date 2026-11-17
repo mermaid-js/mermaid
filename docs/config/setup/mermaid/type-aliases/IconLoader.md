@@ -12,4 +12,4 @@
 
 > **IconLoader** = [`AsyncIconLoader`](../interfaces/AsyncIconLoader.md) | [`SyncIconLoader`](../interfaces/SyncIconLoader.md)
 
-Defined in: [packages/core/src/rendering-util/icons.ts:18](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/rendering-util/icons.ts#L18)
+Defined in: packages/core/src/rendering-util/icons.ts:18
