@@ -57,6 +57,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
 - [Glim](https://github.com/NeoPanic/Glim) - macOS Markdown reader with built-in Mermaid diagram rendering. ✅
+- [hYYa ink](https://hyya.com/hyya-ink.html) - Mac, iPhone, iPad, Apple Vision Pro and Android app that opens Mermaid files (.mmd, .mermaid) as diagrams. ✅
 - [GNU Octave](https://octave.org/) ✅
   - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
 - [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
