@@ -1,0 +1,17 @@
+---
+config:
+  flowchart:
+    nodeSpacing: 10
+---
+%% A subgraph nested at a lane's edge: the lane is drawn around the subgraph's box, so the
+%% gap between the two lanes has to include the subgraph's own padding, or L1 overlaps L2.
+swimlane-beta TB
+  subgraph L1[A]
+    subgraph G[Inner]
+      a
+    end
+  end
+  subgraph L2[B]
+    b
+  end
+  a --> b
