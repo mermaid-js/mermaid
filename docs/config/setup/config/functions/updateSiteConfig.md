@@ -12,7 +12,7 @@
 
 > **updateSiteConfig**(`conf`): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: packages/core/src/config.ts:185
+Defined in: [packages/core/src/config.ts:185](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/config.ts#L185)
 
 ## Parameters
 

@@ -10,7 +10,7 @@
 
 # Interface: RunOptions
 
-Defined in: packages/core/src/mermaid.ts:48
+Defined in: [packages/core/src/mermaid.ts:48](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/mermaid.ts#L48)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: packages/core/src/mermaid.ts:48
 
 > `optional` **nodes**: `ArrayLike`<`HTMLElement`>
 
-Defined in: packages/core/src/mermaid.ts:56
+Defined in: [packages/core/src/mermaid.ts:56](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/mermaid.ts#L56)
 
 The nodes to render. If this is set, `querySelector` will be ignored.
 
@@ -28,7 +28,7 @@ The nodes to render. If this is set, `querySelector` will be ignored.
 
 > `optional` **postRenderCallback**: (`id`) => `unknown`
 
-Defined in: packages/core/src/mermaid.ts:60
+Defined in: [packages/core/src/mermaid.ts:60](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/mermaid.ts#L60)
 
 A callback to call after each diagram is rendered.
 
@@ -48,7 +48,7 @@ A callback to call after each diagram is rendered.
 
 > `optional` **querySelector**: `string`
 
-Defined in: packages/core/src/mermaid.ts:52
+Defined in: [packages/core/src/mermaid.ts:52](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/mermaid.ts#L52)
 
 The query selector to use when finding elements to render. Default: `".mermaid"`.
 
@@ -58,6 +58,6 @@ The query selector to use when finding elements to render. Default: `".mermaid"`
 
 > `optional` **suppressErrors**: `boolean`
 
-Defined in: packages/core/src/mermaid.ts:64
+Defined in: [packages/core/src/mermaid.ts:64](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/mermaid.ts#L64)
 
 If `true`, errors will be logged to the console, but not thrown. Default: `false`

@@ -12,7 +12,7 @@
 
 > **setConfig**(`conf`): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: packages/core/src/config.ts:210
+Defined in: [packages/core/src/config.ts:210](https://github.com/mermaid-js/mermaid/blob/master/packages/core/src/config.ts#L210)
 
 Updates the `currentConfig` with the provided `conf` after sanitization.
 
