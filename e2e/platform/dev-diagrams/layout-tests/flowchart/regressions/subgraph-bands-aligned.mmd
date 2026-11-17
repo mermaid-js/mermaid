@@ -1,0 +1,42 @@
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+%% A band of three TB columns, written A, C, B, between two LR rows; links into a later node of a column take a corridor.
+flowchart TB
+    subgraph lead ["Planning"]
+        direction LR
+        P1["Plan"] --> P2["Estimate"] --> P3["Review"]
+        P4["Archive"]
+    end
+    subgraph band [" "]
+        direction LR
+        subgraph colA ["Team A"]
+            direction TB
+            A1["Design"] --> A2["Build"] --> A3["Test"] --> A4["Release"]
+        end
+        subgraph colC ["Team C"]
+            direction TB
+            C1["Prepare"] --> C2["Check"] --> C3["Simulate"] --> C4["Report"]
+        end
+        subgraph colB ["Team B"]
+            direction TB
+            B1["Layout"] --> B2["Render"] --> B3["Review"] --> B4["Publish"]
+        end
+    end
+    subgraph ops ["Operations"]
+        direction LR
+        O1["Intake"] --> O2["Wire"] --> O3["Evaluate"]
+    end
+    P3 --> A1
+    P3 --> B1
+    P1 --> C1
+    P2 -.->|"stubs"| A1
+    P2 -.->|"stubs"| B1
+    P3 -.->|"checks"| A2
+    P3 -.->|"checks"| B2
+    C3 -.->|"runs"| A2
+    C3 -.->|"runs"| B2
+    P4 --> O1

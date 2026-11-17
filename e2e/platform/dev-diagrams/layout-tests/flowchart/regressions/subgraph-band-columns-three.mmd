@@ -1,0 +1,30 @@
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+%% A row of three steps over a band of three columns puts each step over the column it feeds.
+flowchart TB
+    subgraph intake [" "]
+        direction LR
+        Sow[Sow seeds] --> Water[Water beds] --> Weed[Pull weeds]
+    end
+    subgraph beds [" "]
+        direction LR
+        subgraph herbs [Herbs]
+            direction TB
+            H1[Basil] --> H2[Thyme]
+        end
+        subgraph roots [Roots]
+            direction TB
+            R1[Carrot] --> R2[Beet] --> R3[Radish]
+        end
+        subgraph leaves [Leaves]
+            direction TB
+            L1[Lettuce] --> L2[Chard]
+        end
+    end
+    Sow --> H1
+    Water --> R1
+    Weed --> L1

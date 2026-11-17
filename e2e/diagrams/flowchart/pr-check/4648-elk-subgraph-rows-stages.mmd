@@ -1,0 +1,22 @@
+%%{init: {'layout': 'elk', 'flowchart': {'nodeSpacing': 25, 'rankSpacing': 25}, 'elk': {'directedSubgraphs': 'aligned'}}}%%
+%% With elk.directedSubgraphs aligned, a link from the second row to the fourth stays clear of the third row's nodes (issue #4648).
+flowchart TB
+    subgraph r0 [" "]
+        direction LR
+        S1["Customer: *fewer items*"] --> S2["Signal(ITEM_COUNT,<br/>DECREASE, NORMAL)"]
+    end
+    subgraph r1 [" "]
+        direction LR
+        A1["Prior from context<br/>(mean, spread) per dim"] --> A2["model.from_prior()"] --> A3["State_0"] --> A4["model.update(state, signal)"] --> A5["State_1"]
+    end
+    subgraph r2 [" "]
+        direction LR
+        B1["Customer picks Option A<br/>(cheaper, fewer items)"] --> B2["choice_signals()"] --> B3["Signal(PRICE, DECREASE, STRONG)<br/>Signal(ITEM_COUNT, DECREASE, STRONG)"]
+    end
+    subgraph r3 [" "]
+        direction RL
+        C1["model.update() per signal"] --> C2["State_2"] --> C3["model.mean(state, dim)"] --> C4["weight vector (7 weights)"] --> C5["Sent to the planner"]
+    end
+    S2 --> A4
+    A5 --> C1
+    B3 --> C1

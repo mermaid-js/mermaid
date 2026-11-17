@@ -1,0 +1,21 @@
+%%{init: {'layout': 'elk', 'flowchart': {'nodeSpacing': 25, 'rankSpacing': 25}, 'elk': {'directedSubgraphs': 'aligned'}}}%%
+%% With elk.directedSubgraphs aligned, a row is not spread when that would shift the rows it leads past the widest row (issue #4648).
+flowchart TB
+    subgraph top [" "]
+        direction LR
+        A["Request arrives"] --> B["Load saved state"]
+    end
+    subgraph mid [" "]
+        direction LR
+        C["Restore session"]
+        D["Start fresh"]
+        C ~~~ D
+    end
+    subgraph low [" "]
+        direction LR
+        E["State"] --> F["Update"] --> G["Save"] --> H["Cache"]
+    end
+    B -->|"found"| C
+    B -->|"missing"| D
+    C --> E
+    D --> E
