@@ -309,6 +309,82 @@ banking <--> mainframe : "Syncs with"
     });
   });
 
+  describe('ids', () => {
+    const failed = (input: string) => {
+      const result = parse(input);
+      return result.lexerErrors.length + result.parserErrors.length > 0;
+    };
+
+    it.each(['3ds', '3', '007', '3-D-secure', 'a_b', 'a-b-c'])(
+      'should accept %s as an id',
+      (id) => {
+        const result = parse(`c4-beta\ncontainer ${id} "X"\n`);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.elements[0].id).toBe(id);
+      }
+    );
+
+    it.each([
+      'person',
+      'softwareSystem',
+      'container',
+      'component',
+      'group',
+      'deploymentNode',
+      'infrastructureNode',
+      'context',
+      'dynamic',
+      'deployment',
+      'instances',
+      'TB',
+      'LR',
+    ])('should accept the word %s as an id, before an arrow and after it', (id) => {
+      const result = parse(`c4-beta\ncontainer ${id} "X"\n${id} --> ${id} : "Loops"\n`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.elements[0].id).toBe(id);
+      expect(result.value.relationships[0].sourceId).toBe(id);
+      expect(result.value.relationships[0].targetId).toBe(id);
+    });
+
+    it.each(['title', 'direction', 'style'])('should not accept %s as an id', (id) => {
+      expect(failed(`c4-beta\ncontainer ${id} "X"\n`)).toBe(true);
+    });
+
+    it.each(['a-->b', 'a --> b', 'a<--b', 'a<-->b'])('should split %s at its arrow', (text) => {
+      const result = parse(`c4-beta\n${text}\n`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.relationships[0].sourceId).toBe('a');
+      expect(result.value.relationships[0].targetId).toBe('b');
+    });
+
+    it.each(['a---b', 'a--b', 'a-', '-a'])('should not accept %s as an id', (id) => {
+      expect(failed(`c4-beta\ncontainer ${id} "X"\n`)).toBe(true);
+    });
+
+    it('should read digits and a colon at the start of a line as a step', () => {
+      const result = parse(`c4-beta dynamic\n  12: a --> b\n`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.relationships[0].step).toBe(12);
+    });
+
+    it('should read a number after an arrow as an id, not as a step', () => {
+      const result = parse(`c4-beta dynamic\n2: a --> 3 : "Calls"\n`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.relationships[0].step).toBe(2);
+      expect(result.value.relationships[0].targetId).toBe('3');
+      expect(result.value.relationships[0].description).toBe('Calls');
+    });
+
+    it('should accept a word that only starts like an accessibility statement', () => {
+      const result = parse(`c4-beta\ncontainer accTitles "X"\ncontainer accDescription "Y"\n`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.elements.map((element) => element.id)).toEqual([
+        'accTitles',
+        'accDescription',
+      ]);
+    });
+  });
+
   describe('unclosed braces', () => {
     it.each([1, 3, 4, 5, 40])(
       'should report one parse error, and not throw, for %i unclosed braces',
