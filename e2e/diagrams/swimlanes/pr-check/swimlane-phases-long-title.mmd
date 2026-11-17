@@ -1,0 +1,23 @@
+---
+description: >-
+  A long phase title in a band that holds one row: the band grows to hold the title instead of overflowing into its neighbours.
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TB
+  phase onboarding["Customer onboarding review"]
+  phase done["Done"]
+
+  subgraph sales [Sales]
+    start["Start"]@{ phase: onboarding }
+    finish["Finish"]@{ phase: done }
+  end
+
+  subgraph ops [Operations]
+    check["Check"]@{ phase: done }
+  end
+
+  start --> finish --> check

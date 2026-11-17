@@ -1,0 +1,736 @@
+import { select } from 'd3';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { FlowDB } from '../../../../diagrams/flowchart/flowDb.js';
+import flow from '../../../../diagrams/flowchart/parser/flowParser.js';
+import type { LayoutData } from '../../../types.js';
+import { createEdgeLabelNodes } from '../edgeLabelNodes.js';
+import { prepareLayoutForSwimlanes } from '../helpers.js';
+import { runSwimlaneLayoutCore } from '../layoutCore.js';
+import { log } from '../../../../logger.js';
+import { reset, setConfig } from '../../../../config.js';
+import { createText } from '../../../createText.js';
+import {
+  PHASE_TITLE_INSET,
+  PHASE_TITLE_MARGIN,
+  PHASE_TITLE_THICKNESS,
+  computePhaseBands,
+  measurePhaseTitles,
+  paintPhaseBands,
+} from '../phaseBands.js';
+
+const NODE_WIDTH = 100;
+const NODE_HEIGHT = 40;
+const LANE_LABEL_WIDTH = 40;
+const LANE_LABEL_HEIGHT = 16;
+const NODE_SPACING = 40;
+const RANK_SPACING = 100;
+
+const source = (direction: string, extra = '') =>
+  [
+    `swimlane-beta ${direction}`,
+    'phase p1["Intake"]',
+    'phase p2["Review"]',
+    'phase p3["Closeout"]',
+    'subgraph l1',
+    '  a@{ phase: p1 }',
+    '  b@{ phase: p2 }',
+    'end',
+    'subgraph l2',
+    '  d@{ phase: p1 }',
+    '  c@{ phase: p3 }',
+    '  c2@{ phase: p3 }',
+    'end',
+    'a --> b --> c',
+    extra,
+  ].join('\n');
+
+const laidOut = (
+  text: string,
+  swimlane: Record<string, unknown> = {},
+  titleExtents: Record<string, number> = {}
+): LayoutData => {
+  const flowDb = new FlowDB();
+  flowDb.setGen('gen-2');
+  flow.parser.yy = flowDb;
+  flow.parser.parse(text);
+  const layout: LayoutData = flowDb.getData();
+  // The renderer hands the layout the direction the database parsed.
+  layout.direction = flowDb.getDirection();
+  layout.layoutAlgorithm = 'swimlane';
+  layout.config = {
+    ...layout.config,
+    flowchart: { nodeSpacing: NODE_SPACING, rankSpacing: RANK_SPACING },
+    swimlane,
+  };
+  layout.other = {
+    ...layout.other,
+    phases: layout.other?.phases?.map((phase: { id: string }) => ({
+      ...phase,
+      titleExtent: new Map(Object.entries(titleExtents)).get(phase.id),
+    })),
+  };
+  prepareLayoutForSwimlanes(layout);
+  for (const node of layout.nodes) {
+    if (node.isGroup) {
+      node.labelBBox = { width: LANE_LABEL_WIDTH, height: LANE_LABEL_HEIGHT };
+    } else {
+      node.width = NODE_WIDTH;
+      node.height = NODE_HEIGHT;
+    }
+  }
+  const prepared = createEdgeLabelNodes(layout);
+  prepared.direction = layout.direction;
+  runSwimlaneLayoutCore(prepared);
+  return prepared;
+};
+
+const span = (layout: LayoutData, ids: string[], alongX: boolean) => {
+  const boxes = layout.nodes.filter((node) => ids.includes(node.id));
+  const starts = boxes.map((node) =>
+    alongX ? (node.x ?? 0) - (node.width ?? 0) / 2 : (node.y ?? 0) - (node.height ?? 0) / 2
+  );
+  const ends = boxes.map(
+    (node, index) => starts[index] + (alongX ? (node.width ?? 0) : (node.height ?? 0))
+  );
+  return { start: Math.min(...starts), end: Math.max(...ends) };
+};
+
+const DIRECTIONS = [
+  ['TB', false, false],
+  ['LR', true, false],
+  ['BT', false, true],
+  ['RL', true, true],
+] as const;
+
+describe('phases in the swimlane layout', () => {
+  it.each(DIRECTIONS)(
+    'stacks the phases in declaration order in %s',
+    (direction, alongX, reversed) => {
+      const layout = laidOut(source(direction));
+
+      const [first, second, third] = [
+        span(layout, ['a', 'd'], alongX),
+        span(layout, ['b'], alongX),
+        span(layout, ['c', 'c2'], alongX),
+      ];
+
+      if (reversed) {
+        expect(first.start).toBeGreaterThanOrEqual(second.end);
+        expect(second.start).toBeGreaterThanOrEqual(third.end);
+      } else {
+        expect(first.end).toBeLessThanOrEqual(second.start);
+        expect(second.end).toBeLessThanOrEqual(third.start);
+      }
+    }
+  );
+
+  it('leaves no empty layer between the bands', () => {
+    // c2 has no edge and would sit on the first layer; it must not drag the whole phase down.
+    const layout = laidOut(source('TB'));
+
+    const rows = [...new Set(layout.nodes.filter((node) => !node.isGroup).map((node) => node.y))]
+      .map((y) => y ?? 0)
+      .sort((a, b) => a - b);
+    const steps = new Set(rows.slice(1).map((y, index) => Math.round(y - rows[index])));
+
+    expect(steps.size).toBe(1);
+  });
+
+  it.each(DIRECTIONS)(
+    'stacks the phases in %s with the gravity layering too',
+    (direction, alongX, reversed) => {
+      const layout = laidOut(source(direction), { ignoreCrossLaneEdges: false });
+
+      const [first, second, third] = [
+        span(layout, ['a', 'd'], alongX),
+        span(layout, ['b'], alongX),
+        span(layout, ['c', 'c2'], alongX),
+      ];
+
+      if (reversed) {
+        expect(first.start).toBeGreaterThanOrEqual(second.end);
+        expect(second.start).toBeGreaterThanOrEqual(third.end);
+      } else {
+        expect(first.end).toBeLessThanOrEqual(second.start);
+        expect(second.end).toBeLessThanOrEqual(third.start);
+      }
+    }
+  );
+
+  it('keeps a phase after the earlier ones when nothing links its nodes to them', () => {
+    // c2 has no edge, so by edges alone it would sit on the first layer of its lane.
+    const layout = laidOut(source('TB'));
+
+    expect(span(layout, ['c2'], false).start).toBeGreaterThanOrEqual(
+      span(layout, ['b'], false).end
+    );
+  });
+
+  it('keeps the order when an edge runs back to an earlier phase', () => {
+    const layout = laidOut(source('TB', 'c --> a'));
+
+    const [first, second, third] = [
+      span(layout, ['a', 'd'], false),
+      span(layout, ['b'], false),
+      span(layout, ['c', 'c2'], false),
+    ];
+    expect(first.end).toBeLessThanOrEqual(second.start);
+    expect(second.end).toBeLessThanOrEqual(third.start);
+  });
+
+  it('keeps a labelled edge between two phases from breaking the order', () => {
+    const layout = laidOut(source('TB', 'a -- "needs review" --> c'));
+
+    expect(span(layout, ['a', 'd'], false).end).toBeLessThanOrEqual(
+      span(layout, ['c', 'c2'], false).start
+    );
+  });
+
+  it('keeps the bands off the middle phase when a labelled edge jumps over it', () => {
+    // The label of an edge that spans two ranks sits in a gap of the middle phase, not in the
+    // source phase, so it must not stretch the first band into the second.
+    const middle = 'subgraph l3\n  b2@{ phase: p2 }\nend\nb --> b2 --> c';
+    const layout = laidOut(source('TB', `${middle}\na -- "needs review" --> c`));
+
+    const [first, second, third] = computePhaseBands(layout);
+    const middleNodes = span(layout, ['b', 'b2'], false);
+
+    const label = layout.nodes.find((node) => node.id.startsWith('edge-label-'));
+    expect(label?.y).toBeGreaterThanOrEqual(first.title.y);
+    expect(label?.y).toBeLessThanOrEqual(first.title.y + first.title.height);
+    expect(first.title.y + first.title.height).toBeLessThanOrEqual(middleNodes.start);
+    expect(second.title.y).toBeLessThanOrEqual(middleNodes.start);
+    expect(second.title.y + second.title.height).toBeGreaterThanOrEqual(middleNodes.end);
+    expect(third.title.y).toBeGreaterThanOrEqual(middleNodes.end);
+  });
+
+  it.each(DIRECTIONS)(
+    'keeps every node inside its own band when a labelled edge jumps over a phase in another lane in %s',
+    (direction, alongX) => {
+      const text = [
+        `swimlane-beta ${direction}`,
+        'phase p1["Intake"]',
+        'phase p2["Review"]',
+        'phase p3["Closeout"]',
+        'subgraph l1',
+        '  a@{ phase: p1 }',
+        '  c@{ phase: p3 }',
+        'end',
+        'subgraph l2',
+        '  b@{ phase: p2 }',
+        '  b2@{ phase: p2 }',
+        'end',
+        'a -- "a fairly long label" --> c',
+        'a --> b --> b2 --> c',
+      ].join('\n');
+      const layout = laidOut(text);
+      const bands = new Map(computePhaseBands(layout).map((band) => [band.id, band.title]));
+
+      for (const [id, phase] of Object.entries<string>(layout.other.nodePhases)) {
+        const title = bands.get(phase)!;
+        const [start, extent] = alongX ? [title.x, title.width] : [title.y, title.height];
+        const nodeSpan = span(layout, [id], alongX);
+        expect(nodeSpan.start, `${id} in ${phase}`).toBeGreaterThanOrEqual(start);
+        expect(nodeSpan.end, `${id} in ${phase}`).toBeLessThanOrEqual(start + extent);
+      }
+    }
+  );
+
+  it('puts a node that names no phase after every phase', () => {
+    const layout = laidOut(source('TB', 'subgraph l3\n  z\nend'));
+
+    expect(span(layout, ['z'], false).start).toBeGreaterThanOrEqual(
+      span(layout, ['c', 'c2'], false).end
+    );
+  });
+});
+
+describe('phase bands', () => {
+  const laneBox = (layout: LayoutData) => {
+    const lanes = layout.nodes.filter((node) => node.isGroup && !node.parentId);
+    return {
+      left: Math.min(...lanes.map((lane) => (lane.x ?? 0) - (lane.width ?? 0) / 2)),
+      right: Math.max(...lanes.map((lane) => (lane.x ?? 0) + (lane.width ?? 0) / 2)),
+      top: Math.min(...lanes.map((lane) => (lane.y ?? 0) - (lane.height ?? 0) / 2)),
+      bottom: Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2)),
+    };
+  };
+
+  // A title of several lines, or in a larger font, is thicker across the flow than the strip.
+  const withThickness = (layout: LayoutData, thickness: Record<string, number>) => {
+    layout.other.phases = layout.other.phases.map((phase: { id: string }) => ({
+      ...phase,
+      titleThickness: new Map(Object.entries(thickness)).get(phase.id),
+    }));
+    return layout;
+  };
+  const THICK_TITLE = 70;
+  const crossOf = (band: ReturnType<typeof computePhaseBands>[number]) =>
+    band.titleReadsUpward ? band.title.width : band.title.height;
+
+  it.each(DIRECTIONS)(
+    'makes the whole title strip as thick as its thickest title in %s',
+    (direction, alongX) => {
+      const layout = withThickness(laidOut(source(direction)), { p2: THICK_TITLE });
+      const lanes = laneBox(layout);
+
+      const bands = computePhaseBands(layout);
+
+      expect(bands.map(crossOf)).toEqual(bands.map(() => THICK_TITLE));
+      for (const band of bands) {
+        const [outer, inner] = alongX
+          ? [band.title.y, band.title.y + band.title.height]
+          : [band.title.x, band.title.x + band.title.width];
+        expect(inner).toBeCloseTo(alongX ? lanes.top : lanes.left);
+        if (band.separator) {
+          expect(alongX ? band.separator.y1 : band.separator.x1).toBeCloseTo(outer);
+        }
+      }
+    }
+  );
+
+  it.each(DIRECTIONS)('keeps the strip at its own thickness for thin titles in %s', (direction) => {
+    const layout = withThickness(laidOut(source(direction)), { p1: 10, p2: 20, p3: 1 });
+
+    expect(computePhaseBands(layout).map(crossOf)).toEqual([
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+    ]);
+  });
+
+  it('lets only phases that draw a band thicken the strip', () => {
+    const text = source('TB').replace(
+      'phase p3["Closeout"]',
+      'phase p3["Closeout"]\nphase p4["Spare"]'
+    );
+    const layout = withThickness(laidOut(text), { p4: THICK_TITLE });
+
+    expect(computePhaseBands(layout).map(crossOf)).toEqual([
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+    ]);
+  });
+
+  it('lists a band per phase that has nodes, in order, with the trailing band last', () => {
+    const bands = computePhaseBands(laidOut(source('TB', 'subgraph l3\n  z\nend')));
+
+    expect(bands.map(({ id, label }) => [id, label])).toEqual([
+      ['p1', 'Intake'],
+      ['p2', 'Review'],
+      ['p3', 'Closeout'],
+      ['', ''],
+    ]);
+  });
+
+  it('tiles the lane area along the flow and puts the titles left of the lanes in TB', () => {
+    const layout = laidOut(source('TB'));
+    const lanes = laneBox(layout);
+
+    const bands = computePhaseBands(layout);
+
+    expect(bands[0].title.y).toBeCloseTo(lanes.top);
+    expect(bands.at(-1)!.title.y + bands.at(-1)!.title.height).toBeCloseTo(lanes.bottom);
+    for (const [index, band] of bands.slice(0, -1).entries()) {
+      expect(band.title.y + band.title.height).toBeCloseTo(bands[index + 1].title.y);
+      expect(band.separator?.y1).toBeCloseTo(bands[index + 1].title.y);
+    }
+    expect(bands.every((band) => band.title.x === lanes.left - PHASE_TITLE_THICKNESS)).toBe(true);
+    expect(bands.every((band) => band.titleReadsUpward)).toBe(true);
+    expect(bands.at(-1)?.separator).toBeUndefined();
+  });
+
+  it('puts the titles above the lanes in LR', () => {
+    const layout = laidOut(source('LR'));
+    const lanes = laneBox(layout);
+
+    const bands = computePhaseBands(layout);
+
+    expect(bands[0].title.x).toBeCloseTo(lanes.left);
+    expect(bands.every((band) => band.title.y === lanes.top - PHASE_TITLE_THICKNESS)).toBe(true);
+    expect(bands.some((band) => band.titleReadsUpward)).toBe(false);
+  });
+
+  it('has no bands when no node names a phase', () => {
+    const layout = laidOut('swimlane-beta\nphase p1["One"]\nsubgraph l1\n  a\nend');
+
+    expect(computePhaseBands(layout)).toEqual([]);
+  });
+});
+
+const CHAR_WIDTH = 8;
+const CHAR_HEIGHT = 16;
+
+/** jsdom measures nothing; a label is as wide as it has characters. */
+const stubTextMeasurement = () => {
+  const widthOf = (element: Element) => (element.textContent ?? '').length * CHAR_WIDTH;
+  const originals = [
+    [SVGElement.prototype, 'getBBox'],
+    [SVGElement.prototype, 'getComputedTextLength'],
+    [Element.prototype, 'getBoundingClientRect'],
+  ] as const;
+  const saved = originals.map(([target, name]) => Object.getOwnPropertyDescriptor(target, name));
+  Object.defineProperty(SVGElement.prototype, 'getBBox', {
+    configurable: true,
+    value(this: SVGElement) {
+      return { x: 0, y: 0, width: widthOf(this), height: CHAR_HEIGHT };
+    },
+  });
+  Object.defineProperty(SVGElement.prototype, 'getComputedTextLength', {
+    configurable: true,
+    value(this: SVGElement) {
+      return widthOf(this);
+    },
+  });
+  Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
+    configurable: true,
+    value(this: Element) {
+      return { x: 0, y: 0, width: widthOf(this), height: CHAR_HEIGHT };
+    },
+  });
+  return () => {
+    for (const [index, [target, name]] of originals.entries()) {
+      if (saved[index]) {
+        Object.defineProperty(target, name, saved[index]);
+      } else {
+        Reflect.deleteProperty(target, name);
+      }
+    }
+  };
+};
+
+describe('phase bands that must hold a title', () => {
+  const LONG_TITLE = 900;
+  const extentOf = (band: ReturnType<typeof computePhaseBands>[number]) =>
+    band.titleReadsUpward ? band.title.height : band.title.width;
+
+  it.each(DIRECTIONS)('grows a long first, middle and last title to fit in %s', (direction) => {
+    for (const long of ['p1', 'p2', 'p3']) {
+      const bands = computePhaseBands(laidOut(source(direction), {}, { [long]: LONG_TITLE }));
+
+      const band = bands.find(({ id }) => id === long)!;
+      expect(extentOf(band), `${direction} ${long}`).toBeGreaterThanOrEqual(LONG_TITLE - 0.5);
+    }
+  });
+
+  it.each(DIRECTIONS)('keeps the neighbouring bands apart in %s', (direction) => {
+    const bands = computePhaseBands(laidOut(source(direction), {}, { p2: LONG_TITLE }));
+    const startOf = (band: (typeof bands)[number]) =>
+      band.titleReadsUpward ? band.title.y : band.title.x;
+
+    const ordered = [...bands].sort((a, b) => startOf(a) - startOf(b));
+    for (const [index, band] of ordered.slice(0, -1).entries()) {
+      expect(startOf(band) + extentOf(band)).toBeLessThanOrEqual(startOf(ordered[index + 1]) + 0.5);
+    }
+  });
+
+  it('lays a diagram out as before when every title fits', () => {
+    const plain = laidOut(source('TB'));
+    const short = laidOut(source('TB'), {}, { p1: 10, p2: 10, p3: 10 });
+
+    expect(short.nodes.map(({ id, x, y }) => [id, x, y])).toEqual(
+      plain.nodes.map(({ id, x, y }) => [id, x, y])
+    );
+  });
+
+  // A phase id is any word, so one that names a property every object inherits is a phase like
+  // any other.
+  it.each(['constructor', '__proto__', 'toString'])(
+    'lays out a phase named %s like any other phase',
+    (id) => {
+      const text = source('TB').replaceAll('p1', id);
+      const fitting = laidOut(
+        text,
+        {},
+        Object.fromEntries([
+          [id, 10],
+          ['p2', LONG_TITLE],
+        ])
+      );
+      const long = laidOut(
+        text,
+        {},
+        Object.fromEntries([
+          [id, LONG_TITLE],
+          ['p2', 10],
+        ])
+      );
+
+      const placed = fitting.nodes.filter((node) => !node.isGroup);
+      expect(placed.every((node) => Number.isFinite(node.x) && Number.isFinite(node.y))).toBe(true);
+      const band = computePhaseBands(long).find((candidate) => candidate.id === id)!;
+      expect(extentOf(band)).toBeGreaterThanOrEqual(LONG_TITLE - 0.5);
+    }
+  );
+
+  // b1, b2 and b3 share a rank across three lanes, so the middle band is one rank long along
+  // the flow and three lanes wide across it.
+  const acrossLanes = (direction: string) =>
+    [
+      `swimlane-beta ${direction}`,
+      'phase p1["Intake"]',
+      'phase p2["Review"]',
+      'phase p3["Closeout"]',
+      'subgraph l1',
+      '  a@{ phase: p1 }',
+      '  b1@{ phase: p2 }',
+      'end',
+      'subgraph l2',
+      '  b2@{ phase: p2 }',
+      'end',
+      'subgraph l3',
+      '  b3@{ phase: p2 }',
+      '  c@{ phase: p3 }',
+      'end',
+      'a --> b1',
+      'a --> b2',
+      'a --> b3',
+      'b3 --> c',
+    ].join('\n');
+  const TITLE_OVERHANG = 10;
+
+  // Bands are measured before the edges are routed, and routing can still move a lane title
+  // outward, which lengthens an outer band; a title half as long as its band fits either way.
+  it.each(DIRECTIONS)(
+    'lays a diagram out as before in %s when every title fits its band',
+    (direction) => {
+      for (const text of [source(direction), acrossLanes(direction)]) {
+        const plain = laidOut(text);
+        const fitting = Object.fromEntries(
+          computePhaseBands(plain).map((band) => [band.id, extentOf(band) / 2])
+        );
+
+        const laid = laidOut(text, {}, fitting);
+
+        expect(laid.nodes.map(({ id, x, y }) => [id, x, y])).toEqual(
+          plain.nodes.map(({ id, x, y }) => [id, x, y])
+        );
+      }
+    }
+  );
+
+  it.each(DIRECTIONS)(
+    'grows a band spanning several lanes by just what its title lacks in %s',
+    (direction) => {
+      const plain = computePhaseBands(laidOut(acrossLanes(direction)));
+      const title = extentOf(plain.find(({ id }) => id === 'p2')!) + TITLE_OVERHANG;
+
+      const grown = computePhaseBands(laidOut(acrossLanes(direction), {}, { p2: title }));
+
+      expect(extentOf(grown.find(({ id }) => id === 'p2')!)).toBeCloseTo(title, 0);
+    }
+  );
+
+  // A band grows by widening the gaps to its neighbours, and a lone band has none. When lanes
+  // can grow along the flow this limit goes, and this test must be rewritten to expect growth.
+  it.each(['TB', 'LR'])(
+    'leaves a long title overflowing when every node is in one phase in %s (not yet handled)',
+    (direction) => {
+      const lone = (titleExtent: number) =>
+        laidOut(
+          `swimlane-beta ${direction}\nphase p1["Intake"]\nsubgraph l1\n  a@{ phase: p1 }\nend`,
+          {},
+          { p1: titleExtent }
+        );
+      const plain = extentOf(computePhaseBands(lone(0))[0]);
+
+      const [band] = computePhaseBands(lone(LONG_TITLE));
+
+      expect(extentOf(band)).toBe(plain);
+      expect(extentOf(band)).toBeLessThan(LONG_TITLE);
+    }
+  );
+
+  it.each(['TB', 'LR'])(
+    'grows the same long title once a second phase has a node in %s',
+    (direction) => {
+      const text = `swimlane-beta ${direction}\nphase p1["Intake"]\nphase p2["Review"]\nsubgraph l1\n  a@{ phase: p1 }\n  b@{ phase: p2 }\nend\na --> b`;
+
+      const band = computePhaseBands(laidOut(text, {}, { p1: LONG_TITLE })).find(
+        ({ id }) => id === 'p1'
+      )!;
+
+      expect(extentOf(band)).toBeGreaterThanOrEqual(LONG_TITLE - 0.5);
+    }
+  );
+
+  it('lays out the same diagram twice with the same result', () => {
+    const once = laidOut(source('LR'), {}, { p2: LONG_TITLE });
+    const twice = laidOut(source('LR'), {}, { p2: LONG_TITLE });
+
+    expect(once.nodes.map(({ id, x, y }) => [id, x, y])).toEqual(
+      twice.nodes.map(({ id, x, y }) => [id, x, y])
+    );
+  });
+});
+
+describe('a declared phase that no node uses', () => {
+  const warned = (text: string) => {
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    laidOut(text);
+    const messages = warn.mock.calls.map((call) => call.join(' ')).filter((m) => /phase/i.test(m));
+    warn.mockRestore();
+    return messages;
+  };
+
+  it('is named in a warning once, and draws no band', () => {
+    const text = source('TB').replace(
+      'phase p3["Closeout"]',
+      'phase p3["Closeout"]\nphase p4["Spare"]'
+    );
+
+    const messages = warned(text);
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toContain('"p4"');
+    expect(computePhaseBands(laidOut(text)).map(({ id }) => id)).toEqual(['p1', 'p2', 'p3']);
+  });
+
+  it('is named even when no node uses any phase', () => {
+    const messages = warned('swimlane-beta\nphase p1["One"]\nsubgraph l1\n  a\nend');
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toContain('"p1"');
+  });
+
+  it('stays quiet when every phase has a node', () => {
+    expect(warned(source('TB'))).toEqual([]);
+  });
+});
+
+describe('painting phase bands', () => {
+  let restoreMeasurement: () => void;
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    restoreMeasurement = stubTextMeasurement();
+  });
+  afterEach(() => {
+    restoreMeasurement();
+    reset();
+  });
+
+  // The renderer puts clusters, edges and nodes in a `root` group under the element it hands over.
+  const RENDERED_GROUPS =
+    '<g class="root"><g class="clusters"></g><g class="edges edgePaths"></g><g class="nodes"></g></g>';
+
+  const paint = async (text: string, groups = RENDERED_GROUPS) => {
+    const layout = laidOut(text);
+    document.body.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"><g id="root">${groups}</g></svg>`;
+    const rootElement = document.querySelector<SVGGElement>('#root')!;
+    await paintPhaseBands(layout, { element: select(rootElement) });
+    return rootElement;
+  };
+  const all = (root: Element, selector: string) => [...root.querySelectorAll(selector)];
+
+  it('draws one titled cell per band and a separator between bands, above the lanes and under the edges', async () => {
+    const root = await paint(source('TB'));
+
+    expect(
+      [...(root.querySelector('.root')?.children ?? [])].map((child) => child.getAttribute('class'))
+    ).toEqual(['clusters', 'swimlane-phases', 'edges edgePaths', 'nodes']);
+    expect(all(root, '.swimlane-phase')).toHaveLength(3);
+    expect(all(root, '.swimlane-phase-separator')).toHaveLength(2);
+    expect(all(root, '.swimlane-phase-label').map((label) => label.textContent)).toEqual([
+      'Intake',
+      'Review',
+      'Closeout',
+    ]);
+  });
+
+  it('turns the labels upward in the left strip of a TB diagram and not in LR', async () => {
+    const topToBottom = all(await paint(source('TB')), '.swimlane-phase-label');
+    const leftToRight = all(await paint(source('LR')), '.swimlane-phase-label');
+
+    expect(
+      topToBottom.every((label) => label.getAttribute('transform')?.includes('rotate(-90)'))
+    ).toBe(true);
+    expect(leftToRight.some((label) => label.getAttribute('transform')?.includes('rotate'))).toBe(
+      false
+    );
+  });
+
+  it('goes first when the element has no edge group to sit in front of', async () => {
+    const root = await paint(source('TB'), '<g class="clusters"></g>');
+
+    expect(root.firstElementChild?.getAttribute('class')).toBe('swimlane-phases');
+  });
+
+  it('draws nothing for a diagram without phases', async () => {
+    const root = await paint('swimlane-beta\nsubgraph l1\n  a\nend');
+
+    expect(all(root, '.swimlane-phases')).toHaveLength(0);
+  });
+
+  it('measures each title as its width with a margin and its height with an inset', async () => {
+    const layout = laidOut(source('TB'));
+    document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"><g id="root"></g></svg>';
+    const root = document.querySelector<SVGGElement>('#root')!;
+
+    await measurePhaseTitles(layout, select(root));
+
+    expect(layout.other.phases.map((phase: { titleExtent: number }) => phase.titleExtent)).toEqual(
+      ['Intake', 'Review', 'Closeout'].map(
+        (title) => title.length * CHAR_WIDTH + 2 * PHASE_TITLE_MARGIN
+      )
+    );
+    expect(
+      layout.other.phases.map((phase: { titleThickness: number }) => phase.titleThickness)
+    ).toEqual([1, 2, 3].map(() => CHAR_HEIGHT + 2 * PHASE_TITLE_INSET));
+    expect(root.children).toHaveLength(0);
+  });
+
+  it.each([
+    ['root htmlLabels false', { htmlLabels: false }, false],
+    ['root htmlLabels true', { htmlLabels: true }, true],
+    [
+      'root htmlLabels false over flowchart true',
+      { htmlLabels: false, flowchart: { htmlLabels: true } },
+      false,
+    ],
+    ['flowchart htmlLabels false alone', { flowchart: { htmlLabels: false } }, false],
+    ['no htmlLabels setting', {}, true],
+  ])('draws the titles as HTML or as SVG text by the %s', async (_name, config, html) => {
+    setConfig(config);
+
+    const labels = all(await paint(source('TB')), '.swimlane-phase-label');
+
+    expect(labels).toHaveLength(3);
+    expect(labels.every((label) => label.querySelector('foreignObject') !== null)).toBe(html);
+  });
+
+  describe.each([true, false])('with htmlLabels %s', (htmlLabels) => {
+    beforeEach(() => {
+      setConfig({ flowchart: { htmlLabels } });
+    });
+
+    // A lane title and a phase title go through the same label helper, so a title that
+    // reads one way on a lane reads the same way on a phase.
+    const laneTitle = async (title: string) => {
+      const layout = laidOut(`swimlane-beta\nsubgraph l1[${title}]\n  a\nend`);
+      const lane = layout.nodes.find((node) => node.id === 'l1')!;
+      const holder = select(document.body).append('svg').append('g');
+      const label = holder.append('g');
+      await createText(label, lane.label ?? '', {
+        useHtmlLabels: htmlLabels,
+        isNode: true,
+        width: lane.width,
+      });
+      return label.node()?.textContent;
+    };
+    const phaseTitle = async (title: string) => {
+      const root = await paint(
+        `swimlane-beta TB\nphase p1[${title}]\nsubgraph l1\n  a@{ phase: p1 }\nend`
+      );
+      return root.querySelector('.swimlane-phase-label')?.textContent;
+    };
+
+    it.each([
+      ['an ampersand', '"R&D"', 'R&D'],
+      ['markdown', '"`**Bold** start`"', 'Bold start'],
+    ])('draws %s the way a lane title does', async (_name, title, shown) => {
+      expect(await phaseTitle(title)).toBe(shown);
+      expect(await phaseTitle(title)).toBe(await laneTitle(title));
+    });
+  });
+});

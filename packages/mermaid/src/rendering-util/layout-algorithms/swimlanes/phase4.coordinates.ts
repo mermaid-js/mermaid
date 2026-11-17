@@ -1,5 +1,7 @@
 import type { Graph, OrderedLayers, Coordinates, NodeId, EdgeRef, Node } from './helpers.js';
 import { COORDINATES } from './config.js';
+import type { PhaseGrowth } from './phases.js';
+import { reservePhaseRoom } from './phases.js';
 import { flowAxisStretch } from './direction/lrTransform.js';
 import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
 
@@ -9,6 +11,7 @@ export interface CoordOptions {
   laneGap?: number; // horizontal gap between lanes (clusters)
   direction?: 'TB' | 'LR' | 'BT' | 'RL'; // layout direction for proper spacing
   laneOrder?: string[];
+  phaseGrowth?: PhaseGrowth;
 }
 
 /** A labelled edge within one rank: its label sits in the target's row. */
@@ -158,6 +161,7 @@ export function assignCoordinates(
   for (const [gap, need] of labelGapNeed.entries()) {
     extraLayerGaps[gap] += need;
   }
+  reservePhaseRoom(extraLayerGaps, layers, gWithDummies.layout, opts);
 
   const laneWidth: Record<string, number> = Object.create(null);
   for (const L of lanesUsed) {

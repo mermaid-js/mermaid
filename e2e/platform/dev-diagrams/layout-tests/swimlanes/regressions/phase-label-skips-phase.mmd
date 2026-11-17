@@ -1,0 +1,23 @@
+---
+config:
+  layout: swimlane
+---
+swimlane-beta TB
+  %% A labelled edge from the first phase to the third runs past the second, whose nodes sit
+  %% in another lane: every node stays inside its own band.
+  phase p1["Intake"]
+  phase p2["Review"]
+  phase p3["Closeout"]
+
+  subgraph front [Front office]
+    receive["Receive"]@{ phase: p1 }
+    close["Close"]@{ phase: p3 }
+  end
+
+  subgraph back [Back office]
+    check["Check"]@{ phase: p2 }
+    approve["Approve"]@{ phase: p2 }
+  end
+
+  receive -- "fast track" --> close
+  receive --> check --> approve --> close

@@ -1,0 +1,21 @@
+---
+config:
+  layout: swimlane
+---
+swimlane-beta LR
+  %% A title of three lines is thicker than the title strip: the strip grows across the flow
+  %% so every title stays inside its cell and clear of the lanes.
+  phase p1["Intake"]
+  phase p2["Review<br/>by finance<br/>and legal"]
+  phase p3["Closeout"]
+
+  subgraph front [Front office]
+    receive["Receive"]@{ phase: p1 }
+    close["Close"]@{ phase: p3 }
+  end
+
+  subgraph back [Back office]
+    check["Check"]@{ phase: p2 }
+  end
+
+  receive --> check --> close
