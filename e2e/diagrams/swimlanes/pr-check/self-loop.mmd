@@ -1,0 +1,16 @@
+---
+description: >-
+  A node with a labelled edge to itself (#8446). The loop sits on the
+  right of B and its label sits on the loop.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+  subgraph MD
+    A
+    B
+  end
+  A -->|Submit| B
+  B -->|Submit| B

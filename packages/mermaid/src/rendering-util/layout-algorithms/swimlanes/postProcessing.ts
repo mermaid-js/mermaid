@@ -2,6 +2,7 @@
 import type { Edge, LayoutData, Node } from '../../types.js';
 import {
   clipEdgeEndpointsToNodeBoundaries,
+  finishSelfLoops,
   prepareEdgeEndpointsForRenderer,
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
@@ -123,7 +124,11 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   swapDestinationTerminalTailsToReduceCrossings(edges, nodeByIdMap);
 
   const finalizeRenderedEdges = (): void => {
-    resolveRenderedOrthogonalCrossings(edges, nodeByIdMap);
+    // Self-loops are left out: rerouting them breaks the loop
+    resolveRenderedOrthogonalCrossings(
+      edges.filter((e) => e.start !== e.end),
+      nodeByIdMap
+    );
     // Crossing cleanup can bring a route onto a face another edge already leaves or
     // enters from, so split shared terminal lanes again before endpoints are pinned.
     separateSharedRenderedTerminalLanes(edges, nodeByIdMap);
@@ -154,6 +159,7 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // present in the pre-materialized route, so run the bounded cleanup once
   // more and then re-prepare the endpoints it reshaped.
   finalizeRenderedEdges();
+  finishSelfLoops(edges, nodeByIdMap);
 
   // The passes above can route an edge between two aligned nodes in different lanes around a
   // corner, or leave a terminal leg off its node's port: beside a diamond's vertex, or against a
