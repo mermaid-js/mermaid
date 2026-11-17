@@ -11,6 +11,7 @@
  *
  * `sync` and `label` call the gh CLI and need GH_TOKEN and REPO (owner/name).
  */
+/* eslint-disable no-console -- command-line script */
 import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -19,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const DIAGRAMS_DIR = join(root, 'packages/mermaid/src/diagrams');
 export const QUEUE_LABEL = 'Triage: Needs AI';
-const LABEL_COLOUR = 'b7eeff';
+const LABEL_COLOUR = 'b7eeff'; // cspell:disable-line
 
 export const loadConfig = () =>
   JSON.parse(readFileSync(join(root, '.github/triage-labels.json'), 'utf8'));
@@ -33,17 +34,24 @@ export function findMismatches(config, folders) {
   };
 }
 
-const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegExp = (text) => text.replace(/[$()*+.?[\\\]^{|}]/g, '\\$&');
 
 /** First line of a diagram once front matter, directives and comments are removed. */
 function firstStatement(code) {
-  const body = code.replace(/^\s*---\n[\s\S]*?\n---\s*\n/, '').replace(/%%\{[\s\S]*?\}%%/g, '');
+  const body = code.replace(/^\s*---\n[\S\s]*?\n---\s*\n/, '').replace(/%%{[\S\s]*?}%%/g, '');
   return body.split('\n').find((line) => line.trim() && !line.trim().startsWith('%%')) ?? '';
 }
 
+/** Fences tagged with another language (yaml, js, ...) are not diagrams. */
+const DIAGRAM_FENCE_LANGUAGES = new Set(['', 'mermaid', 'mmd']);
+
 /** Labels for every diagram type found in the fenced code blocks of `text`. */
 export function detectLabels(config, text) {
-  const blocks = [...(text ?? '').matchAll(/```[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+  // Mermaid normalises line endings before reading front matter, so do the same.
+  const normalised = (text ?? '').replace(/\r\n?/g, '\n');
+  const blocks = [...normalised.matchAll(/```([^\n]*)\n([\S\s]*?)```/g)]
+    .filter((m) => DIAGRAM_FENCE_LANGUAGES.has(m[1].trim().toLowerCase()))
+    .map((m) => m[2]);
   const labels = new Set();
   for (const block of blocks) {
     const line = firstStatement(block);

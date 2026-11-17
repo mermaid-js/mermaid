@@ -12,7 +12,7 @@
     "cynefin": { "label": "Graph: Cynefin", "keywords": ["cynefin"] },
     "er": { "label": "Graph: Entity Relationship", "keywords": ["erDiagram"] },
     "eventmodeling": { "label": "Graph: EventModeling", "keywords": ["eventmodeling"] },
-    "flowchart": { "label": "Graph: Flow", "keywords": ["flowchart", "graph"] },
+    "flowchart": { "label": "Graph: Flow", "keywords": ["flowchart", "flowchart-elk", "graph"] },
     "gantt": { "label": "Graph: Gantt", "keywords": ["gantt"] },
     "git": { "label": "Graph: Git", "keywords": ["gitGraph"] },
     "ishikawa": { "label": "Graph: Ishikawa", "keywords": ["ishikawa"] },
