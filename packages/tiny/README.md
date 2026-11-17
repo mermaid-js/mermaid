@@ -28,8 +28,8 @@ If you need to use mermaid in your project, please install the full [`mermaid` p
 <script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny@<MERMAID_MAJOR_VERSION>/dist/mermaid.tiny.js"></script>
 
 <!-- Pinning major version -->
-<script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny@11/dist/mermaid.tiny.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny@12/dist/mermaid.tiny.js"></script>
 
 <!-- Pinning specific version -->
-<script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny@11.6.0/dist/mermaid.tiny.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny@12.3.0/dist/mermaid.tiny.js"></script>
 ```
