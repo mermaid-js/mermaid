@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "a",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "b",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "c",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "d",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "e",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "f",
+      "width": 180,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "77ecef8f1dda0ee8333b4c68266e30b7afc4e2fee8cef5dfa47447938a4e4733",
+    "capturedAt": "2026-11-05T09:27:02.050Z",
+    "capturedFrom": "headless playwright layout-tests/swimlanes/regressions/same-lane-detour-tb.mmd dev-viewer config theme=default look=classic"
+  }
+}

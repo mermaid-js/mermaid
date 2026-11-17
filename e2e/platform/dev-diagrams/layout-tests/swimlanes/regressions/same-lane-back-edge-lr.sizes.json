@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "a",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "b",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "c",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "d",
+      "width": 174,
+      "height": 174
+    },
+    {
+      "id": "edge-label-d-b-L_d_b_0",
+      "width": 18.796875,
+      "height": 24
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "1439e04e9ae2ef8fae45e69844bb69dd9fbcff1aadf95d90e8e08547047cf84c",
+    "capturedAt": "2026-11-05T09:27:01.970Z",
+    "capturedFrom": "headless playwright layout-tests/swimlanes/regressions/same-lane-back-edge-lr.mmd dev-viewer config theme=default look=classic"
+  }
+}

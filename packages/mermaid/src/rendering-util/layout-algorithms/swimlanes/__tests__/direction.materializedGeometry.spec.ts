@@ -425,6 +425,69 @@ describe('materialized render geometry cleanup', () => {
   });
 });
 
+describe('shortcutting a jog next to the boxes an edge joins', () => {
+  // Check sits above Report in one lane; the edge leaves Check's right face, runs down past
+  // Report and enters it from below.
+  const nodeById = new Map<string, any>([
+    ['d', { id: 'd', x: 50, y: 27, width: 180, height: 54 }],
+    ['e', { id: 'e', x: 50, y: 131, width: 180, height: 54 }],
+  ]);
+  const shortcut = (points: { x: number; y: number }[], nodes = nodeById) => {
+    const edges: any[] = [{ id: 'L_d_e_0', start: 'd', end: 'e', points }];
+    shortcutRedundantOrthogonalJogs(edges, nodes);
+    return edges[0].points;
+  };
+
+  it('keeps the jog when the shortcut would run through the boxes the edge joins', () => {
+    const route = [
+      { x: 140, y: 27 },
+      { x: 180, y: 27 },
+      { x: 180, y: 178 },
+      { x: 50, y: 178 },
+      { x: 50, y: 158 },
+    ];
+
+    expect(shortcut(structuredClone(route))).toEqual(route);
+  });
+
+  it('keeps the jog when the shortcut would newly run through one box, though the route starts inside the other', () => {
+    // The route starts at Check's centre; the shortcut would run straight down through Report.
+    const route = [
+      { x: 50, y: 27 },
+      { x: 180, y: 27 },
+      { x: 180, y: 178 },
+      { x: 50, y: 178 },
+      { x: 50, y: 158 },
+    ];
+
+    expect(shortcut(structuredClone(route))).toEqual(route);
+  });
+
+  it('still shortcuts a route that already starts inside its box', () => {
+    // Report sits to the lower left, so the shortcut down from Check's centre passes beside it
+    // and meets its right face.
+    const besideReport = new Map(nodeById).set('e', {
+      id: 'e',
+      x: -150,
+      y: 178,
+      width: 100,
+      height: 40,
+    });
+    const route = [
+      { x: 50, y: 27 },
+      { x: 180, y: 27 },
+      { x: 180, y: 178 },
+      { x: -100, y: 178 },
+    ];
+
+    expect(shortcut(route, besideReport)).toEqual([
+      { x: 50, y: 27 },
+      { x: 50, y: 178 },
+      { x: -100, y: 178 },
+    ]);
+  });
+});
+
 describe('separating two close terminal tracks on one face', () => {
   // `fix -> task` is a straight connector between aligned nodes and leaves fix's left face at
   // its centre; `decision -> fix` arrives on the same face 10 px above it, along the same
