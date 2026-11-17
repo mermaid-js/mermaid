@@ -363,3 +363,18 @@ root
     expect(child2.nodeId).toEqual('B');
   });
 });
+
+describe('when a mindmap decoration has no node before it', function () {
+  beforeEach(function () {
+    mindmap.yy = new MindmapDB();
+    mindmap.yy.clear();
+  });
+
+  it('should reject an icon with an error that says what is missing', function () {
+    expect(() => mindmap.parse('mindmap\n::icon(mdi mdi-fire)')).toThrow('needs a node before it');
+  });
+
+  it('should reject a class with an error that says what is missing', function () {
+    expect(() => mindmap.parse('mindmap\n:::urgent')).toThrow('needs a node before it');
+  });
+});

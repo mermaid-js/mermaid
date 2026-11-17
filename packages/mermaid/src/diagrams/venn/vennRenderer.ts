@@ -50,6 +50,9 @@ export const draw: DrawDefinition = (
   ].filter(Boolean);
   const title = db.getDiagramTitle?.();
   const sets = db.getSubsetData();
+  if (sets.length === 0) {
+    throw new Error('venn-beta needs at least one set. Declare one with "set A".');
+  }
   const textNodes = db.getTextData();
   const styleByKey = buildStyleByKey(db.getStyleData());
 

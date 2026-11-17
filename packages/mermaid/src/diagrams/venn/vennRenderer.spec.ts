@@ -249,3 +249,12 @@ describe('vennRenderer', () => {
     });
   });
 });
+
+describe('vennRenderer without sets', () => {
+  it('reports a diagram that declares no set instead of crashing in the layout', () => {
+    document.body.innerHTML = '<svg id="venn"></svg>';
+    const diagram = createDiagram({ getSubsetData: () => [] });
+
+    expect(() => draw('', 'venn', '1.0', diagram)).toThrow('venn-beta needs at least one set');
+  });
+});
