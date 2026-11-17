@@ -1953,7 +1953,7 @@ export function shortcutRedundantOrthogonalJogs(
   ): number =>
     routes.total -
     routes.of(edge) +
-    routes.withOthers(edge, segmentsFor(pointsFor(edge, edge, replacement)));
+    routes.withOthers(edge, segmentsFor(dedupeConsecutivePoints(replacement)));
 
   const segmentRunsAlongRectBorder = (segment: SegmentLite, rect: RectLite): boolean => {
     if (segment.horizontal) {
@@ -2778,6 +2778,11 @@ export function resolveRenderedOrthogonalCrossings(
    * The scan of one candidate route against the round's routes, kept for the rest of the
    * round under the route's exact coordinates: edges between the same two nodes try the same
    * candidate routes, and a later edge resumes the scan where an earlier one stopped.
+   *
+   * The key omits the edge on purpose, so one scan serves different edges: `found` only grows
+   * and holds every conflict among the edges scanned so far, whichever edge asked; an edge's
+   * early-stop test only gets truer as `found` grows, and a scan that stopped too early for a
+   * later edge resumes; `sharedTrackConflictsFor` never stops early.
    */
   const conflictScanFor = (round: RoundCrossings, path: PointLite[]): ConflictScan => {
     const key = path.map((point) => `${point.x},${point.y}`).join(' ');
