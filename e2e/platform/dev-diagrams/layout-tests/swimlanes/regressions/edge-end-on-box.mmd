@@ -1,0 +1,36 @@
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
+swimlane-beta LR
+  %% The router runs "B2 -> A2" on through the box of A2 and starts "B3 -> A1" inside B3;
+  %% each edge is cut where it meets its box, so the arrowhead into A2 from below shows
+  subgraph Dep1
+    A1
+    A2
+    A3
+  end
+  subgraph Dep2
+    B1
+    B2
+    B3
+  end
+
+  A1 --> B2
+  A1 --> B3
+  A2 --> B1
+  A2 --> B2
+  A2 --> B3
+  A3 --> B1
+  A3 --> B2
+  A3 --> B3
+  B1 --> A1
+  A1 --> A2
+  A1 --> A3
+  B2 --> A1
+  B2 --> A2
+  B2 --> A3
+  B3 --> A1
+  B3 --> A2
+  B3 --> A3

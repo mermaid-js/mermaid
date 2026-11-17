@@ -2,6 +2,7 @@
 import type { Edge, LayoutData, Node } from '../../types.js';
 import {
   clipEdgeEndpointsToNodeBoundaries,
+  cropEdgeEndsToShapes,
   prepareEdgeEndpointsForRenderer,
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
@@ -171,4 +172,8 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // the edges again.
   liftTopLaneTitleBandsAboveRails(edges, nodeByIdMap, direction);
   shiftLeftLaneTitleBandsLeftOfRails(edges, nodeByIdMap, direction);
+
+  if (cropEdgeEndsToShapes(edges, nodeByIdMap)) {
+    anchorLabelsToPolyline(edges, nodeByIdMap);
+  }
 }

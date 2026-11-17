@@ -2,6 +2,7 @@ import {
   dedupeConsecutivePoints,
   orthogonalizePolyline,
   pointInsideRect,
+  rectFromCenterSize,
   rectOfNodeBounds,
   samePoint,
   sameX,
@@ -24,6 +25,56 @@ interface EndpointEdge {
   points?: Point[];
   start?: string;
   end?: string;
+}
+
+interface EndpointNode {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  isGroup?: boolean;
+  shape?: string;
+  metadata?: { drawnExtent?: { width?: unknown; height?: unknown } };
+}
+
+/**
+ * The shapes whose outline is their box, each under every name the shape registry gives it: a
+ * rectangle with square corners, framed or lined, but never rounded. A fork or join bar is
+ * drawn inside a box grown by the state padding, so it is not one. A node with no shape is its
+ * box too.
+ */
+const BOX_SHAPES = new Set<string>([
+  'rect',
+  'squareRect',
+  'proc',
+  'process',
+  'rectangle',
+  'fr-rect',
+  'subroutine',
+  'subprocess',
+  'subproc',
+  'framed-rectangle',
+  'lin-rect',
+  'lined-rectangle',
+  'lined-process',
+  'lin-proc',
+  'shaded-process',
+]);
+
+/** Whether a route cut where it meets the node's box ends on what the node draws. */
+const drawsItsBox = (node: EndpointNode): boolean =>
+  node.shape === undefined || BOX_SHAPES.has(node.shape);
+
+const isFiniteNumber = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value);
+
+/** The box an edge end meets: what the shape draws when it sets `metadata.drawnExtent`, else the node box. */
+function endpointRectOf(node: EndpointNode): RectBounds | undefined {
+  const { x, y } = node;
+  const { width, height } = node.metadata?.drawnExtent ?? {};
+  return isFiniteNumber(width) && isFiniteNumber(height) && isFiniteNumber(x) && isFiniteNumber(y)
+    ? rectFromCenterSize(x, y, width, height)
+    : rectOfNodeBounds(node);
 }
 
 function endpointContextFor(edge: unknown, nodeByIdMap: Map<string, any>, minPoints: number) {
@@ -467,4 +518,109 @@ export function prepareEdgeEndpointsForRenderer(edges: unknown[], nodeByIdMap: M
     ];
     context.edge.points = duplicated;
   }
+}
+
+/** Below this a segment counts as running along a row or column. */
+const SQUARE_EPS = 1e-6;
+/** A segment that runs less than this far inside a box only touches it. */
+const MIN_CONTACT_LENGTH = 1;
+
+/**
+ * Narrows the parameter range of a segment to where one coordinate lies within [low, high].
+ * A segment that keeps that coordinate fixed lies within only when it is strictly between the
+ * two, so one running along a face of the box does not count.
+ */
+function clipAxis(
+  start: number,
+  delta: number,
+  [low, high]: [number, number],
+  [from, to]: [number, number]
+): [number, number] | undefined {
+  if (Math.abs(delta) <= SQUARE_EPS) {
+    return start > low && start < high ? [from, to] : undefined;
+  }
+  const a = (low - start) / delta;
+  const b = (high - start) / delta;
+  const t0 = Math.max(from, Math.min(a, b));
+  const t1 = Math.min(to, Math.max(a, b));
+  return t0 <= t1 ? [t0, t1] : undefined;
+}
+
+/** Where the segment from `a` to `b` first enters `r`, when it runs on inside it. */
+function firstContact(a: Point, b: Point, r: RectBounds): Point | undefined {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const alongX = clipAxis(a.x, dx, [r.left, r.right], [0, 1]);
+  const inside = alongX && clipAxis(a.y, dy, [r.top, r.bottom], alongX);
+  if (!inside || (inside[1] - inside[0]) * Math.hypot(dx, dy) < MIN_CONTACT_LENGTH) {
+    return undefined;
+  }
+  return { x: a.x + inside[0] * dx, y: a.y + inside[0] * dy };
+}
+
+/** Cuts a route at the first point where one of its square segments enters `rect`. */
+function cropTail(points: Point[], rect: RectBounds): Point[] {
+  for (let i = 0; i < points.length - 1; i++) {
+    const square =
+      sameX(points[i], points[i + 1], SQUARE_EPS) || sameY(points[i], points[i + 1], SQUARE_EPS);
+    const contact = square ? firstContact(points[i], points[i + 1], rect) : undefined;
+    if (contact) {
+      return [...points.slice(0, i + 1), contact];
+    }
+  }
+  return points;
+}
+
+/** The nodes at the ends of an edge that is cropped; none for a self-loop or an edge to a group. */
+function endsToCrop(edge: EndpointEdge, nodeByIdMap: Map<string, EndpointNode>) {
+  const src = edge.start ? nodeByIdMap.get(edge.start) : undefined;
+  const dst = edge.end ? nodeByIdMap.get(edge.end) : undefined;
+  if (src === dst || src?.isGroup || dst?.isGroup) {
+    return undefined;
+  }
+  return { src, dst };
+}
+
+const samePolyline = (a: Point[], b: Point[]): boolean =>
+  a.length === b.length && a.every((point, i) => samePoint(point, b[i], SQUARE_EPS));
+
+/** Whether a route has anything to draw: two of its points apart. */
+const hasLength = (points: Point[]): boolean =>
+  points.some((point, i) => i > 0 && !samePoint(point, points[i - 1], SQUARE_EPS));
+
+/**
+ * Cuts each end of a route where it first meets the box of the node at that end. An end at a
+ * shape that draws less than its box, such as a circle or a diamond, is not cut: where the
+ * route meets the box can lie outside what the shape draws.
+ */
+function cropEnds(points: Point[], src?: EndpointNode, dst?: EndpointNode): Point[] {
+  const dstRect = dst && drawsItsBox(dst) ? endpointRectOf(dst) : undefined;
+  const toEnd = dstRect ? cropTail(points, dstRect) : points;
+  const srcRect = src && drawsItsBox(src) ? endpointRectOf(src) : undefined;
+  return srcRect ? cropTail([...toEnd].reverse(), srcRect).reverse() : toEnd;
+}
+
+/**
+ * Ends every edge between two nodes where it first meets each node's box (its drawn extent
+ * when the shape sets one), so an arrowhead is never drawn inside, and hidden by, the box.
+ * Self-loops, edges to groups, slanted segments and ends at shapes that draw less than their
+ * box are left as they are, and so is a route that cropping would leave with nothing to draw.
+ *
+ * @returns whether any route was cut.
+ */
+export function cropEdgeEndsToShapes(
+  edges: EndpointEdge[],
+  nodeByIdMap: Map<string, EndpointNode>
+): boolean {
+  let cropped = false;
+  for (const candidate of edges) {
+    const ends = candidate.isLayoutOnly ? undefined : endsToCrop(candidate, nodeByIdMap);
+    const before = candidate.points ?? [];
+    const points = ends ? cropEnds(before, ends.src, ends.dst) : [];
+    if (hasLength(points) && !samePolyline(points, before)) {
+      candidate.points = points;
+      cropped = true;
+    }
+  }
+  return cropped;
 }
