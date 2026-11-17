@@ -4,6 +4,7 @@ import type { SetOptional, SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 import type { DiagramOrientation } from '../diagrams/git/gitGraphTypes.js';
+import type { LineJoin, SourceLines } from './sourceLines.js';
 
 export interface DiagramMetadata {
   title?: string;
@@ -25,6 +26,14 @@ export interface DiagramCode {
   withComments?: string;
   /** Number of lines occupied by YAML frontmatter (0 if none). */
   frontmatterLineOffset?: number;
+  /** Line of `raw` that each line of `cleaned` comes from; parse errors are reported on it. */
+  cleanedSourceLines?: SourceLines;
+  /** Where a line of `cleaned` goes on with text from another line of `raw`. */
+  cleanedJoins?: readonly LineJoin[];
+  /** Line of `raw` that each line of `withComments` comes from. */
+  withCommentsSourceLines?: SourceLines;
+  /** Where a line of `withComments` goes on with text from another line of `raw`. */
+  withCommentsJoins?: readonly LineJoin[];
 }
 
 export interface InjectUtils {

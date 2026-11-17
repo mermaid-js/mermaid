@@ -888,33 +888,70 @@ export default {
   InitIDGenerator,
 };
 
+/** The replacements {@link encodeEntities} makes, in this order: each one of every match. */
+const entityEncodings: readonly (readonly [RegExp, (match: string) => string])[] = [
+  [/style.*:\S*#.*;/g, (match) => match.substring(0, match.length - 1)],
+  [/classDef.*:\S*#.*;/g, (match) => match.substring(0, match.length - 1)],
+  [
+    /#\w+;/g,
+    (match) => {
+      const innerTxt = match.substring(1, match.length - 1);
+      const isInt = /^\+?\d+$/.test(innerTxt);
+      return (isInt ? 'ﬂ°°' : 'ﬂ°') + innerTxt + '¶ß';
+    },
+  ],
+];
+
 /**
  * @param  text - text to be encoded
  * @returns
  */
 export const encodeEntities = function (text: string): string {
-  let txt = text;
-
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-
-  txt = txt.replace(/#\w+;/g, function (s) {
-    const innerTxt = s.substring(1, s.length - 1);
-
-    const isInt = /^\+?\d+$/.test(innerTxt);
-    if (isInt) {
-      return 'ﬂ°°' + innerTxt + '¶ß';
-    } else {
-      return 'ﬂ°' + innerTxt + '¶ß';
-    }
-  });
-
-  return txt;
+  return entityEncodings.reduce(
+    (encoded, [pattern, encode]) => encoded.replace(pattern, encode),
+    text
+  );
 };
+
+/** A text and columns in it, counted from 1 and in ascending order. */
+interface TextColumns {
+  readonly text: string;
+  readonly columns: readonly number[];
+}
+
+/** One replacement of {@link encodeEntities}, with `columns` moved along. */
+const encodeStep = (
+  { text, columns }: TextColumns,
+  [pattern, encode]: readonly [RegExp, (match: string) => string]
+): TextColumns => {
+  let encoded = '';
+  let cursor = 0;
+  let next = 0;
+  const moved: number[] = [];
+  for (const { index, 0: match } of text.matchAll(new RegExp(pattern))) {
+    encoded += text.slice(cursor, index);
+    const replacement = encode(match);
+    // A column before the end of the match keeps its distance from the start of the match,
+    // up to the end of the replacement.
+    for (; next < columns.length && columns[next] - 1 < index + match.length; next++) {
+      moved.push(encoded.length + Math.min(columns[next] - 1 - index, replacement.length) + 1);
+    }
+    encoded += replacement;
+    cursor = index + match.length;
+  }
+  for (; next < columns.length; next++) {
+    moved.push(columns[next] + encoded.length - cursor);
+  }
+  return { text: encoded + text.slice(cursor), columns: moved };
+};
+
+/**
+ * `columns` of `text`, counted from 1 and in ascending order, moved to the columns of the same
+ * characters in `encodeEntities(text)`. A column inside a part that the encoding replaces keeps
+ * its distance from the start of that part, up to the end of its replacement.
+ */
+export const encodeColumns = (text: string, columns: readonly number[]): readonly number[] =>
+  entityEncodings.reduce(encodeStep, { text, columns }).columns;
 
 /**
  * Partially reverts encoding done via {@link encodeEntities}
