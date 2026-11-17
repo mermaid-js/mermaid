@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import {
   buildTierSpecPattern,
@@ -78,5 +79,19 @@ describe('buildTierSpecPattern', () => {
 describe('buildPrTierSpecPattern (back-compat wrapper)', () => {
   it('is equivalent to buildTierSpecPattern(["pr-check"])', () => {
     expect(buildPrTierSpecPattern()).toBe(buildTierSpecPattern(['pr-check']));
+  });
+});
+
+describe('the bpmn specs', () => {
+  it('run in the pr tier and in the nightly tier, through their tier folders', () => {
+    expect(buildTierSpecPattern(['pr-check']).split(',')).toContain('e2e/rendering/bpmn/pr-check/');
+    expect(buildTierSpecPattern(['nightly-check']).split(',')).toContain(
+      'e2e/rendering/bpmn/nightly-check/'
+    );
+  });
+
+  it('leave no spec outside a tier folder, where no tier would ever run it', () => {
+    const loose = readdirSync(`${SPEC_BASE_DIR}/bpmn`).filter((name) => name.includes('.spec.'));
+    expect(loose).toEqual([]);
   });
 });

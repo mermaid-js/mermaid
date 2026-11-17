@@ -1,0 +1,16 @@
+---
+description: >-
+  Two pools, and a note declared outside both is associated with a task in
+  each. The pools are pushed apart, and each note keeps the same clearance from
+  its task, instead of the note on the task that moved overlapping it.
+---
+bpmn-beta LR
+  pool p1 "Customer"
+    task x "Place order"
+  pool p2 "Shop"
+    task a "Ship order"
+  note m "Online or by phone"
+  note n "Within two days"
+  x --> a
+  m ... x
+  n ... a
