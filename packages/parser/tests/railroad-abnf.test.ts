@@ -21,9 +21,9 @@ describe('Railroad ABNF parser', () => {
     expect(result.value.rules.map((rule) => rule.name)).toEqual(['a', 'b']);
   });
 
-  it('should keep a commented-out definition inside a rule as a comment', () => {
+  it.each([';', ';;'])('should keep a %s commented-out definition inside a rule', (prefix) => {
     const result = parser.parse<RailroadAbnf>(
-      'railroad-abnf-beta\na = "x"\n  ; disabled = "z"\n  / "y" ;\nb = "b" ;'
+      `railroad-abnf-beta\na = "x"\n  ${prefix} disabled = "z"\n  / "y" ;\nb = "b" ;`
     );
     expectNoErrorsOrAlternatives(result);
     expect(result.value.rules.map((rule) => rule.name)).toEqual(['a', 'b']);
