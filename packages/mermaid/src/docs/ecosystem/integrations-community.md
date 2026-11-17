@@ -69,6 +69,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermaid Studio by webtoolz](https://webtoolz.dev/mermaid) - Browser-based Mermaid editor with live preview, curated themes, and PNG/SVG export
+- [Sirena](https://sirenaapp.github.io) ✅ - Free, open-source browser editor with no account or server: toolbar and right-click formatting written back into the code, links that carry the diagram, embedding, five languages and eXeLearning integration
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
 - [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
