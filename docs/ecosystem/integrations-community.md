@@ -27,6 +27,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 
 ### Productivity tools
 
+- [Archboard](https://getarchboard.app/tools/mermaid-to-editable-diagram) - Hosted architecture diagramming canvas. Paste a Mermaid flowchart to get an editable diagram; AI agents can send flowcharts through its MCP server.
 - [Atlassian Products](https://www.atlassian.com)
   - [Mermaid for Confluence](https://marketplace.atlassian.com/apps/1224722/mermaid-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Integration for Confluence](https://marketplace.atlassian.com/apps/1222792/mermaid-integration-for-confluence?hosting=cloud&tab=overview)
