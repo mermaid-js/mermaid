@@ -187,6 +187,16 @@ describe('c4-beta db', () => {
       expect(bidirectional.arrowTypeEnd).toBe('arrow_point');
     });
 
+    it('should store --- as an undirected relationship, with or without blanks', async () => {
+      await populate(`c4-beta context\nperson a "A"\nsoftwareSystem b "B"\na --- b\na---b\n`);
+      expect(
+        db.getRelationships().map(({ sourceId, arrow, targetId }) => [sourceId, arrow, targetId])
+      ).toEqual([
+        ['a', '---', 'b'],
+        ['a', '---', 'b'],
+      ]);
+    });
+
     it('should draw no arrowhead on an undirected --- relationship', async () => {
       await populate(`c4-beta context\nperson a "A"\nsoftwareSystem b "B"\na --- b : "Operates"\n`);
       const { edges } = db.getData();

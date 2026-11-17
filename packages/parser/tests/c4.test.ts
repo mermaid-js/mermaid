@@ -352,12 +352,15 @@ banking <--> mainframe : "Syncs with"
       expect(failed(`c4-beta\ncontainer ${id} "X"\n`)).toBe(true);
     });
 
-    it.each(['a-->b', 'a --> b', 'a<--b', 'a<-->b'])('should split %s at its arrow', (text) => {
-      const result = parse(`c4-beta\n${text}\n`);
-      expectNoErrorsOrAlternatives(result);
-      expect(result.value.relationships[0].sourceId).toBe('a');
-      expect(result.value.relationships[0].targetId).toBe('b');
-    });
+    it.each(['a-->b', 'a --> b', 'a<--b', 'a<-->b', 'a---b', 'a --- b'])(
+      'should split %s at its arrow',
+      (text) => {
+        const result = parse(`c4-beta\n${text}\n`);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.relationships[0].sourceId).toBe('a');
+        expect(result.value.relationships[0].targetId).toBe('b');
+      }
+    );
 
     it.each(['a---b', 'a--b', 'a-', '-a'])('should not accept %s as an id', (id) => {
       expect(failed(`c4-beta\ncontainer ${id} "X"\n`)).toBe(true);

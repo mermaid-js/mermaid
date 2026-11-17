@@ -4,6 +4,7 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { C4BetaDB } from './db.js';
+import type { C4Arrow } from './types.js';
 
 const DIAGRAM_KINDS = ['context', 'container', 'component', 'dynamic', 'deployment'];
 
@@ -58,13 +59,17 @@ const addElement = (
   }
 };
 
+/** The arrow a relationship is stored with: `<--` turns into `-->`, the others stay as written. */
+const storedArrow = (arrow: string): C4Arrow =>
+  arrow === '<-->' || arrow === '---' ? arrow : '-->';
+
 /** Adds the relationship. `a <-- b` is stored as `b --> a`, so ranks follow the meaning. */
 const addRelationship = (db: C4BetaDB, relationship: C4Relationship) => {
   const reversed = relationship.arrow === '<--';
   db.addRelationship({
     sourceId: reversed ? relationship.targetId : relationship.sourceId,
     targetId: reversed ? relationship.sourceId : relationship.targetId,
-    arrow: relationship.arrow === '<-->' ? '<-->' : '-->',
+    arrow: storedArrow(relationship.arrow),
     description: relationship.description,
     technology: relationship.technology,
     step: relationship.step,

@@ -60,10 +60,7 @@ const summarize = async (text: string) => {
  * The probes the parser does not yet give the verdict of the spec. Each names the row of the
  * "prototype oddities" table it waits on; fixing the row removes its entry.
  */
-const NOT_YET: Record<string, string> = {
-  'b06-four-arrows': 'the `---` arrow, which is not on this branch',
-  'b16-arrow-without-spaces': 'the `---` arrow, which is not on this branch',
-};
+const NOT_YET: Record<string, string> = {};
 
 describe('c4-beta shared probes', () => {
   afterEach(() => {
@@ -93,12 +90,4 @@ describe('c4-beta shared probes', () => {
       });
     });
   }
-});
-
-describe('c4-beta shared probes, as far as this branch reads them', () => {
-  it('b06-four-arrows without its undirected arrow stores `a <-- c` as `c --> a`', async () => {
-    const text = source('b06-four-arrows').replace(/^c --- d.*\n/m, '');
-    const got = await summarize(text);
-    expect(got?.relations).toEqual(['a>b', 'c>a', 'b>d']);
-  });
 });
