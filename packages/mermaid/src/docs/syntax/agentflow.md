@@ -296,6 +296,26 @@ agentflow-beta LR
 
 A `connectorRef` value may be a bare node id, a dotted `connector.capability` form, or a URL. The dotted and URL forms are treated as opaque.
 
+### Finding and citing a public source
+
+Use a tool node for read-only search. Pass the search results to the task that writes the answer, and use a reference edge to show that the task consults a source.
+
+```mermaid-example
+agentflow-beta LR
+  connector web["Public web search"]
+  question["When do I need a Yosemite wilderness permit?"]@{ shape: input }
+  search["web_search"]@{ shape: tool, connectorRef: "web.web_search", returns: "URLs and excerpts" }
+  answer["Answer with a citation"]@{ shape: task }
+  source["Yosemite wilderness permits"]@{ shape: refdoc }
+
+  question --> search --> answer
+  answer -.- source
+```
+
+Here the reference document stands for a [public source](https://www.nps.gov/yose/planyourvisit/wildpermits.htm) the answer can cite. Mermaid renders the diagram. The host that runs the workflow supplies the connector and calls its tool.
+
+For example, a host that supports MCP over Streamable HTTP can register `https://mcp.parallel.ai/mcp` as `web` and call `web_search` without an API key. See the [Parallel MCP installation guide](https://docs.parallel.ai/integrations/mcp/installation) for host setup.
+
 ## A worked example
 
 ```mermaid-example
