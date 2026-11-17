@@ -72,16 +72,44 @@ function topLaneHorizontalPadding(lane: Node): number {
   return Math.max(lane.padding ?? MIN_TOP_LANE_HORIZONTAL_PADDING, MIN_TOP_LANE_HORIZONTAL_PADDING);
 }
 
+const DEFAULT_GROUP_PADDING = 20;
+
+/**
+ * How far the deepest group nested in a lane reaches past the nodes it holds: a group is drawn
+ * its content plus its own padding, so each level adds half that padding on either side.
+ */
+function deepestNestedInset(nodes: readonly Node[], isLane: (id: string) => boolean): number {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  let deepest = 0;
+  for (const group of nodes) {
+    if (!group.isGroup || isLane(group.id)) {
+      continue;
+    }
+    let inset = 0;
+    let current: Node | undefined = group;
+    while (current && !isLane(current.id)) {
+      inset += (current.padding ?? DEFAULT_GROUP_PADDING) / 2;
+      current = current.parentId ? byId.get(current.parentId) : undefined;
+    }
+    if (current) {
+      deepest = Math.max(deepest, inset);
+    }
+  }
+  return deepest;
+}
+
 /**
  * The gap between the nodes of neighbouring lanes in TB and BT: twice the node spacing, but at
- * least the padding both lanes keep around their nodes, so lanes touch instead of overlapping.
+ * least the padding both lanes keep around their nodes plus the padding of any group nested at
+ * the lane's edge, so lanes touch instead of overlapping.
  */
 export function topLaneGap(nodes: readonly Node[], nodeSpacing: number): number {
   const model = buildLaneModel([...nodes]);
   const paddings = nodes
     .filter((node) => node.isGroup && model.isLane(node.id))
     .map(topLaneHorizontalPadding);
-  return Math.max(2 * nodeSpacing, 2 * Math.max(0, ...paddings));
+  const reach = Math.max(0, ...paddings) + deepestNestedInset(nodes, model.isLane);
+  return Math.max(2 * nodeSpacing, 2 * reach);
 }
 
 function assignTopLaneTitleRect(lane: Node): void {
