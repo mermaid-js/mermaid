@@ -214,6 +214,21 @@ union A, B`,
     Login("Sign in")
     User --> Login`,
 
+  component: `component-beta
+    component Web["Web shop"]
+    component Orders["Order service"] <<service>>
+    interface IOrders["Orders API"]
+    package Backend {
+      component Payments {
+        port api
+      }
+    }
+    Orders --() IOrders
+    Web --( IOrders
+    Payments.api --() IOrders
+    Web --> Orders : calls
+    note for Orders "handles checkout"`,
+
   swimlane: `swimlane-beta LR
     subgraph sales[Sales]
       a[Draft quote]
