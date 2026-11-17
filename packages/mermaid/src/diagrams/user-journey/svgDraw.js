@@ -173,7 +173,10 @@ export const drawSection = function (elem, section, conf) {
   rect.class = 'journey-section section-type-' + section.num;
   rect.rx = 3;
   rect.ry = 3;
-  drawRect(g, rect);
+  const rectElem = drawRect(g, rect);
+  if (section.styleFill) {
+    rectElem.style('fill', section.fill);
+  }
 
   _drawTextCandidateFunc(conf)(
     section.text,
@@ -186,6 +189,10 @@ export const drawSection = function (elem, section, conf) {
     conf,
     section.colour
   );
+  if (section.styleColour) {
+    g.selectAll('.label').style('color', section.colour);
+    g.selectAll('text').style('fill', section.colour);
+  }
 };
 
 let taskCount = -1;
@@ -228,7 +235,10 @@ export const drawTask = function (elem, task, conf, diagramId) {
   rect.class = 'task task-type-' + task.num;
   rect.rx = 3;
   rect.ry = 3;
-  drawRect(g, rect);
+  const rectElem = drawRect(g, rect);
+  if (task.styleFill) {
+    rectElem.style('fill', task.fill);
+  }
 
   let xPos = task.x + 14;
   task.people.forEach((person) => {
@@ -259,6 +269,10 @@ export const drawTask = function (elem, task, conf, diagramId) {
     conf,
     task.colour
   );
+  if (task.styleColour) {
+    g.selectAll('.label').style('color', task.colour);
+    g.selectAll('text').style('fill', task.colour);
+  }
 };
 
 /**
