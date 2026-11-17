@@ -1,0 +1,20 @@
+%% The layout is the same in every browser language (#8759). Each lane holds two chains
+%% whose ids sort the other way round in some locale: z before t (Estonian), ch after h
+%% (Czech), b after B (Danish), a-umlaut after y (Swedish). Ids are ordered by code unit.
+swimlane-beta TB
+  subgraph E[Estonian]
+    t[Tea] --> t2[Tea 2]
+    z[Zinc] --> z2[Zinc 2]
+  end
+  subgraph C[Czech]
+    ch[Check] --> ch2[Check 2]
+    h[Hold] --> h2[Hold 2]
+  end
+  subgraph D[Danish]
+    b[small b] --> b2[small b 2]
+    B[big B] --> B2[big B 2]
+  end
+  subgraph S[Swedish]
+    ä[Apfel] --> ä2[Apfel 2]
+    y[Yarn] --> y2[Yarn 2]
+  end
