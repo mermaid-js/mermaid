@@ -416,6 +416,22 @@ columns 1
       const B = blocks[0];
       expect(B.styles).toContain('fill:#f9F');
     });
+    it('style statement for an id that was never declared', () => {
+      const str = `block
+columns 1
+    A["Only block"]
+  style B fill:#f9F
+        `;
+
+      const logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+      expect(() => block.parse(str)).not.toThrow();
+      expect(logWarnSpy).toHaveBeenCalledWith(
+        'Cannot style block B: no block with that id was declared'
+      );
+
+      logWarnSpy.mockRestore();
+    });
     it('should log a warning when block width exceeds column width', () => {
       const str = `block-beta
   columns 1
