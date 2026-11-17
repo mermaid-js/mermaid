@@ -55,13 +55,18 @@ export const addStyleClass = function (id: string, styleAttributes = '') {
  * Called when the parser comes across a style definition
  * @example style my-block-id fill:#f96;
  *
- * @param id - the id of the block to style
+ * @param itemIds - the id or a comma separated list of ids of the block(s) to style
  * @param styles - the string with 1 or more style attributes (each separated by a comma)
  */
-export const addStyle2Node = function (id: string, styles = '') {
-  const foundBlock = blockDatabase.get(id)!;
-  if (styles !== undefined && styles !== null) {
-    foundBlock.styles = styles.split(STYLECLASS_SEP);
+export const addStyle2Node = function (itemIds: string, styles = '') {
+  if (styles === undefined || styles === null) {
+    return;
+  }
+  for (const id of itemIds.split(',')) {
+    const foundBlock = blockDatabase.get(id.trim());
+    if (foundBlock) {
+      foundBlock.styles = styles.split(STYLECLASS_SEP);
+    }
   }
 };
 
@@ -75,9 +80,9 @@ export const addStyle2Node = function (id: string, styles = '') {
  */
 export const setCssClass = function (itemIds: string, cssClassName: string) {
   itemIds.split(',').forEach(function (id: string) {
-    let foundBlock = blockDatabase.get(id);
+    const trimmedId = id.trim();
+    let foundBlock = blockDatabase.get(trimmedId);
     if (foundBlock === undefined) {
-      const trimmedId = id.trim();
       foundBlock = { id: trimmedId, type: 'na', children: [] } as Block;
       blockDatabase.set(trimmedId, foundBlock);
     }
@@ -101,6 +106,19 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
  * two sibling containers from opening on the same colour.
  */
 let nextColorIndex = 0;
+
+let deferredStatements: Block[] = [];
+
+const applyDeferredStatements = (): void => {
+  for (const block of deferredStatements) {
+    if (block.type === 'applyClass') {
+      setCssClass(block.id, block?.styleClass ?? '');
+    } else if (block?.stylesStr) {
+      addStyle2Node(block.id, block.stylesStr);
+    }
+  }
+  deferredStatements = [];
+};
 
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
@@ -126,14 +144,9 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       addStyleClass(block.id, block.css);
       continue;
     }
-    if (block.type === 'applyClass') {
-      setCssClass(block.id, block?.styleClass ?? '');
-      continue;
-    }
-    if (block.type === 'applyStyles') {
-      if (block?.stylesStr) {
-        addStyle2Node(block.id, block?.stylesStr);
-      }
+    if (block.type === 'applyClass' || block.type === 'applyStyles') {
+      // The statement may come before the declaration of its block, so it is applied once all blocks are known.
+      deferredStatements.push(block);
       continue;
     }
     if (block.type === 'column-setting') {
@@ -206,6 +219,7 @@ const clear = (): void => {
   edgeCount = new Map();
   diagramId = '';
   nextColorIndex = 0;
+  deferredStatements = [];
 };
 
 export function typeStr2Type(typeStr: string) {
@@ -305,6 +319,7 @@ export const generateId = () => {
 const setHierarchy = (block: Block[]): void => {
   rootBlock.children = block;
   populateBlockDatabase(block, rootBlock);
+  applyDeferredStatements();
   blocks = rootBlock.children;
 };
 
