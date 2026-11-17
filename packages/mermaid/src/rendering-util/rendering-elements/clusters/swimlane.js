@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { evaluate } from '../../../config.js';
 import { log } from '../../../logger.js';
@@ -60,7 +61,7 @@ export const swimlane = async (parent, node, { variant = 'swimlane' } = {}) => {
   if (useHtmlLabels) {
     const div = text.children[0];
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }

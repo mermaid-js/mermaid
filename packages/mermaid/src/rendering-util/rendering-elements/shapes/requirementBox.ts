@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
@@ -201,6 +202,17 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   return shapeSvg;
 }
 
+/**
+ * Add and position one text section within a requirement node.
+ * HTML dimensions use SVG user units; SVG text receives extra height to match HTML spacing.
+ *
+ * @param parentGroup - SVG group receiving the text section.
+ * @param inputText - Text to decode and sanitize; empty text creates no label.
+ * @param yOffset - Vertical offset of the section's center in SVG user units.
+ * @param style - Inline text styles.
+ * @param alignment - Text alignment within the section.
+ * @returns The section height in SVG user units, or zero for empty text.
+ */
 async function addText<T extends SVGGraphicsElement>(
   parentGroup: D3Selection<T>,
   inputText: string,
@@ -252,7 +264,7 @@ async function addText<T extends SVGGraphicsElement>(
     if (alignment === 'start') {
       select(div).style('text-align', 'left');
     }
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }

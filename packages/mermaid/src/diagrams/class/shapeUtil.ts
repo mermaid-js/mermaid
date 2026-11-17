@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../rendering-util/measureHtmlLabel.js';
 import { select } from 'd3';
 import { getConfig } from '../../config.js';
 import { getNodeClasses } from '../../rendering-util/rendering-elements/shapes/util.js';
@@ -95,7 +96,16 @@ export async function textHelper<T extends SVGGraphicsElement>(
   return { shapeSvg, bbox };
 }
 
-// Modified version of labelHelper() to help create and place text for classes
+/**
+ * Add one class title, annotation, member or method label at the requested vertical offset.
+ * Measure HTML labels in SVG user units so section sizes remain stable under host scaling.
+ *
+ * @param parentGroup - Class section receiving the label.
+ * @param node - Class or member content and HTML-label rendering options.
+ * @param yOffset - Vertical offset within the section in SVG user units.
+ * @param styles - Inline label styles, including member classifiers.
+ * @returns The label height in SVG user units for positioning subsequent rows.
+ */
 async function addText<T extends SVGGraphicsElement>(
   parentGroup: D3Selection<T>,
   node: Node | ClassNode | ClassMember,
@@ -178,7 +188,7 @@ async function addText<T extends SVGGraphicsElement>(
 
     await configureLabelImages(div);
 
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }

@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import { createText } from '../../createText.js';
 import fastdom from '../../fastdom.js';
 import type { Node } from '../../types.js';
@@ -47,6 +48,16 @@ export const withMinWidth = (bbox: DOMRect, minWidth: number): DOMRect => {
   } as DOMRect;
 };
 
+/**
+ * Create a node's label and measure it for shape layout, including any minimum width.
+ * Wait for inline images before sizing HTML labels in SVG user units.
+ *
+ * @param parent - SVG container receiving the node group.
+ * @param node - Node content, styles and label sizing options.
+ * @param _classes - CSS classes for the node group.
+ * @param ignoreMinWidth - Whether to bypass the node's minimum label width.
+ * @returns The node group, measured label box, half-padding and centered label group.
+ */
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
@@ -125,8 +136,8 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
 
     bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
-        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
-        : div.getBoundingClientRect()
+        ? profiler.tickSync('getBoundingClientRect', () => measureHtmlLabel(div))
+        : measureHtmlLabel(div)
     );
     bbox = withMinWidth(bbox, minLabelWidth);
     dv.attr('width', bbox.width);
@@ -152,6 +163,15 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   labelEl.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label: labelEl };
 };
+/**
+ * Insert and center a label within an existing shape group.
+ * HTML label dimensions are converted to SVG user units before positioning.
+ *
+ * @param parent - Shape group receiving the label.
+ * @param label - Label content to decode and sanitize.
+ * @param options - Label styling, rendering, padding and width options.
+ * @returns The shape group, measured label box, half-padding and label group.
+ */
 export const insertLabel = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   label: string,
@@ -192,8 +212,8 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
 
     bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
-        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
-        : div.getBoundingClientRect()
+        ? profiler.tickSync('getBoundingClientRect', () => measureHtmlLabel(div))
+        : measureHtmlLabel(div)
     );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);

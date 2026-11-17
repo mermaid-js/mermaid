@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../measureHtmlLabel.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
@@ -55,7 +56,7 @@ const rect = async (parent, node) => {
   if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
@@ -211,7 +212,7 @@ const roundedWithTitle = async (parent, node) => {
   if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
@@ -338,7 +339,7 @@ const kanbanSection = async (parent, node) => {
   if (getEffectiveHtmlLabels(siteConfig)) {
     const div = text.children[0];
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
@@ -566,7 +567,7 @@ const createContainerGroup = async (parent, node, opts) => {
     if (useHtmlLabels) {
       const div = text.children[0];
       const dv = select(text);
-      bbox = div.getBoundingClientRect();
+      bbox = measureHtmlLabel(div);
       dv.attr('width', bbox.width);
       dv.attr('height', bbox.height);
     }
@@ -720,7 +721,7 @@ const usecaseSystemBoundary = async (parent, node) => {
   if (useHtmlLabels) {
     const div = text.children[0];
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
