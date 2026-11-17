@@ -1,4 +1,6 @@
 import { beforeAll, describe, it, expect } from 'vitest';
+import type { Node } from '../../../types.js';
+import { topLaneGap } from '../helpers.js';
 import { addDiagrams } from '../../../../diagram-api/diagram-orchestration.js';
 import { deepestLaneOverlap, laneSeams, layoutFromSource } from './emptyLaneHarness.js';
 
@@ -48,5 +50,13 @@ describe('Swimlanes: a nested subgraph at a lane edge does not push the lane ove
       });
       expect(Math.min(...laneSeams(layout))).toBeGreaterThanOrEqual(-TOLERANCE);
     });
+  });
+});
+
+describe('Swimlanes: topLaneGap on groups whose parents form a cycle', () => {
+  it('ends, and counts no inset for a group that never reaches a lane', () => {
+    const group = (id: string, parentId: string): Node => ({ id, isGroup: true, parentId }) as Node;
+    const lane = { id: 'L1', isGroup: true } as Node;
+    expect(topLaneGap([lane, group('X', 'Y'), group('Y', 'X')], 10)).toBe(topLaneGap([lane], 10));
   });
 });

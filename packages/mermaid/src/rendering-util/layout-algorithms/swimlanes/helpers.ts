@@ -87,11 +87,13 @@ function deepestNestedInset(nodes: readonly Node[], isLane: (id: string) => bool
     }
     let inset = 0;
     let current: Node | undefined = group;
-    while (current && !isLane(current.id)) {
+    const seen = new Set<string>();
+    while (current && !isLane(current.id) && !seen.has(current.id)) {
+      seen.add(current.id);
       inset += (current.padding ?? DEFAULT_GROUP_PADDING) / 2;
       current = current.parentId ? byId.get(current.parentId) : undefined;
     }
-    if (current) {
+    if (current && isLane(current.id)) {
       deepest = Math.max(deepest, inset);
     }
   }
