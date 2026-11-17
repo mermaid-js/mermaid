@@ -71,6 +71,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Mermaid Studio by webtoolz](https://webtoolz.dev/mermaid) - Browser-based Mermaid editor with live preview, curated themes, and PNG/SVG export
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
+- [Styled Mermaid](https://lou.tools/mermaid/) - Browser-only Mermaid editor with six themes and a custom theme builder; SVG export with labels as real text so they show in PowerPoint and Word, plus PNG, PDF and PPTX
 - [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
 - [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
