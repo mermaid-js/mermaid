@@ -201,6 +201,12 @@ that id.
 "^"                   return 'UP';
 "\|"                  return 'SEP';
 "v"                   return 'DOWN';
+\/\*[\s\S]*?\*\/    {
+    // A CSS comment is one token. Without this it only lexes by accident, when every
+    // character inside happens to fall in NODE_STRING and no single character rule
+    // above preempts it, so `/*a*/` parsed and `/*a */` did not.
+    return 'NODE_STRING';
+}
 "*"                   return 'MULT';
 "#"                   return 'BRKT';
 "&"                   return 'AMP';
