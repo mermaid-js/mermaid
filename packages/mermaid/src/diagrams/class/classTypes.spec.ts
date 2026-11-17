@@ -760,3 +760,15 @@ describe('given text representing an attribute', () => {
     });
   });
 });
+
+describe('given text routed to a method that is not written as one, ', function () {
+  it('should report a method typed without its opening parenthesis', function () {
+    expect(() => new ClassMember('+getTime) int', 'method')).toThrow(
+      'Invalid class member "+getTime) int": it contains ")" but is not written as name(parameters)'
+    );
+  });
+
+  it('should report parameters with no method name in front of them', function () {
+    expect(() => new ClassMember('(int x)', 'method')).toThrow('Invalid class member "(int x)"');
+  });
+});
