@@ -1,0 +1,13 @@
+---
+description: >-
+  A transition inside composite state "Boot" from Boot itself to its child
+  Running, under the ELK layout, verifying Boot is not filed as its own
+  child, which hangs the layout or throws.
+config:
+  layout: elk
+---
+stateDiagram-v2
+  state Boot {
+    Running
+    Boot --> Running
+  }
