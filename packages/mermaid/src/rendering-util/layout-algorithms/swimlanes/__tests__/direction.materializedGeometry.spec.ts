@@ -4,6 +4,7 @@ import {
   liftObstacleHuggingSameSideRails,
   liftTopLaneTitleBandsAboveRails,
   reassignCrossingExternalRailChannels,
+  resolveRenderedOrthogonalCrossings,
   separateSharedRenderedTerminalLanes,
   shiftLeftLaneTitleBandsLeftOfRails,
   shortcutRedundantOrthogonalJogs,
@@ -708,5 +709,69 @@ describe('separating two terminal tracks drawn on top of each other', () => {
     for (const end of ends) {
       expect(Math.abs(end)).toBeLessThanOrEqual(10 - 20 / 4);
     }
+  });
+});
+
+describe('a reroute that would share a track with another route', () => {
+  /** The overlap, in px, from which two routes on one track count as sharing it. */
+  const SHARED_TRACK_MINIMUM = 8;
+  type Routes = Parameters<typeof resolveRenderedOrthogonalCrossings>[0];
+  // A runs to B straight through the vertical route of C -> D. The cleanup takes A over the
+  // top, along the track at y = -180, unless another route lies on that track.
+  const nodeById = (): Map<string, any> =>
+    new Map<string, any>([
+      ['A', { id: 'A', x: 0, y: 0, width: 40, height: 40 }],
+      ['B', { id: 'B', x: 300, y: 0, width: 40, height: 40 }],
+      ['C', { id: 'C', x: 150, y: -140, width: 40, height: 40 }],
+      ['D', { id: 'D', x: 150, y: 140, width: 40, height: 40 }],
+    ]);
+  const overTrack = (y: number) => [
+    { x: 0, y: -20 },
+    { x: 0, y },
+    { x: 300, y },
+    { x: 300, y: -20 },
+  ];
+  const routesWith = (alongTrack: number): Routes => [
+    {
+      id: 'A_B',
+      start: 'A',
+      end: 'B',
+      points: [
+        { x: 20, y: 0 },
+        { x: 280, y: 0 },
+      ],
+    },
+    {
+      id: 'C_D',
+      start: 'C',
+      end: 'D',
+      points: [
+        { x: 150, y: -120 },
+        { x: 150, y: 120 },
+      ],
+    },
+    {
+      id: 'loose',
+      points: [
+        { x: 100, y: -180 },
+        { x: 100 + alongTrack, y: -180 },
+      ],
+    },
+  ];
+
+  it('takes the track when the other route overlaps it by less than the minimum', () => {
+    const edges = routesWith(SHARED_TRACK_MINIMUM - 1);
+
+    resolveRenderedOrthogonalCrossings(edges, nodeById());
+
+    expect(edges[0].points).toEqual(overTrack(-180));
+  });
+
+  it('moves to the next track when the other route overlaps it by the minimum', () => {
+    const edges = routesWith(SHARED_TRACK_MINIMUM);
+
+    resolveRenderedOrthogonalCrossings(edges, nodeById());
+
+    expect(edges[0].points).toEqual(overTrack(-200));
   });
 });
