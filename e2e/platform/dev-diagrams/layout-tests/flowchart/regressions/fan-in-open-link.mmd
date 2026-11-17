@@ -1,0 +1,9 @@
+---
+title: Three arrows and an open link end on a two-line node
+---
+flowchart LR
+    A["Web shop"] --> M["Order<br/>queue"]
+    B["Mobile app"] --> M
+    C["Phone desk"] --> M
+    D["Audit log"] --- M
+    M --> X["Fulfil"]

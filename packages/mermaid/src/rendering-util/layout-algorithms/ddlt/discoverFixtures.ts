@@ -15,8 +15,18 @@ function walkSizesFiles(dir: string, acc: string[]): void {
   }
 }
 
+/**
+ * Infers a fixture profile from its relative directory when no manifest profile is supplied.
+ * Fixtures outside the grid and swimlanes directories retain the legacy flowchart profile.
+ */
 function defaultProfileForRelId(relId: string): DdltFixtureProfile {
-  return relId.startsWith('swimlanes/') ? 'swimlanes' : 'flowchart-domus';
+  if (relId.startsWith('swimlanes/')) {
+    return 'swimlanes';
+  }
+  if (relId.startsWith('grid/')) {
+    return 'grid';
+  }
+  return 'flowchart-domus';
 }
 
 function loadManifest(baseDir: string): DdltManifest {

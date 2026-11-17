@@ -1,0 +1,19 @@
+---
+description:
+  Per-subgraph direction under the layered layout. The first LR subgraph keeps its own
+  direction; the second inherits the diagram's TB because an edge crosses into it.
+config:
+  layout: layered
+---
+flowchart TB
+  top[Top] --> own
+  subgraph own [Own direction]
+    direction LR
+    o1[One] --> o2[Two] --> o3[Three]
+  end
+  own --> c1
+  subgraph crossed [Crossed]
+    direction LR
+    c1[Alpha] --> c2[Beta]
+  end
+  c2 --> c2

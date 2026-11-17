@@ -1,0 +1,31 @@
+---
+description:
+  A class diagram under the layered layout, with relation markers, cardinality
+  labels at the edge ends, a relation label, a namespace, a note and a lollipop
+  interface.
+config:
+  layout: layered
+---
+classDiagram
+  namespace Shop {
+    class Order {
+      +int id
+      +place()
+    }
+    class LineItem {
+      +int qty
+    }
+  }
+  class Customer {
+    +String name
+  }
+  class Payment {
+    +pay()
+  }
+  Customer "1" --> "*" Order : places
+  Order *-- "1..*" LineItem
+  Order o-- Payment
+  Payment <|.. CardPayment
+  CardPayment ..> Customer
+  Wallet ()-- Payment
+  note for Customer "Registered users only"

@@ -63,7 +63,10 @@ import { ROOT_CONTAINER_ID, gridError } from './types.js';
 // reusable search memory, and retry state while the base layout geometry remains read-only.
 interface BundleEdgeCheckpoint {
   edge: Edge;
+  // Geometry and its rendering contract commit together; retries must not leak either half.
   points: Edge['points'];
+  curve: Edge['curve'];
+  cornerRadius: Edge['cornerRadius'];
 }
 
 interface BundleCheckpoint {
@@ -122,6 +125,8 @@ function createBundleCheckpoint(
     edges: pairPlans.map(({ edge }) => ({
       edge,
       points: edge.points,
+      curve: edge.curve,
+      cornerRadius: edge.cornerRadius,
     })),
     instrumentedRoutesLength: instrumentedRoutes?.length,
     metrics: metrics ? createGridRoutingInstrumentationCheckpoint(metrics) : undefined,
@@ -158,6 +163,8 @@ function restoreBundleCheckpoint(
   }
   for (const edgeCheckpoint of checkpoint.edges) {
     edgeCheckpoint.edge.points = edgeCheckpoint.points;
+    edgeCheckpoint.edge.curve = edgeCheckpoint.curve;
+    edgeCheckpoint.edge.cornerRadius = edgeCheckpoint.cornerRadius;
   }
   if (instrumentedRoutes && checkpoint.instrumentedRoutesLength !== undefined) {
     instrumentedRoutes.length = checkpoint.instrumentedRoutesLength;
@@ -434,6 +441,9 @@ export class GridEdgeRoutingSession {
       const countKey = `${sourceNode.id}:${side}`;
       selfLoopCounts.set(countKey, index + 1);
       edge.points = points;
+      // The router owns the polyline; attach its curve contract at the same commit boundary.
+      edge.curve = result.config.curve;
+      edge.cornerRadius = result.config.edgeCornerRadius;
       committedPairRoutes.push(points);
       pairRoutes.set(plan.pairKey, committedPairRoutes);
       if (metrics && instrumentedRoutes) {
@@ -506,7 +516,11 @@ export class GridEdgeRoutingSession {
             endpointOverlayScratch.get(plan.lcaContainerId)!,
             options,
             pairRoutes.get(plan.pairKey) ?? [],
-            { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
+            {
+              index: this.occupancyFor(plan.lcaContainerId),
+              pairKey: plan.pairKey,
+              prioritizeEndpointCandidates: this.prepared.coordinatedEndpointIds.has(edge.id),
+            }
           )
         : useSparseLca
           ? sparseContainerSegment(
@@ -529,7 +543,10 @@ export class GridEdgeRoutingSession {
                 plan.source.finalKind === 'item' && plan.source.chain.length > 1
                   ? this.alternativePairedPortals(sourceFinal, false)
                   : [],
-              plan.bundleSize > 1
+              plan.bundleSize > 1,
+              this.modes.overlapAvoidanceEnabled
+                ? { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
+                : undefined
             )
           : validatedCompatibilitySegment(
               edge.id,
@@ -624,6 +641,9 @@ export class GridEdgeRoutingSession {
       metrics.bundleSeparationRelaxations++;
     }
     edge.points = points;
+    // Publish style only after the route satisfies terminal and pair-separation invariants.
+    edge.curve = result.config.curve;
+    edge.cornerRadius = result.config.edgeCornerRadius;
     committedPairRoutes.push(points);
     pairRoutes.set(plan.pairKey, committedPairRoutes);
     // Fast routes were registered while routing modes were prepared.

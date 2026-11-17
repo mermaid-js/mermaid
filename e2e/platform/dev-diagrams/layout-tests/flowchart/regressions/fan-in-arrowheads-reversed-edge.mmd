@@ -1,0 +1,12 @@
+---
+title: Three arrowheads meet on the right side of "Ledger" once ELK reverses the edge into it
+---
+flowchart LR
+    subgraph Core["Core services"]
+        A["Intake"] --> B["Validate"]
+        L["Ledger"]
+    end
+    B --> X["Audit"]
+    X --> L
+    L <--> D1["Billing"]
+    L <--> D2["Reports"]
