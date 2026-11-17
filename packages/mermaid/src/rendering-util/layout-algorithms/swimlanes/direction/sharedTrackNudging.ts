@@ -4,11 +4,12 @@ import {
   dedupeConsecutivePoints,
   overlapLength,
   orthogonalSegmentsForPoints,
-  orthogonalSegmentsStrictlyCross,
   rectOfNodeBounds,
   segmentHitsAnyRect,
 } from './geometry.js';
 import type { OrthogonalSegment, Point } from './geometry.js';
+import { buildRouteCrossings, buildTrackIndex } from './segmentCrossingIndex.js';
+import type { RouteCrossings, TrackIndex } from './segmentCrossingIndex.js';
 
 export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<string, Node>): void {
   const EPS_LOCAL = 1e-3;
@@ -24,6 +25,16 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
   interface SegmentLite extends OrthogonalSegment {
     edge: Edge;
     interior: boolean;
+  }
+
+  /** One round's segments, which stay where they are until the round applies its fix. */
+  interface Round {
+    segments: SegmentLite[];
+    /** Each segment under its place in `segments`. */
+    tracks: TrackIndex<number>;
+    routes: RouteCrossings<Edge>;
+    /** By place in `segments`: the first safe candidate found for that segment, or null. */
+    safeCandidates: Map<number, PointLite[] | null>;
   }
 
   const { realNodeRects, labelNodeRects: labelRects } = collectNodeRectEntries(
@@ -69,7 +80,7 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
     return false;
   };
 
-  const candidateIsSafe = (edge: Edge, candidate: PointLite[]): boolean => {
+  const candidateIsSafe = (round: Round, edge: Edge, candidate: PointLite[]): boolean => {
     const sourceId = edge.start;
     const targetId = edge.end;
     const candidateSegments = segmentsFor(edge, candidate);
@@ -88,35 +99,13 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
       }
     }
 
-    for (const other of edges) {
-      if (other === edge || other.isLayoutOnly) {
-        continue;
-      }
-      const otherPoints = other.points;
-      if (!otherPoints || otherPoints.length < 2) {
-        continue;
-      }
-      for (const candidateSegment of candidateSegments) {
-        for (const otherSegment of segmentsFor(other, dedupeConsecutivePoints(otherPoints))) {
-          if (hasCrowdedParallelTrack(candidateSegment, otherSegment)) {
-            return false;
-          }
-          if (
-            orthogonalSegmentsStrictlyCross(
-              candidateSegment.a,
-              candidateSegment.b,
-              otherSegment.a,
-              otherSegment.b,
-              EPS_LOCAL
-            )
-          ) {
-            return false;
-          }
-        }
-      }
-    }
-
-    return true;
+    const crowded = candidateSegments.some((candidateSegment) =>
+      round.tracks.alongside(candidateSegment, MIN_TRACK_GAP + 1).some(({ owner }) => {
+        const other = round.segments[owner];
+        return other.edge !== edge && hasCrowdedParallelTrack(candidateSegment, other);
+      })
+    );
+    return !crowded && round.routes.withOthers(edge, candidateSegments) === 0;
   };
 
   const shiftedCandidate = (segment: SegmentLite, shift: number): PointLite[] | undefined => {
@@ -278,44 +267,86 @@ export function nudgeSharedInteriorSubpaths(edges: Edge[], nodeByIdMap: Map<stri
     3 * TRACK_SHIFT,
   ];
 
-  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-    const segments = allSegments();
-    let fixed = false;
+  const startRound = (segments: SegmentLite[]): Round => {
+    const byEdge = new Map<Edge, SegmentLite[]>();
+    for (const segment of segments) {
+      byEdge.set(segment.edge, [...(byEdge.get(segment.edge) ?? []), segment]);
+    }
+    return {
+      segments,
+      tracks: buildTrackIndex(segments.map((segment, place) => ({ segment, owner: place }))),
+      routes: buildRouteCrossings(byEdge, EPS_LOCAL),
+      safeCandidates: new Map(),
+    };
+  };
 
-    for (let i = 0; i < segments.length && !fixed; i++) {
-      for (let j = i + 1; j < segments.length && !fixed; j++) {
-        const first = segments[i];
-        const second = segments[j];
-        if (first.edge === second.edge || !hasCrowdedParallelTrack(first, second)) {
-          continue;
-        }
+  /** The first safe candidate that moves `segment`: shift by shift, the plain shift first. */
+  const firstSafeCandidate = (round: Round, segment: SegmentLite): PointLite[] | null => {
+    for (const shift of shifts) {
+      const direct = shiftedCandidate(segment, shift);
+      if (direct && candidateIsSafe(round, segment.edge, direct)) {
+        return direct;
+      }
+      const detoured = sourceDetourCandidate(segment, shift);
+      if (detoured && candidateIsSafe(round, segment.edge, detoured)) {
+        return detoured;
+      }
+    }
+    return null;
+  };
 
-        const candidates = [first, second].filter((segment) => segment.interior);
-        for (const segment of candidates) {
-          for (const shift of shifts) {
-            const direct = shiftedCandidate(segment, shift);
-            if (direct && candidateIsSafe(segment.edge, direct)) {
-              segment.edge.points = direct;
-              fixed = true;
-              break;
-            }
+  /**
+   * `firstSafeCandidate` of the segment at `place`, computed at most once a round. The answer
+   * reads only that segment and the round's routes, so every crowded pair that reaches the
+   * segment gets the same one.
+   */
+  const safeCandidateAt = (round: Round, place: number): PointLite[] | null => {
+    let found = round.safeCandidates.get(place);
+    if (found === undefined) {
+      found = firstSafeCandidate(round, round.segments[place]);
+      round.safeCandidates.set(place, found);
+    }
+    return found;
+  };
 
-            const detoured = sourceDetourCandidate(segment, shift);
-            if (detoured && candidateIsSafe(segment.edge, detoured)) {
-              segment.edge.points = detoured;
-              fixed = true;
-              break;
-            }
-          }
-          if (fixed) {
-            break;
+  /** The places after `place` whose segments crowd it from another edge, in ascending order. */
+  const crowdingAfter = (round: Round, place: number): number[] => {
+    const first = round.segments[place];
+    return round.tracks
+      .alongside(first, MIN_TRACK_GAP + 1)
+      .map(({ owner }) => owner)
+      .filter((other) => {
+        const second = round.segments[other];
+        return (
+          other > place && second.edge !== first.edge && hasCrowdedParallelTrack(first, second)
+        );
+      })
+      .sort((a, b) => a - b);
+  };
+
+  /**
+   * The fix of the first crowded pair, in the order of a walk over every pair of segments:
+   * the earlier segment of a pair is tried before the later one, and only interior ones.
+   */
+  const firstFix = (round: Round): { edge: Edge; points: PointLite[] } | undefined => {
+    for (let place = 0; place < round.segments.length; place++) {
+      for (const other of crowdingAfter(round, place)) {
+        for (const tried of [place, other]) {
+          const points = round.segments[tried].interior ? safeCandidateAt(round, tried) : null;
+          if (points) {
+            return { edge: round.segments[tried].edge, points };
           }
         }
       }
     }
+    return undefined;
+  };
 
-    if (!fixed) {
+  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    const fix = firstFix(startRound(allSegments()));
+    if (!fix) {
       return;
     }
+    fix.edge.points = fix.points;
   }
 }
