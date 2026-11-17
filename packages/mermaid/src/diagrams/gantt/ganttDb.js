@@ -50,6 +50,7 @@ export const clear = function () {
   currentSection = '';
   funs = [];
   taskCnt = 0;
+  usedTaskIds = new Set();
   lastTask = undefined;
   lastTaskID = undefined;
   rawTasks = [];
@@ -466,12 +467,43 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
 };
 
 let taskCnt = 0;
-const parseId = function (idStr) {
-  if (idStr === undefined) {
-    taskCnt = taskCnt + 1;
-    return 'task' + taskCnt;
+// IDs handed out so far, so that a generated ID never reuses an explicit one such as `task2`.
+let usedTaskIds = new Set();
+/**
+ * Checks whether the first of two items in a task definition is a task id rather than a start.
+ *
+ * This is used to tell apart `startDate, length` from `taskId, length`. A string is treated as
+ * a task id only when it is not an `after` statement, cannot be parsed as a date with the current
+ * date format, and contains at least one letter or underscore (so mistyped dates such as `202304`
+ * still raise an error instead of silently becoming an id).
+ *
+ * @param {string} str - The string to check.
+ * @returns {boolean} `true` if the string should be used as the task id.
+ */
+const isTaskId = function (str) {
+  if (/^after\s+/.test(str) || !/^[\w-]*[A-Z_a-z][\w-]*$/.test(str)) {
+    return false;
   }
-  return idStr;
+  try {
+    getStartDate(undefined, dateFormat, str);
+    return false;
+  } catch {
+    return true;
+  }
+};
+
+const parseId = function (idStr) {
+  if (idStr !== undefined) {
+    usedTaskIds.add(idStr);
+    return idStr;
+  }
+  let id;
+  do {
+    taskCnt = taskCnt + 1;
+    id = 'task' + taskCnt;
+  } while (usedTaskIds.has(id));
+  usedTaskIds.add(id);
+  return id;
 };
 // id, startDate, endDate
 // id, startDate, length
@@ -479,6 +511,8 @@ const parseId = function (idStr) {
 // id, after x, length
 // startDate, endDate
 // startDate, length
+// id, endDate
+// id, length
 // after x, endDate
 // after x, length
 // endDate
@@ -512,8 +546,13 @@ const compileData = function (prevTask, dataStr) {
       endTimeData = data[0];
       break;
     case 2:
-      task.id = parseId();
-      task.startTime = getStartDate(undefined, dateFormat, data[0]);
+      if (isTaskId(data[0])) {
+        task.id = parseId(data[0]);
+        task.startTime = prevTask.endTime;
+      } else {
+        task.id = parseId();
+        task.startTime = getStartDate(undefined, dateFormat, data[0]);
+      }
       endTimeData = data[1];
       break;
     case 3:
@@ -564,11 +603,19 @@ const parseData = function (prevTaskId, dataStr) {
       };
       break;
     case 2:
-      task.id = parseId();
-      task.startTime = {
-        type: 'getStartDate',
-        startData: data[0],
-      };
+      if (isTaskId(data[0])) {
+        task.id = parseId(data[0]);
+        task.startTime = {
+          type: 'prevTaskEnd',
+          id: prevTaskId,
+        };
+      } else {
+        task.id = parseId();
+        task.startTime = {
+          type: 'getStartDate',
+          startData: data[0],
+        };
+      }
       task.endTime = {
         data: data[1],
       };
