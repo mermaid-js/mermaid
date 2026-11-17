@@ -209,6 +209,7 @@ Communication tools and platforms
   - [Preview](https://marketplace.visualstudio.com/items?itemName=searKing.preview-vscode)
   - [Preview Sequence Diagrams](https://marketplace.visualstudio.com/items?itemName=arichika.previewseqdiag-vscode)
   - [Mermaid Markdown Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=bpruitt-goddard.mermaid-markdown-syntax-highlighting)
+  - [md2nativedocx](https://marketplace.visualstudio.com/items?itemName=md2nativedocx.md2nativedocx)
 - [Vim](https://www.vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
   - [Official Vim Syntax and ft plugin](https://github.com/craigmac/vim-mermaid)
@@ -236,6 +237,8 @@ Communication tools and platforms
 - [MkDocs](https://www.mkdocs.org)
   - [mkdocs-mermaid2-plugin](https://github.com/fralau/mkdocs-mermaid2-plugin)
   - [mkdocs-material](https://github.com/squidfunk/mkdocs-material), check the [docs](https://squidfunk.github.io/mkdocs-material/reference/diagrams/)
+- [Pandoc](https://pandoc.org/)
+  - [md2nativedocx](https://github.com/nicolasbridelance/md2nativedocx)
 - [Quarto](https://quarto.org/) ✅
 - [rehype](https://github.com/rehypejs/rehype)
   - [rehype-mermaid](https://github.com/remcohaszing/rehype-mermaid)
