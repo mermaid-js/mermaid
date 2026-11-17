@@ -74,6 +74,7 @@ describe('c4-beta db', () => {
   it('should store step numbers and tags without rendering them', async () => {
     await populate(`c4-beta dynamic
       softwareSystem a "A" :::tagged
+      softwareSystem b "B"
       1: a --> b : "Calls" :::async
     `);
     expect(db.getKind()).toBe('dynamic');
@@ -195,13 +196,6 @@ describe('c4-beta db', () => {
       expect(edges[0].arrowTypeEnd).toBe('none');
     });
 
-    it('should point a <-- relationship at its source only', async () => {
-      await populate(`c4-beta context\nperson a "A"\nsoftwareSystem b "B"\na <-- b\n`);
-      const { edges } = db.getData();
-      expect(edges[0].arrowTypeStart).toBe('arrow_point');
-      expect(edges[0].arrowTypeEnd).toBe('none');
-    });
-
     it('should map non-person elements to the rect shape', async () => {
       await populate(exampleDiagram);
       const { nodes } = db.getData();
@@ -284,6 +278,8 @@ describe('c4-beta db', () => {
       it('should apply tag styles and line pattern to relationships', async () => {
         await populate(`c4-beta context
           style async stroke:#0a0, color:#0a0, line:dashed
+          softwareSystem a "A"
+          softwareSystem b "B"
           a --> b : "Calls" :::async
         `);
         const { edges } = db.getData();
@@ -292,9 +288,22 @@ describe('c4-beta db', () => {
         expect(edges[0].pattern).toBe('dashed');
       });
 
+      it('should take a color name where a hex color goes', async () => {
+        await populate(`c4-beta context
+          style hot fill:red, stroke:#fff, color:white
+          softwareSystem a "A" :::hot
+        `);
+        expect(db.getData().nodes[0].cssStyles?.slice(-3)).toEqual([
+          'fill: red',
+          'stroke: #fff',
+          'color: white',
+        ]);
+      });
+
       it('should add tag classes even for tags without styles', async () => {
         await populate(`c4-beta context
           softwareSystem a "A" :::critical
+          softwareSystem b "B"
           a --> b :::async
         `);
         const data = db.getData();
@@ -506,6 +515,16 @@ describe('c4-beta db', () => {
         expect(api?.shape).toBe('rect');
       });
 
+      it('should draw an empty group as a boundary, with a frame round its title', async () => {
+        await populate(`c4-beta container
+          group team "Team Kestrel"
+          container worker "Worker"
+        `);
+        const team = db.getData().nodes.find((node) => node.id === 'team');
+        expect(team).toMatchObject({ isGroup: true, label: 'Team Kestrel' });
+        expect(team?.cssClasses).toBe('c4-boundary');
+      });
+
       it('should warn about relationships connecting two clusters', async () => {
         const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
         await populate(`c4-beta deployment
@@ -628,14 +647,20 @@ deploymentNode dc "Data Centre" "" "Big Bank plc" :::critical
     expect(dc?.cssStyles).toContain('stroke: #cc0000');
   });
 
-  describe('an id declared inside an element with the same id', () => {
+  describe('an id declared twice', () => {
     it.each([
-      ['group', 'group g "G" {\n  group g "G" {\n  }\n}'],
-      ['softwareSystem', 'softwareSystem s "S" {\n  softwareSystem s "S" {\n  }\n}'],
-      ['deploymentNode', 'deploymentNode dc "DC" {\n  deploymentNode dc "DC" {\n  }\n}'],
-    ])('should be rejected for a %s nested in itself', async (_kind, body) => {
+      ['group', 'group g "G" {\n  group g "G" {\n  }\n}', 'g', 2, 3],
+      ['softwareSystem', 'softwareSystem s "S" {\n  softwareSystem s "S" {\n  }\n}', 's', 2, 3],
+      [
+        'deploymentNode',
+        'deploymentNode dc "DC" {\n  deploymentNode dc "DC" {\n  }\n}',
+        'dc',
+        2,
+        3,
+      ],
+    ])('should be rejected for a %s nested in itself', async (_kind, body, id, first, second) => {
       await expect(populate(`c4-beta context\n${body}`)).rejects.toThrow(
-        /^c4-beta: the id "(g|s|dc)" is declared inside an element with the same id\. Every element needs its own id\.$/
+        `c4-beta: the id "${id}" is declared twice, at line ${first} and at line ${second}. Every element needs its own id.`
       );
     });
 
@@ -648,14 +673,25 @@ group a "A" {
     }
   }
 }`)
-      ).rejects.toThrow('c4-beta: the id "a" is declared inside an element with the same id.');
+      ).rejects.toThrow('c4-beta: the id "a" is declared twice, at line 2 and at line 4.');
     });
 
-    it('should keep rendering sibling elements that share an id', async () => {
-      await populate(`c4-beta context
+    it('should be rejected for siblings that share an id, naming both lines', async () => {
+      await expect(
+        populate(`c4-beta context
 softwareSystem s "S1"
-softwareSystem s "S2"`);
-      expect(db.getData().nodes).toHaveLength(2);
+softwareSystem s "S2"`)
+      ).rejects.toThrow('c4-beta: the id "s" is declared twice, at line 2 and at line 3.');
+    });
+
+    it('should name every id declared twice', async () => {
+      await expect(
+        populate(`c4-beta context
+person a "A"
+person b "B"
+person a "A again"
+person b "B again"`)
+      ).rejects.toThrow(/id "a" is declared twice.*\n.*id "b" is declared twice/);
     });
 
     it('should keep accepting nested elements with distinct ids', async () => {
@@ -665,6 +701,99 @@ group g "G" {
   }
 }`);
       expect(db.getData().nodes.map((node) => node.id)).toEqual(['g', 'h']);
+    });
+  });
+
+  describe('a relationship end that is no element', () => {
+    it.each([
+      ['target', 'a --> ghost : "Calls"', 'ghost'],
+      ['source', 'ghost --> a : "Calls"', 'ghost'],
+    ])('should reject an unknown %s at parse, naming it and its line', async (_end, line, id) => {
+      await expect(populate(`c4-beta context\nperson a "A"\n${line}`)).rejects.toThrow(
+        `names "${id}", which is no element. Declare it with a statement such as person ${id} "Name".`
+      );
+      await expect(populate(`c4-beta context\nperson a "A"\n${line}`)).rejects.toThrow('at line 3');
+    });
+
+    it('should name both ends when both are unknown', async () => {
+      await expect(populate('c4-beta context\nx --> y')).rejects.toThrow(
+        /names "x", which is no element.*\n.*names "y", which is no element/
+      );
+    });
+
+    it('should accept a relationship written before its elements', async () => {
+      await populate('c4-beta context\na --> b\nperson a "A"\nperson b "B"');
+      expect(db.getRelationships()).toHaveLength(1);
+    });
+  });
+
+  describe('a relationship written with <--', () => {
+    it('should be stored from the right-hand end, as a --> arrow', async () => {
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\na <-- c : "Is called by"');
+      const [relationship] = db.getRelationships();
+      expect(relationship).toMatchObject({ sourceId: 'c', targetId: 'a', arrow: '-->' });
+    });
+
+    it('should draw the arrowhead at the left-hand end, the same as c --> a', async () => {
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\na <-- c');
+      const reversed = db.getData().edges[0];
+      db.clear();
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\nc --> a');
+      const direct = db.getData().edges[0];
+      expect(reversed).toMatchObject({
+        start: direct.start,
+        end: direct.end,
+        arrowTypeStart: direct.arrowTypeStart,
+        arrowTypeEnd: direct.arrowTypeEnd,
+      });
+    });
+
+    it('should keep <--> as a bidirectional relationship', async () => {
+      await populate('c4-beta context\nperson a "A"\nperson c "C"\na <--> c');
+      expect(db.getRelationships()[0]).toMatchObject({
+        sourceId: 'a',
+        targetId: 'c',
+        arrow: '<-->',
+      });
+    });
+  });
+
+  describe('warnings for dropped input', () => {
+    const warnings = async (text: string) => {
+      const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      await populate(text);
+      db.getData();
+      const messages = warn.mock.calls.map(([message]) => String(message));
+      warn.mockRestore();
+      return messages;
+    };
+
+    it('should warn about a step outside a dynamic diagram, and not inside one', async () => {
+      const outside = await warnings(
+        'c4-beta context\nperson a "A"\nperson b "B"\n7: a --> b : "Calls"'
+      );
+      expect(outside).toEqual([
+        'c4-beta: step "7:" on relationship "a --> b" is ignored; steps only apply to dynamic diagrams',
+      ]);
+      db.clear();
+      const inside = await warnings(
+        'c4-beta dynamic\nperson a "A"\nperson b "B"\n7: a --> b : "Calls"'
+      );
+      expect(inside).toEqual([]);
+    });
+
+    it('should warn about a technology on a person and a software system', async () => {
+      const messages = await warnings(
+        'c4-beta context\nperson p "P" "Pays." "Browser"\nsoftwareSystem s "S" "Sells." "Java"'
+      );
+      expect(messages.filter((message) => message.includes('is ignored'))).toHaveLength(2);
+    });
+
+    it('should warn about instances on an element that is not a deployment node', async () => {
+      const messages = await warnings('c4-beta deployment\ncontainer c "C" instances "3"');
+      expect(messages).toEqual([
+        'c4-beta: instances "3" on container "c" is ignored; instances only apply to deploymentNode elements',
+      ]);
     });
   });
 });

@@ -1,0 +1,7 @@
+c4-beta container
+style store shape:cylinder, fill:#1f2937, stroke:red
+style async line:dashed, color:#333
+style odd foo:bar
+container api "API" :::odd
+container db "Store" :::store
+api --> db : "Writes to" :::async

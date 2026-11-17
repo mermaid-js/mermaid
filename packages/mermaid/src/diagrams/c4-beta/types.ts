@@ -11,7 +11,8 @@ export type C4ElementKind =
   | 'deploymentNode'
   | 'infrastructureNode';
 
-export type C4Arrow = '-->' | '<--' | '<-->' | '---';
+/** `a <-- b` is stored as `b --> a`, so only these three reach the db. */
+export type C4Arrow = '-->' | '<-->' | '---';
 
 export interface C4BetaElement {
   id: string;
