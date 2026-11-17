@@ -702,4 +702,22 @@ describe('[Text] when parsing', () => {
     expect(vert.get('A').type).toBe('subroutine');
     expect(vert.get('A').text).toBe('subroutine');
   });
+
+  it('should handle adjacent nested opening brackets in node labels', function () {
+    const res = flow.parser.parse('graph TD;A[x [[y]]] --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('x [[y]]');
+  });
+
+  it('should handle a trapezoid opener inside a node label', function () {
+    const res = flow.parser.parse('graph TD;A[x [/ y]] --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('x [/ y]');
+  });
 });
