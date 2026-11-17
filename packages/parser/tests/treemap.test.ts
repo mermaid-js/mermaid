@@ -235,4 +235,105 @@ accDescr: This is an accessible description
       }
     });
   });
+
+  describe('Trailing whitespace', () => {
+    it('should parse a leaf with trailing space after the value', () => {
+      const result = parse('treemap\n"Root"\n  "Child": 100 ');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(2);
+    });
+
+    it('should keep the hierarchy when a leaf has a trailing space', () => {
+      const input = ['treemap', '"Root"', '  "Child": 100 ', '  "Sibling": 200'].join('\n');
+      const result = parse(input);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(3);
+
+      const [root, child, sibling] = result.value.TreemapRows;
+      // The trailing whitespace must not swallow the next row's indentation,
+      // and must not leave a phantom row behind
+      expect(root.indent).toBeUndefined();
+      expect(child.indent).toBe(2);
+      expect(sibling.indent).toBe(2);
+      expect(result.value.TreemapRows.every((row) => row.item)).toBe(true);
+      expect(child.item?.$type).toBe('Leaf');
+      expect((child.item as Leaf).value).toBe(100);
+      expect((sibling.item as Leaf).value).toBe(200);
+    });
+
+    it('should parse a leaf with a trailing tab after the value', () => {
+      const input = ['treemap', '"Root"', '\t"Child": 100\t', '\t"Child2": 50'].join('\n');
+      const result = parse(input);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(3);
+
+      const [root, child, child2] = result.value.TreemapRows;
+      expect(root.indent).toBeUndefined();
+      expect(child.indent).toBe(1);
+      expect(child2.indent).toBe(1);
+      expect((child.item as Leaf).value).toBe(100);
+      expect((child2.item as Leaf).value).toBe(50);
+    });
+
+    it('should parse a section with a trailing tab', () => {
+      const input = ['treemap', '"Root"\t', '\t"Child": 100'].join('\n');
+      const result = parse(input);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(2);
+      expect(result.value.TreemapRows[0].item?.$type).toBe('Section');
+      expect(result.value.TreemapRows[1].indent).toBe(1);
+    });
+
+    it('should parse treemap with trailing whitespace on several rows', () => {
+      const input = [
+        'treemap',
+        '"Category A"   ',
+        '    "Item A1": 10 ',
+        '    "Item A2": 20',
+        '"Category B"\t',
+        '    "Item B1": 15  ',
+      ].join('\n');
+      const result = parse(input);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(5);
+      expect(result.value.TreemapRows.map((row) => row.indent)).toEqual([
+        undefined,
+        4,
+        4,
+        undefined,
+        4,
+      ]);
+    });
+
+    it('should parse a section with trailing space', () => {
+      const result = parse('treemap\n"Root" \n  "Child": 100');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(2);
+      expect(result.value.TreemapRows[0].item?.$type).toBe('Section');
+      expect(result.value.TreemapRows[1].indent).toBe(2);
+    });
+
+    it('should parse treemap-beta with trailing space on the last leaf line', () => {
+      const input = [
+        'treemap-beta',
+        '"Category A"',
+        '    "Item A1": 10',
+        '    "Item A2": 20',
+        '"Category B"',
+        '    "Item B1": 15',
+        '    "Item C3": 10 ',
+      ].join('\n');
+      const result = parse(input);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(6);
+      expect(result.value.TreemapRows.map((row) => row.indent)).toEqual([
+        undefined,
+        4,
+        4,
+        undefined,
+        4,
+        4,
+      ]);
+    });
+  });
 });

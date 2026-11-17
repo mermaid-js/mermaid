@@ -46,7 +46,8 @@ entry Treemap returns Treemap:
     (
         TitleAndAccessibilities
         | TreemapRows+=TreemapRow
-    )*;
+    )*
+    INDENTATION?;  // trailing whitespace at the end of the document
 terminal TREEMAP_KEYWORD:  'treemap-beta' | 'treemap';
 
 terminal CLASS_DEF: /classDef\s+([a-zA-Z_][a-zA-Z0-9_]+)(?:\s+([^;\r\n]*))?(?:;)?/;
@@ -54,12 +55,16 @@ terminal STYLE_SEPARATOR: ':::';
 terminal SEPARATOR: ':';
 terminal COMMA: ',';
 
+// Declared before INDENTATION so trailing whitespace on a line is skipped as part of the
+// newline. The newline must actually be present, so this can never consume the leading
+// indentation of the next row.
+hidden terminal NL: /[ \t]*\r?\n/;
+
 // This should be processed before whitespace is ignored
 terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
 hidden terminal ML_COMMENT: /\%\%[^\n]*/;
-hidden terminal NL: /\r?\n/;
 
 TreemapRow:
     indent=INDENTATION? (item=Item | ClassDef);
