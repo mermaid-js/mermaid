@@ -1,0 +1,14 @@
+---
+config:
+  c4:
+    boundaryFontSize: 1.5em
+    messageFontSize: 1.5em
+---
+C4Context
+    title A relative boundary and relationship font size applies once (24px on a 16px page)
+
+    Boundary(shop, "Web shop") {
+        Person(buyer, "Buyer")
+        System(cart, "Cart")
+        Rel(buyer, cart, "Adds items to")
+    }

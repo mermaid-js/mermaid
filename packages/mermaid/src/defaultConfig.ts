@@ -92,6 +92,8 @@ const config: RequiredDeep<MermaidConfig> = {
   c4: {
     ...defaultConfigJson.c4,
     useWidth: undefined,
+    // Left undefined so a boundary only gets a direction when the diagram asks for one.
+    boundaryDirection: undefined,
     personFont: function () {
       return {
         fontFamily: this.personFontFamily,
