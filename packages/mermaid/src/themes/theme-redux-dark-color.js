@@ -1,5 +1,5 @@
 import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
-import { applyOverride, mkBorder } from './theme-helpers.js';
+import { applyOverride, bpmnThemeVariables, mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
@@ -380,6 +380,12 @@ class Theme {
     this.quadrantExternalBorderStrokeFill =
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
+    /* bpmn */
+    // Every BPMN colour is a theme variable so a diagram can be retuned without
+    // editing diagrams/bpmn/styles.ts, which is the only stylesheet that can reach
+    // these shapes (mermaid scopes diagram CSS with the svg id).
+    this.bpmn = bpmnThemeVariables(this);
 
     /* xychart */
     this.xyChart = {

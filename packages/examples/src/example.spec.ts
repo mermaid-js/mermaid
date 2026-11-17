@@ -53,6 +53,7 @@ describe('examples', () => {
       // Beta, and deliberately not announced: no entry in the examples registry
       // and no sidebar link until the syntax is declared stable.
       'agentflow',
+      'bpmn',
     ];
     const diagrams = mermaid
       .getRegisteredDiagramsMetadata()

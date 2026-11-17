@@ -1,0 +1,21 @@
+---
+description: >-
+  The theme sets bpmn.eventStrokeWidth to 1.6, the value the theme would use
+  anyway. Because the author set it, every non-end ring is drawn at 1.6px,
+  the double rings of the intermediate and boundary events too, instead of
+  their lighter notation weight of 1.4px.
+config:
+  themeVariables:
+    bpmn:
+      eventStrokeWidth: 1.6
+---
+bpmn-beta LR
+  lane "Orders"
+    start s1 "Order received"
+    task t1 "Check stock"
+      boundary timer b1 "2 days"
+    intermediate timer i1 "Wait a day"
+    end e1 "Order closed"
+  s1 --> t1
+  t1 --> i1
+  i1 --> e1
