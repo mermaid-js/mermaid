@@ -917,6 +917,28 @@ deactivate Bob`);
     expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[3].from).toBe('Bob');
   });
+  it('should handle a space before the one line deactivation and an uppercase X actor', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    Xavier->>+John: Hello
+    John-->> -Xavier: Bye`);
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(4);
+    expect(messages[2].to).toBe('Xavier');
+    expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
+    expect(messages[3].from).toBe('John');
+  });
+  it('should still accept trailing whitespace and a line break after an arrow', async () => {
+    const diagram = await Diagram.fromText('sequenceDiagram\nAlice->> \nBob: Hello');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[0].to).toBe('Bob');
+  });
   it('should handle stacked activations', async () => {
     const diagram = await Diagram.fromText(`
       sequenceDiagram

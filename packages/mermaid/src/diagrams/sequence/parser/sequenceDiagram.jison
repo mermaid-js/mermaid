@@ -25,7 +25,7 @@
 
 [\n]+                                                           return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
-<ID,ALIAS,LINE,ARROW_END>((?!\n)\s)+                            /* skip same-line whitespace */
+<ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
 <INITIAL,ID,ALIAS,LINE>\#[^\n]*   															/* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
@@ -117,6 +117,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 ":"(?:(?:no)?wrap:)?[^#\n;]*                                    return 'TXT';
 ":"                             								return 'TXT';
 // Right after an arrow, "-" and "+" are the activation shortcuts, never the start of another arrow
+<ARROW_END>(?!\n)\s+                                           /* skip whitespace exactly as INITIAL does */
 <ARROW_END>"-"                                                  { this.popState(); return '-'; }
 <ARROW_END>"+"                                                  { this.popState(); return '+'; }
 <ARROW_END>(?:)                                                 { this.popState(); }
