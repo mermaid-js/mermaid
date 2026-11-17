@@ -6,7 +6,7 @@ import { prepareLayoutForSwimlanes } from '../helpers.js';
 import { runSwimlaneLayoutCore } from '../layoutCore.js';
 import { validateLayout } from '../../layout-utils/validateLayout.js';
 
-type Direction = 'TB' | 'LR';
+type Direction = 'TB' | 'LR' | 'RL';
 type EdgeSpec = [start: string, end: string, label?: string];
 
 const NODE_SIZE = { width: 60, height: 40 };
@@ -196,18 +196,24 @@ describe('swimlane edge labels do not change node ranks (#8327)', () => {
     expect(gap(labelled)).toBeCloseTo(gap(plain) + reserved, 0);
   });
 
-  it.each([0, 1, 4])(
-    'gives an LR label the same room with %i anchored nodes in the lane',
-    (anchoredCount) => {
+  it.each(
+    (['LR', 'RL'] as const).flatMap((direction) =>
+      [0, 1, 4].map((count): [Direction, number] => [direction, count])
+    )
+  )(
+    'gives an %s label the same room with %i anchored nodes in the lane',
+    (direction, anchoredCount) => {
       const edges: EdgeSpec[] = [
         ['A', 'B', 'wide'],
         ['B', 'C'],
       ];
       const lanes = { s1: ['A', 'B', 'C'] };
-      const labelled = layOut('LR', lanes, edges, WIDE_LABEL_SIZE, anchoredCount);
-      const plain = layOut('LR', lanes, withoutLabels(edges), WIDE_LABEL_SIZE, anchoredCount);
+      const labelled = layOut(direction, lanes, edges, WIDE_LABEL_SIZE, anchoredCount);
+      const plain = layOut(direction, lanes, withoutLabels(edges), WIDE_LABEL_SIZE, anchoredCount);
 
-      const gap = (data: LayoutData) => alongFlow(data, 'LR').C - alongFlow(data, 'LR').A;
+      // RL mirrors the flow axis, so C sits on the other side of A there.
+      const gap = (data: LayoutData) =>
+        Math.abs(alongFlow(data, direction).C - alongFlow(data, direction).A);
       const reserved = WIDE_LABEL_SIZE.width + 2 * COORDINATES.EDGE_LABEL_CLEARANCE;
       expect(gap(labelled) - gap(plain)).toBeCloseTo(reserved, 0);
     }
