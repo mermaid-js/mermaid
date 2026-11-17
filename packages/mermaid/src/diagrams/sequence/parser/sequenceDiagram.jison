@@ -94,26 +94,31 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \-\-[x]                                                         { this.begin('ARROW_END'); return 'DOTTED_CROSS'; }
 \-[\)]                                                          { this.begin('ARROW_END'); return 'SOLID_POINT'; }
 \-\-[\)]                                                        { this.begin('ARROW_END'); return 'DOTTED_POINT'; }
+
 //normal-dotted
 \-\-\|\\                                                        { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP_DOTTED'; }
 \-\-\|\/                                                        { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM_DOTTED'; }
 \-\-\\\\                                                        { this.begin('ARROW_END'); return 'STICK_ARROW_TOP_DOTTED'; }
 \-\-\/\/                                                        { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM_DOTTED'; }
+
 //reverse-dotted
 \/\|\-\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP_REVERSE_DOTTED'; }
 \\\|\-\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM_REVERSE_DOTTED'; }
 \/\/\-\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_TOP_REVERSE_DOTTED'; }
 \\\\\-\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM_REVERSE_DOTTED'; }
+
 //normal
 \-\|\\                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP'; }
 \-\|\/                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM'; }
 \-\\\\                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_TOP'; }
 \-\/\/                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM'; }
+
 //reverse
 \/\|\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP_REVERSE'; }
 \\\|\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM_REVERSE'; }
 \/\/\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_TOP_REVERSE'; }
 \\\\\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM_REVERSE'; }
+
 ":"(?:(?:no)?wrap:)?[^#\n;]*                                    return 'TXT';
 ":"                             								return 'TXT';
 // Right after an arrow, "-" and "+" are the activation shortcuts, never the start of another arrow
