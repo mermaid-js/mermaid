@@ -1710,7 +1710,7 @@ export function shortcutRedundantOrthogonalJogs(
   ): number =>
     routes.total -
     routes.of(edge) +
-    routes.withOthers(edge, segmentsFor(pointsFor(edge, edge, replacement)));
+    routes.withOthers(edge, segmentsFor(dedupeConsecutivePoints(replacement)));
 
   const segmentRunsAlongRectBorder = (segment: SegmentLite, rect: RectLite): boolean => {
     if (segment.horizontal) {
