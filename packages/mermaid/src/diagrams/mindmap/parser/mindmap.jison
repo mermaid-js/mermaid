@@ -15,12 +15,22 @@
 %x NSTR2
 %x ICON
 %x CLASS
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 
 %%
 
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
 "mindmap"		       return 'MINDMAP';
+accTitle\s*":"[ \t]*                             { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_title_value"; }
+accDescr\s*":"[ \t]*                             { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 ":::"              { this.begin('CLASS'); }
 <CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}
@@ -100,14 +110,22 @@ statement
 	: SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
 	| SPACELIST ICON       { yy.getLogger().trace('Icon: ',$2);yy.decorateNode({icon: $2}); }
 	| SPACELIST CLASS      { yy.decorateNode({class: $2}); }
+	| SPACELIST accStatement
   | SPACELINE { yy.getLogger().trace('SPACELIST');}
 	| node					       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type);  }
 	| ICON                 { yy.decorateNode({icon: $1}); }
 	| CLASS                { yy.decorateNode({class: $1}); }
+	| accStatement
   | SPACELIST
 	;
 
 
+
+accStatement
+	: acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
+	| acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+	| acc_descr_multiline_value  { $$=$1.trim();yy.setAccDescription($$); }
+	;
 
 node
   :nodeWithId
