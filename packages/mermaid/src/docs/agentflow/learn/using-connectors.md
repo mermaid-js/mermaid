@@ -1,0 +1,56 @@
+---
+editLink: false
+---
+
+<!-- This page is ported from the Agentflow language reference, which is maintained outside this repository. Changes made only here are lost at the next port: please open an issue instead of editing this file. -->
+
+# 5. Using connectors
+
+A connector is an outside service a task can use: a server that gives agents tools over the Model Context Protocol (MCP). Put it at the top level of the workflow, and link it to each task that needs it with a dotted link (`-.-`).
+
+<!-- expect: valid -->
+
+```mermaid-example
+agentflow TB
+  connector github["GitHub"]@{ protocol: "mcp", url: "https://api.githubcopilot.com/mcp/" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "List the open issues labelled bug." }
+    label["Label issues"]@{ instruction: "Add a priority label to each bug." }
+    read --> label
+    read -.- github
+    label -.- github
+  end
+```
+
+A connector needs two settings:
+
+- `protocol` — always `"mcp"`.
+- `url` — the full address of the server.
+
+You can also write the settings on their own line, after the connector:
+
+```text
+connector github["GitHub"]
+github@{ protocol: "mcp", url: "https://api.githubcopilot.com/mcp/" }
+```
+
+A dotted link has no direction, so `read -.- github` and `github -.- read` mean the same. Only a task can link to a connector, and a connector is never part of the order of steps. An arrow to a connector is an error.
+
+<!-- expect: EDGE_KIND_INVALID -->
+
+```mermaid-example
+agentflow TB
+  connector github["GitHub"]@{ protocol: "mcp", url: "https://api.githubcopilot.com/mcp/" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "List the open issues labelled bug." }
+    read --> github
+  end
+```
+
+> Connector "github" can't be the target of an arrow. Link it with a dotted link instead: \<task> -.- github.
+
+A connector that no task links to is an error too, because nothing can use it.
+
+Next: [6. Starting a flow](./starting-a-flow.md).
