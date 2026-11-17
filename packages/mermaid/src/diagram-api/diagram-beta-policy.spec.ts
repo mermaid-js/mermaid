@@ -57,6 +57,7 @@ const GRADUATED_DIAGRAMS = new Set([
   'ishikawa',
   'architecture',
   'treemap',
+  'agentflow',
 ]);
 
 /** Internal or pseudo-diagram types — not subject to beta policy. */
