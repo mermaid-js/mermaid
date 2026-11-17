@@ -239,6 +239,450 @@ describe('getEdgesToRender', () => {
     expect(data4Layout.edges.map((edge) => edge.id)).toEqual(['X-cluster1']);
   });
 
+  it('reserves each nested cluster its own label height and clears every ancestor header', () => {
+    // Two nested top-level clusters O -> I -> leaf L, each with a multi-line header whose
+    // measured height exceeds the configured margin. Every node must clear the cumulative
+    // height of all its ancestors' headers, and each cluster must grow to fit its own header
+    // plus the deepest chain of nested headers below it.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('I', {
+      id: 'I',
+      x: 100,
+      y: 110,
+      width: 160,
+      height: 120,
+      labelBBox: { height: 20 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 120, width: 80, height: 40 });
+    graph.setParent('I', 'O');
+    graph.setParent('L', 'I');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'I', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 10,
+    });
+
+    // O overflows the margin by 30 - 10 = 20; I by 20 - 10 = 10.
+    // O grows by the margin plus its own overflow and the deepest nested one below it
+    // (10 + 20 + 10 = 40); its centre moves down by half the overflow (15), keeping its top.
+    expect(graph.node('O')).toMatchObject({ y: 115, height: 220 });
+    // I grows by the margin plus its own overflow (10 + 10); its centre moves down by O's
+    // overflow plus half its own (20 + 5 = 25).
+    expect(graph.node('I')).toMatchObject({ y: 135, height: 140 });
+    // The leaf clears both ancestor overflows (20 + 10) on top of the baseline half-margin.
+    expect(graph.node('L')).toMatchObject({ y: 155, height: 40 });
+  });
+
+  it('reserves the top margin as well as a label taller than the total margin', () => {
+    // The label is painted `top` below the cluster's top edge, so it ends at top + height.
+    // Children must start at or below that, not at the label height alone.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 120,
+      labelBBox: { height: 40 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 100, width: 80, height: 40 });
+    graph.setParent('L', 'O');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 20,
+      subGraphTitleTopMargin: 10,
+    });
+
+    // O needs max(40 + 10, 20) = 50, which overflows the margin by 30; it grows by 20 + 30
+    // and its centre moves by half the overflow, 15.
+    expect(graph.node('O')).toMatchObject({ y: 115, height: 170 });
+    // The leaf clears the 30 overflow: its top (y - 20) lies at or below the label bottom.
+    const clusterTop = graph.node('O').y - graph.node('O').height / 2;
+    const labelBottom = clusterTop + 10 + 40;
+    expect(graph.node('L').y - graph.node('L').height / 2).toBeGreaterThanOrEqual(labelBottom);
+  });
+
+  it.each([
+    // The title ends at 5 + 20, inside the 100 margin: the flat margin geometry stays.
+    { title: 20, cluster: { y: 100, height: 220 }, leaf: 150 },
+    // The title ends at 5 + 120, 25 below the margin: everything below it moves by 25.
+    { title: 120, cluster: { y: 112.5, height: 245 }, leaf: 175 },
+  ])(
+    'keeps the flat margin geometry unless a $title high title overflows it',
+    ({ title, cluster, leaf }) => {
+      const graph = new Graph({ multigraph: true, compound: true });
+      graph.setGraph({ rankdir: 'TB' });
+      graph.setNode('O', {
+        id: 'O',
+        x: 100,
+        y: 100,
+        width: 200,
+        height: 120,
+        labelBBox: { height: title },
+      });
+      graph.setNode('L', { id: 'L', x: 100, y: 100, width: 80, height: 40 });
+      graph.setParent('L', 'O');
+      const data4Layout = {
+        nodes: [
+          { id: 'O', isGroup: true },
+          { id: 'L', isGroup: false },
+        ],
+        edges: [],
+      };
+
+      applyDagreLayoutResult(data4Layout, {
+        graph,
+        mergeSelfLoops: true,
+        subGraphTitleTotalMargin: 100,
+        subGraphTitleTopMargin: 5,
+      });
+
+      expect(graph.node('O')).toMatchObject(cluster);
+      expect(graph.node('L')).toMatchObject({ y: leaf });
+    }
+  );
+
+  it('keeps a nested tall label clear of its own and every ancestor label', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 40 },
+    });
+    graph.setNode('I', {
+      id: 'I',
+      x: 100,
+      y: 110,
+      width: 160,
+      height: 120,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 120, width: 80, height: 40 });
+    graph.setParent('I', 'O');
+    graph.setParent('L', 'I');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'I', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 20,
+      subGraphTitleTopMargin: 10,
+    });
+
+    // O overflows by 50 - 20 = 30, I by 40 - 20 = 20; O grows by 20 + 30 + 20, I by 20 + 20.
+    expect(graph.node('O')).toMatchObject({ y: 125, height: 250 });
+    expect(graph.node('I')).toMatchObject({ y: 150, height: 160 });
+    // The leaf clears both: baseline 10 + 30 + 20 below its dagre y.
+    expect(graph.node('L')).toMatchObject({ y: 180 });
+  });
+
+  it('shifts a recursively-rendered cluster by its ancestors overflow, without resizing it', () => {
+    // A cluster with no external connections is extracted into its own sub-graph and comes
+    // back as a `clusterNode` placeholder, which already contains its own header. Nested
+    // inside a cluster that did survive, it must still drop below that ancestor's header,
+    // but must not be grown again.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('P', { id: 'P', x: 100, y: 110, width: 160, height: 120, clusterNode: true });
+    graph.setParent('P', 'O');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'P', isGroup: true },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 10,
+    });
+
+    // The clusterNode keeps its own height and shifts by the full margin (10) plus O's
+    // title overflow (30 - 10 = 20): 110 + 10 + 20 = 140.
+    expect(graph.node('P')).toMatchObject({ y: 140, height: 120 });
+  });
+
+  it('keeps an edge that crosses into a nested cluster on its endpoint', () => {
+    // A cluster with an edge crossing its boundary is not extracted into a sub-graph, so its
+    // children stay in the top-level graph and are shifted by their ancestors' title overflow.
+    // The edge has to move with them: shifting it by the baseline margin alone would leave it
+    // hanging above the node it points at, by exactly that overflow.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('OUT', { id: 'OUT', x: 100, y: 40, width: 80, height: 40 });
+    graph.setNode('C', {
+      id: 'C',
+      x: 100,
+      y: 140,
+      width: 200,
+      height: 120,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('IN', { id: 'IN', x: 100, y: 150, width: 80, height: 40 });
+    graph.setParent('IN', 'C');
+    graph.setEdge(
+      'OUT',
+      'IN',
+      {
+        id: 'e1',
+        points: [
+          { x: 100, y: 60 },
+          { x: 100, y: 150 },
+        ],
+      },
+      'e1'
+    );
+
+    const data4Layout = {
+      nodes: [
+        { id: 'OUT', isGroup: false },
+        { id: 'C', isGroup: true },
+        { id: 'IN', isGroup: false },
+      ],
+      edges: [{ id: 'e1', start: 'OUT', end: 'IN' }],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 10,
+    });
+
+    const target = graph.node('IN');
+    const [edge] = data4Layout.edges;
+    const lastPoint = edge.points.at(-1);
+
+    expect(lastPoint.y).toBe(target.y);
+  });
+
+  it('keeps a self-loop on a node inside a titled cluster', () => {
+    // Self-loop points are generated from the already-shifted node and pre-compensated for the
+    // offset the edge normaliser adds back. Adding the ancestor overflow on top of that offset
+    // would move the loop off its node by exactly the overflow.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setNode('C', {
+      id: 'C',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 120,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('A', { id: 'A', x: 100, y: 110, width: 20, height: 20 });
+    graph.setNode('A---A---1', { id: 'A---A---1' });
+    graph.setNode('A---A---2', { id: 'A---A---2' });
+    graph.setParent('A', 'C');
+
+    const originalEdge = { id: 'A-A', start: 'A', end: 'A' };
+    const segment = (id, order) => ({
+      ...originalEdge,
+      id,
+      selfLoop: { id: 'A-A', order },
+      originalEdge,
+      points: [],
+    });
+    graph.setEdge('A', 'A---A---1', segment('s0', 0), 'A-cyclic-special-0');
+    graph.setEdge('A---A---1', 'A---A---2', segment('s1', 1), 'A-cyclic-special-1');
+    graph.setEdge('A---A---2', 'A', segment('s2', 2), 'A-cyclic-special-2');
+
+    const data4Layout = {
+      nodes: [
+        { id: 'C', isGroup: true },
+        { id: 'A', isGroup: false },
+      ],
+      edges: [originalEdge],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 10,
+    });
+
+    const node = graph.node('A');
+    const [loop] = data4Layout.edges;
+    // the loop is drawn above the node, so its lowest points sit on the node's top edge
+    const lowest = Math.max(...loop.points.map((point) => point.y));
+    expect(lowest).toBe(node.y - node.height / 2);
+  });
+
+  it.each([
+    // Leaving the cluster, the route goes from the 20 overflow at its start to 0 at its end.
+    { case: 'three points', points: [150, 100, 60], expected: [175, 115, 65] },
+    // A route of one point takes the overflow of its start.
+    { case: 'one point', points: [150], expected: [175] },
+  ])(
+    'spreads the title overflow along an unlabelled edge of $case out of a cluster',
+    ({ points, expected }) => {
+      const graph = new Graph({ multigraph: true, compound: true });
+      graph.setNode('C', {
+        id: 'C',
+        x: 100,
+        y: 140,
+        width: 200,
+        height: 120,
+        labelBBox: { height: 30 },
+      });
+      graph.setNode('IN', { id: 'IN', x: 100, y: 150, width: 80, height: 40 });
+      graph.setNode('OUT', { id: 'OUT', x: 100, y: 40, width: 80, height: 40 });
+      graph.setParent('IN', 'C');
+      graph.setEdge('IN', 'OUT', { id: 'e1', points: points.map((y) => ({ x: 100, y })) }, 'e1');
+      const data4Layout = {
+        nodes: [
+          { id: 'C', isGroup: true },
+          { id: 'IN', isGroup: false },
+          { id: 'OUT', isGroup: false },
+        ],
+        edges: [{ id: 'e1', start: 'IN', end: 'OUT' }],
+      };
+
+      applyDagreLayoutResult(data4Layout, {
+        graph,
+        mergeSelfLoops: true,
+        subGraphTitleTotalMargin: 10,
+      });
+
+      const [edge] = data4Layout.edges;
+      // The baseline half-margin (5) plus the overflow at each point.
+      expect(edge.points.map(({ y }) => y)).toEqual(expected);
+      // An edge without a label has no position of its own to move.
+      expect(edge).not.toHaveProperty('y');
+    }
+  );
+
+  it('moves a labelled edge and its label together', () => {
+    // Dagre puts the label at the edge's own x/y. Shifting the route without the label leaves
+    // the text behind the line it belongs to.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setNode('OUT', { id: 'OUT', x: 100, y: 40, width: 80, height: 40 });
+    graph.setNode('C', {
+      id: 'C',
+      x: 100,
+      y: 140,
+      width: 200,
+      height: 120,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('IN', { id: 'IN', x: 100, y: 150, width: 80, height: 40 });
+    graph.setParent('IN', 'C');
+    graph.setEdge(
+      'OUT',
+      'IN',
+      {
+        id: 'e1',
+        label: 'uses',
+        x: 100,
+        y: 105,
+        points: [
+          { x: 100, y: 60 },
+          { x: 100, y: 150 },
+        ],
+      },
+      'e1'
+    );
+
+    const data4Layout = {
+      nodes: [
+        { id: 'OUT', isGroup: false },
+        { id: 'C', isGroup: true },
+        { id: 'IN', isGroup: false },
+      ],
+      edges: [{ id: 'e1', start: 'OUT', end: 'IN' }],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 10,
+    });
+
+    const [edge] = data4Layout.edges;
+    // The route gained 10 at its midpoint (0 at the top end, the 20 overflow at the end inside
+    // the cluster), so the label gains the same and keeps its position relative to its line.
+    expect(edge.y).toBe(105 + 10);
+  });
+
+  it('leaves every node untouched at the default margin', () => {
+    // The reserve is inert at margin 0, and the helpers return before walking the graph.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 120, width: 80, height: 40 });
+    graph.setParent('L', 'O');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 0,
+    });
+
+    expect(graph.node('O')).toMatchObject({ y: 100, height: 180 });
+    expect(graph.node('L')).toMatchObject({ y: 120, height: 40 });
+  });
+
   it('creates one compact render edge from self-loop layout segments', () => {
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
@@ -729,6 +1173,80 @@ clusterA --> C`
       expect(dom.window.document.querySelectorAll('.edgePaths path.flowchart-link')).toHaveLength(
         2
       );
+    } finally {
+      restoreDom();
+    }
+  });
+
+  it.each([
+    // No edge crosses the subgraph, so it is extracted and rendered recursively.
+    ['a recursively-rendered', 'a --> b\nend\nc --> d'],
+    // An edge into the subgraph keeps it in the top-level graph.
+    ['a top-level', 'a\nend\nc --> a'],
+  ])('keeps %s cluster title taller than the margin clear of its children', async (_, rest) => {
+    const restoreDom = setupDom();
+
+    try {
+      // `layout` is pinned because the global default is elk, and `htmlLabels` is off
+      // because jsdom measures only SVG labels, through the getBBox stub.
+      const { svg } = await mermaidAPI.render(
+        'cluster-title-reserve-test',
+        `%%{init: {"layout": "dagre", "htmlLabels": false, "flowchart": {"subGraphTitleMargin": {"top": 5, "bottom": 5}}}}%%
+flowchart TD
+subgraph X[Title]
+${rest}`
+      );
+      const document = new JSDOM(svg).window.document;
+      const cluster = document.querySelector('.cluster[id$="-X"]');
+      // setupDom stubs every getBBox, title and node alike, to this height.
+      const stubbedHeight = 50;
+      const clusterTop = Number(cluster.querySelector('rect').getAttribute('y'));
+      const nodeTop = (id) => {
+        const transform = document.querySelector(`.node[id*="-${id}-"]`).getAttribute('transform');
+        const y = Number(/translate\([^,]+,\s*([^)]+)\)/.exec(transform)[1]);
+        return y - stubbedHeight / 2;
+      };
+
+      expect(nodeTop('a') - clusterTop).toBeGreaterThanOrEqual(stubbedHeight);
+    } finally {
+      restoreDom();
+    }
+  });
+
+  it('reserves no title for a state note group, which paints only an invisible frame', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      // setupDom stubs every getBBox to 50 high, so the note text is taller than the margin.
+      const nodeYs = async (margin) => {
+        const { svg } = await mermaidAPI.render(
+          'note-group-title-test',
+          `%%{init: {"layout": "dagre", "htmlLabels": false, "flowchart": {"subGraphTitleMargin": {"top": ${margin}, "bottom": ${margin}}}}}%%
+stateDiagram-v2
+  A --> B
+  note right of A
+    one
+    two
+  end note`
+        );
+        const document = new JSDOM(svg).window.document;
+        return new Map(
+          [...document.querySelectorAll('.node')].map((node) => [
+            node.id.replace(/^.*-state-/, ''),
+            Number(/translate\([^,]+,\s*([^)]+)\)/.exec(node.getAttribute('transform'))[1]),
+          ])
+        );
+      };
+
+      const atDefault = await nodeYs(0);
+      const withMargin = await nodeYs(5);
+      // The flat margin moves every node alike; the note gets no title reserve on top.
+      const moved = [...withMargin].map(([id, y]) => [id, y - atDefault.get(id)]);
+      expect(moved).toEqual([
+        ['A-1', 5],
+        ['B-0', 5],
+        ['A----note-1', 5],
+      ]);
     } finally {
       restoreDom();
     }

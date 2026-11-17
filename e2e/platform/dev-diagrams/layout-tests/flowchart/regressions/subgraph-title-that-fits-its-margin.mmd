@@ -1,0 +1,15 @@
+---
+config:
+  layout: dagre
+  flowchart:
+    subGraphTitleMargin:
+      top: 5
+      bottom: 95
+---
+flowchart TB
+  %% The edge into a keeps S in the top-level graph. Its title fits the margin, so S and
+  %% its children sit where the flat margin puts them.
+  subgraph S [Short]
+    a --> b
+  end
+  x --> a
