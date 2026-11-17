@@ -27,6 +27,7 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 <br>
 <br>
 
+[![Agent Friendly](https://agentfriendlycode.com/api/badge/github/mermaid-js/mermaid.svg)](https://agentfriendlycode.com/repo/23775)
 [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid)
 [![Build CI Status](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/actions/workflows/build.yml)
 [![npm minified gzipped bundle size](https://img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia.com/package/mermaid)
