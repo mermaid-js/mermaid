@@ -5,6 +5,7 @@
 export const betaSyntaxPages = new Set([
   'agentflow',
   'architecture',
+  'c4-beta',
   'cynefin',
   'radar',
   'railroad',
