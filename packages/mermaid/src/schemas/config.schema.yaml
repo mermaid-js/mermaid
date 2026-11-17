@@ -468,6 +468,8 @@ properties:
     $ref: '#/$defs/RadarDiagramConfig'
   usecase:
     $ref: '#/$defs/UsecaseDiagramConfig'
+  component:
+    $ref: '#/$defs/ComponentDiagramConfig'
   venn:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
@@ -3213,6 +3215,38 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           - role
           - rotate
         default: role
+  ComponentDiagramConfig:
+    title: Component Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for UML component diagrams.
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+      - wrappingWidth
+      - minNodeWidth
+    properties:
+      wrappingWidth:
+        $ref: '#/$defs/FlowchartDiagramConfig/properties/wrappingWidth'
+        default: 150
+      minNodeWidth:
+        $ref: '#/$defs/FlowchartDiagramConfig/properties/minNodeWidth'
+        default: 80
+      nodeSpacing:
+        description: Spacing between nodes on the same level
+        type: number
+        minimum: 0
+        default: 50
+      rankSpacing:
+        description: Spacing between nodes on different levels
+        type: number
+        minimum: 0
+        default: 50
+      diagramPadding:
+        description: Padding around the entire diagram
+        type: number
+        minimum: 0
+        default: 20
   VennDiagramConfig:
     title: Venn Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]

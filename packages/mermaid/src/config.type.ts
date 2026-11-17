@@ -388,6 +388,7 @@ export interface MermaidConfig {
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
   usecase?: UsecaseDiagramConfig;
+  component?: ComponentDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
@@ -2598,6 +2599,44 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    *
    */
   colorScheme?: 'role' | 'rotate';
+}
+/**
+ * The object containing configurations specific for UML component diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ComponentDiagramConfig".
+ */
+export interface ComponentDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
+  /**
+   * Spacing between nodes on the same level
+   */
+  nodeSpacing?: number;
+  /**
+   * Spacing between nodes on different levels
+   */
+  rankSpacing?: number;
+  /**
+   * Padding around the entire diagram
+   */
+  diagramPadding?: number;
 }
 /**
  * The object containing configurations specific for Venn diagrams.
