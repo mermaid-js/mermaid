@@ -247,6 +247,44 @@ export const updateNodeBounds = <T extends SVGGraphicsElement>(
 };
 
 /**
+ * Inline paint for a rectangle that only sets a node's bounds and hit area. A class
+ * assigned to the node emits `.<name> path { fill: ...!important; stroke: ...!important }`
+ * when labels are SVG text, and only an inline `!important` declaration outranks it.
+ * The fill stays `transparent` rather than `none` so the rectangle still takes pointer
+ * events.
+ */
+export const BOUNDS_ONLY_PATH_STYLE = 'fill: transparent !important; stroke: none !important;';
+
+/**
+ * Keeps every path of a bounds-only rough.js group unpainted, whatever classes the node
+ * carries, so the result does not depend on how many paths rough.js emits for the look.
+ */
+export const keepBoundsUnpainted = (bounds: D3Selection<SVGGElement>) => {
+  bounds.selectAll('path').attr('style', BOUNDS_ONLY_PATH_STYLE);
+};
+
+/** The elements a class's `.<name> <element>` shape-paint rule targets with SVG labels. */
+const CLASS_PAINTED_ELEMENTS = 'rect, polygon, ellipse, circle, path';
+const PAINT_PROPERTIES = ['fill', 'stroke'] as const;
+
+/**
+ * Keeps an embedded icon's artwork in its own colours when the node carries a class.
+ * Each painted element restates its own fill and stroke (inline style, else attribute,
+ * else `inherit`) as an inline `!important` declaration, the only thing that outranks
+ * the class rule, so the class paints the shape around the icon and not the glyph.
+ * The glyph's `currentColor` still follows the node's stroke.
+ */
+export const keepIconArtworkPaint = (artwork: D3Selection<SVGGElement>) => {
+  artwork.selectAll<SVGElement, unknown>(CLASS_PAINTED_ELEMENTS).attr('style', function () {
+    const restated = PAINT_PROPERTIES.map((property) => {
+      const own = this.style.getPropertyValue(property) || this.getAttribute(property) || 'inherit';
+      return `${property}: ${own} !important;`;
+    });
+    return [this.style.cssText, ...restated].filter(Boolean).join(' ');
+  });
+};
+
+/**
  * @param parent - Parent element to append the polygon to
  * @param w - Width of the polygon
  * @param h - Height of the polygon
