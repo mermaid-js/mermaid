@@ -14,6 +14,7 @@ describe('Railroad ABNF parser', () => {
     ['comment lines', '; a = "z" ;\na = "x" ;\n;; b = "z" ;\nb = "y" ;'],
     ['a comment inside a rule', 'a = "x" ; first\n  / "z" ;\nb = "y" ;'],
     ['the terminator on its own line', 'a = "x"\n  ; \nb = "y" ;'],
+    ['a comment after a terminator on its own line', 'a = "x"\n  ; ; comment\nb = "y" ;'],
   ])('should keep the rule terminator with %s', (_, rules) => {
     const result = parser.parse<RailroadAbnf>(`railroad-abnf-beta\n${rules}`);
     expectNoErrorsOrAlternatives(result);

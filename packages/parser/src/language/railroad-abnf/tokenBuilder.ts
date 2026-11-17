@@ -6,8 +6,8 @@ import { AbstractMermaidTokenBuilder } from '../common/index.js';
 const COMMENT = /;[^\n\r]*/y;
 // Inside a rule, `;` is the terminator when only whitespace, a comment or the next rule follows it.
 const TERMINATOR_FOLLOWER = /[\t ]*(?:[\n\r;]|$|[A-Za-z][\dA-Za-z-]*[\t ]*=)/y;
-// A `;` starting a line with text after it is a commented-out line.
-const LINE_START_TERMINATOR_FOLLOWER = /[\t ]*(?:[\n\r]|$)/y;
+// A `;` starting a line with anything but a comment after it is a commented-out line.
+const LINE_START_TERMINATOR_FOLLOWER = /[\t ]*(?:[\n\r;]|$)/y;
 
 const startsLine = (text: string, offset: number): boolean => {
   let i = offset - 1;
