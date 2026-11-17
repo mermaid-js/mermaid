@@ -1,0 +1,15 @@
+---
+config:
+  theme: base
+  themeVariables:
+    radius: 24
+---
+%% An ELK edge that would step past a subgraph title onto the rounded corner of the node it enters stays where it is, so it keeps meeting the outline.
+flowchart TB
+    subgraph intake ["Stage 1: Intake"]
+        A("Receive the order")
+    end
+    subgraph stock ["Stage 2: Stock lot"]
+        B("Reserve the items")
+    end
+    A -->|"Orders team"| B
