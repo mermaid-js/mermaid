@@ -510,6 +510,84 @@ describe('lineJump', () => {
       expect(newD).toMatch(/Q20,5/);
     });
 
+    it('preserves repeating dotted stroke-dasharray on crossed edges', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'verticalLine',
+          points: [
+            { x: 50, y: 0 },
+            { x: 50, y: 20 },
+          ],
+        },
+        {
+          id: 'dottedEdge',
+          points: [
+            { x: 0, y: 10 },
+            { x: 100, y: 10 },
+          ],
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'verticalLine', d: 'M50,0 L50,20' },
+        { id: 'dottedEdge', d: 'M0,10 L100,10' },
+      ]);
+
+      const dottedPath = group.node()!.querySelector('path[data-id="dottedEdge"]')!;
+      dottedPath.setAttribute(
+        'style',
+        'stroke-dasharray: 0 0 2 2 2 2 2 2 2 2 2; stroke-dashoffset: 0;'
+      );
+      Object.defineProperty(dottedPath, 'getTotalLength', {
+        value: () => 26,
+      });
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const updatedStyle = dottedPath.getAttribute('style')!;
+      // (26 - 0 - 2) / (2 + 2) = 6 pairs of `2 2`, ending with trailing `2`
+      expect(updatedStyle).toContain('stroke-dasharray: 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2;');
+    });
+
+    it('preserves a trailing classDef stroke-dasharray when recomputing clearance', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'verticalLine',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+        },
+        {
+          id: 'styledEdge',
+          points: [
+            { x: 0, y: 10 },
+            { x: 20, y: 10 },
+          ],
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'verticalLine', d: 'M10,0 L10,20' },
+        { id: 'styledEdge', d: 'M0,10 L20,10' },
+      ]);
+
+      const styledPath = group.node()!.querySelector('path[data-id="styledEdge"]')!;
+      styledPath.setAttribute(
+        'style',
+        'stroke-dasharray: 0 5 10 5; stroke-dashoffset: 0; stroke-dasharray: 8 4;'
+      );
+      Object.defineProperty(styledPath, 'getTotalLength', {
+        value: () => 30,
+      });
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const updatedStyle = styledPath.getAttribute('style')!;
+      expect(updatedStyle).toContain('stroke-dasharray: 0 5 20 5;');
+      expect(updatedStyle).toContain('stroke-dasharray: 8 4;');
+    });
+
     it('preserves a custom corner radius when rewriting a rounded edge', () => {
       const edges: EdgeGeom[] = [
         {
