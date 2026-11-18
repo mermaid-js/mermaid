@@ -281,6 +281,7 @@ export type RenderSettings = {
    * decide (older versions have different defaults and can break on new values).
    */
   theme?: string;
+  /** When set, it also wins over a layout the diagram picks itself (see `buildRenderConfig`). */
   layout?: string;
   look?: string;
   logLevel: string;
@@ -315,11 +316,23 @@ const USE_MAX_WIDTH_SECTIONS = [
   'treemap',
 ];
 
+// Mermaid's default `secure` keys, which a diagram's frontmatter or directives cannot change.
+const DEFAULT_SECURE_KEYS = [
+  'secure',
+  'securityLevel',
+  'startOnLoad',
+  'maxTextSize',
+  'suppressErrorRendering',
+  'maxEdges',
+];
+
 /**
  * The mermaid.initialize() config the viewer renders with. Unset theme /
- * layout / look are omitted (never `undefined`). With `naturalSize`, every
- * diagram renders at its intrinsic size (no `useMaxWidth`) so two renders
- * overlay pixel for pixel.
+ * layout / look are omitted (never `undefined`). A set layout is also made a
+ * `secure` key, so it wins over a `layout` in the diagram's frontmatter or
+ * directives; otherwise picking a layout would do nothing for such diagrams.
+ * With `naturalSize`, every diagram renders at its intrinsic size (no
+ * `useMaxWidth`) so two renders overlay pixel for pixel.
  */
 export function buildRenderConfig(
   s: RenderSettings,
@@ -331,7 +344,7 @@ export function buildRenderConfig(
     maxTextSize: DEV_MAX_TEXT_SIZE,
     maxEdges: DEV_MAX_EDGES,
     ...(s.theme ? { theme: s.theme } : {}),
-    ...(s.layout ? { layout: s.layout } : {}),
+    ...(s.layout ? { layout: s.layout, secure: [...DEFAULT_SECURE_KEYS, 'layout'] } : {}),
     ...(s.look ? { look: s.look } : {}),
     logLevel: s.logLevel,
     flowchart: {
