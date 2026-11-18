@@ -169,6 +169,31 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[3].id).toEqual('d');
     expect(tasks[3].task).toEqual('task D');
   });
+  it('should handle tasks with relative dates (issue #2850)', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat relative month\n' +
+      'axisFormat M%R\n' +
+      'section Work packages\n' +
+      'WP1 Management: wp1, 0, 36\n' +
+      'WP2 Research: wp2, 9, 14\n' +
+      'Review: milestone, after wp2, 0d';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(parser.yy.getRelativeDateUnit()).toEqual('month');
+    expect(parser.yy.getAxisFormat()).toEqual('M%R');
+
+    const tasks = parser.yy.getTasks();
+    const start = parser.yy.getRelativeStart();
+    const month = (offset) => new Date(start.getFullYear(), start.getMonth() + offset, 1);
+
+    expect(tasks[0].startTime).toEqual(month(0));
+    expect(tasks[0].endTime).toEqual(month(36));
+    expect(tasks[1].startTime).toEqual(month(9));
+    expect(tasks[1].endTime).toEqual(month(14));
+    expect(tasks[2].startTime).toEqual(month(14));
+    expect(tasks[2].milestone).toBeTruthy();
+  });
   it.each`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
