@@ -83,24 +83,27 @@ export class ClassMember {
     if (this.memberType === 'method') {
       const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
       const match = methodRegEx.exec(input);
-      if (match) {
-        const detectedVisibility = match[1] ? match[1].trim() : '';
+      if (!match) {
+        throw new Error(
+          `Invalid class member "${input}": methods must be written as name(parameters)`
+        );
+      }
+      const detectedVisibility = match[1] ? match[1].trim() : '';
 
-        if (visibilityValues.includes(detectedVisibility)) {
-          this.visibility = detectedVisibility as Visibility;
-        }
+      if (visibilityValues.includes(detectedVisibility)) {
+        this.visibility = detectedVisibility as Visibility;
+      }
 
-        this.id = match[2];
-        this.parameters = match[3] ? match[3].trim() : '';
-        potentialClassifier = match[4] ? match[4].trim() : '';
-        this.returnType = match[5] ? match[5].trim() : '';
+      this.id = match[2];
+      this.parameters = match[3] ? match[3].trim() : '';
+      potentialClassifier = match[4] ? match[4].trim() : '';
+      this.returnType = match[5] ? match[5].trim() : '';
 
-        if (potentialClassifier === '') {
-          const lastChar = this.returnType.substring(this.returnType.length - 1);
-          if (/[$*]/.exec(lastChar)) {
-            potentialClassifier = lastChar;
-            this.returnType = this.returnType.substring(0, this.returnType.length - 1);
-          }
+      if (potentialClassifier === '') {
+        const lastChar = this.returnType.substring(this.returnType.length - 1);
+        if (/[$*]/.exec(lastChar)) {
+          potentialClassifier = lastChar;
+          this.returnType = this.returnType.substring(0, this.returnType.length - 1);
         }
       }
     } else {

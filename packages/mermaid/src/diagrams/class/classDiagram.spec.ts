@@ -1295,6 +1295,27 @@ describe('given a class diagram with members and methods ', function () {
       parser.parse(str);
     });
 
+    it('should report a member that starts with a parenthesis as an invalid member', function () {
+      const str = `classDiagram
+        class A {
+          (a) B
+        }`;
+
+      expect(() => parser.parse(str)).toThrowError('Invalid class member "(a) B"');
+    });
+
+    it('should report a malformed method inside a class body with annotations', function () {
+      const str = `classDiagram
+        class createSnapshotRangeModel {
+          <<function>>
+          (chain, from, to) IMultiDiffDocumentSource
+        }`;
+
+      expect(() => parser.parse(str)).toThrowError(
+        'Invalid class member "(chain, from, to) IMultiDiffDocumentSource"'
+      );
+    });
+
     it('should handle simple return types', function () {
       const str = 'classDiagram\n' + 'class Object\n' + 'Object : getObject() Object';
 

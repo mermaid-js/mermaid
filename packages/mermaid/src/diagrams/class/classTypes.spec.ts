@@ -6,6 +6,18 @@ const staticCssStyle = 'text-decoration:underline;';
 const abstractCssStyle = 'font-style:italic;';
 
 describe('given text representing a method, ', function () {
+  describe('when method has no name', function () {
+    it('should throw an error naming the member instead of a TypeError', function () {
+      expect(() => new ClassMember('(a) B', 'method')).toThrowError(
+        'Invalid class member "(a) B": methods must be written as name(parameters)'
+      );
+    });
+
+    it('should throw for a closing parenthesis without an opening one', function () {
+      expect(() => new ClassMember('a) B', 'method')).toThrowError(/Invalid class member "a\) B"/);
+    });
+  });
+
   describe('when method has no parameters', function () {
     it('should parse correctly', function () {
       const str = `getTime()`;
