@@ -1,3 +1,4 @@
+// cspell:ignore falsey titleaxis
 import { describe, expect, it } from 'vitest';
 
 import { Radar } from '../src/language/index.js';
@@ -16,6 +17,61 @@ const mutateGlobalSpacing = (context: string) => {
 };
 
 describe('radar', () => {
+  describe('keyword prefixes in identifiers', () => {
+    it.each([
+      'circles',
+      'polygonal',
+      'trueNorth',
+      'falsey',
+      'titles',
+      'circle-line',
+      'true_north',
+      'title-line',
+      'title2',
+    ])('should preserve %s in axes, curves and detailed entries', (name) => {
+      const result = parse(`radar-beta\naxis ${name}, b\ncurve ${name}{${name}: 1, b: 2}`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.axes[0].name).toBe(name);
+      expect(result.value.curves[0].name).toBe(name);
+      expect(result.value.curves[0].entries[0].axis?.$refText).toBe(name);
+    });
+
+    it.each(['true', 'false'])('should preserve glued showLegend %s values', (value) => {
+      const result = parse(`radar-beta\naxis a, b, c\nshowLegend ${value}curve x{1,2,3}`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.options[0].value).toBe(value === 'true');
+      expect(result.value.curves[0].name).toBe('x');
+    });
+
+    it.each(['circle', 'polygon'])('should preserve glued graticule %s values', (value) => {
+      const result = parse(`radar-beta\ngraticule ${value}axis a, b, c\ncurve x{1,2,3}`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.options[0].value).toBe(value);
+      expect(result.value.axes).toHaveLength(3);
+    });
+
+    it.each(['circle', 'polygon', 'true', 'false'])('should keep %s reserved', (name) => {
+      const result = parse(`radar-beta\naxis ${name}, b`);
+      expect(result.parserErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should preserve comments, tabs, CRLF and an empty title', () => {
+      const result = parse(
+        'radar-beta\r\ntitle\r\naxis\tcircles, titles\r\n%% a comment\r\ncurve trueNorth{circles: 1, titles: 2}'
+      );
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.axes.map((axis) => axis.name)).toEqual(['circles', 'titles']);
+    });
+
+    it.each(['graticule circles', 'showLegend falsey', 'titleaxis a, b'])(
+      'should reject the invalid option or title %s',
+      (statement) => {
+        const result = parse(`radar-beta\n${statement}`);
+        expect(result.parserErrors.length).toBeGreaterThan(0);
+      }
+    );
+  });
+
   it.each([
     ...mutateGlobalSpacing('radar-beta'),
     ...mutateGlobalSpacing('radar-beta:'),
