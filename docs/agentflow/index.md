@@ -6,7 +6,7 @@
 
 <!-- This page is ported from the Agentflow language reference, which is maintained outside this repository. Changes made only here are lost at the next port: please open an issue instead of editing this file. -->
 
-# Agentflow Semantics (v\<MERMAID_RELEASE_VERSION>+)
+# Agentflow Semantics (v12.3.0+)
 
 Draw an AI workflow as a diagram, and run it as drawn. Three pieces make that work:
 
