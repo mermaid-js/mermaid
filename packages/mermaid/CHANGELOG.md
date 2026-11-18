@@ -1,5 +1,11 @@
 # mermaid
 
+## 12.4.0
+
+### Minor Changes
+
+- [#8834](https://github.com/mermaid-js/mermaid/pull/8834) [`68114ea`](https://github.com/mermaid-js/mermaid/commit/68114eaf565558971737d0dea1f3c10c8d97990e) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: agentflow diagrams accept the `agentflow` keyword. `agentflow-beta` keeps working as an alias
+
 ## 12.3.0
 
 ### Minor Changes
