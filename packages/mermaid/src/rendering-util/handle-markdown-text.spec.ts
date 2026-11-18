@@ -47,6 +47,18 @@ Here is a line *with an italic* section`;
   expect(output).toEqual(expectedOutput);
 });
 
+test('markdownToLines - code span', () => {
+  expect(markdownToLines('Run `a <b> **c**` now')).toEqual([
+    [
+      { content: 'Run', type: 'normal' },
+      { content: 'a', type: 'code' },
+      { content: '<b>', type: 'code' },
+      { content: '**c**', type: 'code' },
+      { content: 'now', type: 'normal' },
+    ],
+  ]);
+});
+
 test('markdownToLines - Empty input', () => {
   const input = '';
   const expectedOutput = [[]];
@@ -276,6 +288,34 @@ test('markdownToHTML - Only italic formatting', () => {
 test('markdownToHTML - Mixed formatting', () => {
   const input = `*Italic* and **bold** formatting`;
   const expectedOutput = `<p><em>Italic</em> and <strong>bold</strong> formatting</p>`;
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Code span', () => {
+  const input = 'Run `backup`, then **`steps`**';
+  const expectedOutput = '<p>Run <code>backup</code>, then <strong><code>steps</code></strong></p>';
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Code span with HTML special characters', () => {
+  const input = 'The unit `<name>-migrate & *pre*`';
+  const expectedOutput = '<p>The unit <code>&lt;name&gt;-migrate & *pre*</code></p>';
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Code span with entities from `sanitizeText`', () => {
+  const input = 'Use `a &lt; b &amp;&amp; c`';
+  const expectedOutput = '<p>Use <code>a &lt; b &amp;&amp; c</code></p>';
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Code span with icon syntax', () => {
+  const input = 'fa:fa-home is `fa:fa-home`';
+  const expectedOutput = '<p>fa:fa-home is <code>fa&#58;fa-home</code></p>';
   const output = markdownToHTML(input);
   expect(output).toEqual(expectedOutput);
 });
