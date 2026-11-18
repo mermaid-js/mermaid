@@ -71,6 +71,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Mermaid Studio by webtoolz](https://webtoolz.dev/mermaid) - Browser-based Mermaid editor with live preview, curated themes, and PNG/SVG export
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
+- [Splat](https://github.com/sventmueller/splat) - Ultrafast native Markdown editor for macOS, built in Rust, with offline Mermaid rendering and click-to-edit diagrams. ✅
 - [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
 - [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
