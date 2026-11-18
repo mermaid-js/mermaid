@@ -17,6 +17,7 @@ import { insertEdgeLabel, positionEdgeLabel, insertEdge } from '../../rendering-
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import utils from '../../../utils.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -182,6 +183,27 @@ const getSelfLoopLabelPosition = (node, points, side = 'top', yOffset = 0, label
   }
 };
 
+// Dagre's injectEdgeLabelProxies only reserves a label rank when width and height
+// are both non-zero. An empty HTML label such as `<p></p>` stays a truthy string,
+// but the measured box has no area, so the edge never receives x/y. The painters
+// interpolate those coordinates into `translate(...)`, which becomes
+// `translate(undefined, NaN)` (#6086). Sit the label on the edge instead.
+const assignMissingEdgeLabelCoordinates = (edge) => {
+  if (!edge?.label || (Number.isFinite(edge.x) && Number.isFinite(edge.y))) {
+    return;
+  }
+  const points = Array.isArray(edge.points)
+    ? edge.points.filter((point) => Number.isFinite(point?.x) && Number.isFinite(point?.y))
+    : [];
+  const mid = points.length > 0 ? utils.calcLabelPosition(points) : { x: 0, y: 0 };
+  if (!Number.isFinite(edge.x)) {
+    edge.x = Number.isFinite(mid.x) ? mid.x : 0;
+  }
+  if (!Number.isFinite(edge.y)) {
+    edge.y = Number.isFinite(mid.y) ? mid.y : 0;
+  }
+};
+
 // Convert internal dagre layout edges into the public SVG edges we actually render.
 export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } = {}) => {
   const selfLoopEdgeGroups = new Map();
@@ -252,6 +274,10 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
 
     edgesToRender.push({ edge: mergedEdge, start: mergedEdge.start, end: mergedEdge.end });
   });
+
+  for (const { edge } of edgesToRender) {
+    assignMissingEdgeLabelCoordinates(edge);
+  }
 
   return edgesToRender;
 };
