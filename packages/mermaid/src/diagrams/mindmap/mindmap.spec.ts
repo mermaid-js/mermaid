@@ -76,6 +76,21 @@ describe('when parsing a mindmap ', function () {
         'There can be only one root. No parent could be found for ("fakeRoot")'
       );
     });
+    it.each([
+      ['trailing spaces on the header', 'mindmap   \n  root\n    child'],
+      ['a blank line after the header', 'mindmap\n\n  root\n    child'],
+      ['a whitespace-only line after the header', 'mindmap\n   \n  root\n    child'],
+      ['a comment and a blank line after the header', 'mindmap\n%% comment\n\n  root\n    child'],
+    ])('MMP-26 should handle %s', function (_, str) {
+      mindmap.parse(str);
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.descr).toEqual('root');
+      expect(mm.children.length).toEqual(1);
+      expect(mm.children[0].descr).toEqual('child');
+    });
+    it('MMP-27 should still accept a header followed only by blank lines', function () {
+      expect(() => mindmap.parse('mindmap\n   \n\n')).not.toThrow();
+    });
   });
   describe('nodes', function () {
     it('MMP-7 should handle an id and type for a node definition', function () {
