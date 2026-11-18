@@ -376,12 +376,11 @@ async function addText<T extends SVGGraphicsElement>(
   );
   // Undo work around now that text passed through correctly
   if (labelText.includes('&lt;') || labelText.includes('&gt;')) {
-    let child: Element | ChildNode = text.children[0];
-    child.textContent = child.textContent!.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
-    while (child.childNodes[0]) {
-      child = child.childNodes[0];
-      // Replace its text content
-      child.textContent = child.textContent!.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
+    // Only rewrite text nodes: assigning `textContent` on an element would drop the
+    // formatting elements (e.g. <strong>, <em>) that markdown produced.
+    const walker = text.ownerDocument.createTreeWalker(text, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      node.nodeValue = node.nodeValue!.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
     }
   }
 
