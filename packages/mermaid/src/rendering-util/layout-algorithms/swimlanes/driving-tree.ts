@@ -1,4 +1,5 @@
 import type { Graph, NodeId } from './helpers.js';
+import { compareStrings } from './compare.js';
 import {
   buildPredecessorSuccessorMaps,
   normalizeGraph,
@@ -38,10 +39,10 @@ export function buildDrivingTree(graph: Graph, opts?: DrivingTreeBuildOptions): 
 
   const { preds } = buildPredecessorSuccessorMaps(g);
   for (const arr of preds.values()) {
-    arr.sort((a, b) => a.localeCompare(b));
+    arr.sort((a, b) => compareStrings(a, b));
   }
 
-  const topoOrder = topoSortIfAcyclic(g) ?? [...g.nodes].sort((a, b) => a.localeCompare(b));
+  const topoOrder = topoSortIfAcyclic(g) ?? [...g.nodes].sort((a, b) => compareStrings(a, b));
   const topoIndex = new Map<NodeId, number>();
   for (const [idx, id] of topoOrder.entries()) {
     topoIndex.set(id, idx);
@@ -84,7 +85,7 @@ export function buildDrivingTree(graph: Graph, opts?: DrivingTreeBuildOptions): 
     const ta = topoIndex.get(a) ?? 0;
     const tb = topoIndex.get(b) ?? 0;
     if (ta === tb) {
-      return a.localeCompare(b);
+      return compareStrings(a, b);
     }
     return ta - tb;
   });
@@ -94,7 +95,7 @@ export function buildDrivingTree(graph: Graph, opts?: DrivingTreeBuildOptions): 
   for (const [node, set] of adjacency.entries()) {
     adjacencyList.set(
       node,
-      [...set].sort((a, b) => a.localeCompare(b))
+      [...set].sort((a, b) => compareStrings(a, b))
     );
   }
 
@@ -181,7 +182,7 @@ function chooseParent(node: NodeId, candidates: NodeId[], ctx: ParentSelectionCo
       return idxA - idxB;
     }
 
-    return a.localeCompare(b);
+    return compareStrings(a, b);
   });
   return sorted[0];
 }

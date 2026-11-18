@@ -1,4 +1,5 @@
 import type { Graph, EdgeRef, NodeId } from './helpers.js';
+import { compareStrings } from './compare.js';
 // cspell:ignore acyclicity topo indeg preds succs
 
 // Normalize/validate a Graph view; ensure nodeById exists and edges refer to known nodes
@@ -46,7 +47,7 @@ export function buildSuccessorMap(g: Graph): Map<NodeId, NodeId[]> {
 export function buildSortedSuccessorMap(g: Graph): Map<NodeId, NodeId[]> {
   const succs = buildSuccessorMap(g);
   for (const successors of succs.values()) {
-    successors.sort((a, b) => a.localeCompare(b));
+    successors.sort((a, b) => compareStrings(a, b));
   }
   return succs;
 }
@@ -66,7 +67,7 @@ export function sortedZeroInDegreeNodes(g: Graph, indeg: Map<NodeId, number>): N
   const sorted = [...indeg.entries()]
     .filter(([, degree]) => degree === 0)
     .map(([id]) => id)
-    .sort((a, b) => a.localeCompare(b));
+    .sort((a, b) => compareStrings(a, b));
 
   // Nodes without any edge are unconstrained, so sorting them by ID is arbitrary and
   // reorders a lane of unconnected nodes alphabetically (#8355). Refill their slots in
