@@ -270,6 +270,16 @@ that id.
 [\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
                       return 'UNICODE_TEXT';
+/* Symbols and emoji in unquoted text, e.g. subgraph titles and node ids.
+   These ranges sit above ASCII, so no flowchart syntax token is affected.
+   Astral-plane characters (emoji) are UTF-16 surrogate pairs; variation
+   selectors and joiners keep sequences such as U+26A0 U+FE0F and ZWJ emoji
+   intact. U+205F is left out on purpose: it is whitespace, matched by the
+   SPACE rule below. */
+[\u200C\u200D\u2030-\u205E\u20A0-\u20BF\u20D0-\u20FF\u2190-\u21FF\u2300-\u23FF\u2460-\u24FF\u2500-\u27BF\u2900-\u2BFF\uFE00-\uFE0F]
+                      return 'UNICODE_TEXT';
+[\uD800-\uDBFF][\uDC00-\uDFFF]
+                      return 'UNICODE_TEXT';
 
 <text>"|"             { this.popState(); return 'PIPE'; }
 <*>"|"                { this.pushState("text"); return 'PIPE'; }
