@@ -617,4 +617,53 @@ describe('when using the ganttDb', function () {
       warnSpy.mockRestore();
     });
   });
+
+  describe('when a milestone is declared with an id and a start date only (issue #4121)', function () {
+    it('should use the first item as the id and default to a zero duration', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('M1', 'milestone, m1, 2023-01-01');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].id).toEqual('m1');
+      expect(tasks[0].startTime).toEqual(dayjs('2023-01-01', 'YYYY-MM-DD').toDate());
+      expect(tasks[0].endTime).toEqual(tasks[0].startTime);
+    });
+
+    it('should let tasks start after each milestone', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('M1', 'milestone, m1, 2023-01-02');
+      ganttDb.addTask('M2', 'milestone, m2, 2023-02-01');
+      ganttDb.addTask('Task 1', 't1, after m1, 1d');
+      ganttDb.addTask('Task 3', 't3, after m2, 1d');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[2].startTime).toEqual(dayjs('2023-01-02', 'YYYY-MM-DD').toDate());
+      expect(tasks[3].startTime).toEqual(dayjs('2023-02-01', 'YYYY-MM-DD').toDate());
+    });
+
+    it('should accept an "after" statement as the start', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('Task 1', 't1, 2023-01-02, 3d');
+      ganttDb.addTask('M1', 'milestone, m1, after t1');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[1].id).toEqual('m1');
+      expect(tasks[1].startTime).toEqual(tasks[0].endTime);
+      expect(tasks[1].endTime).toEqual(tasks[1].startTime);
+    });
+
+    it('should keep treating "startDate, duration" as before', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('M1', 'milestone, 2023-01-02, 2d');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].id).toEqual('task1');
+      expect(tasks[0].startTime).toEqual(dayjs('2023-01-02', 'YYYY-MM-DD').toDate());
+      expect(tasks[0].endTime).toEqual(dayjs('2023-01-04', 'YYYY-MM-DD').toDate());
+    });
+  });
 });
