@@ -1,4 +1,6 @@
 import { select } from 'd3';
+// Registers selection.transition(); d3 >= 7.9.1 is side-effect free, so its re-export can be tree-shaken.
+import 'd3-transition';
 import DOMPurify from 'dompurify';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';

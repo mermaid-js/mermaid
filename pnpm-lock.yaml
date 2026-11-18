@@ -309,6 +309,9 @@ importers:
       d3-sankey:
         specifier: ^0.12.3
         version: 0.12.3
+      d3-transition:
+        specifier: ^3.0.1
+        version: 3.0.1(d3-selection@3.0.0)
       dagre-d3-es:
         specifier: 7.0.14
         version: 7.0.14
