@@ -42,7 +42,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 4 : undefined,
   timeout: 60_000,
   expect: {
     timeout: 15_000,
@@ -59,10 +59,16 @@ export default defineConfig({
     baseURL: `http://localhost:${port}`,
     ...devices['Desktop Chrome'],
     viewport: { width: 1440, height: 1024 },
+    // Fixed rather than inherited from the host: historical timezone offsets
+    // aren't whole hours, so a mocked ancient test date (e.g. gantt's
+    // 1010-10-10) can resolve to an odd sub-hour offset that varies by
+    // machine — and isn't avoided by using an explicit Z-suffixed clock
+    // value, since dayjs's own date defaulting still resolves through it.
+    timezoneId: 'UTC',
     // Render at 2x device pixels so diagram screenshots have enough resolution to
     // stay sharp when the Argos grid enlarges them to fill a cell.
     deviceScaleFactor: 2,
-    trace: 'retain-on-failure',
+    trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
   snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',

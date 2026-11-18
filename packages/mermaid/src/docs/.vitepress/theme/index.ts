@@ -3,7 +3,6 @@ import DefaultTheme from 'vitepress/theme';
 import Contributors from '../components/Contributors.vue';
 import EditorSelectionModal from '../components/EditorSelectionModal.vue';
 import HomePage from '../components/HomePage.vue';
-import LandingIntentModal from '../components/LandingIntentModal.vue';
 import TopBar from '../components/TopBar.vue';
 import './custom.css';
 import Mermaid from './Mermaid.vue';
@@ -27,10 +26,10 @@ export default {
       'home-hero-after': () => h(OssHomeHeroNameClipApplier),
       'doc-before': () => h(TopBar),
       'layout-bottom': () => h(Tooltip),
-      'layout-top': () => [h(EditorSelectionModal), h(LandingIntentModal)],
+      'layout-top': () => h(EditorSelectionModal),
     });
   },
-  enhanceApp({ app, router }: EnhanceAppContext) {
+  enhanceApp({ app, router, siteData }: EnhanceAppContext) {
     if (typeof window !== 'undefined') {
       void initPlausible();
     }
@@ -42,11 +41,11 @@ export default {
     router.onBeforeRouteChange = (to) => {
       try {
         const url = new URL(window.location.origin + to);
-        const newPath = getRedirect(url);
+        const newPath = getRedirect(url, siteData.value.base);
         if (newPath) {
           console.log(`Redirecting to ${newPath} from ${window.location.toString()}`);
           // router.go isn't loading the ID properly.
-          window.location.href = `/${newPath}`;
+          window.location.href = `${siteData.value.base}${newPath}`;
         }
       } catch (e) {
         console.error(e);

@@ -1,3 +1,7 @@
+---
+description: 'Model database schemas with entities, attributes, keys, and crow’s foot notation for relationship cardinality.'
+---
+
 # Entity Relationship Diagrams
 
 > An entity–relationship model (or ER model) describes interrelated things of interest in a specific domain of knowledge. A basic ER model is composed of entity types (which classify the things of interest) and specifies relationships that can exist between entities (instances of those entity types) [Wikipedia](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model).
@@ -49,6 +53,8 @@ When including attributes on ER diagrams, you must decide whether to include for
 Entity relationship diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
+
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
 
 The same diagram, drawn both ways:
 

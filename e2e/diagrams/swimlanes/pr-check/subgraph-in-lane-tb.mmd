@@ -1,0 +1,16 @@
+---
+description: >-
+  A subgraph nested in a lane, TB: the Intake group is framed around its two steps
+  inside the Sales lane, and the lane grows to hold it.
+---
+swimlane-beta TB
+  subgraph L1[Sales]
+    subgraph G1[Intake]
+      A[Receive order] --> B[Check stock]
+    end
+    C[Confirm]
+  end
+  subgraph L2[Warehouse]
+    D[Pick] --> E[Ship]
+  end
+  B --> C --> D

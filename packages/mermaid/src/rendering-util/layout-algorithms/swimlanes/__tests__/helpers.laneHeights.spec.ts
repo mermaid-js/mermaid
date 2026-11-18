@@ -98,3 +98,43 @@ describe('writeBackToLayoutData lane sizing', () => {
     expect(lane.width).toBeGreaterThanOrEqual(child.width! + 40);
   });
 });
+
+describe('a group holding an anchored node', () => {
+  it('is sized from its own content, not from a coordinate the anchored node arrived with', () => {
+    // An anchored node is held out of the layout and placed from its host afterwards, so
+    // a coordinate it still carries here is left over from an earlier render.
+    const lane: TestNode = { id: 'lane', isGroup: true, padding: 20 };
+    const A: TestNode = { id: 'A', isGroup: false, parentId: 'lane', width: 80, height: 40 };
+    const stray = {
+      id: 'stray',
+      isGroup: false,
+      parentId: 'lane',
+      width: 36,
+      height: 36,
+      x: 4000,
+      y: 4000,
+      metadata: { anchorTo: { hostId: 'A' } },
+    };
+    const layout: any = { nodes: [lane, A, stray], edges: [] };
+    const nodeById = new Map<NodeId, any>([
+      ['lane', lane],
+      ['A', A],
+      ['stray', stray],
+    ]);
+    const g: Graph = { nodes: ['A'], edges: [], layout, nodeById } as any;
+
+    writeBackToLayoutData(
+      g,
+      { layers: [['A']] } as OrderedLayers,
+      { x: { A: 0 }, y: { A: 0 } } as any,
+      {
+        nodeGap: 40,
+        layerGap: 120,
+      }
+    );
+
+    // 4000 away would balloon the lane; it is sized from A alone.
+    expect(lane.width!).toBeLessThan(1000);
+    expect(lane.height!).toBeLessThan(1000);
+  });
+});

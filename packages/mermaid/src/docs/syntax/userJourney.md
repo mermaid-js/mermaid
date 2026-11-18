@@ -1,3 +1,7 @@
+---
+description: 'Map the steps users take to complete a task, grouped into sections and scored by satisfaction for each actor.'
+---
+
 # User Journey Diagram
 
 > User journeys describe at a high level of detail exactly what steps different users take to complete a specific task within a system, application or website. This technique shows the current (as-is) user workflow, and reveals areas of improvement for the to-be workflow. (Wikipedia)

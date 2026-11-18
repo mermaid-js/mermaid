@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { LayoutData, Node, Edge } from '../../types.js';
 import { validateLayout } from './validateLayout.js';
+import { isAnchoredTo } from '../swimlanes/anchoredNodes.js';
 
 interface Point {
   x: number;
@@ -20,8 +21,15 @@ function mkEdge(
   return { id, start, end, type: 'arrow', points } as any;
 }
 
-function getIssueTypes(layout: LayoutData): string[] {
-  const res = validateLayout(layout);
+function anchored(id: string, hostId: string, x: number, y: number): Node {
+  return { ...mkNode(id, x, y, 20, 20), metadata: { anchorTo: { hostId } } } as any;
+}
+
+function getIssueTypes(layout: LayoutData, attached = false): string[] {
+  const res = validateLayout(
+    layout,
+    attached ? { isAttached: isAnchoredTo(layout.nodes ?? []) } : {}
+  );
   return res.issues.map((i) => i.type);
 }
 
@@ -658,6 +666,55 @@ describe('validateLayout new geometric issues', () => {
     expect(types).toContain('node-border-hugging');
   });
 
+  it('does NOT flag node-overlap for a node pinned to its host border', () => {
+    // An anchored node is drawn centred on the border it names, so it always covers
+    // part of its host. That is the notation, not a layout fault.
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), anchored('b', 'h', 20, -10)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(getIssueTypes(layout, true)).not.toContain('node-overlap');
+  });
+
+  it('does NOT flag node-overlap for a pair the caller says is attached', () => {
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), mkNode('b', 20, -10)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(validateLayout(layout).issues.map((i) => i.type)).toContain('node-overlap');
+    const attached = validateLayout(layout, {
+      isAttached: (nodeId, toId) => nodeId === 'b' && toId === 'h',
+    });
+    expect(attached.issues.map((i) => i.type)).not.toContain('node-overlap');
+  });
+
+  it('knows nothing of swimlane anchors unless the caller passes the hook', () => {
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), anchored('b', 'h', 20, -10)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(getIssueTypes(layout)).toContain('node-overlap');
+  });
+
+  it('does NOT flag node-overlap for a node pinned through a chain of anchors', () => {
+    // `b2` names `b1` as its host, but `b1` is itself anchored, so the pinning puts
+    // `b2` on `h` - the same border its chain resolves to. The exemption has to follow
+    // the same chain or it reports the overlap the pinning just created.
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), anchored('b1', 'h', 20, -10), anchored('b2', 'b1', 20, 14)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(getIssueTypes(layout, true)).not.toContain('node-overlap');
+  });
+
   it('flags edge-label-off-edge when a labelled edge polyline does not cross its own label node', () => {
     // Label-as-waypoint model: the labelled edge's polyline must pass
     // through the label node's rectangle. Here the edge runs along y=0 but
@@ -719,6 +776,98 @@ describe('validateLayout new geometric issues', () => {
 
     const types = getIssueTypes(layout);
     expect(types).not.toContain('edge-label-off-edge');
+  });
+
+  it.each([
+    {
+      name: 'crosses the label away from its center',
+      sharedDefaultAnchored: true,
+      points: [
+        { x: 20, y: -5 },
+        { x: 180, y: -5 },
+      ],
+    },
+    {
+      name: 'runs along the label border',
+      sharedDefaultAnchored: true,
+      points: [
+        { x: 20, y: -10 },
+        { x: 180, y: -10 },
+      ],
+    },
+    {
+      name: 'touches only a label corner',
+      sharedDefaultAnchored: false,
+      points: [
+        { x: 20, y: -10 },
+        { x: 85, y: -10 },
+        { x: 85, y: -40 },
+        { x: 180, y: -40 },
+      ],
+    },
+  ])(
+    'supports layout-specific label anchoring when the owning edge $name',
+    ({ points, sharedDefaultAnchored }) => {
+      const a = mkNode('A', 0, 0);
+      const b = mkNode('B', 200, 0);
+      const label: Node = {
+        id: 'edge-label-A-B-e1',
+        x: 100,
+        y: 0,
+        width: 30,
+        height: 20,
+        isGroup: false,
+        isEdgeLabel: true,
+      } as any;
+      const e = {
+        id: 'e1',
+        start: 'A',
+        end: 'B',
+        type: 'arrow',
+        labelNodeId: 'edge-label-A-B-e1',
+        points,
+      } as unknown as Edge;
+      const layout: LayoutData = { nodes: [a, b, label], edges: [e], config: {} as any };
+
+      expect(getIssueTypes(layout).includes('edge-label-off-edge')).toBe(!sharedDefaultAnchored);
+      expect(
+        validateLayout(layout, { requireEdgeLabelCenter: true }).issues.map((issue) => issue.type)
+      ).toContain('edge-label-off-edge');
+    }
+  );
+
+  it.each([
+    { name: 'centered on the edge', y: 0, anchored: true },
+    { name: 'intersecting the edge away from its center', y: 5, anchored: false },
+    { name: 'entirely off the edge', y: 30, anchored: false },
+  ])('validates an overlay label $name only in strict mode', ({ y, anchored }) => {
+    const edge: Edge = {
+      ...mkEdge('e1', 'A', 'B', [
+        { x: 20, y: 0 },
+        { x: 180, y: 0 },
+      ]),
+      label: 'overlay label',
+      x: 70,
+      y,
+      width: 30,
+      height: 20,
+    };
+    const layout: LayoutData = {
+      nodes: [mkNode('A', 0, 0), mkNode('B', 200, 0)],
+      edges: [edge],
+      config: {},
+    };
+
+    expect(validateLayout(layout).ok).toBe(true);
+    expect(validateLayout(layout, { requireEdgeLabelCenter: false }).ok).toBe(true);
+
+    const result = validateLayout(layout, { requireEdgeLabelCenter: true });
+    expect(result.ok).toBe(anchored);
+    if (!anchored) {
+      expect(result.issues).toEqual([
+        expect.objectContaining({ type: 'edge-label-off-edge', edgeId: 'e1' }),
+      ]);
+    }
   });
 
   it('flags edge-endpoint-inside-node when an edge endpoint sits inside a non-endpoint node', () => {

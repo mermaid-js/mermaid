@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-21T01:20:21.059Z",
+    "capturedFrom": "browser-capture layout-tests/grid/placement-matrix-lr.mmd theme=default look=classic",
+    "sourceSha256": "b9f60bf5a8529c5d8737a47854e8ff75fd5620194ebee00f86f604d3ae78aa13"
+  },
+  "nodes": [
+    {
+      "id": "A",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "C",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "D",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "E",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "F",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "G",
+      "width": 152,
+      "height": 45
+    }
+  ]
+}

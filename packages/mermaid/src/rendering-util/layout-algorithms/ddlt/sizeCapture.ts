@@ -1,6 +1,10 @@
 import type { Selection } from 'd3';
 import type { LayoutData } from '../../types.js';
-import { DDLT_SIZE_CAPTURE_VERSION } from './captureContract.js';
+import {
+  DDLT_SIZE_CAPTURE_VERSION,
+  edgeLabelFixtureId,
+  groupTitleFixtureId,
+} from './captureContract.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DDLT size capture (dev / test tooling — NOT part of production rendering)
@@ -105,7 +109,8 @@ function emitCapturedSizes(captured: CapturedSizes, element: D3Selection): void 
 }
 
 /**
- * Record the measured sizes of every leaf + edge-label node from an
+ * Record the measured sizes of every leaf + edge-label node, centre edge label and subgraph
+ * title from an
  * already-laid-out {@link LayoutData} into `window.mermaidCapturedSizes`.
  *
  * Reads `node.width`/`node.height` set by createGraphWithElements during
@@ -121,6 +126,28 @@ export function captureNodeSizes(element: D3Selection, data4Layout: LayoutData):
       continue;
     }
     nodes.push({ id: node.id, width: node.width ?? 0, height: node.height ?? 0 });
+  }
+  // Centre labels measured on the edge itself (`insertEdgeLabel`), for layouts that do not turn
+  // them into `edge-label-*` nodes. A label already measured as a node keeps that entry.
+  const seen = new Set(nodes.map((n) => n.id));
+  for (const edge of data4Layout.edges) {
+    const label = typeof edge.label === 'string' ? edge.label.trim() : edge.label;
+    const id = edgeLabelFixtureId(edge);
+    if (!label || seen.has(id) || !(typeof edge.width === 'number')) {
+      continue;
+    }
+    seen.add(id);
+    nodes.push({ id, width: edge.width, height: edge.height ?? 0 });
+  }
+  // Subgraph titles (`measureGroupLabel`), which size the band above a group's content.
+  for (const node of data4Layout.nodes) {
+    if (node.isGroup && node.labelBBox) {
+      nodes.push({
+        id: groupTitleFixtureId(node),
+        width: node.labelBBox.width,
+        height: node.labelBBox.height,
+      });
+    }
   }
   if (nodes.length === 0) {
     return;

@@ -1,4 +1,12 @@
+---
+description: 'Illustrate cloud and CI/CD deployments with services, groups, junctions, and icons connected by edges.'
+---
+
 # Architecture Diagrams Documentation (v11.1.0+)
+
+```warning
+Architecture diagrams are in beta. Diagrams start with the `architecture-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
 
 > In the context of mermaid-js, the architecture diagram is used to show the relationship between services and resources commonly found within the Cloud or CI/CD deployments. In an architecture diagram, services (nodes) are connected by edges. Related services can be placed within groups to better illustrate how they are organized.
 

@@ -1,3 +1,7 @@
+---
+description: 'Recommendations for building Mermaid plugins and integrations, including file extensions, MIME types, and how to detect and render diagrams.'
+---
+
 # Integrations - create
 
 ## Recommendations

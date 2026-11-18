@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   assertUniqueSnapshotNames,
   buildFixtureTree,
@@ -29,14 +29,22 @@ const fixtureTree = buildFixtureTree(fixtures);
 
 // Gantt fixtures are dated around 1010-10-10 and several of them exercise the
 // today marker, which the renderer places at `new Date()`. Pin the browser
-// clock to that date (as `rendering/gantt/gantt.spec.js` does) so the marker
-// lands inside the chart instead of billions of pixels to the right.
+// clock to that date so the marker lands inside the chart instead of
+// somewhere off-canvas. Keyed by top-level folder (e.g. 'gantt') as the
+// default for the whole diagram type, or by a fixture's full relative path
+// when it needs the marker at a specific spot instead (checked first).
 const FIXED_CLOCKS: Record<string, string> = {
   gantt: '1010-10-10',
+  // Seconds-based dateFormat: lands the marker between the "01" and "02"
+  // tick marks, clear of both the task-start edge and any task boundary.
+  'gantt/pr-check/should-render-a-gantt-diagram-with-a-vert-tag.mmd': '1010-10-10T00:00:01.500Z',
 };
 
+// Fixtures that select the layered layout in their frontmatter config.
+const USES_LAYERED_LAYOUT = /^\s*layout:\s*layered\b/m;
+
 const fixedClockFor = (relativePath: string): string | undefined =>
-  FIXED_CLOCKS[relativePath.split('/')[0]];
+  FIXED_CLOCKS[relativePath] ?? FIXED_CLOCKS[relativePath.split('/')[0]];
 
 const registerFixtureNode = (node: FixtureTree): void => {
   for (const segment of [...node.children.keys()].sort()) {
@@ -72,13 +80,22 @@ const registerFixtureNode = (node: FixtureTree): void => {
       }
       const fixedClock = fixedClockFor(relativePath);
       if (fixedClock) {
-        await page.clock.install({ time: new Date(fixedClock) });
+        // setFixedTime over install: never advances, so a diagram whose own
+        // date parsing defaults to "now" can't resolve to a slightly later
+        // instant than a render-time `new Date()` call (e.g. the today
+        // marker) just because rendering took some real time to run.
+        await page.clock.setFixedTime(new Date(fixedClock));
       }
       // Mirror the fixture's storage path so Argos sheets group by diagram
       // folder (e.g. diagrams/packet) rather than the runner spec file.
       await imgSnapshotTest(page, testInfo, source, {
         screenshotPath: `diagrams/${relativePath.replace(/\.mmd$/i, '')}`,
       });
+      if (USES_LAYERED_LAYOUT.test(source)) {
+        // A layered failure falls back to dagre with only a warning; without this check the
+        // baseline would quietly record dagre's drawing.
+        await expect(page.locator('svg[data-layout-fallback]')).toHaveCount(0);
+      }
     });
   }
 };

@@ -1,9 +1,14 @@
+---
+description: 'Describe LLM agent systems as flowcharts, with nested containers, agents, tools, and the contracts that hold at each step.'
+---
+
 # Agentflow (v12.0.0+)
 
+```warning
+Agentflow is in beta. Diagrams start with the `agentflow-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
+
 > An agentflow diagram describes an agentic workflow: the agents that do the work, the flows they run, the tasks and tools inside those flows, and how control and data move between them.
->
-> **Warning**
-> Agentflow is in **beta**. The diagram type is selected with the `agentflow-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 
 ## Introduction
 
@@ -33,6 +38,8 @@ agentflow-beta TB
 Agentflow diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every
 diagram type does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for
 the list and for the order in which Mermaid decides.
+
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
 
 The same diagram, drawn both ways:
 

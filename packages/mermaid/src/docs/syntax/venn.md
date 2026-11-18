@@ -1,9 +1,14 @@
+---
+description: 'Show relationships between sets with overlapping circles, labels, sizes, text nodes, and styling.'
+---
+
 # Venn diagrams (v11.12.3+)
 
-Venn diagrams show relationships between sets using overlapping circles.
+```warning
+Venn diagrams are in beta. Diagrams start with the `venn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
 
-> **Warning**
-> This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+Venn diagrams show relationships between sets using overlapping circles.
 
 ## Default theme and look (v12.0.0+)
 
