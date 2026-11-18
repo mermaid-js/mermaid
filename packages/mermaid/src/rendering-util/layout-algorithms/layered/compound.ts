@@ -35,6 +35,11 @@ export interface CNode {
   seq: number;
   // How much of a side its edges may spread along, measured across the flow; 0 keeps them at its middle.
   span: number;
+  // A group's title: its width (0 without one), and where it starts and ends below the top
+  // border. It sits in the middle of the top border, so edges cross that border beside it.
+  titleW: number;
+  titleTop: number;
+  titleBottom: number;
   x: number;
   y: number;
 }
@@ -428,6 +433,80 @@ export function shiftLayout(nodes: CNode[], edges: CEdge[], ox: number, oy: numb
   }
 }
 
+// Room between a group's title and an edge that crosses the top border beside it.
+export const TITLE_CLEAR = 10;
+// The part of a node's side that an edge end moved beside a title keeps clear of at each corner.
+const FACE_CORNER = 12;
+
+// Moves the ports on a group's top border that would run through its title to beside it (#8824).
+// Ports left of the title's middle go left, the others right, each kept `sep` from the next, so
+// ports already beside the title move on only to make room. An edge that runs straight from the
+// port to a node shifts along with it while it still meets the node's side; any other edge turns
+// from the moved port back to its route just below the title.
+function clearTitle(level: Level, group: CNode, boxW: number, nodes: CNode[], sep: number): void {
+  const top = level.ports.filter((p) => p.side === Side.Top);
+  if (top.length === 0) return;
+  const middle = boxW / 2;
+  const half = group.titleW / 2 + TITLE_CLEAR;
+  const left = top.filter((p) => p.px <= middle).sort((p, q) => q.px - p.px);
+  const right = top.filter((p) => p.px > middle).sort((p, q) => p.px - q.px);
+  let next = middle - half;
+  for (const port of left) {
+    const x = Math.max(0, Math.min(port.px, next));
+    movePort(port, x, group, nodes);
+    next = x - sep;
+  }
+  next = middle + half;
+  for (const port of right) {
+    const x = Math.min(boxW, Math.max(port.px, next));
+    movePort(port, x, group, nodes);
+    next = x + sep;
+  }
+}
+
+function movePort(port: PortEdge, x: number, group: CNode, nodes: CNode[]): void {
+  const from = port.px;
+  if (Math.abs(x - from) < 0.01) return;
+  const route = port.route;
+  const item = nodes[port.inner]!;
+  let straight = true;
+  for (let i = 0; i < route.length; i += 3) if (Math.abs(route[i]! - from) > 0.5) straight = false;
+  const reach = item.w / 2 - Math.min(FACE_CORNER, item.w / 4);
+  // A nested group's own ports are already placed, so only an edge to a node shifts.
+  if (straight && !item.isGroup && Math.abs(x - item.x) <= reach) {
+    for (let i = 0; i < route.length; i += 3) route[i] = x;
+    port.px = x;
+    return;
+  }
+  // Turn just below the title: on the border at `x`, down past the title, then back to `from`.
+  const turn = (group.titleBottom + group.padTop) / 2;
+  const points: [number, number, number][] = [];
+  for (let i = 0; i < route.length; i += 3) points.push([route[i]!, route[i + 1]!, route[i + 2]!]);
+  if (port.out) points.reverse();
+  // Border first: drop the points that lie in the band the turn replaces.
+  let k = 1;
+  while (k < points.length && points[k]![1] <= turn) k++;
+  const rest = points.slice(k);
+  if (rest.length === 0) return;
+  const jog: [number, number, number][] = [
+    [x, 0, 0],
+    [x, turn, 0],
+    [from, turn, 1],
+  ];
+  let out: [number, number, number][];
+  if (port.out) {
+    // Back in the edge's own order, which ends on the border: each axis is how the edge runs
+    // into its point.
+    const back = rest.reverse();
+    out = [...back, [from, turn, 0], [x, turn, 1], [x, 0, 0]];
+  } else {
+    rest[0] = [rest[0]![0], rest[0]![1], 0];
+    out = [...jog, ...rest];
+  }
+  port.route = out.flat();
+  port.px = x;
+}
+
 export function cnode(w: number, h: number, parent = -1): CNode {
   return {
     w,
@@ -441,6 +520,9 @@ export function cnode(w: number, h: number, parent = -1): CNode {
     minW: 0,
     seq: 0,
     span: 0,
+    titleW: 0,
+    titleTop: 0,
+    titleBottom: 0,
     x: 0,
     y: 0,
   };
@@ -911,6 +993,7 @@ export function compoundLayout(
         port.py = by;
         port.route = port.out ? [ix, iy, a, bx, by, a] : [bx, by, a, ix, iy, a];
       });
+      if (group && group.titleW > 0) clearTitle(level, group, boxW, nodes, opt.edgeSep);
 
       if (group) {
         group.w = boxW;

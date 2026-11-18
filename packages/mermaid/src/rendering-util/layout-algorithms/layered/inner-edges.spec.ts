@@ -112,7 +112,9 @@ describe('layered: an edge between a group and a node inside it', () => {
     expect(overlap(labelBox!, titleBox)).toBe(false);
   });
 
-  it('starts the edge below the title instead of crossing it, with room for an arrowhead', () => {
+  it('starts the edge below a title wider than the node, with room for an arrowhead', () => {
+    // No place on the node's 40px side is beside a 60px title, so the edge cannot start on the
+    // border without crossing the title.
     const title = { width: 60, height: 18 };
     for (const labelled of [true, false]) {
       const { from, to, group, node } = parts(layered(graphOf('TB', 'A', 'x', labelled, title)));
@@ -150,6 +152,191 @@ describe('layered: an edge between a group and a node inside it', () => {
     expect(to.y).toBeCloseTo(node.y - node.height / 2);
     expect(overlap(labelBox!, model.groups.get('B')!)).toBe(false);
   });
+});
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+// Length of the stretch two segments share when they lie on one line, else 0.
+const sharedLength = (a1: Point, a2: Point, b1: Point, b2: Point): number => {
+  const dx = a2.x - a1.x;
+  const dy = a2.y - a1.y;
+  const len = Math.hypot(dx, dy);
+  if (len < 1e-6) return 0;
+  const ux = dx / len;
+  const uy = dy / len;
+  const offLine = (p: Point): number => Math.abs((p.x - a1.x) * uy - (p.y - a1.y) * ux);
+  if (offLine(b1) > 0.5 || offLine(b2) > 0.5) return 0;
+  const along = (p: Point): number => (p.x - a1.x) * ux + (p.y - a1.y) * uy;
+  const [lo, hi] = [along(b1), along(b2)].sort((p, q) => p - q);
+  return Math.max(0, Math.min(len, hi!) - Math.max(0, lo!));
+};
+
+const longestShared = (p: Point[], q: Point[]): number => {
+  let worst = 0;
+  for (let i = 0; i + 1 < p.length; i++) {
+    for (let j = 0; j + 1 < q.length; j++) {
+      worst = Math.max(worst, sharedLength(p[i]!, p[i + 1]!, q[j]!, q[j + 1]!));
+    }
+  }
+  return worst;
+};
+
+// Issue #8824: `Out --> In` and `Sub --> In`, where `Sub` holds `In`.
+describe('layered: an edge between a group and its member beside an edge from outside', () => {
+  const graph = (direction: Dir, into: boolean, routing: LayoutGraph['routing']): LayoutGraph => ({
+    direction,
+    nodes: [
+      { id: 'Out', width: 60, height: 54 },
+      { id: 'In', width: 60, height: 54, parent: 'Sub' },
+    ],
+    groups: [{ id: 'Sub', padding: pad }],
+    edges: into
+      ? [
+          { id: 'outside', source: 'Out', target: 'In', minLen: 1 },
+          { id: 'inner', source: 'Sub', target: 'In', minLen: 1 },
+        ]
+      : [
+          { id: 'outside', source: 'In', target: 'Out', minLen: 1 },
+          { id: 'inner', source: 'In', target: 'Sub', minLen: 1 },
+        ],
+    spacing: { node: 50, rank: 50, edge: 20 },
+    diagramPadding: 0,
+    routing,
+    headRoom: 7,
+  });
+
+  const dirs: Dir[] = ['TB', 'BT', 'LR', 'RL'];
+  const routings: LayoutGraph['routing'][] = ['stepped', 'curved', 'straight'];
+  for (const routing of routings) {
+    for (const dir of dirs) {
+      for (const into of [true, false]) {
+        const name = into ? 'Out --> In and Sub --> In' : 'In --> Out and In --> Sub';
+        it(`does not draw ${name} on top of each other in ${dir} (${routing})`, () => {
+          const model = layered(graph(dir, into, routing));
+          const outside = model.edges.get('outside')!.points;
+          const inner = model.edges.get('inner')!.points;
+
+          expect(longestShared(outside, inner)).toBeLessThan(1);
+        });
+      }
+    }
+  }
+});
+
+// Issue #8824: a group's title sits in the middle of its top border. Edges that cross that border
+// do so beside the title, and an edge from the group to a member starts on the border, as ELK
+// draws it.
+describe('layered: edges at the border that holds a group title', () => {
+  const title = { width: 30, height: 18 };
+  const wide = { width: 150, height: 45 };
+
+  // Whether a polyline passes through a box, checked every half pixel along it.
+  const passesThrough = (points: Point[], b: Box): boolean => {
+    for (let i = 0; i + 1 < points.length; i++) {
+      const p = points[i]!;
+      const q = points[i + 1]!;
+      const steps = Math.max(1, Math.ceil(Math.hypot(q.x - p.x, q.y - p.y) * 2));
+      for (let s = 0; s <= steps; s++) {
+        const x = p.x + ((q.x - p.x) * s) / steps;
+        const y = p.y + ((q.y - p.y) * s) / steps;
+        if (Math.abs(x - b.x) < b.width / 2 && Math.abs(y - b.y) < b.height / 2) return true;
+      }
+    }
+    return false;
+  };
+  const titleBox = (model: LayoutModel, id = 'Sub'): Box => ({
+    ...model.groups.get(id)!.title!,
+    ...title,
+  });
+
+  const graph = (
+    direction: Dir,
+    edges: (readonly [string, string])[],
+    routing: LayoutGraph['routing'],
+    size: { width: number; height: number } = wide,
+    inside = ['In']
+  ): LayoutGraph => ({
+    direction,
+    nodes: [
+      { id: 'Out', ...size },
+      { id: 'Out2', ...size },
+      ...inside.map((id) => ({ id, ...size, parent: 'Sub' })),
+    ],
+    groups: [{ id: 'Sub', padding: pad, title }],
+    edges: edges.map(([source, target], i) => ({ id: `e${i}`, source, target, minLen: 1 })),
+    spacing: { node: 50, rank: 50, edge: 20 },
+    diagramPadding: 0,
+    routing,
+    headRoom: 7,
+  });
+  const routings: LayoutGraph['routing'][] = ['stepped', 'curved', 'straight'];
+
+  for (const routing of routings) {
+    // TB: the edge comes in through the top border; BT: it goes out through it.
+    for (const [dir, edges] of [
+      ['TB', [['Out', 'In']]],
+      ['BT', [['In', 'Out']]],
+    ] as const) {
+      it(`runs ${edges[0][0]} --> ${edges[0][1]} beside the title in ${dir} (${routing})`, () => {
+        const model = layered(graph(dir, [...edges], routing));
+
+        expect(passesThrough(model.edges.get('e0')!.points, titleBox(model))).toBe(false);
+      });
+
+      it(`runs ${edges[0][0]} --> ${edges[0][1]} beside a title wider than the node in ${dir} (${routing})`, () => {
+        const model = layered(graph(dir, [...edges], routing, { width: 40, height: 40 }));
+
+        expect(passesThrough(model.edges.get('e0')!.points, titleBox(model))).toBe(false);
+      });
+    }
+
+    it(`splits the ports under the title to either side of it, apart (${routing})`, () => {
+      const model = layered(
+        graph(
+          'TB',
+          [
+            ['Out', 'In'],
+            ['Out2', 'In'],
+          ],
+          routing
+        )
+      );
+      const routes = [...model.edges.values()].map((e) => e.points);
+
+      for (const points of routes) expect(passesThrough(points, titleBox(model))).toBe(false);
+      for (let i = 0; i < routes.length; i++) {
+        for (let j = i + 1; j < routes.length; j++) {
+          expect(longestShared(routes[i]!, routes[j]!)).toBeLessThan(1);
+        }
+      }
+    });
+
+    it(`draws Out --> In and Sub --> In from the border, beside the title and apart (${routing})`, () => {
+      const model = layered(
+        graph(
+          'TB',
+          [
+            ['Out', 'In'],
+            ['Sub', 'In'],
+          ],
+          routing
+        )
+      );
+      const outside = model.edges.get('e0')!.points;
+      const inner = model.edges.get('e1')!.points;
+      const group = model.groups.get('Sub')!;
+      const node = model.nodes.get('In')!;
+
+      expect(inner[0]!.y).toBeCloseTo(group.y - group.height / 2);
+      expect(inner.at(-1)!.y).toBeCloseTo(node.y - node.height / 2);
+      expect(passesThrough(inner, titleBox(model))).toBe(false);
+      expect(passesThrough(outside, titleBox(model))).toBe(false);
+      expect(longestShared(outside, inner)).toBeLessThan(1);
+    });
+  }
 });
 
 describe('layered: the ranks one edge may ask for', () => {

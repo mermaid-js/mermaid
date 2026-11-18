@@ -15,6 +15,7 @@ import {
   cnode,
   compoundLayout,
   inheritCrossedDirections,
+  TITLE_CLEAR,
   type CEdge,
   type CNode,
 } from './compound.js';
@@ -162,6 +163,11 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     const padTop = g.padding.top * padScale;
     padTops.push(padTop);
     c.padTop = padTop + (g.title?.height ?? 0);
+    if (g.title) {
+      c.titleW = g.title.width;
+      c.titleTop = padTop / 2;
+      c.titleBottom = padTop / 2 + g.title.height;
+    }
     c.padBottom = g.padding.bottom * padScale;
     c.minW = (g.title?.width ?? 0) + 2 * c.padX;
     c.seq = nodeCount + j;
@@ -193,11 +199,13 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     const c = cnodes[group]!;
     const atTop = down && out === (dir === 'TB');
     const band = !down ? c.padX : atTop ? c.padTop : c.padBottom;
-    // The title sits in the top padding; the edge starts below it instead of crossing it.
+    // The title sits in the middle of the top border. An edge from that border runs beside it,
+    // or where the member's side has no room beside it, starts below it instead of crossing it.
     const j = group - nodeCount;
     const title = atTop ? graph.groups[j]!.title : undefined;
+    const titleW = title ? title.width : 0;
     const skip = title ? padTops[j]! / 2 + title.height : 0;
-    return { group, member: out ? dst : src, out, dir, band, skip, labelLen };
+    return { group, member: out ? dst : src, out, dir, band, titleW, skip, labelLen };
   });
   for (const edge of inner) {
     if (!edge || (edge.labelLen === 0 && edge.skip === 0)) continue;
@@ -299,6 +307,8 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     return { x: c.x + pad, y: c.y + pad, width: size.width, height: size.height };
   };
   const edges = new Map<string, LayoutModelEdge>();
+  // Edges between a group and a member are drawn last, clear of the edges already at the member.
+  const deferred: number[] = [];
   graph.edges.forEach((e, k) => {
     const ce = cedges[k]!;
     const [src, dst] = ends[k]!;
@@ -317,9 +327,8 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
       );
       return;
     }
-    const within = inner[k];
-    if (within) {
-      edges.set(e.id, innerEdge(box(within.group), box(within.member), within, e.label));
+    if (inner[k]) {
+      deferred.push(k);
       return;
     }
     const points: RoutePoint[] = [];
@@ -340,6 +349,13 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     if (ce.labelW > 0 || ce.labelH > 0) model.label = { x: ce.labelX + pad, y: ce.labelY + pad };
     edges.set(e.id, model);
   });
+  for (const k of deferred) {
+    const within = inner[k]!;
+    const group = box(within.group);
+    const member = box(within.member);
+    const place = freeAcross(group, member, within, [...edges.values()]);
+    edges.set(graph.edges[k]!.id, innerEdge(group, member, within, graph.edges[k]!.label, place));
+  }
 
   return {
     width: total.width + 2 * pad,
@@ -361,7 +377,9 @@ interface InnerEdge {
   dir: Dir;
   // The group's padding on the side the edge is drawn at, before room for a label is added.
   band: number;
-  // How far in from the border the group's title reaches on that side, 0 without one there.
+  // The width of the group's title on the border the edge runs from or to, 0 without one there.
+  titleW: number;
+  // How far in from that border the title reaches, 0 without one there.
   skip: number;
   // The label's size along the flow, 0 without a label.
   labelLen: number;
@@ -391,25 +409,23 @@ function flowIn(cnodes: CNode[], g: number, rootDir: Dir): Dir {
 }
 
 // Draws an edge between a group and a member along the flow: from the border the flow starts at
-// to the member, or from the member to the border the flow ends at. Where the title is on that
-// border, the edge ends below the title. The label sits in the room the group keeps for it,
-// clear of the title and of the member.
+// to the member, or from the member to the border the flow ends at, at the place across the flow
+// that `freeAcross` picks. The edge meets the border beside the title, or where it cannot,
+// ends below the title instead of crossing it. The label sits in the room the group keeps for
+// it, clear of the title and of the member.
 function innerEdge(
   group: LayoutModelNode,
   member: LayoutModelNode,
   { out, dir, band, skip, labelLen }: InnerEdge,
-  label: { width: number; height: number } | undefined
+  label: { width: number; height: number } | undefined,
+  { across, belowTitle }: InnerPlace
 ): LayoutModelEdge {
-  const down = !runsAcross(dir);
-  const sign = dir === 'TB' || dir === 'LR' ? 1 : -1;
-  const side = out ? -sign : sign;
+  const { down, side, face } = innerFace(member, out, dir);
   const centre = down ? group.y : group.x;
   const border = centre + (side * (down ? group.height : group.width)) / 2;
-  const face = (down ? member.y : member.x) + (side * (down ? member.height : member.width)) / 2;
-  const across = down ? member.x : member.y;
   const at = (along: number): RoutePoint =>
     down ? { x: across, y: along, axis: 'v' } : { x: along, y: across, axis: 'h' };
-  const edge = border - side * skip;
+  const edge = belowTitle ? border - side * skip : border;
   const [from, to] = out ? [edge, face] : [face, edge];
   const model: LayoutModelEdge = {
     points: [at(from), at(to)],
@@ -423,6 +439,82 @@ function innerEdge(
     model.label = down ? { x: across, y: along } : { x: along, y: across };
   }
   return model;
+}
+
+// The side of the member an edge between it and its group runs to: whether the flow runs down,
+// which way the side faces along the flow (-1 or 1), and where the side lies along the flow.
+function innerFace(
+  member: LayoutModelNode,
+  out: boolean,
+  dir: Dir
+): { down: boolean; side: number; face: number } {
+  const down = !runsAcross(dir);
+  const sign = dir === 'TB' || dir === 'LR' ? 1 : -1;
+  const side = out ? -sign : sign;
+  const face = (down ? member.y : member.x) + (side * (down ? member.height : member.width)) / 2;
+  return { down, side, face };
+}
+
+// Where an edge between a group and a member meets the member's side, across the flow.
+interface InnerPlace {
+  across: number;
+  // No place on the side is beside the title, so the edge ends below it.
+  belowTitle: boolean;
+}
+
+// Where across the member's side an edge between it and its group runs (#8824): in line with
+// the member when that is free, otherwise the nearest place on the side that is at least
+// `PORT_SEP` from the ends of the edges already there and, on the border with the title, beside
+// the title. With no such place, the one furthest from those ends, beside the title if the side
+// reaches past it.
+function freeAcross(
+  group: LayoutModelNode,
+  member: LayoutModelNode,
+  { out, dir, titleW }: InnerEdge,
+  drawn: LayoutModelEdge[]
+): InnerPlace {
+  const { down, face } = innerFace(member, out, dir);
+  const centre = down ? member.x : member.y;
+  const half = (down ? member.width : member.height) / 2;
+  const reach = Math.max(0, half - Math.min(CORNER, half / 2));
+  const along = (p: RoutePoint): number => (down ? p.y : p.x);
+  const acrossOf = (p: RoutePoint): number => (down ? p.x : p.y);
+  const taken: number[] = [];
+  for (const edge of drawn) {
+    for (const p of [edge.points[0], edge.points[edge.points.length - 1]]) {
+      if (!p || Math.abs(along(p) - face) > 1 || Math.abs(acrossOf(p) - centre) > half + 1) {
+        continue;
+      }
+      taken.push(acrossOf(p));
+    }
+  }
+  const gap = (x: number): number =>
+    taken.reduce((min, t) => Math.min(min, Math.abs(x - t)), Infinity);
+  // The title lies in the middle of the group's top border (only an edge that runs down meets it).
+  const titleMiddle = down ? group.x : group.y;
+  const titleHalf = titleW > 0 ? titleW / 2 + TITLE_CLEAR : 0;
+  const beside = (x: number): boolean => Math.abs(x - titleMiddle) >= titleHalf - 1e-6;
+
+  const candidates = [
+    centre,
+    centre + reach,
+    centre - reach,
+    titleMiddle - titleHalf,
+    titleMiddle + titleHalf,
+  ];
+  for (const t of taken) candidates.push(t - PORT_SEP, t + PORT_SEP);
+  for (let step = 1; step * PORT_SEP <= reach + 1e-6; step++) {
+    candidates.push(centre + step * PORT_SEP, centre - step * PORT_SEP);
+  }
+  const usable = candidates
+    .filter((x) => Math.abs(x - centre) <= reach + 1e-6 || x === centre)
+    .sort((a, b) => Math.abs(a - centre) - Math.abs(b - centre) || b - a);
+  const roomy = (x: number): boolean => gap(x) >= PORT_SEP - 1e-6;
+  const furthest = (pool: number[]): number =>
+    pool.reduce((best, x) => (gap(x) > gap(best) ? x : best), pool[0]!);
+  const clear = usable.filter(beside);
+  if (clear.length > 0) return { across: clear.find(roomy) ?? furthest(clear), belowTitle: false };
+  return { across: usable.find(roomy) ?? furthest(usable), belowTitle: titleW > 0 };
 }
 
 const FLOW_START: Readonly<Record<Dir, Side>> = {
