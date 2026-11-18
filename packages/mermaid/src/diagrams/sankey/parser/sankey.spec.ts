@@ -47,6 +47,83 @@ describe('Sankey diagram', function () {
       );
     });
 
+    describe.each(['sankey-beta', 'sankey'])('%s record whitespace', (syntax) => {
+      describe.each([
+        ['LF', '\n'],
+        ['CRLF', '\r\n'],
+      ])('with %s line endings', (_name, newline) => {
+        it.each([
+          {
+            description: 'trailing whitespace after the header',
+            text: ' \t\na,b,1',
+            links: [{ source: 'a', target: 'b', value: 1 }],
+          },
+          {
+            description: 'tab indentation',
+            text: '\n\ta,b,1\nc,d,2',
+            links: [
+              { source: 'a', target: 'b', value: 1 },
+              { source: 'c', target: 'd', value: 2 },
+            ],
+          },
+          {
+            description: 'whitespace-only rows',
+            text: '\na,b,1\n \t \n\nc,d,2',
+            links: [
+              { source: 'a', target: 'b', value: 1 },
+              { source: 'c', target: 'd', value: 2 },
+            ],
+          },
+          {
+            description: 'whitespace before a quoted source',
+            text: '\na,b,1\n \t"c d",e,2',
+            links: [
+              { source: 'a', target: 'b', value: 1 },
+              { source: 'c d', target: 'e', value: 2 },
+            ],
+          },
+          {
+            description: 'whitespace after a quoted value',
+            text: '\nd,e,"2" \t\ng,h,3',
+            links: [
+              { source: 'd', target: 'e', value: 2 },
+              { source: 'g', target: 'h', value: 3 },
+            ],
+          },
+        ])('ignores $description', ({ text, links }) => {
+          sankey.parser.parse(prepareTextForParsing(`${syntax}${text.replaceAll('\n', newline)}`));
+
+          expect(db.getGraph().links).toEqual(links);
+        });
+
+        it('preserves whitespace, blank lines, commas and escaped quotes inside quoted fields', () => {
+          const source = `a  ${newline}  b, "quoted"${newline}${newline}c`;
+          const text = `${syntax}${newline}"a  ${newline}  b, ""quoted""${newline}${newline}c",target,2`;
+
+          sankey.parser.parse(prepareTextForParsing(text));
+
+          expect(db.getGraph().links).toEqual([{ source, target: 'target', value: 2 }]);
+        });
+
+        it.each(['"a,b,1', '"a"x,b,1', 'a,b,1,extra', 'a,b', 'a,"b" x,1', 'a,\tb,1'])(
+          'still rejects malformed CSV: %j',
+          (record) => {
+            expect(() =>
+              sankey.parser.parse(prepareTextForParsing(`${syntax}${newline}${record}`))
+            ).toThrow();
+          }
+        );
+      });
+    });
+
+    it.each(['\n', '\r\n'])('preserves Unicode and quoted content when preparing %j', (newline) => {
+      const record = `"能源  ${newline}  café, ""🌊""${newline}${newline}fin",目标,2`;
+      const text = ` \tsankey \t${newline} \t${record} \t${newline} \t${newline}`;
+
+      // Unicode tokenization is independent of whitespace preprocessing.
+      expect(prepareTextForParsing(text)).toBe(`sankey\n${record}`);
+    });
+
     const issue7528PerformanceDiagram = `
       Agricultural 'waste',Bio-conversion,124.729
       Bio-conversion,Liquid,0.597
