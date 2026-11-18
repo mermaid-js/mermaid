@@ -233,6 +233,23 @@ describe('layered: an edge between a group and its member beside an edge from ou
         longestShared(model.edges.get('outside')!.points, model.edges.get('inner')!.points)
       ).toBeLessThan(1);
     });
+
+    // Moved aside from `Out --> In`, the edge no longer lies under the title, so it starts on the
+    // border, as the edge from outside does.
+    it(`starts Sub --> In on the border when it runs beside the title (${routing})`, () => {
+      const title = { width: 30, height: 18 };
+      const g = graph('TB', true, routing);
+      g.nodes = g.nodes.map((n) => ({ ...n, width: 150, height: 45 }));
+      g.groups[0]!.title = title;
+      const model = layered(g);
+      const [from, to] = model.edges.get('inner')!.points;
+      const group = model.groups.get('Sub')!;
+      const node = model.nodes.get('In')!;
+
+      expect(Math.abs(from!.x - group.title!.x)).toBeGreaterThanOrEqual(title.width / 2);
+      expect(from!.y).toBeCloseTo(group.y - group.height / 2);
+      expect(to!.y).toBeCloseTo(node.y - node.height / 2);
+    });
   }
 });
 

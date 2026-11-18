@@ -193,11 +193,12 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     const c = cnodes[group]!;
     const atTop = down && out === (dir === 'TB');
     const band = !down ? c.padX : atTop ? c.padTop : c.padBottom;
-    // The title sits in the top padding; the edge starts below it instead of crossing it.
+    // The title sits in the top padding; an edge that would cross it starts below it instead.
     const j = group - nodeCount;
     const title = atTop ? graph.groups[j]!.title : undefined;
     const skip = title ? padTops[j]! / 2 + title.height : 0;
-    return { group, member: out ? dst : src, out, dir, band, skip, labelLen };
+    const titleW = title ? title.width : 0;
+    return { group, member: out ? dst : src, out, dir, band, skip, titleW, labelLen };
   });
   for (const edge of inner) {
     if (!edge || (edge.labelLen === 0 && edge.skip === 0)) continue;
@@ -373,6 +374,8 @@ interface InnerEdge {
   band: number;
   // How far in from the border the group's title reaches on that side, 0 without one there.
   skip: number;
+  // The width of the title on that border, 0 without one there. The title is centred on it.
+  titleW: number;
   // The label's size along the flow, 0 without a label.
   labelLen: number;
 }
@@ -401,13 +404,13 @@ function flowIn(cnodes: CNode[], g: number, rootDir: Dir): Dir {
 }
 
 // Draws an edge between a group and a member along the flow: from the border the flow starts at
-// to the member, or from the member to the border the flow ends at. Where the title is on that
-// border, the edge ends below the title. The label sits in the room the group keeps for it,
-// clear of the title and of the member.
+// to the member, or from the member to the border the flow ends at. Where it would cross the
+// title on that border, the edge ends below the title instead. The label sits in the room the
+// group keeps for it, clear of the title and of the member.
 function innerEdge(
   group: LayoutModelNode,
   member: LayoutModelNode,
-  { out, dir, band, skip, labelLen }: InnerEdge,
+  { out, dir, band, skip, titleW, labelLen }: InnerEdge,
   label: { width: number; height: number } | undefined,
   across: number
 ): LayoutModelEdge {
@@ -416,7 +419,9 @@ function innerEdge(
   const border = centre + (side * (down ? group.height : group.width)) / 2;
   const at = (along: number): RoutePoint =>
     down ? { x: across, y: along, axis: 'v' } : { x: along, y: across, axis: 'h' };
-  const edge = border - side * skip;
+  // Only an edge in line with the title would cross it; one beside it starts on the border.
+  const underTitle = down && Math.abs(across - group.x) < titleW / 2;
+  const edge = underTitle ? border - side * skip : border;
   const [from, to] = out ? [edge, face] : [face, edge];
   const model: LayoutModelEdge = {
     points: [at(from), at(to)],
