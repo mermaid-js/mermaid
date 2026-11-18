@@ -889,18 +889,53 @@ export default {
 };
 
 /**
+ * Removes the last `;` of every line in which `keyword` is followed by a `:`, any number of
+ * non-whitespace characters and a `#`, as in `style A fill:#f9f;`.
+ *
+ * It gives the same result as replacing every match of `keyword.*:\S*#.*;` with the match minus
+ * its last character: such a match runs from the first `keyword` of a line to the last `;` of that
+ * line. That expression has three unbounded repetitions and backtracks through every combination
+ * of them when no `;` follows the `#`, so this scans each line once instead.
+ *
+ * @param text - The text to process
+ * @param keyword - The statement keyword, `style` or `classDef`
+ * @returns The text without those `;`
+ */
+const removeLastSemicolonOfStyleLines = (text: string, keyword: string): string => {
+  // `.` and `\S` do not match line terminators, so a match never spans more than one line.
+  return text.replace(/[^\n\r\u2028\u2029]+/g, (line) => {
+    const keywordIndex = line.indexOf(keyword);
+    const semicolonIndex = line.lastIndexOf(';');
+    if (keywordIndex === -1 || semicolonIndex === -1) {
+      return line;
+    }
+
+    // Look for `:\S*#` between the keyword and the last `;`.
+    let afterColon = false;
+    for (let i = keywordIndex + keyword.length; i < semicolonIndex; i++) {
+      const char = line[i];
+      if (char === '#' && afterColon) {
+        return line.slice(0, semicolonIndex) + line.slice(semicolonIndex + 1);
+      }
+      if (char === ':') {
+        afterColon = true;
+      } else if (/\s/.test(char)) {
+        afterColon = false;
+      }
+    }
+    return line;
+  });
+};
+
+/**
  * @param  text - text to be encoded
  * @returns
  */
 export const encodeEntities = function (text: string): string {
   let txt = text;
 
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
+  txt = removeLastSemicolonOfStyleLines(txt, 'style');
+  txt = removeLastSemicolonOfStyleLines(txt, 'classDef');
 
   txt = txt.replace(/#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);
