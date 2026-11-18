@@ -236,6 +236,19 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
+  const getLinkClipId = (index: number): string => `sankey-link-clip-${id}-${index}`;
+
+  // Keep vertical stroke variation intact; only constrain the link at its horizontal endpoints.
+  link
+    .append('clipPath')
+    .attr('id', (_d: any, index: number) => getLinkClipId(index))
+    .attr('clipPathUnits', 'userSpaceOnUse')
+    .append('rect')
+    .attr('x', (d: any) => Math.min(d.source.x1, d.target.x0))
+    .attr('y', -height)
+    .attr('width', (d: any) => Math.abs(d.target.x0 - d.source.x1))
+    .attr('height', height * 3);
+
   const linkColor = conf?.linkColor ?? 'gradient';
 
   if (linkColor === 'gradient') {
@@ -276,7 +289,8 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .append('path')
     .attr('d', d3SankeyLinkHorizontal())
     .attr('stroke', coloring)
-    .attr('stroke-width', (d: any) => Math.max(1, d.width));
+    .attr('stroke-width', (d: any) => Math.max(1, d.width))
+    .attr('clip-path', (_d: any, index: number) => `url(#${getLinkClipId(index)})`);
 
   setupGraphViewbox(undefined, svg, 0, useMaxWidth);
 };
