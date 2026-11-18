@@ -728,7 +728,7 @@ export const draw = function (text, id, version, diagObj) {
       .style('text-anchor', 'middle')
       .attr('fill', '#000')
       .attr('stroke', 'none')
-      .attr('font-size', 10)
+      .attr('font-size', conf.axisFontSize)
       .attr('dy', '1em');
 
     if (diagObj.db.topAxisEnabled() || conf.topAxis) {
@@ -791,7 +791,7 @@ export const draw = function (text, id, version, diagObj) {
         .style('text-anchor', 'middle')
         .attr('fill', '#000')
         .attr('stroke', 'none')
-        .attr('font-size', 10);
+        .attr('font-size', conf.axisFontSize);
       // .attr('dy', '1em');
     }
   }
