@@ -640,7 +640,7 @@ export class StateDB {
     const foundClass = this.classes.get(id);
     if (styleAttributes && foundClass) {
       styleAttributes.split(CONSTANTS.STYLECLASS_SEP).forEach((attrib) => {
-        const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
+        const fixedAttrib = attrib.replace(';', '').trim();
         if (RegExp(CONSTANTS.COLOR_KEYWORD).exec(attrib)) {
           const newStyle1 = fixedAttrib.replace(CONSTANTS.FILL_KEYWORD, CONSTANTS.BG_FILL);
           const newStyle2 = newStyle1.replace(CONSTANTS.COLOR_KEYWORD, CONSTANTS.FILL_KEYWORD);

@@ -18,6 +18,60 @@ describe('State Diagram stateDb', () => {
       expect(styleClasses.get(newStyleClassId).styles[0]).toEqual('font-weight:bold');
       expect(styleClasses.get(newStyleClassId).styles[1]).toEqual('border:blue');
     });
+
+    it('removes the first ; of each style attribute', () => {
+      // What `attrib.replace(/([^;]*);/, '$1')` did before #5958; kept as the oracle.
+      const legacyFix = (attrib) => attrib.replace(/([^;]*);/, '$1').trim();
+      const attribs = [
+        'fill:#f96',
+        'stroke:#333;',
+        ' stroke-width:2px;; ',
+        ';font-weight:bold',
+        ';',
+        '',
+      ];
+
+      stateDb.addStyleClass('newStyleClass', attribs.join(','));
+
+      const { styles } = stateDb.getClasses().get('newStyleClass');
+      expect(styles).toEqual([
+        'fill:#f96',
+        'stroke:#333',
+        'stroke-width:2px;',
+        'font-weight:bold',
+        '',
+        '',
+      ]);
+      expect(styles).toEqual(attribs.map(legacyFix));
+    });
+
+    it('scales linearly with the length of a style attribute', () => {
+      // Same measurement as in regexes.spec.ts: the minimum over a few trials, because noise on
+      // a shared runner only ever adds time.
+      const fastestRun = (run, trials = 5, iterations = 5) => {
+        let fastest = Infinity;
+        for (let trial = 0; trial < trials; trial++) {
+          const t0 = performance.now();
+          for (let i = 0; i < iterations; i++) {
+            run();
+          }
+          fastest = Math.min(fastest, (performance.now() - t0) / iterations);
+        }
+        return fastest;
+      };
+      const measure = (n) => {
+        // No ; anywhere, so the old expression retried its greedy match from every position.
+        const attrib = 'fill:' + 'a'.repeat(n);
+        new StateDB(1).addStyleClass('warmUp', attrib);
+        return fastestRun(() => new StateDB(1).addStyleClass('newStyleClass', attrib));
+      };
+
+      const small = measure(5000);
+      const large = measure(20000);
+
+      // 4x the input. Linear predicts ~4x, quadratic ~16x.
+      expect(large / Math.max(small, 0.01)).toBeLessThan(8);
+    });
   });
 
   describe('addDescription to a state', () => {

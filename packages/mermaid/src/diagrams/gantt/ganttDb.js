@@ -5,7 +5,7 @@ import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import utils from '../../utils.js';
+import utils, { splitOnCommasOutsideQuotes } from '../../utils.js';
 
 import {
   setAccTitle,
@@ -752,7 +752,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   let argList = [];
   if (typeof functionArgs === 'string') {
     /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
-    argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    argList = splitOnCommasOutsideQuotes(functionArgs);
     for (let i = 0; i < argList.length; i++) {
       let item = argList[i].trim();
       /* Removes all double quotes at the start and end of an argument */
