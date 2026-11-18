@@ -479,6 +479,52 @@ Bob-->Alice: I am good thanks!`;
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
 
+  it.each([
+    ['a trailing space', 'autonumber ', true],
+    ['a trailing tab', 'autonumber\t', true],
+    ['a start value and a trailing space', 'autonumber 10 ', true],
+    ['a start value and step and a trailing space', 'autonumber 10 2 ', true],
+    ['off and a trailing space', 'autonumber off ', false],
+  ])('should parse autonumber with %s', async (_, line, visible) => {
+    const str = `sequenceDiagram\n${line}\n    actor Patient\nPatient->Bob: Hi`;
+
+    const diagram = await Diagram.fromText(str);
+
+    expect(diagram.db.getActors().has('Patient')).toBe(true);
+    expect(diagram.db.getMessages().some((m) => m.type === diagram.db.LINETYPE.AUTONUMBER)).toBe(
+      true
+    );
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+    expect(diagram.db.showSequenceNumbers()).toBe(visible);
+  });
+
+  it('should parse autonumber with Windows line endings', async () => {
+    const str = 'sequenceDiagram\r\nautonumber 10 2\r\nAlice->Bob: Hi\r\nBob->Alice: Hello\r\n';
+
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+    expect(diagram.db.showSequenceNumbers()).toBe(true);
+    const autonumber = diagram.db
+      .getMessages()
+      .find((m) => m.type === diagram.db.LINETYPE.AUTONUMBER);
+    expect(autonumber?.message).toMatchObject({ start: 10, step: 2, visible: true });
+  });
+
+  it.each([
+    ['a space', ' '],
+    ['a tab', '\t'],
+  ])('should parse participants with a config and %s at the end of the line', async (_, ws) => {
+    const str = `sequenceDiagram\n    participant Alice@{ "type" : "boundary" }${ws}\n    actor Bob@{ "type" : "database" }${ws}\n    Alice->>Bob: Hi`;
+
+    const diagram = await Diagram.fromText(str);
+
+    const actors = diagram.db.getActors();
+    expect(actors.get('Alice').type).toBe('boundary');
+    expect(actors.get('Bob').type).toBe('database');
+    expect(diagram.db.getMessages()).toHaveLength(1);
+  });
+
   it('should allow sequence numbers to have decimals up to the hundredths place', async () => {
     const str = `
         sequenceDiagram
