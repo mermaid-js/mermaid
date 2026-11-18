@@ -1059,6 +1059,13 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
+  // Class relation colors can come from themeCSS or an external stylesheet.
+  // Resolve the cascade before selecting a color-specific arrowhead.
+  if (diagramType === 'classDiagram') {
+    const pathNode = svgPath.node();
+    strokeColor = pathNode.ownerDocument.defaultView.getComputedStyle(pathNode).stroke;
+  }
+
   const useMargin = drawsMarginMarkers(edge);
   addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, useMargin, strokeColor);
   const midIndex = Math.floor(points.length / 2);
