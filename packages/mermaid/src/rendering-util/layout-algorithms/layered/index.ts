@@ -28,6 +28,10 @@ const LOOP = 26;
 const LOOP_GAP = 6;
 // The part of a side that edge ends keep clear of at each corner when the node sets no span.
 const CORNER = 12;
+// Room between the label of an edge from a group to a member and other edges at that member.
+const LABEL_CLEAR = 4;
+// How much of its label an edge from a group to a member keeps under it when the label slides.
+const LABEL_HOLD = 4;
 // A drawing that runs across is turned to run down only when the width budget is under this.
 export const TURN_BREAKPOINT = 640;
 // Tight layouts (`availableWidth`): node and rank spacing and group padding are scaled by these.
@@ -345,11 +349,12 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
   for (const k of deferred) {
     const within = inner[k]!;
     const member = box(within.member);
-    const across = freeAcross(member, within, [...edges.values()]);
-    edges.set(
-      graph.edges[k]!.id,
-      innerEdge(box(within.group), member, within, graph.edges[k]!.label, across)
-    );
+    const group = box(within.group);
+    const label = graph.edges[k]!.label;
+    const taken = endsAt(member, within, edges.values());
+    const across = freeAcross(member, within, taken);
+    const labelAt = label ? labelAcross(group, within, label, across, taken) : across;
+    edges.set(graph.edges[k]!.id, innerEdge(group, member, within, label, across, labelAt));
   }
 
   return {
@@ -406,13 +411,14 @@ function flowIn(cnodes: CNode[], g: number, rootDir: Dir): Dir {
 // Draws an edge between a group and a member along the flow: from the border the flow starts at
 // to the member, or from the member to the border the flow ends at. Where it would cross the
 // title on that border, the edge ends below the title instead. The label sits in the room the
-// group keeps for it, clear of the title and of the member.
+// group keeps for it, clear of the title and of the member, centred across at `labelAt`.
 function innerEdge(
   group: LayoutModelNode,
   member: LayoutModelNode,
   { out, dir, band, skip, titleW, labelLen }: InnerEdge,
   label: { width: number; height: number } | undefined,
-  across: number
+  across: number,
+  labelAt: number
 ): LayoutModelEdge {
   const { down, side, face } = innerFace(member, out, dir);
   const centre = down ? group.y : group.x;
@@ -432,7 +438,7 @@ function innerEdge(
   };
   if (label) {
     const along = border - side * (band + labelLen / 2);
-    model.label = down ? { x: across, y: along } : { x: along, y: across };
+    model.label = down ? { x: labelAt, y: along } : { x: along, y: labelAt };
   }
   return model;
 }
@@ -451,15 +457,13 @@ function innerFace(
   return { down, side, face };
 }
 
-// Where across the member's side an edge between it and its group runs (#8824): in line with
-// the member when that is free, otherwise the nearest place on the side at least `PORT_SEP` from
-// the ends of the edges already there, so the two do not run on top of each other. With no such
-// place, the one furthest from those ends.
-function freeAcross(
+// Where across the member's side the edges already drawn end on the side an edge between the
+// member and its group runs to.
+function endsAt(
   member: LayoutModelNode,
   { out, dir }: InnerEdge,
-  drawn: LayoutModelEdge[]
-): number {
+  drawn: Iterable<LayoutModelEdge>
+): number[] {
   const { down, face } = innerFace(member, out, dir);
   const centre = down ? member.x : member.y;
   const half = (down ? member.width : member.height) / 2;
@@ -474,8 +478,22 @@ function freeAcross(
       taken.push(acrossOf(p));
     }
   }
-  const gap = (x: number): number =>
-    taken.reduce((min, t) => Math.min(min, Math.abs(x - t)), Infinity);
+  return taken;
+}
+
+// How far `x` is from the nearest of `taken`; Infinity when there are none.
+const gapTo = (x: number, taken: number[]): number =>
+  taken.reduce((min, t) => Math.min(min, Math.abs(x - t)), Infinity);
+
+// Where across the member's side an edge between it and its group runs (#8824): in line with
+// the member when that is free, otherwise the nearest place on the side at least `PORT_SEP` from
+// the ends of the edges already there (`taken`), so the two do not run on top of each other.
+// With no such place, the one furthest from those ends.
+function freeAcross(member: LayoutModelNode, { dir }: InnerEdge, taken: number[]): number {
+  const down = !runsAcross(dir);
+  const centre = down ? member.x : member.y;
+  const half = (down ? member.width : member.height) / 2;
+  const gap = (x: number): number => gapTo(x, taken);
   if (gap(centre) >= PORT_SEP) return centre;
   const reach = Math.max(0, half - Math.min(CORNER, half / 2));
   let best = centre;
@@ -487,6 +505,36 @@ function freeAcross(
   }
   for (const x of [centre + reach, centre - reach]) if (gap(x) > gap(best)) best = x;
   return best;
+}
+
+// Where across the label of an edge between a group and a member is centred: on the edge at
+// `across` when that keeps it clear of the other edges at the member (`taken`), otherwise slid
+// across just far enough to clear them, still over its own edge and inside the group. With no
+// such place, the one that keeps it furthest from them.
+function labelAcross(
+  group: LayoutModelNode,
+  { dir }: InnerEdge,
+  label: { width: number; height: number },
+  across: number,
+  taken: number[]
+): number {
+  const down = !runsAcross(dir);
+  const half = (down ? label.width : label.height) / 2;
+  const clear = half + LABEL_CLEAR;
+  const room = (down ? group.width : group.height) / 2 - half;
+  const centre = down ? group.x : group.y;
+  const [lo, hi] = room >= 0 ? [centre - room, centre + room] : [centre, centre];
+  const slide = Math.max(0, half - LABEL_HOLD);
+  const fits = (x: number): boolean =>
+    x >= lo - 1e-6 && x <= hi + 1e-6 && Math.abs(x - across) <= slide + 1e-6;
+  const gap = (x: number): number => gapTo(x, taken);
+  if (taken.length === 0 || (gap(across) >= clear && fits(across))) return across;
+  const options = [across, ...taken.flatMap((t) => [t - clear, t + clear])].filter(fits);
+  options.sort((a, b) => Math.abs(a - across) - Math.abs(b - across));
+  const free = options.find((x) => gap(x) >= clear);
+  if (free !== undefined) return free;
+  const clamp = (x: number): number => Math.min(hi, Math.max(lo, x));
+  return [clamp(across), ...options].reduce((best, x) => (gap(x) > gap(best) ? x : best));
 }
 
 const FLOW_START: Readonly<Record<Dir, Side>> = {

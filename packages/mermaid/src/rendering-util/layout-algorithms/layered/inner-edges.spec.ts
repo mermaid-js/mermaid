@@ -3,6 +3,9 @@ import { layered, MAX_MIN_LEN } from './index.js';
 import type { Dir, LayoutGraph, LayoutModel } from './types.js';
 
 const pad = { top: 20, right: 20, bottom: 20, left: 20 };
+// From index.ts: the room between edge ends on a side, and what each corner of a side keeps clear.
+const PORT_SEP = 20;
+const CORNER = 12;
 const label = { width: 26, height: 25 };
 
 // A group `A` that holds `x`, and one edge between the two.
@@ -218,6 +221,15 @@ describe('layered: an edge between a group and its member beside an edge from ou
           const inner = model.edges.get('inner')!.points;
 
           expect(longestShared(outside, inner)).toBeLessThan(1);
+          // Their ends on `In` are `PORT_SEP` apart, or as far as the side's usable half allows.
+          const across = runsAcross(dir) ? 'y' : 'x';
+          const at = (p: Point[]): number => (into ? p[p.length - 1]! : p[0]!)[across];
+          const node = model.nodes.get('In')!;
+          const half = (across === 'x' ? node.width : node.height) / 2;
+          const usable = half - Math.min(CORNER, half / 2);
+          expect(Math.abs(at(outside) - at(inner))).toBeGreaterThanOrEqual(
+            Math.min(PORT_SEP, usable) - 1e-6
+          );
         });
       }
     }
@@ -228,10 +240,14 @@ describe('layered: an edge between a group and its member beside an edge from ou
       g.nodes = g.nodes.map((n) => ({ ...n, width: 150, height: 45 }));
       g.groups[0]!.title = { width: 30, height: 18 };
       const model = layered(g);
+      const outside = model.edges.get('outside')!.points;
+      const inner = model.edges.get('inner')!.points;
 
+      expect(longestShared(outside, inner)).toBeLessThan(1);
+      // A wide node has room for the full gap.
       expect(
-        longestShared(model.edges.get('outside')!.points, model.edges.get('inner')!.points)
-      ).toBeLessThan(1);
+        Math.abs(outside[outside.length - 1]!.x - inner[inner.length - 1]!.x)
+      ).toBeGreaterThanOrEqual(PORT_SEP - 1e-6);
     });
 
     // Moved aside from `Out --> In`, the edge no longer lies under the title, so it starts on the
@@ -251,7 +267,47 @@ describe('layered: an edge between a group and its member beside an edge from ou
       expect(to!.y).toBeCloseTo(node.y - node.height / 2);
     });
   }
+
+  // The label of `Sub --> In` sits on its own edge, clear of `Out --> In` and inside the group.
+  for (const routing of routings) {
+    for (const dir of dirs) {
+      for (const width of [26, 60]) {
+        it(`keeps a ${width}px label of Sub --> In off Out --> In in ${dir} (${routing})`, () => {
+          const g = graph(dir, true, routing);
+          g.nodes = g.nodes.map((n) => ({ ...n, width: 150, height: 45 }));
+          const size = { width, height: 25 };
+          g.edges[1]!.label = size;
+          const model = layered(g);
+          const inner = model.edges.get('inner')!;
+          const labelBox = { ...inner.label!, ...size };
+          const across = runsAcross(dir) ? 'y' : 'x';
+          const [from] = inner.points;
+
+          expect(crossesBox(model.edges.get('outside')!.points, labelBox)).toBe(false);
+          expect(within(labelBox, model.groups.get('Sub')!)).toBe(true);
+          // The label still covers its own edge.
+          const half = (across === 'x' ? size.width : size.height) / 2;
+          expect(Math.abs(labelBox[across] - from![across])).toBeLessThan(half);
+        });
+      }
+    }
+  }
 });
+
+const runsAcross = (dir: Dir): boolean => dir === 'LR' || dir === 'RL';
+
+// Whether a polyline of axis-aligned segments touches the inside of a box.
+const crossesBox = (points: Point[], b: Box): boolean =>
+  points.some((p, k) => {
+    const q = points[k - 1];
+    if (!q) return false;
+    return (
+      Math.max(p.x, q.x) > b.x - b.width / 2 + 1e-6 &&
+      Math.min(p.x, q.x) < b.x + b.width / 2 - 1e-6 &&
+      Math.max(p.y, q.y) > b.y - b.height / 2 + 1e-6 &&
+      Math.min(p.y, q.y) < b.y + b.height / 2 - 1e-6
+    );
+  });
 
 describe('layered: the ranks one edge may ask for', () => {
   const chain = (minLen: number): LayoutGraph => ({
