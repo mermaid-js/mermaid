@@ -399,12 +399,16 @@ export function transformMarkdownAst({
         astWithTransformedBlocks.children.unshift(yamlFrontMatter);
       }
       const filePathFromRoot = posix.join('packages/mermaid', originalFilename);
-      yamlFrontMatter.value = dump({
-        ...(load(yamlFrontMatter.value, { schema: JSON_SCHEMA }) as
-          | Record<string, unknown>
-          | undefined),
-        editLink: `https://github.com/mermaid-js/mermaid/edit/develop/${filePathFromRoot}`,
-      });
+      const frontMatter = load(yamlFrontMatter.value, { schema: JSON_SCHEMA }) as
+        | Record<string, unknown>
+        | undefined;
+      // `editLink: false` is how a page opts out of the link, e.g. one that is maintained elsewhere
+      if (frontMatter?.editLink !== false) {
+        yamlFrontMatter.value = dump({
+          ...frontMatter,
+          editLink: `https://github.com/mermaid-js/mermaid/edit/develop/${filePathFromRoot}`,
+        });
+      }
     }
 
     if (removeYAML) {

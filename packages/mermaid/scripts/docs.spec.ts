@@ -160,6 +160,22 @@ This Markdown should be kept.
 `);
   });
 
+  it('should keep `editLink: false` in the YAML frontmatter even if `addEditLink: true`', async () => {
+    const contents = `---
+title: Ported page
+editLink: false
+---
+
+This Markdown should be kept.
+`;
+    const withYaml = (
+      await remarkBuilder()
+        .use(transformMarkdownAst, { originalFilename, addEditLink: true })
+        .process(contents)
+    ).toString();
+    expect(withYaml).toEqual(contents);
+  });
+
   describe('transformToBlockQuote', () => {
     // TODO Is there a way to test this with --vitepress given as a process argument?
 
