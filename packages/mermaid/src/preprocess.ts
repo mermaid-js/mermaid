@@ -6,6 +6,8 @@ import utils, { cleanAndMerge, removeDirectives } from './utils.js';
 const cleanupText = (code: string) => {
   return (
     code
+      // a UTF-8 byte order mark (e.g. from a .mmd file saved by Notepad) would hide the front matter
+      .replace(/^\uFEFF/, '')
       // parser problems on CRLF ignore all CR and leave LF;;
       .replace(/\r\n?/g, '\n')
       // clean up html tags so that all attributes use single quotes, parser throws error on double quotes
