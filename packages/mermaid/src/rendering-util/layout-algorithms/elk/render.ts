@@ -1732,14 +1732,17 @@ export function straightenTerminalJogs(points: P[]): P[] {
 function straightenTerminalJogsWithRuns(points: P[]): {
   points: P[];
   runs: StraightenedRun[];
+  edits: TerminalEdit[];
 } {
   const runs: StraightenedRun[] = [];
+  const edits: TerminalEdit[] = [];
   let pts = points;
 
   const front = straightenFront(pts);
   if (front) {
     pts = front.points;
     runs.push(front.run);
+    edits.push(front.edit);
   }
 
   const reversed = [...pts].reverse();
@@ -1747,9 +1750,15 @@ function straightenTerminalJogsWithRuns(points: P[]): {
   if (back) {
     pts = back.points.reverse();
     runs.push(back.run);
+    edits.push(back.edit);
   }
 
-  return { points: pts, runs };
+  return { points: pts, runs, edits };
+}
+
+interface TerminalEdit {
+  before: P[];
+  after: P[];
 }
 
 /**
@@ -1766,7 +1775,9 @@ function straightenTerminalJogsWithRuns(points: P[]): {
  * The run is only moved when the point after it is not the far terminal, since
  * that would move the other end's port and reintroduce the same problem there.
  */
-function straightenFront(pts: P[]): { points: P[]; run: StraightenedRun } | null {
+function straightenFront(
+  pts: P[]
+): { points: P[]; run: StraightenedRun; edit: TerminalEdit } | null {
   if (pts.length < 5) {
     return null;
   }
@@ -1818,7 +1829,9 @@ function straightenFront(pts: P[]): { points: P[]; run: StraightenedRun } | null
   };
   // p1 and p2 are now collinear with p0 and the rest of the run.
   moved.splice(1, 2);
-  return { points: moved, run };
+  // Include the segment connecting the moved run to the first unchanged point.
+  const edit = { before: pts.slice(0, last + 2), after: moved.slice(0, last) };
+  return { points: moved, run, edit };
 }
 
 /** Do two axis-aligned segments cross at a point interior to both? */
@@ -1895,6 +1908,22 @@ interface Box {
   y2: number;
 }
 
+function routeBounds(points: P[]): Box {
+  const bounds = { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity };
+  for (const point of points) {
+    bounds.x1 = Math.min(bounds.x1, point.x);
+    bounds.y1 = Math.min(bounds.y1, point.y);
+    bounds.x2 = Math.max(bounds.x2, point.x);
+    bounds.y2 = Math.max(bounds.y2, point.y);
+  }
+  return bounds;
+}
+
+// Touching boxes can still contain a segment along a label boundary.
+function boundsIntersect(a: Box, b: Box): boolean {
+  return a.x1 <= b.x2 && b.x1 <= a.x2 && a.y1 <= b.y2 && b.y1 <= a.y2;
+}
+
 /** Whether segment a-b passes through the box (Liang-Barsky clip). */
 function segmentHitsBox(a: P, b: P, box: Box): boolean {
   let t0 = 0;
@@ -1948,15 +1977,18 @@ const labelBox = (center: P, size: { width: number; height: number }): Box => ({
  */
 export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: StraightenedRun[] }[] {
   const routes = edges.map((edge) => (edge as { points?: P[] }).points ?? []);
+  const bounds = routes.map(routeBounds);
   const labels = edges.map((edge) =>
     edge.x == null || edge.y == null || !edge.label || !edge.width || !edge.height
       ? undefined
       : { centre: { x: edge.x, y: edge.y }, size: { width: edge.width, height: edge.height } }
   );
-  const covers = (route: P[], label: (typeof labels)[number]) => {
+  const covers = (route: P[], bounds: Box, label: (typeof labels)[number]) => {
     const box = label && labelBox(label.centre, label.size);
     return (
-      !!box && route.some((p, i) => i < route.length - 1 && segmentHitsBox(p, route[i + 1], box))
+      !!box &&
+      boundsIntersect(bounds, box) &&
+      route.some((p, i) => i < route.length - 1 && segmentHitsBox(p, route[i + 1], box))
     );
   };
   const overlaps = (a: (typeof labels)[number], b: (typeof labels)[number]) =>
@@ -1968,7 +2000,7 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
     if (original.length < 5) {
       continue;
     }
-    const { points: candidate, runs } = straightenTerminalJogsWithRuns(original);
+    const { points: candidate, runs, edits } = straightenTerminalJogsWithRuns(original);
     if (candidate === original) {
       continue;
     }
@@ -1978,6 +2010,12 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
     const moved = label && projectLabelOntoStraightenedRun(label.centre, runs);
     const candidateLabel = label && moved ? { centre: moved, size: label.size } : label;
 
+    const candidateBounds = routeBounds(candidate);
+    const changes = edits.map(({ before, after }) => ({
+      before,
+      after,
+      bounds: routeBounds([...before, ...after]),
+    }));
     let before = 0;
     let after = 0;
     // Net counts, as for crossings: label-over-edge pairs in either direction.
@@ -1989,11 +2027,20 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
       if (other === index || route.length < 2) {
         continue;
       }
-      before += crossingCount(original, route);
-      after += crossingCount(candidate, route);
-      coveredBefore += Number(covers(route, label)) + Number(covers(original, labels[other]));
+      // Unchanged segments cancel. If both terminals move, the two deltas add.
+      for (const edit of changes) {
+        if (!boundsIntersect(edit.bounds, bounds[other])) {
+          continue;
+        }
+        before += crossingCount(edit.before, route);
+        after += crossingCount(edit.after, route);
+      }
+      coveredBefore +=
+        Number(covers(route, bounds[other], label)) +
+        Number(covers(original, bounds[index], labels[other]));
       coveredAfter +=
-        Number(covers(route, candidateLabel)) + Number(covers(candidate, labels[other]));
+        Number(covers(route, bounds[other], candidateLabel)) +
+        Number(covers(candidate, candidateBounds, labels[other]));
       collides ||= overlaps(candidateLabel, labels[other]) && !overlaps(label, labels[other]);
     }
     if (after > before || coveredAfter > coveredBefore || collides) {
@@ -2002,6 +2049,7 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
 
     (edge as { points?: P[] }).points = candidate;
     routes[index] = candidate;
+    bounds[index] = candidateBounds;
     labels[index] = candidateLabel;
     changed.push({ edge, runs });
   }
