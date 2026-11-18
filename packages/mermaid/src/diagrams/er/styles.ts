@@ -95,7 +95,7 @@ const getStyles: DiagramStylesProvider = (options) => {
 
   .edgeLabel .label {
     fill: ${options.nodeBorder};
-    font-size: 14px;
+    font-size: ${options.fontSize};
   }
 
   .label {
