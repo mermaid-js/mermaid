@@ -3,7 +3,7 @@ import type { Edge, LayoutData, Node } from '../../types.js';
 import { PIXEL_EPSILON } from '../layout-utils/geometry.js';
 import { clamp, compareCodeUnits, rectForNode } from '../layout-utils/helpers.js';
 import { isAncestorGroup } from './groups.js';
-import { ROUTE_CLEARANCE_PX, routingPointKey } from './routerTopology.js';
+import { EDGE_CLEARANCE_PX, ROUTE_CLEARANCE_PX, routingPointKey } from './routerTopology.js';
 import type {
   GridAttachmentDemand,
   GridContainerId,
@@ -26,6 +26,8 @@ export interface EdgeEndpointEntry {
   oppositeCoord: number;
   preferredCoord: number;
   compactPortal: boolean;
+  ambiguousSides?: readonly GridSide[];
+  inner?: { demandKey: string; side: GridSide };
 }
 
 export interface EdgeEndpointPlan {
@@ -59,6 +61,7 @@ export interface PreparedEdgeRoutes {
   demandCoords: Map<string, number>;
   endpointCandidatesByEdge: Map<string, EdgeRouteCandidates>;
   endpointIncidentCounts: Map<string, number>;
+  coordinatedEndpointIds: Set<string>;
 }
 
 export function ownerGroupTitle(node: Node): boolean {
@@ -129,6 +132,16 @@ function oppositeCoordFor(rect: ReturnType<typeof rectForNode>, side: GridSide):
   return side === 'left' || side === 'right' ? rect.cy : rect.cx;
 }
 
+function sideMidpoint(rect: ReturnType<typeof rectForNode>, side: GridSide): Point {
+  return side === 'left' || side === 'right'
+    ? { x: side === 'left' ? rect.left : rect.right, y: rect.cy }
+    : { x: rect.cx, y: side === 'top' ? rect.top : rect.bottom };
+}
+
+function tangentialCoordinate(point: Point, side: GridSide): number {
+  return side === 'left' || side === 'right' ? point.y : point.x;
+}
+
 function buildEndpointPlan(
   endpoint: Node,
   other: Node,
@@ -146,9 +159,26 @@ function buildEndpointPlan(
   for (;;) {
     const parentId = current.parentId ?? ROOT_CONTAINER_ID;
     const parent = nodeById.get(parentId);
+    const currentCenter = { x: current.x ?? 0, y: current.y ?? 0 };
+    const dx = otherCenter.x - currentCenter.x;
+    const dy = otherCenter.y - currentCenter.y;
+    const titleAvoidanceTie =
+      dy < 0 &&
+      Math.abs(dx) <= PIXEL_EPSILON &&
+      Boolean((current.isGroup ? current.groupTitleRect : undefined) ?? parent?.groupTitleRect);
+    const directSideCandidates: GridSide[] = [];
+    if (Math.abs(Math.abs(dx) - Math.abs(dy)) <= PIXEL_EPSILON && Math.abs(dx) > PIXEL_EPSILON) {
+      directSideCandidates.push(dx >= 0 ? 'right' : 'left', dy >= 0 ? 'bottom' : 'top');
+    }
+    const topBlocked = Boolean(
+      (current.isGroup ? current.groupTitleRect : undefined) ?? parent?.groupTitleRect
+    );
+    const ambiguousSides = (
+      titleAvoidanceTie ? (['left', 'right'] as GridSide[]) : directSideCandidates
+    ).filter((candidate) => candidate !== 'top' || !topBlocked);
     let side = preferredSide(current, otherCenter);
     if (side === 'top' && parent?.groupTitleRect) {
-      side = otherCenter.x >= (current.x ?? 0) ? 'right' : 'left';
+      side = dx >= 0 ? 'right' : 'left';
     }
     chain.push({
       ownerId: current.id,
@@ -157,6 +187,10 @@ function buildEndpointPlan(
       oppositeCoord: oppositeCoordFor(otherRect, side),
       preferredCoord: oppositeCoordFor(endpointRect, side),
       compactPortal: current.id !== endpoint.id,
+      ambiguousSides: ambiguousSides.length > 1 ? ambiguousSides : undefined,
+      inner: chain.length
+        ? { demandKey: chain[chain.length - 1].demandKey, side: chain[chain.length - 1].side }
+        : undefined,
     });
 
     if (
@@ -221,11 +255,111 @@ function buildPairLanes(edges: Edge[]): Map<string, PairLane> {
   return out;
 }
 
+function resolveAmbiguousEndpointSides(plans: EdgeRoutePlan[], result: GridLayoutResult): void {
+  // Reserve geometrically preferred sides first. Equal-cost endpoint choices then use the legal
+  // side with the fewest strong reservations, preserving the original preference as a stable tie.
+  const reserved = new Map<string, number>();
+  const reservationKey = (ownerId: string, side: GridSide) => ownerSideKey(ownerId, side);
+  for (const plan of plans) {
+    for (const entry of [...plan.source.chain, ...plan.target.chain]) {
+      if (!entry.ambiguousSides) {
+        const key = reservationKey(entry.ownerId, entry.side);
+        reserved.set(key, (reserved.get(key) ?? 0) + 1);
+      }
+    }
+  }
+
+  const resolveEndpoint = (
+    plan: EdgeRoutePlan,
+    endpoint: EdgeEndpointPlan,
+    role: 'source' | 'target'
+  ): void => {
+    const ambiguous = endpoint.chain.filter(({ ambiguousSides }) => ambiguousSides);
+    if (ambiguous.length === 0) {
+      return;
+    }
+    const legalSides = (['right', 'bottom', 'left', 'top'] as const).filter(
+      (side) =>
+        ambiguous.every((entry) => entry.ambiguousSides?.includes(side)) &&
+        ambiguous.every((entry) => {
+          const owner = result.forest.nodeById.get(entry.ownerId);
+          return owner !== undefined && sideInterval(owner, side) !== undefined;
+        })
+    );
+    const selected = legalSides.sort(
+      (a, b) =>
+        ambiguous.reduce(
+          (count, entry) => count + (reserved.get(reservationKey(entry.ownerId, a)) ?? 0),
+          0
+        ) -
+          ambiguous.reduce(
+            (count, entry) => count + (reserved.get(reservationKey(entry.ownerId, b)) ?? 0),
+            0
+          ) || Number(a !== ambiguous[0].side) - Number(b !== ambiguous[0].side)
+    )[0];
+    if (!selected) {
+      return;
+    }
+    for (const entry of ambiguous) {
+      entry.side = selected;
+      const key = reservationKey(entry.ownerId, selected);
+      reserved.set(key, (reserved.get(key) ?? 0) + 1);
+      const owner = result.forest.nodeById.get(entry.ownerId);
+      if (owner) {
+        entry.preferredCoord = oppositeCoordFor(rectForNode(owner), selected);
+      }
+    }
+    for (const [index, entry] of endpoint.chain.entries()) {
+      entry.demandKey = JSON.stringify([plan.edge.id, role, entry.ownerId, entry.side]);
+      entry.inner =
+        index > 0
+          ? {
+              demandKey: endpoint.chain[index - 1].demandKey,
+              side: endpoint.chain[index - 1].side,
+            }
+          : undefined;
+    }
+  };
+
+  const endpoints = plans
+    .flatMap((plan) => [
+      { plan, endpoint: plan.source, role: 'source' as const },
+      { plan, endpoint: plan.target, role: 'target' as const },
+    ])
+    .sort((a, b) =>
+      compareCodeUnits(
+        `${a.plan.edge.start ?? ''}|${a.plan.edge.end ?? ''}|${a.plan.edge.id}|${a.role}`,
+        `${b.plan.edge.start ?? ''}|${b.plan.edge.end ?? ''}|${b.plan.edge.id}|${b.role}`
+      )
+    );
+  for (const { plan, endpoint, role } of endpoints) {
+    resolveEndpoint(plan, endpoint, role);
+  }
+
+  for (const plan of plans) {
+    const sourceFinal = plan.source.chain.at(-1);
+    const targetFinal = plan.target.chain.at(-1);
+    const sourceOwner = sourceFinal ? result.forest.nodeById.get(sourceFinal.ownerId) : undefined;
+    const targetOwner = targetFinal ? result.forest.nodeById.get(targetFinal.ownerId) : undefined;
+    if (!sourceFinal || !targetFinal || !sourceOwner || !targetOwner) {
+      continue;
+    }
+    const sourcePoint = sideMidpoint(rectForNode(sourceOwner), sourceFinal.side);
+    const targetPoint = sideMidpoint(rectForNode(targetOwner), targetFinal.side);
+    for (const entry of plan.source.chain) {
+      entry.oppositeCoord = tangentialCoordinate(targetPoint, entry.side);
+    }
+    for (const entry of plan.target.chain) {
+      entry.oppositeCoord = tangentialCoordinate(sourcePoint, entry.side);
+    }
+  }
+}
+
 function collectRoutePlans(layout: LayoutData, result: GridLayoutResult): EdgeRoutePlan[] {
   const nodeById = result.forest.nodeById;
   const pairLanes = buildPairLanes(layout.edges);
 
-  return layout.edges.map((edge) => {
+  const plans = layout.edges.map((edge) => {
     const source = edge.start ? nodeById.get(edge.start) : undefined;
     const target = edge.end ? nodeById.get(edge.end) : undefined;
     if (!source || !target) {
@@ -253,6 +387,8 @@ function collectRoutePlans(layout: LayoutData, result: GridLayoutResult): EdgeRo
       pairKey: pairLane.pairKey,
     };
   });
+  resolveAmbiguousEndpointSides(plans, result);
+  return plans;
 }
 
 export function assignCompactPortalCoordinates(
@@ -309,6 +445,7 @@ function assignDemandCoordinates(
           oppositeCoord: entry.oppositeCoord,
           preferredCoord: entry.preferredCoord,
           compactPortal: entry.compactPortal,
+          inner: entry.inner,
         });
       }
     }
@@ -329,8 +466,18 @@ function assignDemandCoordinates(
     byOwnerSide.set(key, group);
   }
 
+  // Ports are placed before the compact portals that line up with them, innermost group first.
+  const depthOf = (ownerId: string): number => {
+    const owner = nodeById.get(ownerId);
+    return owner ? containerChain(owner, nodeById).length : 0;
+  };
+  const orderedOwnerSides = [...byOwnerSide.values()].sort(
+    (a, b) =>
+      Number(a.demands.every((d) => d.compactPortal)) -
+        Number(b.demands.every((d) => d.compactPortal)) || depthOf(b.ownerId) - depthOf(a.ownerId)
+  );
   const assigned = new Map<string, number>();
-  for (const { ownerId, side, demands } of byOwnerSide.values()) {
+  for (const { ownerId, side, demands } of orderedOwnerSides) {
     const owner = nodeById.get(ownerId);
     if (!owner) {
       continue;
@@ -379,8 +526,29 @@ function assignDemandCoordinates(
         side === 'left' || side === 'right'
           ? container?.horizontalCorridors
           : container?.verticalCorridors;
+      const innerCoordinate = (demand: GridAttachmentDemand): number => {
+        const inner = demand.inner ? demandByKey.get(demand.inner.demandKey) : undefined;
+        const innerOwner = inner ? nodeById.get(inner.ownerId) : undefined;
+        const coordinate = inner ? assigned.get(inner.demandKey) : undefined;
+        if (!inner || !innerOwner || coordinate === undefined) {
+          return demand.preferredCoord;
+        }
+        const point = sideMidpoint(rectForNode(innerOwner), inner.side);
+        if (inner.side === 'left' || inner.side === 'right') {
+          point.y = coordinate;
+        } else {
+          point.x = coordinate;
+        }
+        return tangentialCoordinate(point, side);
+      };
       const preferredCoordinate = (demand: GridAttachmentDemand): number => {
-        const clamped = clamp(demand.preferredCoord, low, high);
+        const innerCoord = demand.inner ? assigned.get(demand.inner.demandKey) : undefined;
+        const alignedWithInner =
+          demand.inner !== undefined &&
+          innerCoord !== undefined &&
+          (demand.inner.side === 'left' || demand.inner.side === 'right') ===
+            (side === 'left' || side === 'right');
+        const clamped = clamp(alignedWithInner ? innerCoord : demand.preferredCoord, low, high);
         const nearest = corridorCoordinates?.reduce(
           (best, coordinate) =>
             Math.abs(coordinate - clamped) < Math.abs(best - clamped) ? coordinate : best,
@@ -395,6 +563,12 @@ function assignDemandCoordinates(
         continue;
       }
       if (span >= MIN_PORT_SEPARATION_PX * (demands.length - 1)) {
+        demands.sort(
+          (a, b) =>
+            innerCoordinate(a) - innerCoordinate(b) ||
+            a.oppositeCoord - b.oppositeCoord ||
+            compareCodeUnits(a.edgeId, b.edgeId)
+        );
         const desired = demands.map(preferredCoordinate);
         const coordinates = assignCompactPortalCoordinates(desired, low, high);
         demands.forEach((demand, index) => assigned.set(demand.demandKey, coordinates[index]));
@@ -410,6 +584,51 @@ function assignDemandCoordinates(
       assigned.set(demand.demandKey, low + step * index);
     });
   }
+
+  // Keep a nearly aligned hierarchy route on one exact coordinate. Sub-pixel differences between
+  // independently allocated endpoint and portal slots are otherwise normalized away as a diagonal,
+  // which unnecessarily demotes the route to sparse search.
+  for (const plan of plans) {
+    if (plan.bundleSize !== 1) {
+      continue;
+    }
+    const sourceFinal = plan.source.chain.at(-1);
+    const targetFinal = plan.target.chain.at(-1);
+    if (!sourceFinal || !targetFinal) {
+      continue;
+    }
+    const verticalSide = (side: GridSide) => side === 'left' || side === 'right';
+    if (verticalSide(sourceFinal.side) !== verticalSide(targetFinal.side)) {
+      continue;
+    }
+    const sourceCoord = assigned.get(sourceFinal.demandKey);
+    const targetCoord = assigned.get(targetFinal.demandKey);
+    if (
+      sourceCoord === undefined ||
+      targetCoord === undefined ||
+      Math.abs(sourceCoord - targetCoord) > PIXEL_EPSILON
+    ) {
+      continue;
+    }
+    const entries = [...plan.source.chain, ...plan.target.chain];
+    if (entries.some((entry) => verticalSide(entry.side) !== verticalSide(sourceFinal.side))) {
+      continue;
+    }
+    const alignedCoord = [sourceCoord, targetCoord].find((coordinate) =>
+      entries.every((entry) => {
+        const owner = nodeById.get(entry.ownerId);
+        const interval = owner ? sideInterval(owner, entry.side) : undefined;
+        return (
+          interval !== undefined &&
+          coordinate >= interval.low - PIXEL_EPSILON &&
+          coordinate <= interval.high + PIXEL_EPSILON
+        );
+      })
+    );
+    if (alignedCoord !== undefined) {
+      entries.forEach((entry) => assigned.set(entry.demandKey, alignedCoord));
+    }
+  }
   return assigned;
 }
 
@@ -419,6 +638,9 @@ export interface EndpointCandidate {
   port: RouterPoint;
   connect: RouterPoint;
   rank: number;
+  // Set only at owners that mix aligned and unaligned edges: whether the candidate uses the side the
+  // allocator assigned. The sparse search keeps those owners on their assigned side when it can.
+  onAssignedSide?: boolean;
 }
 
 interface EndpointDemandEntry {
@@ -545,7 +767,6 @@ function endpointSideCapacity(owner: Node, side: GridSide): number {
 function endpointSidePreferences(owner: Node, demand: EndpointDemandEntry): GridSide[] {
   const oppositeRect = rectForNode(demand.opposite);
   const preferred = preferredSide(owner, { x: oppositeRect.cx, y: oppositeRect.cy });
-  const ownerRect = rectForNode(owner);
   return (['right', 'bottom', 'left', 'top'] as const)
     .filter((side) => endpointSideCapacity(owner, side) > 0)
     .sort((a, b) => {
@@ -555,30 +776,78 @@ function endpointSidePreferences(owner: Node, demand: EndpointDemandEntry): Grid
       if (b === preferred) {
         return 1;
       }
-      const midpoint = (side: GridSide): Point =>
-        side === 'left' || side === 'right'
-          ? {
-              x: side === 'left' ? ownerRect.left : ownerRect.right,
-              y: ownerRect.cy,
-            }
-          : {
-              x: ownerRect.cx,
-              y: side === 'top' ? ownerRect.top : ownerRect.bottom,
-            };
-      const aPoint = midpoint(a);
-      const bPoint = midpoint(b);
+      const ownerRect = rectForNode(owner);
+      const aPoint = sideMidpoint(ownerRect, a);
+      const bPoint = sideMidpoint(ownerRect, b);
       const aDistance = Math.abs(aPoint.x - oppositeRect.cx) + Math.abs(aPoint.y - oppositeRect.cy);
       const bDistance = Math.abs(bPoint.x - oppositeRect.cx) + Math.abs(bPoint.y - oppositeRect.cy);
       return aDistance - bDistance || sideOrder(a) - sideOrder(b);
     });
 }
 
+function isAxisAlignedDemand(owner: Node, demand: EndpointDemandEntry): boolean {
+  const ownerRect = rectForNode(owner);
+  const oppositeRect = rectForNode(demand.opposite);
+  return (
+    Math.abs(ownerRect.cx - oppositeRect.cx) <= PIXEL_EPSILON ||
+    Math.abs(ownerRect.cy - oppositeRect.cy) <= PIXEL_EPSILON
+  );
+}
+
+// Places unaligned ports on a side that already carries fixed (aligned) ports. Each port takes the
+// legal coordinate nearest its desired one that keeps EDGE_CLEARANCE_PX from every other port, so the
+// aligned ports stay on their straight lines. Returns undefined when the side cannot fit them all.
+function placePortsBesideFixed(
+  owner: Node,
+  side: GridSide,
+  fixed: readonly number[],
+  movable: readonly EndpointDemandEntry[]
+): Map<EndpointDemandEntry, number> | undefined {
+  const interval = sideInterval(owner, side);
+  if (!interval) {
+    return undefined;
+  }
+  const placed = [...fixed];
+  const placements = new Map<EndpointDemandEntry, number>();
+  for (const demand of movable) {
+    const opposite = rectForNode(demand.opposite);
+    const desired = clamp(
+      side === 'left' || side === 'right' ? opposite.cy : opposite.cx,
+      interval.low,
+      interval.high
+    );
+    const candidates = [
+      desired,
+      interval.low,
+      interval.high,
+      ...placed.flatMap((coordinate) => [
+        coordinate - EDGE_CLEARANCE_PX,
+        coordinate + EDGE_CLEARANCE_PX,
+      ]),
+    ]
+      .filter(
+        (coordinate) =>
+          coordinate >= interval.low - PIXEL_EPSILON &&
+          coordinate <= interval.high + PIXEL_EPSILON &&
+          placed.every((other) => Math.abs(coordinate - other) >= EDGE_CLEARANCE_PX - PIXEL_EPSILON)
+      )
+      .sort((a, b) => Math.abs(a - desired) - Math.abs(b - desired) || a - b);
+    if (candidates.length === 0) {
+      return undefined;
+    }
+    placements.set(demand, candidates[0]);
+    placed.push(candidates[0]);
+  }
+  return placements;
+}
+
 function allocateEndpointSlots(
   owner: Node,
   demands: readonly EndpointDemandEntry[]
 ): ReadonlyMap<string, EndpointSlotAssignment> {
-  // Assignment is greedy but deterministic: stable demand identity chooses first, geometric side
-  // preference chooses second, and side capacity prevents accidental over-subscription when possible.
+  // Aligned edges get first choice of their direct side and keep their straight port. Other edges
+  // prefer an unreserved side, or share a reserved side when their port can sit a full clearance
+  // away from the aligned ports. This stops a diagonal approach from displacing a straight one.
   const assignedBySide = new Map<GridSide, EndpointDemandEntry[]>();
   const capacities = new Map(
     (['right', 'bottom', 'left', 'top'] as const).map((side) => [
@@ -587,19 +856,69 @@ function allocateEndpointSlots(
     ])
   );
 
-  for (const demand of [...demands].sort(compareEndpointDemandIdentity)) {
-    const preferences = endpointSidePreferences(owner, demand);
-    if (preferences.length === 0) {
-      continue;
-    }
-    const side =
-      preferences.find(
-        (candidate) =>
-          (assignedBySide.get(candidate)?.length ?? 0) < (capacities.get(candidate) ?? 0)
-      ) ?? preferences[0];
+  const orderedDemands = [...demands].sort(compareEndpointDemandIdentity);
+  const alignedDemands = orderedDemands.filter((demand) => isAxisAlignedDemand(owner, demand));
+  const unalignedDemands = orderedDemands.filter((demand) => !isAxisAlignedDemand(owner, demand));
+  const reservedSides = new Set<GridSide>();
+  const alignedCoordinates = new Map<GridSide, number[]>();
+  const sharedPlacements = new Map<GridSide, Map<EndpointDemandEntry, number>>();
+  const hasCapacity = (candidate: GridSide) =>
+    (assignedBySide.get(candidate)?.length ?? 0) < (capacities.get(candidate) ?? 0);
+  const record = (demand: EndpointDemandEntry, side: GridSide) => {
     const assigned = assignedBySide.get(side) ?? [];
     assigned.push(demand);
     assignedBySide.set(side, assigned);
+  };
+  const assignAligned = (demand: EndpointDemandEntry): void => {
+    const side = endpointSidePreferences(owner, demand).find(hasCapacity);
+    if (side) {
+      record(demand, side);
+      reservedSides.add(side);
+    }
+  };
+  const tryShareReservedSide = (demand: EndpointDemandEntry, side: GridSide): boolean => {
+    const shared = sharedPlacements.get(side) ?? new Map<EndpointDemandEntry, number>();
+    const placements = placePortsBesideFixed(
+      owner,
+      side,
+      [...(alignedCoordinates.get(side) ?? []), ...shared.values()],
+      [demand]
+    );
+    if (!placements) {
+      return false;
+    }
+    shared.set(demand, placements.get(demand)!);
+    sharedPlacements.set(side, shared);
+    record(demand, side);
+    return true;
+  };
+  const assignUnaligned = (demand: EndpointDemandEntry): void => {
+    const preferences = endpointSidePreferences(owner, demand).filter(hasCapacity);
+    const unreserved = preferences.find((candidate) => !reservedSides.has(candidate));
+    const sharable = preferences.find(
+      (candidate) =>
+        (unreserved === undefined ||
+          preferences.indexOf(candidate) < preferences.indexOf(unreserved)) &&
+        reservedSides.has(candidate) &&
+        tryShareReservedSide(demand, candidate)
+    );
+    if (sharable) {
+      return;
+    }
+    const side = unreserved ?? preferences[0];
+    if (side) {
+      record(demand, side);
+    }
+  };
+
+  for (const demand of alignedDemands) {
+    assignAligned(demand);
+  }
+  for (const [side, assigned] of assignedBySide) {
+    alignedCoordinates.set(side, [...preferredEndpointCoordinates(owner, side, assigned).values()]);
+  }
+  for (const demand of unalignedDemands) {
+    assignUnaligned(demand);
   }
 
   const assignments = new Map<string, EndpointSlotAssignment>();
@@ -608,7 +927,12 @@ function allocateEndpointSlots(
     if (!interval) {
       continue;
     }
-    const preferredCoordinates = preferredEndpointCoordinates(owner, side, assigned);
+    const shared = sharedPlacements.get(side);
+    const fixedDemands = shared ? assigned.filter((demand) => !shared.has(demand)) : assigned;
+    const preferredCoordinates = new Map([
+      ...preferredEndpointCoordinates(owner, side, fixedDemands),
+      ...(shared ?? []),
+    ]);
     const sorted = [...assigned].sort((a, b) => compareEndpointDemands(a, b, side));
     for (const [index, demand] of sorted.entries()) {
       const coordinate =
@@ -627,6 +951,7 @@ function endpointCandidates(
   role: 'source' | 'target',
   demandsByOwner: ReadonlyMap<string, readonly EndpointDemandEntry[]>,
   assignmentsByOwner: ReadonlyMap<string, ReadonlyMap<string, EndpointSlotAssignment>>,
+  coordinatedOwnerIds: ReadonlySet<string>,
   result: GridLayoutResult
 ): EndpointCandidate[] {
   const ownerId = role === 'source' ? plan.edge.start! : plan.edge.end!;
@@ -640,6 +965,8 @@ function endpointCandidates(
   const candidates: EndpointCandidate[] = [];
   const candidateKeys = new Set<string>();
 
+  const assignment = assignmentsByOwner.get(ownerId)?.get(`${plan.edge.id}:${role}`);
+  const trackAssignedSide = coordinatedOwnerIds.has(ownerId) && assignment !== undefined;
   const addCandidate = (side: GridSide, coordinate: number, rank: number): void => {
     const interval = sideInterval(owner, side);
     if (!interval || coordinate < interval.low || coordinate > interval.high) {
@@ -668,10 +995,10 @@ function endpointCandidates(
           (side === 'top' ? -TERMINAL_APPROACH_PX : side === 'bottom' ? TERMINAL_APPROACH_PX : 0),
       },
       rank,
+      onAssignedSide: trackAssignedSide ? side === assignment.side : undefined,
     });
   };
 
-  const assignment = assignmentsByOwner.get(ownerId)?.get(`${plan.edge.id}:${role}`);
   // Negative ranks reserve precedence for the globally allocated slot and the bundle lane. The
   // remaining geometric alternatives are re-ranked after deterministic sorting.
   if (assignment && plan.bundleSize === 1) {
@@ -767,6 +1094,25 @@ export function prepareEdgeRoutes(
       return [ownerId, owner ? allocateEndpointSlots(owner, demands) : new Map()] as const;
     })
   );
+  const coordinatedEndpointIds = new Set<string>();
+  const coordinatedOwnerIds = new Set<string>();
+  for (const [ownerId, demands] of endpointDemandsByOwner) {
+    const owner = result.forest.nodeById.get(ownerId);
+    if (!owner) {
+      continue;
+    }
+    const hasAligned = demands.some((demand) => isAxisAlignedDemand(owner, demand));
+    const hasUnaligned = demands.some((demand) => !isAxisAlignedDemand(owner, demand));
+    if (hasAligned && hasUnaligned) {
+      coordinatedOwnerIds.add(ownerId);
+      // The aligned edge already has its straight route, so only the others need the sparse search.
+      for (const demand of demands) {
+        if (!isAxisAlignedDemand(owner, demand)) {
+          coordinatedEndpointIds.add(demand.plan.edge.id);
+        }
+      }
+    }
+  }
   const endpointCandidatesByEdge = new Map(
     eligiblePlans.map((plan) => [
       plan.edge.id,
@@ -776,6 +1122,7 @@ export function prepareEdgeRoutes(
           'source',
           endpointDemandsByOwner,
           endpointAssignmentsByOwner,
+          coordinatedOwnerIds,
           result
         ),
         targets: endpointCandidates(
@@ -783,6 +1130,7 @@ export function prepareEdgeRoutes(
           'target',
           endpointDemandsByOwner,
           endpointAssignmentsByOwner,
+          coordinatedOwnerIds,
           result
         ),
       },
@@ -836,5 +1184,6 @@ export function prepareEdgeRoutes(
     demandCoords: assignDemandCoordinates(orderedPlans, result, endpointIncidentCounts),
     endpointCandidatesByEdge,
     endpointIncidentCounts,
+    coordinatedEndpointIds,
   };
 }

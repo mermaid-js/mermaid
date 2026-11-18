@@ -1,6 +1,30 @@
 import type { SVG } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import type { EdgeData } from '../../types.js';
+import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
+
+interface EdgeAnimation {
+  animate?: boolean;
+  animation?: string;
+  cssCompiledStyles?: string[];
+}
+
+/** The styles an edge takes from its classes for its path: all but the label styles. */
+export const edgeClassStyles = ({ cssCompiledStyles }: Pick<EdgeAnimation, 'cssCompiledStyles'>) =>
+  Object.entries(cssCompiledStyles ?? {})
+    .filter(([key]) => !isLabelStyle(key))
+    .map(([, style]) => style);
+
+/** Whether the edge animates, by its own setting or by a class that names an animation. */
+export const isAnimatedEdge = (edge: EdgeAnimation): boolean =>
+  edge.animate === true ||
+  !!edge.animation ||
+  edgeClassStyles(edge).join(';').includes('animation');
+
+/** The neo look draws the margin variant of a marker, unless the edge animates. */
+export const drawsMarginMarkers = (edge: EdgeAnimation & { look?: string }): boolean =>
+  edge.look === 'neo' && !isAnimatedEdge(edge);
+
 /**
  * Adds SVG markers to a path element based on the arrow types specified in the edge.
  *
