@@ -14,7 +14,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const db = diagObj.db as typeof XYChartDB;
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
-  const labelData = db.getXYChartData().plots[0].data.map((data) => data[1]);
+  const allPlots = db.getXYChartData().plots;
   function getDominantBaseLine(horizontalPos: TextVerticalPos) {
     return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
@@ -100,6 +100,9 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('stroke-width', (data) => data.strokeWidth);
 
         if (chartConfig.showDataLabel) {
+          const barPlotGroup = shape.groupTexts.find((t) => t.startsWith('bar-plot-'));
+          const plotIdx = barPlotGroup ? parseInt(barPlotGroup.replace('bar-plot-', ''), 10) : 0;
+          const labelData = (allPlots[plotIdx]?.data ?? allPlots[0].data).map((data) => data[1]);
           const showDataLabelOutsideBar = chartConfig.showDataLabelOutsideBar;
 
           if (chartConfig.chartOrientation === 'horizontal') {
