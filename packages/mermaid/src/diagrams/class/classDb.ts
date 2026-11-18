@@ -830,6 +830,8 @@ export class ClassDB implements DiagramDB {
     }
 
     for (const _interface of this.interfaces) {
+      const { className } = this.splitClassNameAndType(_interface.classId);
+      const parent = this.classes.get(className)?.parent;
       const interfaceNode: Node = {
         id: _interface.id,
         label: _interface.label,
@@ -837,6 +839,7 @@ export class ClassDB implements DiagramDB {
         shape: 'rect',
         cssStyles: ['opacity: 0;'],
         look: config.look,
+        parentId: hierarchical ? parent : this.resolveExplicitAncestor(parent),
       };
       nodes.push(interfaceNode);
     }
