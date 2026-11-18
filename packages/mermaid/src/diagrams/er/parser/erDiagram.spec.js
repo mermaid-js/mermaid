@@ -962,6 +962,28 @@ describe('when parsing ER diagram it...', function () {
     expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red', 'fill:#f9f']);
   });
 
+  it.each([
+    ['spaces', '  '],
+    ['a tab', '\t'],
+    ['a carriage return', '\r'],
+  ])('should end style, classDef and class lines that end with %s', function (_, ws) {
+    erDiagram.parser.parse(
+      [
+        'erDiagram',
+        'CUSTOMER ||--o{ ORDER : places',
+        `style CUSTOMER fill:#f00${ws}`,
+        `classDef foo stroke:#333${ws}`,
+        `class ORDER foo${ws}`,
+        'ORDER ||--|{ ITEM : contains',
+      ].join('\n')
+    );
+
+    expect(erDb.getEntity('CUSTOMER').cssStyles).toEqual(['fill:#f00']);
+    expect(erDb.getClasses().get('foo').styles).toEqual(['stroke:#333']);
+    expect(erDb.getEntity('ORDER').cssClasses).toBe('default foo');
+    expect(erDb.getRelationships()).toHaveLength(2);
+  });
+
   it('should be possible to assign a class to an entity', function () {
     const entityName = 'CUSTOMER';
     erDiagram.parser.parse(`erDiagram\n${entityName}\nclass ${entityName} myClass`);
