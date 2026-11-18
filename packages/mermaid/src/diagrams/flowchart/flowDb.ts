@@ -319,6 +319,10 @@ export class FlowDB implements DiagramDB {
       if (doc?.label) {
         vertex.text = doc?.label;
         vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
+        const markdownString = /^`([^`]*)`$/.exec(doc.label);
+        if (markdownString && vertex.labelType === 'markdown') {
+          vertex.text = markdownString[1];
+        }
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;

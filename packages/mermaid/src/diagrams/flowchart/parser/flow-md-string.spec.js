@@ -61,4 +61,15 @@ end`);
     expect(subgraph2.title).toBe('**Two**');
     expect(subgraph2.labelType).toBe('markdown');
   });
+  it('markdown formatting in shape data labels', function () {
+    const res = flow.parser.parse(`flowchart
+A@{ shape: rect, label: "\`The cat in **the** hat\`" }
+B@{ shape: rect, label: "The dog in the hog" }`);
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').text).toBe('The cat in **the** hat');
+    expect(vert.get('A').labelType).toBe('markdown');
+    expect(vert.get('B').text).toBe('The dog in the hog');
+  });
 });
