@@ -283,6 +283,41 @@ export const runFunc = (functionName: string, ...params: unknown[]) => {
 };
 
 /**
+ * Splits a string on the commas that are outside double-quoted substrings.
+ *
+ * Returns the same parts as `text.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)`, but in linear time.
+ * The lookahead in that expression rescans the rest of the string for every comma, which makes
+ * it quadratic in the number of commas.
+ *
+ * A comma counts as outside quotes when an even number of double quotes follows it, so a string
+ * with an unbalanced quote is split exactly as the expression above splits it.
+ *
+ * @param text - The string to split, e.g. the arguments of a `click ... call fn(...)` statement
+ * @returns The parts between the separating commas, untrimmed
+ */
+export const splitOnCommasOutsideQuotes = (text: string): string[] => {
+  let quotesAhead = 0;
+  for (const char of text) {
+    if (char === '"') {
+      quotesAhead++;
+    }
+  }
+
+  const parts: string[] = [];
+  let start = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '"') {
+      quotesAhead--;
+    } else if (text[i] === ',' && quotesAhead % 2 === 0) {
+      parts.push(text.slice(start, i));
+      start = i + 1;
+    }
+  }
+  parts.push(text.slice(start));
+  return parts;
+};
+
+/**
  * Finds the distance between two points using the Distance Formula
  *
  * @param p1 - The first point

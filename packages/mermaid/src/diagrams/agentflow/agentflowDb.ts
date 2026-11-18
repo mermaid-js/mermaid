@@ -7,7 +7,7 @@ import { isValidShape, type ShapeID } from '../../rendering-util/rendering-eleme
 import type { ClusterShapeID } from '../../rendering-util/rendering-elements/clusters.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
-import utils, { getEdgeId } from '../../utils.js';
+import utils, { getEdgeId, splitOnCommasOutsideQuotes } from '../../utils.js';
 import { validateGridPlacementCoordinates } from '../../utils/gridPlacement.js';
 import common from '../common/common.js';
 import {
@@ -938,7 +938,7 @@ You have to call mermaid.initialize.`
     let argList: string[] = [];
     if (typeof functionArgs === 'string') {
       /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
-      argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+      argList = splitOnCommasOutsideQuotes(functionArgs);
       for (let i = 0; i < argList.length; i++) {
         let item = argList[i].trim();
         /* Removes all double quotes at the start and end of an argument */
