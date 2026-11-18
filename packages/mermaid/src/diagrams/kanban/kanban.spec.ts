@@ -230,6 +230,25 @@ root
       expect(sections[0].cssClasses).toEqual('m-4 p-8');
       expect(sections[0].icon).toEqual('bomb');
     });
+    it('KNBN-38 should pass cssClasses through getData() for sections and items', function () {
+      const str = `kanban
+  id1[Todo]
+  :::hot
+    id2[Card]
+    :::urgent
+    `;
+
+      kanban.parse(str);
+
+      const data = kanban.yy.getData();
+      const sections = kanban.yy.getSections();
+
+      expect(sections[0].cssClasses).toEqual('hot');
+      const sectionNode = data.nodes.find((n: KanbanNode) => n.id === 'id1');
+      expect(sectionNode?.cssClasses).toEqual('hot');
+      const itemNode = data.nodes.find((n: KanbanNode) => n.id === 'id2');
+      expect(itemNode?.cssClasses).toEqual('urgent');
+    });
   });
   describe('descriptions', function () {
     it('KNBN-17 should be possible to use node syntax in the descriptions', function () {
