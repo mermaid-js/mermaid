@@ -6,25 +6,25 @@ editLink: false
 
 # Input
 
-An input says what starts a flow: a schedule or a webhook.
+An input says what starts a flow: a schedule.
 
 ## Syntax
 
 ```text
-id[/"Label"/]@{ trigger: "…" }
-id["Label"]@{ shape: input, trigger: "…" }
+id[/"Label"/]@{ trigger: "schedule", cron: "…" }
+id["Label"]@{ shape: input, trigger: "schedule", at: "…" }
 ```
 
 ## Settings
 
 | Setting    | Required                                  | Value                                               | Example                     |
 | ---------- | ----------------------------------------- | --------------------------------------------------- | --------------------------- |
-| `trigger`  | yes                                       | one of `"schedule"`, `"webhook"`                    | `trigger: "webhook"`        |
+| `trigger`  | yes                                       | `"schedule"`                                        | `trigger: "schedule"`       |
 | `cron`     | a schedule needs `cron` or `at`, not both | text in crontab format                              | `cron: "0 9 * * 1-5"`       |
 | `at`       | a schedule needs `cron` or `at`, not both | a date and 24-hour time, written `YYYY-MM-DDTHH:MM` | `at: "2026-12-24T09:00"`    |
 | `timezone` | no                                        | a time zone name                                    | `timezone: "Europe/Madrid"` |
 
-`cron`, `at` and `timezone` belong to a schedule; a webhook takes no other settings. `cron` repeats and `at` runs once. Both are read in `timezone`, which is UTC when you leave it out. `chron` is accepted as another spelling of `cron`. [Triggers](../triggers.md) covers each trigger and the `cron` format in detail.
+`cron` repeats and `at` runs once. Both are read in `timezone`, which is UTC when you leave it out. [Triggers](../triggers.md) covers the schedule trigger and the `cron` format in detail.
 
 ## Where it can go
 
@@ -43,11 +43,11 @@ An input can start any flow, even one inside another flow. One input can start s
 - An input only has arrows to flows. → [`EDGE_KIND_INVALID`](../diagnostics.md#edge_kind_invalid) (error)
 - Nothing can point at an input. → [`EDGE_KIND_INVALID`](../diagnostics.md#edge_kind_invalid) (error)
 - An input has a `trigger`. → [`METADATA_REQUIRED`](../diagnostics.md#metadata_required) (error)
-- The trigger is `"schedule"` or `"webhook"`. → [`METADATA_INVALID_VALUE`](../diagnostics.md#metadata_invalid_value) (error)
 - A schedule has a `cron` or an `at`. → [`METADATA_REQUIRED`](../diagnostics.md#metadata_required) (error)
-- A schedule doesn't have both. → [`METADATA_KEY_CONFLICT`](../diagnostics.md#metadata_key_conflict) (error)
-- `cron` is valid crontab, `at` is a real date and time, and `timezone` is a known time zone. → [`METADATA_INVALID_VALUE`](../diagnostics.md#metadata_invalid_value) (error)
-- A webhook takes no `cron`, `at` or `timezone`, and no input takes any other setting. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
+- A schedule doesn't have both `cron` and `at`. → [`METADATA_KEY_CONFLICT`](../diagnostics.md#metadata_key_conflict) (error)
+- An input takes no settings other than `trigger`, `cron`, `at` and `timezone`. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
+- The trigger is `"schedule"`. → [`METADATA_INVALID_VALUE`](../diagnostics.md#metadata_invalid_value) (error)
+- `cron` is text in crontab format, `at` is text naming a real date and time, and `timezone` is text naming a known time zone. → [`METADATA_INVALID_VALUE`](../diagnostics.md#metadata_invalid_value) (error)
 - An input's id is used by no other node. → [`ID_DUPLICATE`](../diagnostics.md#id_duplicate) (error)
 
 ## Example
@@ -56,19 +56,17 @@ An input can start any flow, even one inside another flow. One input can start s
 
 ```mermaid-example
 agentflow TB
-  new_issue[/"New issue"/]@{ trigger: "webhook" }
   weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", cron: "0 9 * * 1-5", timezone: "Europe/Madrid" }
   launch["Launch day"]@{ shape: input, trigger: "schedule", at: "2026-12-24T09:00" }
 
   flow triage["Issue triage"]
-    read["Read issues"]@{ instruction: "Summarise the new issue, or every open issue on a scheduled run." }
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
   end
 
   flow announce["Announce"]
     post["Post"]@{ instruction: "Post the launch announcement." }
   end
 
-  new_issue --> triage
   weekday --> triage
   launch --> announce
 ```
@@ -81,13 +79,13 @@ An arrow from an input straight to a task.
 
 ```mermaid-example
 agentflow TB
-  new_issue[/"New issue"/]@{ trigger: "webhook" }
+  weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", cron: "0 9 * * 1-5" }
 
   flow triage["Issue triage"]
-    read["Read issue"]@{ instruction: "Summarise the new issue." }
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
   end
 
-  new_issue --> read
+  weekday --> read
 ```
 
-> Input "new_issue" can only start a flow, but "read" is a task. Point the arrow at a flow instead.
+> Input "weekday" can only start a flow, but "read" is a task. Point the arrow at a flow instead.

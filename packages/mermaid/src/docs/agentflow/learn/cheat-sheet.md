@@ -10,13 +10,13 @@ Every shape, arrow and setting on one page.
 
 ## Shapes
 
-| Shape                               | Write it                                                   | Lives                       |
-| ----------------------------------- | ---------------------------------------------------------- | --------------------------- |
-| [Flow](../shapes/flow.md)           | `flow id["Title"]` … `end`                                 | top level, or inside a flow |
-| [Task](../shapes/task.md)           | `id["Label"]`                                              | inside a flow               |
-| [Decision](../shapes/decision.md)   | `id{"Question?"}` or `id["Question?"]@{ shape: decision }` | inside a flow               |
-| [Input](../shapes/input.md)         | `id[/"Label"/]` or `id["Label"]@{ shape: input }`          | top level of the workflow   |
-| [Connector](../shapes/connector.md) | `connector id["Label"]`                                    | top level of the workflow   |
+| Shape                               | Write it                                                   | Sits in                                     |
+| ----------------------------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| [Flow](../shapes/flow.md)           | `flow id["Title"]` … `end`                                 | top level of the workflow, or inside a flow |
+| [Task](../shapes/task.md)           | `id["Label"]`                                              | inside a flow                               |
+| [Decision](../shapes/decision.md)   | `id{"Question?"}` or `id["Question?"]@{ shape: decision }` | inside a flow                               |
+| [Input](../shapes/input.md)         | `id[/"Label"/]` or `id["Label"]@{ shape: input }`          | top level of the workflow                   |
+| [Connector](../shapes/connector.md) | `connector id["Label"]`                                    | top level of the workflow                   |
 
 ## Arrows
 
@@ -37,14 +37,14 @@ Settings go in `@{ … }` after the node, or on their own line as `id@{ … }`.
 | task      | `instruction` | yes                                       | text                                                               |
 | decision  | `instruction` | no                                        | text                                                               |
 | branch    | `instruction` | no                                        | text, set through an arrow id: `d e1@-- yes --> b` then `e1@{ … }` |
-| input     | `trigger`     | yes                                       | one of `"schedule"`, `"webhook"`                                   |
+| input     | `trigger`     | yes                                       | `"schedule"`                                                       |
 | input     | `cron`        | a schedule needs `cron` or `at`, not both | text in crontab format, such as `"0 9 * * 1-5"`                    |
-| input     | `at`          | a schedule needs `cron` or `at`, not both | a date and time, such as `"2026-12-24T09:00"`                      |
-| input     | `timezone`    | no, schedule only                         | a time zone name, such as `"UTC"`                                  |
+| input     | `at`          | a schedule needs `cron` or `at`, not both | a date and 24-hour time, such as `"2026-12-24T09:00"`              |
+| input     | `timezone`    | no                                        | a time zone name, such as `"UTC"`                                  |
 | connector | `protocol`    | yes                                       | `"mcp"`                                                            |
 | connector | `url`         | yes                                       | a full address, such as `"https://example.com/mcp"`                |
 
-An instruction can't hold an unfilled placeholder such as `<REPO>`. Each input trigger and its settings are in [Triggers](../triggers.md).
+An instruction can't hold an unfilled placeholder such as `<REPO>`. The schedule trigger and the `cron` format are in [Triggers](../triggers.md).
 
 ## A complete workflow
 

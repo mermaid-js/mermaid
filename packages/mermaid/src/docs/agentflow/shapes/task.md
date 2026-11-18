@@ -38,10 +38,10 @@ A task sits inside a flow and holds nothing.
 - A task sits inside a flow. → [`TASK_OUTSIDE_FLOW`](../diagnostics.md#task_outside_flow) (error)
 - A task has an instruction that isn't blank. → [`INSTRUCTION_MISSING`](../diagnostics.md#instruction_missing) (error)
 - A task with an empty label still needs an instruction. → [`TASK_MISSING_LABEL`](../diagnostics.md#task_missing_label) (error)
-- The instruction has no unfilled placeholder such as `<REPO>`. → [`INSTRUCTION_PLACEHOLDER`](../diagnostics.md#instruction_placeholder) (error)
-- A task's id is used by no other node. → [`ID_DUPLICATE`](../diagnostics.md#id_duplicate) (error)
 - A task takes only the `instruction` setting. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
 - The instruction is text. → [`METADATA_INVALID_VALUE`](../diagnostics.md#metadata_invalid_value) (error)
+- The instruction has no unfilled placeholder such as `<REPO>`. → [`INSTRUCTION_PLACEHOLDER`](../diagnostics.md#instruction_placeholder) (error)
+- A task's id is used by no other node. → [`ID_DUPLICATE`](../diagnostics.md#id_duplicate) (error)
 
 ## Example
 

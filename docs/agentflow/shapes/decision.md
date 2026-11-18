@@ -45,10 +45,10 @@ A decision sits inside a flow and holds nothing.
 - No two branches share a label. → [`DECISION_BRANCH_AMBIGUOUS`](../diagnostics.md#decision_branch_ambiguous) (warning)
 - No two branches go to the same node. → [`DECISION_BRANCH_SHARED_TARGET`](../diagnostics.md#decision_branch_shared_target) (error)
 - Every loop can end: a decision in it has a branch that leaves the loop, and every loop inside it, however small, takes at least one decision branch. → [`CYCLE_NO_EXIT`](../diagnostics.md#cycle_no_exit) (error)
-- A decision's id is used by no other node. → [`ID_DUPLICATE`](../diagnostics.md#id_duplicate) (error)
 - A decision takes only the `instruction` setting. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
 - The instruction is text. → [`METADATA_INVALID_VALUE`](../diagnostics.md#metadata_invalid_value) (error)
 - The instruction has no unfilled placeholder such as `<REPO>`. → [`INSTRUCTION_PLACEHOLDER`](../diagnostics.md#instruction_placeholder) (error)
+- A decision's id is used by no other node. → [`ID_DUPLICATE`](../diagnostics.md#id_duplicate) (error)
 
 ## Example
 

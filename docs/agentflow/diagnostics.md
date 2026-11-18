@@ -12,7 +12,7 @@
 
 # Diagnostics
 
-Every error and warning the checker can show. An error means the workflow can't run as written. A warning points at something that runs but is likely a mistake.
+Every error and warning Mermaid Flow can show for a workflow. An error means the workflow can't run as written. A warning points at something that runs but is likely a mistake.
 
 | Id                                                                | Severity | Applies to                  | In one line                                                  |
 | ----------------------------------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------ |
@@ -134,22 +134,22 @@ agentflow TB
 ```mermaid
 agentflow TB
   flow triage["Issue triage"]
-    new_issue[/"New issue"/]@{ trigger: "webhook" }
-    read["Read issue"]@{ instruction: "Summarise the new issue." }
+    weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", cron: "0 9 * * 1-5" }
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
   end
 ```
 
 ```mermaid-example
 agentflow TB
   flow triage["Issue triage"]
-    new_issue[/"New issue"/]@{ trigger: "webhook" }
-    read["Read issue"]@{ instruction: "Summarise the new issue." }
+    weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", cron: "0 9 * * 1-5" }
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
   end
 ```
 
-> Input "new_issue" is inside flow "triage", but inputs belong at the top level of the workflow. Move it out of the flow.
+> Input "weekday" is inside flow "triage", but inputs belong at the top level of the workflow. Move it out of the flow.
 
-**Fix.** Move the input outside every flow, and point an arrow from it to the flow: `new_issue --> triage`.
+**Fix.** Move the input outside every flow, and point an arrow from it to the flow: `weekday --> triage`.
 
 **Related.** [`CONNECTOR_NOT_ROOT`](#connector_not_root), [`EDGE_KIND_INVALID`](#edge_kind_invalid)
 
@@ -1191,34 +1191,6 @@ agentflow TB
 
 > Task "summarise" has an unknown setting "promt". Check the spelling, or remove it.
 
-On an input, a schedule setting with a webhook trigger gets its own wording:
-
-<!-- expect: METADATA_UNKNOWN_KEY -->
-
-```mermaid
-agentflow TB
-  new_issue[/"New issue"/]@{ trigger: "webhook", cron: "0 9 * * 1-5" }
-
-  flow triage["Issue triage"]
-    read["Read issue"]@{ instruction: "Summarise the new issue." }
-  end
-
-  new_issue --> triage
-```
-
-```mermaid-example
-agentflow TB
-  new_issue[/"New issue"/]@{ trigger: "webhook", cron: "0 9 * * 1-5" }
-
-  flow triage["Issue triage"]
-    read["Read issue"]@{ instruction: "Summarise the new issue." }
-  end
-
-  new_issue --> triage
-```
-
-> Input "new_issue" has a "cron" setting, but only a "schedule" trigger uses it. Remove it, or set the trigger to "schedule".
-
 **Fix.** Fix the spelling, or remove the setting. Each [shape page](./shapes/index.md) lists the settings it takes.
 
 **Related.** [`METADATA_INVALID_VALUE`](#metadata_invalid_value)
@@ -1309,7 +1281,7 @@ agentflow TB
 
 **error** · input · active
 
-**Why.** A schedule runs either on repeat (`cron`) or once (`at`), not both. Writing `chron` next to `cron` sets the same thing twice.
+**Why.** A schedule runs either on repeat (`cron`) or once (`at`), not both.
 
 <!-- expect: METADATA_KEY_CONFLICT -->
 

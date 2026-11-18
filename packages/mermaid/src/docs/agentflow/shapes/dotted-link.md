@@ -39,7 +39,7 @@ A dotted link is not part of the order of steps. The task can sit in any flow.
 - A dotted link joins a task and a connector, nothing else. → [`EDGE_KIND_INVALID`](../diagnostics.md#edge_kind_invalid) (error)
 - Both ends are nodes that exist. → [`REF_UNRESOLVED`](../diagnostics.md#ref_unresolved) (error)
 - The same task and connector are linked once. → [`CONNECTOR_BINDING_DUPLICATE`](../diagnostics.md#connector_binding_duplicate) (warning)
-- Every connector has at least one link. → [`CONNECTOR_UNBOUND`](../diagnostics.md#connector_unbound) (error)
+- A connector is linked to at least one other node, which must be a task. → [`CONNECTOR_UNBOUND`](../diagnostics.md#connector_unbound) (error); a link from anything but a task is [`EDGE_KIND_INVALID`](../diagnostics.md#edge_kind_invalid) (error)
 
 ## Example
 

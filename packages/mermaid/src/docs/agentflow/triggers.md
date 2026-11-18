@@ -6,12 +6,7 @@ editLink: false
 
 # Triggers
 
-A trigger is what starts a flow. You set it on an [input](./shapes/input.md) with `trigger: "…"`.
-
-| Trigger      | Starts the flow                                  | Settings                                   |
-| ------------ | ------------------------------------------------ | ------------------------------------------ |
-| `"schedule"` | on repeat (`cron`), or once at a set time (`at`) | exactly one of `cron` and `at`; `timezone` |
-| `"webhook"`  | on a webhook                                     | none                                       |
+A trigger is what starts a flow. You set it on an [input](./shapes/input.md) with `trigger: "schedule"`. A schedule is the only trigger: it starts the flow on repeat, or once at a set time.
 
 ## Schedule
 
@@ -31,9 +26,9 @@ A schedule takes exactly one of `cron` and `at`. You can add a `timezone`.
 
 Names can be in any case. Each field is one of these, or a comma list of them:
 
-- `*`, any value;
-- a value, such as `9`;
-- a range, such as `9-17` or `MON-FRI`.
+- `*` matches any value.
+- A value, such as `9`, matches that value.
+- A range from a lower value to a higher one, such as `9-17` or `MON-FRI`, matches every value in it. `SAT-SUN` isn't valid, because `SUN` counts as 0: write `6-7` instead.
 
 `*` and a range can take a step: `*/15` is every 15th minute, and `9-17/2` every second hour from 9 to 17.
 
@@ -58,7 +53,7 @@ agentflow TB
 
 ### `at`: run once
 
-`at` runs the flow once. Write a date and a 24-hour time as `YYYY-MM-DDTHH:MM`. The date has to exist, so `2026-02-30T09:00` is not valid.
+`at` runs the flow once. Write a date and a 24-hour time as `YYYY-MM-DDTHH:MM`. The date has to exist, so `2026-02-30T09:00` isn't valid.
 
 <!-- expect: valid -->
 
@@ -90,50 +85,14 @@ agentflow TB
   weekday --> triage
 ```
 
-### `chron`
-
-`chron` is accepted as another spelling of `cron`. It takes the same values. Don't write both.
-
-<!-- expect: valid -->
-
-```mermaid-example
-agentflow TB
-  weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", chron: "0 9 * * 1-5" }
-
-  flow triage["Issue triage"]
-    read["Read issues"]@{ instruction: "Summarise every open issue." }
-  end
-
-  weekday --> triage
-```
-
-## Webhook
-
-A webhook takes no other settings: no `cron`, `at` or `timezone`.
-
-<!-- expect: valid -->
-
-```mermaid-example
-agentflow TB
-  new_issue[/"New issue"/]@{ trigger: "webhook" }
-
-  flow triage["Issue triage"]
-    read["Read issue"]@{ instruction: "Summarise the new issue." }
-  end
-
-  new_issue --> triage
-```
-
 ## Rules
 
 - An input has a `trigger`. → [`METADATA_REQUIRED`](./diagnostics.md#metadata_required) (error)
-- The trigger is `"schedule"` or `"webhook"`. → [`METADATA_INVALID_VALUE`](./diagnostics.md#metadata_invalid_value) (error)
 - A schedule has a `cron` or an `at`. → [`METADATA_REQUIRED`](./diagnostics.md#metadata_required) (error)
 - A schedule doesn't have both `cron` and `at`. → [`METADATA_KEY_CONFLICT`](./diagnostics.md#metadata_key_conflict) (error)
-- An input doesn't have both `chron` and `cron`. → [`METADATA_KEY_CONFLICT`](./diagnostics.md#metadata_key_conflict) (error)
-- `cron` and `chron` are text in crontab format, `at` is text naming a real date and time, and `timezone` is text naming a known time zone. → [`METADATA_INVALID_VALUE`](./diagnostics.md#metadata_invalid_value) (error)
-- A webhook takes no `cron`, `chron`, `at` or `timezone`. → [`METADATA_UNKNOWN_KEY`](./diagnostics.md#metadata_unknown_key) (warning)
-- An input takes no settings other than `trigger`, `cron`, `chron`, `at` and `timezone`. → [`METADATA_UNKNOWN_KEY`](./diagnostics.md#metadata_unknown_key) (warning)
+- An input takes no settings other than `trigger`, `cron`, `at` and `timezone`. → [`METADATA_UNKNOWN_KEY`](./diagnostics.md#metadata_unknown_key) (warning)
+- The trigger is `"schedule"`. → [`METADATA_INVALID_VALUE`](./diagnostics.md#metadata_invalid_value) (error)
+- `cron` is text in crontab format, `at` is text naming a real date and time, and `timezone` is text naming a known time zone. → [`METADATA_INVALID_VALUE`](./diagnostics.md#metadata_invalid_value) (error)
 
 ## Common mistakes
 
@@ -152,7 +111,7 @@ agentflow TB
   weekday --> triage
 ```
 
-> Input "weekday" is missing its "trigger" setting. Add one: "schedule" or "webhook".
+> Input "weekday" is missing its "trigger" setting. Add trigger: "schedule".
 
 A schedule with neither `cron` nor `at`.
 
@@ -171,23 +130,6 @@ agentflow TB
 
 > Input "weekday" is missing its schedule, which a "schedule" trigger needs. Add "cron" to repeat, such as "0 9 \* \* 1-5", or "at" to run once, such as "2026-12-24T09:00".
 
-`chron` and `cron` together.
-
-<!-- expect: METADATA_KEY_CONFLICT -->
-
-```mermaid-example
-agentflow TB
-  weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", chron: "0 9 * * 1-5", cron: "0 9 * * 1-5" }
-
-  flow triage["Issue triage"]
-    read["Read issues"]@{ instruction: "Summarise every open issue." }
-  end
-
-  weekday --> triage
-```
-
-> Input "weekday" has both a "chron" and a "cron" setting. Remove "chron"; "cron" replaces it.
-
 A crontab shortcut instead of the five fields.
 
 <!-- expect: METADATA_INVALID_VALUE -->
@@ -205,19 +147,19 @@ agentflow TB
 
 > The "cron" setting on input "daily" isn't valid: "@daily" is not a valid schedule. Use the crontab format, such as "0 9 \* \* 1-5".
 
-A time zone on a webhook. Only a schedule is read in a time zone.
+The setting name as the trigger. The trigger is always `"schedule"`; `cron` is a setting next to it.
 
-<!-- expect: METADATA_UNKNOWN_KEY -->
+<!-- expect: METADATA_INVALID_VALUE -->
 
 ```mermaid-example
 agentflow TB
-  new_issue[/"New issue"/]@{ trigger: "webhook", timezone: "Europe/Madrid" }
+  weekday[/"Weekdays at 09:00"/]@{ trigger: "cron" }
 
   flow triage["Issue triage"]
-    read["Read issue"]@{ instruction: "Summarise the new issue." }
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
   end
 
-  new_issue --> triage
+  weekday --> triage
 ```
 
-> Input "new_issue" has a "timezone" setting, but only a "schedule" trigger uses it. Remove it, or set the trigger to "schedule".
+> The "trigger" setting on input "weekday" can't be "cron". Use "schedule".

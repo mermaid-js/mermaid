@@ -40,10 +40,10 @@ agentflow TB
 
 The decision chooses a branch by its label, so:
 
-- every branch needs a label,
-- each label is different,
-- each branch goes to a different node,
-- and a decision has at least two branches.
+- Every branch needs a label.
+- Each label is different.
+- Each branch goes to a different node.
+- A decision has at least two branches.
 
 A branch with no label can't be chosen.
 

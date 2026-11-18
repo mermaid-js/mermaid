@@ -12,21 +12,16 @@ An input says what starts a flow. Write it with slashes, `id[/"Label"/]`, put it
 
 ```mermaid-example
 agentflow TB
-  new_issue[/"New issue"/]@{ trigger: "webhook" }
   weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", cron: "0 9 * * 1-5" }
 
   flow triage["Issue triage"]
-    read["Read issues"]@{ instruction: "Summarise the new issue, or every open issue on a scheduled run." }
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
   end
 
-  new_issue --> triage
   weekday --> triage
 ```
 
-Every input has a `trigger`:
-
-- `"webhook"` takes no other settings.
-- `"schedule"` starts the flow at set times. It takes exactly one of `cron` or `at`, and an optional `timezone`.
+Every input has a `trigger`, and the trigger is `"schedule"`: it starts the flow at set times. A schedule takes exactly one of `cron` and `at`, and an optional `timezone`.
 
 `cron` repeats, written in crontab format: minute, hour, day of month, month, day of week. `at` runs once, at a date and 24-hour time written `YYYY-MM-DDTHH:MM`. [Triggers](../triggers.md) has the full details.
 

@@ -49,12 +49,12 @@ A flow sits at the top level of the workflow or inside another flow, and holds t
 ## Rules
 
 - A flow holds at least one task or decision of its own. → [`FLOW_EMPTY`](../diagnostics.md#flow_empty) (warning)
-- A flow's id is used by no other node. → [`ID_DUPLICATE`](../diagnostics.md#id_duplicate) (error)
 - An arrow can't point at a node inside a flow from outside that flow. Point it at the flow. An input can start any flow, even one inside another flow. → [`REF_OUT_OF_SCOPE`](../diagnostics.md#ref_out_of_scope) (error)
 - When a flow has an arrow to what comes next, its last step has no arrow of its own out of the flow. → [`FLOW_CONFLICTING_TRANSITIONS`](../diagnostics.md#flow_conflicting_transitions) (error)
 - A flow takes only the `model` and `instruction` settings. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
 - Each setting is text. → [`METADATA_INVALID_VALUE`](../diagnostics.md#metadata_invalid_value) (error)
 - The instruction has no unfilled placeholder such as `<REPO>`. → [`INSTRUCTION_PLACEHOLDER`](../diagnostics.md#instruction_placeholder) (error)
+- A flow's id is used by no other node. → [`ID_DUPLICATE`](../diagnostics.md#id_duplicate) (error)
 
 ## Example
 

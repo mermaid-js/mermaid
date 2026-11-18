@@ -49,12 +49,12 @@ An arrow never touches a connector. Use a [dotted link](./dotted-link.md) for th
 - An arrow doesn't point at a node inside a flow from outside that flow. An input's arrow is the exception: it can start any flow. → [`REF_OUT_OF_SCOPE`](../diagnostics.md#ref_out_of_scope) (error)
 - Only a branch has a label. → [`EDGE_LABEL_UNSUPPORTED`](../diagnostics.md#edge_label_unsupported) (error)
 - Only a branch has an instruction. → [`EDGE_INSTRUCTION_UNSUPPORTED`](../diagnostics.md#edge_instruction_unsupported) (error)
-- A branch takes only the `instruction` setting. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
-- The instruction has no unfilled placeholder such as `<REPO>`. → [`INSTRUCTION_PLACEHOLDER`](../diagnostics.md#instruction_placeholder) (error)
 - The same arrow isn't drawn twice. → [`EDGE_REDUNDANT`](../diagnostics.md#edge_redundant) (warning)
 - An arrow doesn't skip a step its source already reaches. → [`EDGE_SHORTCUT`](../diagnostics.md#edge_shortcut) (error)
 - Every loop can end: a decision in it has a branch that leaves the loop, and every loop inside it, however small, takes at least one decision branch. → [`CYCLE_NO_EXIT`](../diagnostics.md#cycle_no_exit) (error)
 - A task in a loop doesn't have an arrow that leaves the loop. → [`CYCLE_TASK_EXIT`](../diagnostics.md#cycle_task_exit) (warning)
+- A branch takes only the `instruction` setting. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
+- The instruction has no unfilled placeholder such as `<REPO>`. → [`INSTRUCTION_PLACEHOLDER`](../diagnostics.md#instruction_placeholder) (error)
 
 ## Example
 
