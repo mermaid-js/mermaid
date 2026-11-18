@@ -3,6 +3,8 @@ import { afterAll, beforeAll, it, describe, expect } from 'vitest';
 import { db } from './db.js';
 import { parser } from './parser.js';
 import { mermaidAPI } from '../../mermaidAPI.js';
+import { getConfig } from '../../config.js';
+import { contrastRatio } from '../../rendering-util/rendering-elements/edgeStepAnimation.js';
 
 const { clear } = db;
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
@@ -130,4 +132,48 @@ data ItemAddedData
     tf 10 readmodel ReadModel2`;
     await expect(parser.parse(str)).resolves.not.toThrow();
   });
+});
+
+describe('eventmodeling rendering', () => {
+  afterAll(() => {
+    mermaidAPI.initialize({ theme: 'default' });
+  });
+
+  it('should render the text of a box with the text color of the theme', async () => {
+    mermaidAPI.initialize({ theme: 'dark' });
+    const { svg } = await mermaidAPI.render(
+      'eventmodeling-dark',
+      `eventmodeling
+    tf 01 ui CartUI`
+    );
+    const box = new DOMParser().parseFromString(svg, 'text/html').querySelector('.em-box span');
+    const expected = document.createElement('span');
+    expected.style.color = getConfig().themeVariables.textColor;
+    expect((box as HTMLElement).style.color).toBe(expected.style.color);
+  });
+
+  it.each(['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'] as const)(
+    'should keep the text of every box readable with the %s theme',
+    async (theme) => {
+      mermaidAPI.initialize({ theme });
+      const { svg } = await mermaidAPI.render(
+        `eventmodeling-${theme}`,
+        `eventmodeling
+    tf 01 ui Screen
+    tf 02 cmd Command
+    tf 03 evt Event
+    tf 04 rmo Model
+    tf 05 pcr Processor`
+      );
+      const rects = new DOMParser()
+        .parseFromString(svg, 'text/html')
+        .querySelectorAll('.em-box rect');
+      const fills = [...rects].map((rect) => rect.getAttribute('fill')!);
+      const { textColor } = getConfig().themeVariables;
+      expect(fills).toHaveLength(5);
+      for (const fill of fills) {
+        expect(contrastRatio(textColor, fill)).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  );
 });
