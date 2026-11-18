@@ -334,6 +334,13 @@ class Theme {
       blockFillColor: this.background,
     };
 
+    /* treeView */
+    this.treeView = {
+      ...this.treeView,
+      labelColor: this.treeView?.labelColor || this.textColor,
+      lineColor: this.treeView?.lineColor || this.lineColor,
+    };
+
     /* radar */
     this.radar = {
       axisColor: this.radar?.axisColor || this.lineColor,
