@@ -9,6 +9,7 @@ export const betaSyntaxPages = new Set([
   'radar',
   'railroad',
   'swimlanes',
+  'timing',
   'treeView',
   'usecase',
   'venn',

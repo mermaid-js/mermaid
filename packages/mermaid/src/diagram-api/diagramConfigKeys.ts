@@ -8,6 +8,7 @@ const DIAGRAM_CONFIG_KEY_ALIASES: Record<string, string> = {
   'flowchart-elk': 'flowchart',
   classDiagram: 'class',
   stateDiagram: 'state',
+  timingDiagram: 'timing',
   xychart: 'xyChart',
   railroadAbnf: 'railroad',
   railroadEbnf: 'railroad',
