@@ -88,7 +88,7 @@ start
   ;
 
 chartConfig
-  : CHART_ORIENTATION                                           { yy.setOrientation($1); }
+  : CHART_ORIENTATION                                           { yy.setOrientation($1.toLowerCase()); }
   ;
 
 document
