@@ -164,7 +164,7 @@ does it for that type alone. `layout` is a top-level option, so it applies to ev
 
 Every diagram starts with the `agentflow` keyword, optionally followed by a direction — `TB`, `TD`, `BT`, `LR`, or `RL`.
 
-The `agentflow` keyword is available from v\<MERMAID_RELEASE_VERSION>. Earlier versions only accept `agentflow-beta`, which still works as an alias.
+The `agentflow` keyword is available from v12.3.0. Earlier versions only accept `agentflow-beta`, which still works as an alias.
 
 ```txt
 agentflow LR
