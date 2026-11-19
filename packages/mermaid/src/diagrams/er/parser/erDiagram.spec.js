@@ -572,12 +572,59 @@ describe('when parsing ER diagram it...', function () {
     expect(rels.length).toBe(2);
   });
 
-  it('should limit the number of relationships between the same two entities', function () {
-    /* TODO */
+  it('should omit repeated relationships in either entity order (issue #1541)', function () {
+    erDiagram.parser.parse(`erDiagram
+      CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+      CUSTOMER ||--o{ ORDER : places
+      CUSTOMER ||--o{ INVOICE : "liable for"
+      CUSTOMER ||--o{ INVOICE : "liable for"
+      INVOICE }o--|| CUSTOMER : "liable for"
+      CUSTOMER ||--o{ INVOICE : "liable for also"
+    `);
+
+    const relationships = erDb.getRelationships();
+    expect(relationships).toHaveLength(4);
+    expect(
+      relationships.filter((relationship) => relationship.roleA === 'liable for')
+    ).toHaveLength(1);
+    expect(erDb.getData().edges).toHaveLength(4);
   });
 
-  it('should not allow multiple relationships between the same two entities unless the roles are different', function () {
-    /* TODO */
+  it.each([
+    ['the same order', 'A ||--o{ B : has', 1],
+    ['the reverse order', 'B }o--|| A : has', 1],
+    ['a different role', 'B }o--|| A : owns', 2],
+    ['a different cardinality', 'A ||--|{ B : has', 2],
+    ['a different identification', 'A ||..o{ B : has', 2],
+    ['unequal cardinalities in reverse order', 'B ||--o{ A : has', 2],
+    ['different entities', 'A ||--o{ C : has', 2],
+  ])('should preserve relationship semantics with %s', (_description, line, count) => {
+    erDiagram.parser.parse(`erDiagram
+      A ||--o{ B : has
+      ${line}
+    `);
+
+    expect(erDb.getRelationships()).toHaveLength(count);
+    expect(erDb.getData().edges).toHaveLength(count);
+  });
+
+  it('should omit a repeated recursive relationship with reversed cardinalities', function () {
+    erDiagram.parser.parse(`erDiagram
+      PERSON ||--o{ PERSON : manages
+      PERSON }o--|| PERSON : manages
+    `);
+
+    expect(erDb.getRelationships()).toHaveLength(1);
+  });
+
+  it('should accept relationships again after clearing the diagram', function () {
+    const diagram = 'erDiagram\nA ||--o{ B : has';
+    erDiagram.parser.parse(diagram);
+    erDb.clear();
+    erDiagram.parser.parse(diagram);
+
+    expect(erDb.getRelationships()).toHaveLength(1);
+    expect(erDb.getData().edges).toHaveLength(1);
   });
 
   it('should handle only-one-to-one-or-more relationships', function () {
