@@ -30,3 +30,49 @@ describe('layered renderer: measuring', () => {
     expect(defined.measure).toHaveBeenCalledWith(data, context, { unwrapGroupLabels: true });
   });
 });
+
+// Issue #8821: subgraphs are painted in turn, each one's filled box over what came before, so a
+// subgraph listed after the ones inside it would hide them.
+describe('layered renderer: painting subgraphs', () => {
+  const item = (id: string, isGroup: boolean, parentId?: string) => ({ id, isGroup, parentId });
+  const order = (nodes: ReturnType<typeof item>[]): string[] => {
+    const getNodes = defined.definition!.paintOptions?.getNodes;
+    expect(getNodes).toBeDefined();
+    return [...getNodes!({ nodes, edges: [] } as never, {} as never)].map((n) => n.id);
+  };
+
+  it('paints each subgraph before the subgraphs inside it', () => {
+    // As flowchart lists `O` holds `A` holds `B`, declared B, A, then O.
+    const painted = order([
+      item('A', true, 'O'),
+      item('B', true, 'A'),
+      item('O', true),
+      item('b', false, 'A'),
+      item('a', false, 'A'),
+      item('c', false, 'B'),
+    ]);
+
+    expect(painted.indexOf('O')).toBeLessThan(painted.indexOf('A'));
+    expect(painted.indexOf('A')).toBeLessThan(painted.indexOf('B'));
+    expect(painted).toHaveLength(6);
+  });
+
+  it('keeps the given order otherwise', () => {
+    expect(
+      order([
+        item('x', false),
+        item('P', true),
+        item('y', false, 'P'),
+        item('Q', true),
+        item('R', true, 'P'),
+        item('z', false),
+      ])
+    ).toEqual(['P', 'Q', 'R', 'x', 'y', 'z']);
+  });
+
+  it('paints a subgraph whose parent is not a subgraph at the top, and stops on a loop', () => {
+    expect(order([item('A', true, 'B'), item('B', true, 'A'), item('C', true, 'missing')])).toEqual(
+      ['C', 'A', 'B']
+    );
+  });
+});
