@@ -334,6 +334,73 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
+  it('should handle style definitions selecting links by their text', function () {
+    flow.parser.parse(`graph TD
+    A -- Success --> B
+    A -- Failure --> C
+    B -- Success --> D
+    linkStyle "Success" stroke:red`);
+
+    const edges = flow.parser.yy.getData().edges;
+
+    expect(edges[0].style).toEqual(['stroke:red', 'fill:none']);
+    expect(edges[1].style).toEqual([]);
+    expect(edges[2].style).toEqual(['stroke:red', 'fill:none']);
+  });
+
+  it('should handle style definitions selecting links by text containing spaces', function () {
+    flow.parser.parse(`graph TD
+    A -->|Not found| B
+    A -- "Found it" --> C
+    linkStyle "Not found" stroke:red
+    linkStyle "Found it" stroke:green,stroke-width:2px`);
+
+    const edges = flow.parser.yy.getData().edges;
+
+    expect(edges[0].style).toEqual(['stroke:red', 'fill:none']);
+    expect(edges[1].style).toEqual(['stroke:green', 'stroke-width:2px', 'fill:none']);
+  });
+
+  it('should give numbered style definitions precedence over ones selecting links by text', function () {
+    flow.parser.parse(`graph TD
+    A -- Success --> B
+    B -- Success --> C
+    C -- Success --> D
+    linkStyle 0 stroke:blue
+    linkStyle "Success" stroke:red
+    linkStyle 2 stroke:green`);
+
+    const edges = flow.parser.yy.getData().edges;
+
+    expect(edges[0].style).toEqual(['stroke:blue', 'fill:none']);
+    expect(edges[1].style).toEqual(['stroke:red', 'fill:none']);
+    expect(edges[2].style).toEqual(['stroke:green', 'fill:none']);
+  });
+
+  it('should combine default styles with style definitions selecting links by text', function () {
+    flow.parser.parse(`graph TD
+    A -- Success --> B
+    A -- Failure --> C
+    linkStyle default stroke-width:2px
+    linkStyle "Success" stroke:red`);
+
+    const edges = flow.parser.yy.getData().edges;
+
+    expect(edges[0].style).toEqual(['stroke-width:2px', 'stroke:red', 'fill:none']);
+    expect(edges[1].style).toEqual(['stroke-width:2px']);
+  });
+
+  it('should ignore style definitions selecting a link text that no link has', function () {
+    flow.parser.parse(`graph TD
+    A -- Success --> B
+    linkStyle "Failure" stroke:red`);
+
+    const edges = flow.parser.yy.getData().edges;
+
+    expect(edges.length).toBe(1);
+    expect(edges[0].style).toEqual([]);
+  });
+
   it('should handle classDefs with style in classes', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nclassDef exClass font-style:bold;');
 
