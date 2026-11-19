@@ -1,0 +1,17 @@
+---
+description:
+  A subgraph that no edge crosses (edges only to and from the subgraph itself)
+  and that sets no direction, under the layered layout. As with dagre, it is
+  laid out across the diagram (LR inside a TB flowchart), so its unlinked nodes
+  are stacked instead of placed side by side (#8832).
+config:
+  layout: layered
+---
+flowchart TD
+  start[Start] --> grp
+  subgraph grp[Grouped]
+    a[One]
+    b[Two]
+    c[Three]
+  end
+  grp --> done[Done]

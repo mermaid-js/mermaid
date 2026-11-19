@@ -158,6 +158,62 @@ function checkNesting(groups: LayoutGroup[]): void {
   }
 }
 
+// A subgraph no edge crosses, with no direction of its own, is laid out across the one around
+// it, as dagre lays it out (#8832): `LR` inside a `TB` parent, `TB` inside any other. An edge
+// crosses a subgraph when exactly one of its ends lies inside it; an edge to the subgraph itself
+// does not, one from it to its own node does. A crossed subgraph keeps its parent's direction,
+// which the engine sees to (`inheritCrossedDirections`).
+function turnUncrossed(
+  groups: LayoutGroup[],
+  nodes: LayoutNode[],
+  edges: LayoutEdge[],
+  rootDir: Dir
+): void {
+  const parentOf = new Map<string, string | undefined>();
+  for (const n of [...groups, ...nodes]) {
+    parentOf.set(n.id, n.parent);
+  }
+  const ancestors = (id: string): Set<string> => {
+    const set = new Set<string>();
+    for (let p = parentOf.get(id); p !== undefined && !set.has(p); p = parentOf.get(p)) {
+      set.add(p);
+    }
+    return set;
+  };
+  const crossed = new Set<string>();
+  for (const e of edges) {
+    if (e.source === e.target) {
+      continue;
+    }
+    const a = ancestors(e.source);
+    const b = ancestors(e.target);
+    for (const g of a) if (!b.has(g)) crossed.add(g);
+    for (const g of b) if (!a.has(g)) crossed.add(g);
+  }
+  const byId = new Map(groups.map((g) => [g.id, g]));
+  const laidOut = new Map<string, Dir>();
+  // The direction a group's content runs in, settling its parents first. `checkNesting` has
+  // already refused nesting loops.
+  const resolve = (g: LayoutGroup): Dir => {
+    const known = laidOut.get(g.id);
+    if (known) {
+      return known;
+    }
+    const parent = g.parent ? byId.get(g.parent) : undefined;
+    const around = parent ? resolve(parent) : rootDir;
+    let own = around;
+    if (!crossed.has(g.id)) {
+      g.direction ??= around === 'TB' ? 'LR' : 'TB';
+      own = g.direction;
+    }
+    laidOut.set(g.id, own);
+    return own;
+  };
+  for (const g of groups) {
+    resolve(g);
+  }
+}
+
 function hasLabel(edge: Edge): boolean {
   return typeof edge.label === 'string' ? edge.label.trim().length > 0 : Boolean(edge.label);
 }
@@ -211,6 +267,7 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     }
     edges.push(edge);
   }
+  turnUncrossed(groups, nodes, edges, dir);
   // v13 hands the engine `diagramPadding` (v12 default 8); mermaid's renderers add that same
   // padding themselves when they set up the viewport, so the engine adds none.
   const mode = routing(data);

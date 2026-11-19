@@ -418,7 +418,9 @@ describe('layered adapter: subgraphs', () => {
     const [outer, inner] = graph.groups;
     expect(outer).toMatchObject({ id: 'outer', title: { width: 50, height: 20 } });
     expect(outer.parent).toBeUndefined();
-    expect(outer.direction).toBeUndefined();
+    // No edge crosses `outer` (`c` links to the subgraph itself), so it is laid out across the
+    // diagram, as dagre does (#8832).
+    expect(outer.direction).toBe('LR');
     expect(inner).toMatchObject({ id: 'inner', parent: 'outer', direction: 'LR' });
     // An untitled group has no title band.
     expect(inner.title).toBeUndefined();
@@ -521,7 +523,7 @@ describe('layered adapter: subgraphs', () => {
   it('routes a self-loop inside its subgraph, beside the node', () => {
     const data = layoutData(
       'TB',
-      [group('g'), child('a', 'g')],
+      [group('g', { dir: 'TB' }), child('a', 'g')],
       [edge('loop', 'a', 'a', { label: 'again', width: 40, height: 18 })]
     );
     runLayeredLayoutCore(data);
@@ -576,13 +578,113 @@ describe('layered adapter: subgraphs', () => {
     const run = (minlen: number) => {
       const data = layoutData(
         'TB',
-        [group('g'), child('a', 'g'), child('b', 'g')],
+        [group('g', { dir: 'TB' }), child('a', 'g'), child('b', 'g')],
         [edge('e1', 'a', 'b', { minlen } as Partial<Edge>)]
       );
       runLayeredLayoutCore(data);
       return byId(data, 'b').y! - byId(data, 'a').y!;
     };
     expect(run(3)).toBeGreaterThan(run(1) * 2);
+  });
+});
+
+// Issue #8832: as dagre does, a subgraph no edge crosses, with no direction of its own, is laid
+// out across its parent: `LR` inside a `TB` parent, `TB` inside any other.
+describe('layered adapter: the direction of a subgraph no edge crosses', () => {
+  const dirOf = (data: LayoutData, id: string) =>
+    toLayoutGraph(data).groups.find((g) => g.id === id)!.direction;
+  // As in the issue: edges to and from the subgraph itself, none to its nodes.
+  const boxed = (direction: string, extra: Partial<Node> = {}) =>
+    layoutData(
+      direction,
+      [
+        node('start'),
+        group('g', extra),
+        child('a', 'g'),
+        child('b', 'g'),
+        child('c', 'g'),
+        node('done'),
+      ],
+      [edge('in', 'start', 'g'), edge('out', 'g', 'done')]
+    );
+
+  it('lays the subgraph out across a TB diagram', () => {
+    expect(dirOf(boxed('TB'), 'g')).toBe('LR');
+    expect(dirOf(boxed('TD'), 'g')).toBe('LR');
+  });
+
+  it('lays it out TB in a diagram of any other direction, as dagre does', () => {
+    for (const direction of ['LR', 'BT', 'RL']) {
+      expect(dirOf(boxed(direction), 'g')).toBe('TB');
+    }
+  });
+
+  it('keeps a direction the subgraph sets itself', () => {
+    expect(dirOf(boxed('TB', { dir: 'TB' }), 'g')).toBe('TB');
+    expect(dirOf(boxed('LR', { dir: 'RL' }), 'g')).toBe('RL');
+  });
+
+  it("leaves a crossed subgraph to its parent's direction", () => {
+    const crossed = (e: Edge) =>
+      layoutData('TB', [node('x'), group('g'), child('a', 'g'), child('b', 'g')], [e]);
+
+    // From one of its nodes to a node outside it.
+    expect(dirOf(crossed(edge('e', 'a', 'x')), 'g')).toBeUndefined();
+    // From the subgraph to one of its own nodes.
+    expect(dirOf(crossed(edge('e', 'g', 'a')), 'g')).toBeUndefined();
+    // Edges between its own nodes do not cross it.
+    expect(dirOf(crossed(edge('e', 'a', 'b')), 'g')).toBe('LR');
+  });
+
+  it('turns each nested level against the one around it', () => {
+    const data = layoutData(
+      'TB',
+      [
+        group('outer'),
+        group('inner', { parentId: 'outer' }),
+        child('a', 'inner'),
+        child('b', 'inner'),
+      ],
+      []
+    );
+    expect(dirOf(data, 'outer')).toBe('LR');
+    expect(dirOf(data, 'inner')).toBe('TB');
+  });
+
+  it('turns a nested subgraph against the direction its parent has', () => {
+    const nested = (outer: Partial<Node>, edges: Edge[]) =>
+      layoutData(
+        'TB',
+        [
+          node('x'),
+          group('outer', outer),
+          group('inner', { parentId: 'outer' }),
+          child('a', 'inner'),
+          child('b', 'outer'),
+        ],
+        edges
+      );
+
+    // The parent sets its own direction.
+    expect(dirOf(nested({ dir: 'LR' }, []), 'inner')).toBe('TB');
+    // The parent is crossed, so it runs TB like the diagram.
+    expect(dirOf(nested({}, [edge('e', 'x', 'b')]), 'outer')).toBeUndefined();
+    expect(dirOf(nested({}, [edge('e', 'x', 'b')]), 'inner')).toBe('LR');
+    // An edge to the nested subgraph itself crosses only the parent.
+    expect(dirOf(nested({}, [edge('e', 'x', 'inner')]), 'outer')).toBeUndefined();
+    expect(dirOf(nested({}, [edge('e', 'x', 'inner')]), 'inner')).toBe('LR');
+    // An edge from a node of the nested subgraph to one beside it crosses only the nested one.
+    expect(dirOf(nested({}, [edge('e', 'a', 'b')]), 'outer')).toBe('LR');
+    expect(dirOf(nested({}, [edge('e', 'a', 'b')]), 'inner')).toBeUndefined();
+  });
+
+  it('stacks the nodes of the subgraph in the issue, as dagre does', () => {
+    const data = boxed('TB');
+    runLayeredLayoutCore(data);
+    const [a, b, c] = ['a', 'b', 'c'].map((id) => data.nodes.find((n) => n.id === id)!);
+    expect(b!.x).toBeCloseTo(a!.x!, 3);
+    expect(c!.x).toBeCloseTo(a!.x!, 3);
+    expect(new Set([a!.y, b!.y, c!.y]).size).toBe(3);
   });
 });
 

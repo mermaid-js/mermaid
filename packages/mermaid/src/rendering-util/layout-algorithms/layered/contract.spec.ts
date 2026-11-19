@@ -651,7 +651,8 @@ describe('layered adapter: subgraphs as groups', () => {
     expect(inGroup.parent).toBe('outer');
     expect(inGroup.direction).toBe('LR');
     expect(inNode.parent).toBeUndefined();
-    expect(inNode.direction).toBeUndefined();
+    // No direction of its own and no edge crossing it: laid out across the diagram (#8832).
+    expect(inNode.direction).toBe('LR');
   });
 
   it('puts a node in a group only when its parent is a group', () => {
