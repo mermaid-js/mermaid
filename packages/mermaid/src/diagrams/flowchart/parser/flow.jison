@@ -177,11 +177,14 @@ that id.
 <*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
 
 <text>"]]"                { this.popState(); return 'SUBROUTINEEND'; }
-/* Inside a bracket group (`btext`), a `[` is literal label text, not a shape
-   opener: without this rule `[[` and `[/` match the SUBROUTINESTART /
-   TRAPSTART rules below, so `A[x [[y]]]` and `A[x [/ y]]` fail to parse.
-   Push `btext` (like the generic `[` rule) so each `]` pops one level. */
-<btext>"["                { this.pushState("btext"); return 'SQS'; }
+/* Inside a label (`text` state) or a bracket group (`btext`), a `[` is literal
+   label text, not a shape opener: without this rule `[[` and `[/` match the
+   SUBROUTINESTART / TRAPSTART rules below, so `A(x [[y]])` and `A(x [/api])`
+   fail to parse. Push `btext` (like the generic `[` rule) so each `]` pops
+   one level. Shape openers still work: they are matched in INITIAL state,
+   before any label text is lexed. */
+<text>"["                { this.pushState("btext"); return 'SQS'; }
+<btext>"["               { this.pushState("btext"); return 'SQS'; }
 <*>"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
 
 "[|"                      { return 'VERTEX_WITH_PROPS_START'; }
