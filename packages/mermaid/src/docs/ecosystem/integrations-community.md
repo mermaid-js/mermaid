@@ -40,6 +40,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
   - [CloudScript.io Mermaid Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
   - [Mermaid plus for Confluence](https://marketplace.atlassian.com/apps/1236814/mermaid-plus-for-confluence?hosting=cloud&tab=overview)
+  - [Mermaid Text Diagrams for Confluence & Jira](https://marketplace.atlassian.com/apps/2342912516/mermaid-text-diagrams-for-confluence-jira)
 - [Azure Devops](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
 - [Doctave](https://www.doctave.com/) ✅
@@ -97,6 +98,8 @@ LLM integrations to create mermaid diagrams using AI from text descriptions.
 Customer Relationship Management/Enterprise Resource Planning
 
 - [coreBOS](https://blog.corebos.org/blog/december2019)
+- [Odoo](https://www.odoo.com)
+  - [Text Diagrams (Mermaid) for Odoo](https://apps.odoo.com/apps/modules/19.0/brightdesk_text_diagrams)
 
 ### Blogging
 
