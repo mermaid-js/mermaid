@@ -170,6 +170,31 @@ block
 
 In this syntax, 'D' is a nested block within a larger parent block. This feature is particularly useful for depicting complex structures, such as a server with multiple services or a department within a larger organizational framework.
 
+**Example - Composite Block Titles:**
+Give a composite block an ID and a label to show a title at its top, above the blocks inside it:
+
+```mermaid
+block
+  columns 1
+  block:frontend["Frontend"]
+    Web Mobile
+  end
+  block:backend["Backend"]
+    API DB[("Database")]
+  end
+```
+
+```mermaid-example
+block
+  columns 1
+  block:frontend["Frontend"]
+    Web Mobile
+  end
+  block:backend["Backend"]
+    API DB[("Database")]
+  end
+```
+
 ### Column Width Dynamics
 
 #### Adjusting Widths

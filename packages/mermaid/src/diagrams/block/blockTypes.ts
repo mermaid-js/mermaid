@@ -60,6 +60,11 @@ export interface Block {
   stylesStr?: string;
   widthInColumns?: number;
   /**
+   * Measured height of a composite's title. The layout keeps this much room above the
+   * inner blocks, and the composite shape draws the title there.
+   */
+  titleHeight?: number;
+  /**
    * Palette slot, assigned in declaration order by `populateBlockDatabase`. Read by the
    * renderer, stamped as `data-color-id`, and matched by the rules `styles.ts` emits.
    * Undefined on a theme without a palette and on blocks that paint nothing.

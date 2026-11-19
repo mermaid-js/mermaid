@@ -47,3 +47,71 @@ describe('layout runtime config', () => {
     expect(result1!.width).toBeLessThan(result2!.width);
   });
 });
+
+describe('composite block titles', () => {
+  const padding = 8;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const square = (id: string, width: number, height: number): Block => ({
+    id,
+    type: 'square',
+    children: [],
+    size: { width, height, x: 0, y: 0 },
+  });
+
+  // As `calculateBlockSizes` leaves it: a composite is measured as its bare title.
+  const titledGroup = (children: Block[]): Block => ({
+    id: 'group',
+    type: 'composite',
+    label: 'Group title',
+    titleHeight: 24,
+    children,
+    size: { width: 80, height: 24, x: 0, y: 0 },
+  });
+
+  const runLayout = (children: Block[]) => {
+    const root: Block = { id: 'root', type: 'composite', columns: -1, children };
+    const db = {
+      getBlock: (id: string) => (id === 'root' ? root : undefined),
+    } as unknown as BlockDB;
+    vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({ block: { padding } });
+    layout(db);
+  };
+
+  const top = (block: Block) => block.size!.y - block.size!.height / 2;
+  const bottom = (block: Block) => block.size!.y + block.size!.height / 2;
+
+  it('should place the inner blocks of a titled composite below its title (#5423)', () => {
+    const inner = [square('a', 100, 50), square('b', 100, 50)];
+    const group = titledGroup(inner);
+    runLayout([group]);
+
+    for (const block of inner) {
+      expect(top(block)).toBeGreaterThanOrEqual(top(group) + 24 + padding);
+      expect(bottom(block)).toBeLessThanOrEqual(bottom(group) - padding);
+    }
+  });
+
+  it('should keep the title band when a titled composite is stretched to a larger sibling', () => {
+    const inner = square('a', 20, 20);
+    const group = titledGroup([inner]);
+    runLayout([group, square('wide', 300, 50)]);
+
+    expect(top(inner)).toBeGreaterThanOrEqual(top(group) + 24 + padding);
+    expect(bottom(inner)).toBeLessThanOrEqual(bottom(group) - padding);
+  });
+
+  it('should not reserve a title band for a composite without a title', () => {
+    const inner = [square('a', 100, 50), square('b', 100, 50)];
+    const group: Block = { id: 'group', type: 'composite', label: '', children: inner };
+    runLayout([group]);
+
+    expect(group.size!.height).toBe(50 + 2 * padding);
+    for (const block of inner) {
+      expect(top(block)).toBe(top(group) + padding);
+    }
+  });
+});

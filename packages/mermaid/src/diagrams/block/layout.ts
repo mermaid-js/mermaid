@@ -140,9 +140,10 @@ function setBlockSizes(
     }
 
     const ySize = Math.ceil(numItems / xSize);
+    const titleHeight = block.titleHeight ?? 0;
 
     let width = xSize * (maxWidth + padding) + padding;
-    let height = ySize * (maxHeight + padding) + padding;
+    let height = ySize * (maxHeight + padding) + padding + titleHeight;
     // If maxWidth
     if (width < siblingWidth) {
       log.debug(
@@ -151,7 +152,7 @@ function setBlockSizes(
       width = siblingWidth;
       height = siblingHeight;
       const childWidth = (siblingWidth - xSize * padding - padding) / xSize;
-      const childHeight = (siblingHeight - ySize * padding - padding) / ySize;
+      const childHeight = (siblingHeight - titleHeight - ySize * padding - padding) / ySize;
       // cspell:ignore indata
       log.debug('Size indata abc88', block.id, 'childWidth', childWidth, 'maxWidth', maxWidth);
       log.debug('Size indata abc88', block.id, 'childHeight', childHeight, 'maxHeight', maxHeight);
@@ -293,8 +294,9 @@ function layoutBlocks(block: Block, db: BlockDB, padding = 8) {
 
         const rowYOffset = rowYOffsets.get(py) ?? 0;
         const rowHeight = rowHeights.get(py) ?? height;
-        child.size.y =
-          parent.size.y - parent.size.height / 2 + rowYOffset + rowHeight / 2 + padding;
+        // Rows start below the parent's title, if it has one
+        const rowsTop = parent.size.y - parent.size.height / 2 + (parent.titleHeight ?? 0);
+        child.size.y = rowsTop + rowYOffset + rowHeight / 2 + padding;
 
         log.debug(
           `abc88 layout blocks (calc) px, pyid:${
