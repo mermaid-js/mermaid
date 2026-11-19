@@ -205,6 +205,40 @@ ${prop} --> [*]`);
     });
   });
 
+  describe('case-insensitive note positions (issue #2775)', () => {
+    it.each([
+      ['left', 'left of'],
+      ['Left', 'left of'],
+      ['LEFT', 'left of'],
+      ['lEfT', 'left of'],
+      ['right', 'right of'],
+      ['Right', 'right of'],
+      ['RIGHT', 'right of'],
+      ['rIgHt', 'right of'],
+    ])('normalizes %s without changing the state id or note text', (side, expectedPosition) => {
+      for (const diagramType of ['stateDiagram', 'stateDiagram-v2']) {
+        for (const note of [
+          `note ${side} of MixedCase: Keep My Case`,
+          `note ${side} of MixedCase\nKeep My Case\nend note`,
+        ]) {
+          stateDb.clear();
+          stateDiagram.parser.parse(`${diagramType}\nMixedCase --> Other\n${note}`);
+
+          const state = stateDb.getStates().get('MixedCase');
+          expect(state.note).toEqual({ position: expectedPosition, text: 'Keep My Case' });
+          expect(stateDb.getStates().has('mixedcase')).toBe(false);
+
+          const data = stateDb.getData();
+          const noteNode = data.nodes.find((node) => node.shape === 'note');
+          const noteEdge = data.edges.find((edge) => edge.classes.includes('note-edge'));
+          expect(noteNode.position).toBe(expectedPosition);
+          expect(noteEdge.start).toBe(expectedPosition === 'left of' ? noteNode.id : 'MixedCase');
+          expect(noteEdge.end).toBe(expectedPosition === 'left of' ? 'MixedCase' : noteNode.id);
+        }
+      }
+    });
+  });
+
   describe('note parsing (issue #7089)', () => {
     it('should not terminate a note when "send note" appears within the note text', () => {
       const diagramText = `stateDiagram-v2
