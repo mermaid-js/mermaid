@@ -323,11 +323,12 @@ function onOutline(n: Outline, end: RoutePoint): RoutePoint {
 }
 
 // Where the route, carried on along the flow from its end on the box side, first meets the
-// outline (#8833). Shapes whose `intersect` honours a line origin (the polygon ones) answer
-// this directly, which also holds for outlines that are not star-shaped, such as the lightning
-// bolt's zigzag: there the bisection below settles on an inner kink, in the middle of the
-// shape. Other shapes answer for the line from their centre instead, which does not lie on the
-// route unless the end is on the centre line; then `undefined`, and the caller carries on.
+// outline (#8833). The shared `intersect.rect`, `intersect.ellipse` and `intersect.polygon`
+// honour a line origin, so most built-in shapes answer this directly, which also holds for
+// outlines that are not star-shaped, such as the lightning bolt's zigzag: there the bisection
+// below settles on an inner kink, in the middle of the shape. A custom `intersect` that ignores
+// the origin answers for the line from the centre instead, which does not lie on the route
+// unless the end is on the centre line; then `undefined`, and the caller carries on.
 function firstMet(n: Outline, end: RoutePoint, onTopOrBottom: boolean): RoutePoint | undefined {
   // The same point on the box's opposite side: the line through the two is the route's.
   const far = onTopOrBottom ? { x: end.x, y: 2 * n.y! - end.y } : { x: 2 * n.x! - end.x, y: end.y };
