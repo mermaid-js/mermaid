@@ -720,4 +720,57 @@ describe('[Text] when parsing', () => {
     expect(vert.get('A').type).toBe('square');
     expect(vert.get('A').text).toBe('x [/ y]');
   });
+
+  it('should handle adjacent nested opening brackets in round node labels', function () {
+    const res = flow.parser.parse('graph TD;A(x [[y]]) --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('round');
+    expect(vert.get('A').text).toBe('x [[y]]');
+  });
+
+  it('should handle adjacent nested opening brackets in diamond node labels', function () {
+    const res = flow.parser.parse('graph TD;A{x [[y]]} --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('diamond');
+    expect(vert.get('A').text).toBe('x [[y]]');
+  });
+
+  it('should handle adjacent nested opening brackets in stadium node labels', function () {
+    const res = flow.parser.parse('graph TD;A([x [[y]]]) --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('stadium');
+    expect(vert.get('A').text).toBe('x [[y]]');
+  });
+
+  it('should handle adjacent nested opening brackets in edge labels', function () {
+    const res = flow.parser.parse('graph TD;A-->|x [[y]]|B;');
+
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].text).toBe('x [[y]]');
+  });
+
+  it('should handle a trapezoid opener inside a round node label', function () {
+    const res = flow.parser.parse('graph TD;A(x [/api]) --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('round');
+    expect(vert.get('A').text).toBe('x [/api]');
+  });
+
+  it('should handle a trapezoid opener inside a diamond node label', function () {
+    const res = flow.parser.parse('graph TD;A{x [/api]} --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('diamond');
+    expect(vert.get('A').text).toBe('x [/api]');
+  });
 });
