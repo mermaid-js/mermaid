@@ -412,4 +412,24 @@ describe('when parsing subgraphs', function () {
     expect(subgraphs[0].nodes).toContain('A');
     expect(subgraphs[0].nodes).toContain('B');
   });
+
+  it('should handle a BMP emoji base at the start of an unquoted subgraph title', function () {
+    flow.parser.parse('flowchart TD\nsubgraph ©️ Credits\nA --> B\nend');
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].title).toBe('©️ Credits');
+    expect(subgraphs[0].nodes).toContain('A');
+    expect(subgraphs[0].nodes).toContain('B');
+  });
+
+  it('should handle other BMP emoji bases in an unquoted subgraph title', function () {
+    flow.parser.parse('flowchart TD\nsubgraph ®️ Brand ™️\nA --> B\nend');
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].title).toBe('®️ Brand ™️');
+    expect(subgraphs[0].nodes).toContain('A');
+    expect(subgraphs[0].nodes).toContain('B');
+  });
 });
