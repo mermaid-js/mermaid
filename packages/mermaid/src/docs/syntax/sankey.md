@@ -102,6 +102,7 @@ It implements CSV standard as [described here](https://www.ietf.org/rfc/rfc4180.
 ### Basic
 
 It is implied that 3 columns inside CSV should represent `source`, `target` and `value` accordingly:
+The value must be a finite number; malformed values are rejected instead of being truncated or rendered as `NaN`.
 
 ```mermaid-example
 sankey
