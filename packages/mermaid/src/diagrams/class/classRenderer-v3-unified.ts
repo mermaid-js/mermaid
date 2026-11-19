@@ -41,7 +41,7 @@ export const getClasses = function (
 export const draw = async function (text: string, id: string, _version: string, diag: any) {
   log.info('REF0:');
   log.info('Drawing class diagram (v3)', id);
-  const { securityLevel, state: conf, layout } = getConfig();
+  const { securityLevel, class: conf, layout } = getConfig();
   // Extracting the data from the parsed structure into a more usable form
   // Not related to the refactoring, but this is the first step in the rendering process
   // diag.db.extract(diag.db.getRootDocV2());
