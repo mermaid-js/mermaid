@@ -380,6 +380,69 @@ describe('layered adapter: route ends on the shape outline', () => {
       }
     });
   }
+
+  // Issue #8833: a lightning bolt is a zigzag, not star-shaped about its centre. An edge into it
+  // must stop where it first meets the outline, as ELK draws it, not at the zigzag's inner kink,
+  // which put both ends in the middle of the bolt and drew the two edges as one line through it.
+  it('ends an edge where it first meets a zigzag outline', () => {
+    // `lightningBolt.ts`: the points of the drawn shape, in a box `w` wide and `2h` high.
+    const w = 35;
+    const h = 35;
+    const gap = 7;
+    const bolt = [
+      { x: w, y: 0 },
+      { x: 0, y: h + gap / 2 },
+      { x: w - 2 * gap, y: h + gap / 2 },
+      { x: 0, y: 2 * h },
+      { x: w, y: h - gap / 2 },
+      { x: 2 * gap, y: h - gap / 2 },
+    ];
+    const lightning = withIntersect(node('L', w, 2 * h, 'bolt'), (self, p) =>
+      intersect.polygon(self, bolt, p)
+    );
+    // Two edges in and two out, as in the issue, so their ends sit off the bolt's centre.
+    const data = layoutData(
+      'TB',
+      [node('t1'), node('t2'), lightning, node('b1'), node('b2')],
+      [
+        edge('in1', 't1', 'L'),
+        edge('in2', 't2', 'L'),
+        edge('out1', 'L', 'b1'),
+        edge('out2', 'L', 'b2'),
+      ]
+    );
+    runLayeredLayoutCore(data);
+    const L = data.nodes.find((n) => n.id === 'L')!;
+    const left = L.x! - w / 2;
+    const top = L.y! - h;
+    // Where the outline crosses the vertical line at `x`, top to bottom.
+    const crossings = (x: number): number[] => {
+      const ys: number[] = [];
+      bolt.forEach((a, i) => {
+        const b = bolt[(i + 1) % bolt.length];
+        const [ax, bx] = [left + a.x, left + b.x];
+        if ((ax - x) * (bx - x) > 0 || ax === bx) {
+          return;
+        }
+        ys.push(top + a.y + ((x - ax) / (bx - ax)) * (b.y - a.y));
+      });
+      return ys.sort((p, q) => p - q);
+    };
+    const ends = (id: string) => data.edges.find((e) => e.id === id)!.points!;
+
+    for (const id of ['in1', 'in2']) {
+      const into = ends(id).at(-1)!;
+      expect(crossings(into.x).length).toBeGreaterThan(0);
+      expect(into.y).toBeCloseTo(crossings(into.x)[0], 3);
+    }
+    for (const id of ['out1', 'out2']) {
+      const outOf = ends(id)[0];
+      expect(crossings(outOf.x).length).toBeGreaterThan(0);
+      expect(outOf.y).toBeCloseTo(crossings(outOf.x).at(-1)!, 3);
+    }
+    // The ends of the two edges in are spread along the side, off the centre.
+    expect(ends('in1').at(-1)!.x).not.toBeCloseTo(ends('in2').at(-1)!.x, 3);
+  });
 });
 
 const group = (id: string, extra: Partial<Node> = {}): Node =>
