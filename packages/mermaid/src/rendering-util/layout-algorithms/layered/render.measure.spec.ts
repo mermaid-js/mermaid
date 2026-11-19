@@ -14,6 +14,7 @@ vi.mock('../common/index.js', () => ({
   defaultMeasureLayout: defined.measure,
 }));
 
+import { applyLayeredLineJumps } from './lineHops.js';
 import './render.js';
 
 describe('layered renderer: measuring', () => {
@@ -28,6 +29,13 @@ describe('layered renderer: measuring', () => {
 
     expect(result).toBe('measured');
     expect(defined.measure).toHaveBeenCalledWith(data, context, { unwrapGroupLabels: true });
+  });
+});
+
+// Issue #8835: crossings get hops once every edge is drawn, as ELK draws them.
+describe('layered renderer: edge crossings', () => {
+  it('draws line hops after painting', () => {
+    expect(defined.definition!.afterPaint).toBe(applyLayeredLineJumps);
   });
 });
 

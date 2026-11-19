@@ -16,6 +16,7 @@ import {
   defaultMeasureLayout,
 } from '../common/index.js';
 import { layeredThrowsOnFailure } from './failureMode.js';
+import { applyLayeredLineJumps } from './lineHops.js';
 import { runLayeredLayoutCore } from './layoutData.js';
 
 export { setLayeredThrowsOnFailure } from './failureMode.js';
@@ -27,6 +28,8 @@ const renderLayered = createCommonLayoutRenderer({
     defaultMeasureLayout(data4Layout, context, { unwrapGroupLabels: true }),
   runLayoutCore: runLayeredLayoutCore,
   paintOptions: { getNodes: (data) => paintOrder(data.nodes) },
+  // Crossings get hops once every edge is drawn, as the elk layout draws them (#8835).
+  afterPaint: applyLayeredLineJumps,
 });
 
 // Subgraphs are painted in turn, each one's filled box over what came before, so every subgraph

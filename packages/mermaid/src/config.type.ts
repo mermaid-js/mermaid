@@ -284,6 +284,18 @@ export interface MermaidConfig {
      *
      */
     edgeRouting?: 'rounded' | 'curved' | 'stepped' | 'straight';
+    /**
+     * Renders edge crossings as small arcs ("hops") or visible gaps, so that
+     * it is clear which line passes over which where two edges meet, as the
+     * `elk` layout does.
+     *
+     * The edge that gives way loses its corner rounding for the segment
+     * carrying the hop, which is the trade for a readable crossing. Curved
+     * edges (`edgeRouting: curved`) are skipped rather than rewritten, to
+     * avoid corrupting their geometry. Set to `false` to draw plain crossings.
+     *
+     */
+    lineHops?: boolean | ('arc' | 'gap');
   };
   darkMode?: boolean;
   /**
