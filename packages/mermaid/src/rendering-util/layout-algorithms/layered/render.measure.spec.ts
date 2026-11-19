@@ -31,6 +31,16 @@ describe('layered renderer: measuring', () => {
   });
 });
 
+// Issue #8835: crossings get hops once every edge is drawn, as ELK draws them.
+describe('layered renderer: edge crossings', () => {
+  it('draws line hops after painting', () => {
+    const afterPaint = defined.definition!.afterPaint;
+
+    expect(afterPaint).toBeTypeOf('function');
+    expect(afterPaint!.name).toBe('applyLayeredLineJumps');
+  });
+});
+
 // Issue #8821: subgraphs are painted in turn, each one's filled box over what came before, so a
 // subgraph listed after the ones inside it would hide them.
 describe('layered renderer: painting subgraphs', () => {

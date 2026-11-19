@@ -1,0 +1,18 @@
+---
+description:
+  Crossing edges under the layered layout. Where two edges cross, the one that
+  gives way hops over the other with a small arc, as in the elk layout (#8835).
+config:
+  layout: layered
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  A --> E
+  B --> C
+  B --> D
+  B --> E
+  C --> D
+  C --> E
+  D --> E
