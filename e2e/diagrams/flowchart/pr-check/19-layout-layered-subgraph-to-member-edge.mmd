@@ -1,0 +1,15 @@
+---
+description:
+  An edge from a subgraph to its own node (Sub --> In) beside an edge from an
+  outside node into the same node (Out --> In) under the layered layout. The two
+  edges are drawn apart instead of on top of each other, and the label of
+  Sub --> In stays clear of Out --> In (#8824).
+config:
+  layout: layered
+---
+flowchart TB
+  Out --> In
+  subgraph Sub
+  In
+  end
+  Sub -->|starts| In
