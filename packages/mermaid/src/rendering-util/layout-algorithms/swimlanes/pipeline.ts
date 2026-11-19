@@ -19,6 +19,7 @@ export interface LayoutOptions {
   // Coordinates
   layerGap?: number;
   nodeGap?: number;
+  laneGap?: number; // between the nodes of neighbouring lanes (TB and BT)
   // Direction (for proper spacing calculation)
   direction?: 'TB' | 'LR' | 'BT' | 'RL';
 }
@@ -63,6 +64,7 @@ export function sugiyamaLayout(g: Graph, opts?: LayoutOptions): LayoutResult {
   const coordinates = assignCoordinates(ordered, graphWithDummies, {
     layerGap: opts?.layerGap,
     nodeGap: opts?.nodeGap,
+    laneGap: opts?.laneGap,
     direction: opts?.direction,
     laneOrder,
   });

@@ -1,5 +1,7 @@
 import type { LayoutData } from '../../../types.js';
+import { laneFontSize, TITLE_CHAR_WIDTH_PER_FONT_SIZE } from '../helpers.js';
 import { buildLaneModel } from '../lanes.js';
+import { topLaneOrderOf } from '../phase2.options.js';
 import {
   anchorFootprints,
   collectAnchoredIds,
@@ -162,6 +164,134 @@ export function flowAxisStretch(nodes: LayoutNode[]): number {
 }
 
 const LANE_TITLE_BAND = 36;
+// With no node to size against, an empty lane is as wide as six title bands.
+const ALL_EMPTY_BAND_WIDTH = 6 * LANE_TITLE_BAND;
+// A node whose top edge is this close to a row boundary counts as starting there.
+const ROW_BOUNDARY_TOLERANCE = 0.5;
+
+interface EmptyBandOptions {
+  centerX: number;
+  laneLeft: number;
+  laneWidth: number;
+  fontSize: number;
+}
+
+/** Room an empty band needs: two title bands, its padding, or the run of its title. */
+function emptyBandHeight(band: LayoutNode, fontSize: number): number {
+  const titleRun =
+    (typeof band.label === 'string' ? band.label.length : 0) *
+    fontSize *
+    TITLE_CHAR_WIDTH_PER_FONT_SIZE;
+  return Math.max(2 * LANE_TITLE_BAND, 2 * (band.padding ?? 0), titleRun + LANE_TITLE_BAND);
+}
+
+function placeEmptyBand(band: LayoutNode, top: number, opts: EmptyBandOptions): number {
+  const height = emptyBandHeight(band, opts.fontSize);
+  const bottom = top + height;
+  band.x = opts.centerX;
+  band.y = top + height / 2;
+  band.width = opts.laneWidth;
+  band.height = height;
+  // RL draws its title band along the top, so keep room for it; LR does not read this.
+  band.swimlaneContentTop = top + LANE_TITLE_BAND;
+  band.groupTitleRect = {
+    left: opts.laneLeft,
+    right: opts.laneLeft + LANE_TITLE_BAND,
+    top,
+    bottom,
+  };
+  return height;
+}
+
+/** Lane nodes in the order the author declared them. */
+function declaredLanes(nodes: LayoutNode[]): LayoutNode[] {
+  const byId = buildNodeMap(nodes);
+  return topLaneOrderOf(nodes).flatMap((id) => byId.get(id) ?? []);
+}
+
+const topOf = (lane: LayoutNode): number => (lane.y ?? 0) - (lane.height ?? 0) / 2;
+const bottomOf = (lane: LayoutNode): number => (lane.y ?? 0) + (lane.height ?? 0) / 2;
+
+/** Whether `node` starts at or below `line`: a group by its top edge, any other node by its centre. */
+function startsBelow(node: LayoutNode, line: number): boolean {
+  if (typeof node.y !== 'number') {
+    return false;
+  }
+  return (node.isGroup ? topOf(node) : node.y) >= line - ROW_BOUNDARY_TOLERANCE;
+}
+
+function moveDown(node: LayoutNode, by: number): void {
+  node.y = (node.y ?? 0) + by;
+  if (node.swimlaneContentTop !== undefined) {
+    node.swimlaneContentTop += by;
+  }
+  if (node.groupTitleRect) {
+    node.groupTitleRect.top += by;
+    node.groupTitleRect.bottom += by;
+  }
+}
+
+/** Moves everything at or below `line` down by `by`: nodes, groups, title strips and edge points. */
+function openRowAt(nodes: LayoutNode[], edges: LayoutData['edges'], line: number, by: number) {
+  for (const node of nodes.filter((candidate) => startsBelow(candidate, line))) {
+    moveDown(node, by);
+  }
+  for (const point of edges.flatMap((edge) => edge.points ?? [])) {
+    if (point.y >= line) {
+      point.y += by;
+    }
+  }
+}
+
+/** Where the band of the lane at `index` starts: below the nearest placed lane before it, else above the next. */
+function bandLine(declared: LayoutNode[], index: number, placed: Set<LayoutNode>): number {
+  const before = declared.slice(0, index).findLast((other) => placed.has(other));
+  if (before) {
+    return bottomOf(before);
+  }
+  const after = declared.slice(index + 1).find((other) => placed.has(other));
+  return after ? topOf(after) : 0;
+}
+
+/**
+ * Gives each lane without nodes a band of its own, in declared order, opening a row for it
+ * next to the lanes already placed.
+ */
+function placeEmptyLanes(
+  nodes: LayoutNode[],
+  edges: LayoutData['edges'],
+  placed: Set<LayoutNode>,
+  opts: EmptyBandOptions
+): void {
+  const declared = declaredLanes(nodes);
+  declared.forEach((lane, index) => {
+    if (!placed.has(lane)) {
+      const line = bandLine(declared, index, placed);
+      openRowAt(nodes, edges, line, emptyBandHeight(lane, opts.fontSize));
+      placeEmptyBand(lane, line, opts);
+      placed.add(lane);
+    }
+  });
+}
+
+/**
+ * With no node in any lane, the lanes are stacked from the top, in declared order. There is no
+ * content to mirror, so RL needs nothing more.
+ */
+function stackLanesWithoutNodes(layout: LayoutData): boolean {
+  const bands = declaredLanes((layout.nodes ?? []) as LayoutNode[]);
+  const opts = {
+    centerX: LANE_TITLE_BAND + ALL_EMPTY_BAND_WIDTH / 2,
+    laneLeft: LANE_TITLE_BAND,
+    laneWidth: ALL_EMPTY_BAND_WIDTH,
+    fontSize: laneFontSize(layout),
+  };
+  let top = 0;
+  for (const band of bands) {
+    top += placeEmptyBand(band, top, opts);
+  }
+  return bands.length > 0;
+}
 
 interface Box {
   left: number;
@@ -289,7 +419,7 @@ export function applyLrDirectionTransform(
   }
 
   if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-    return false;
+    return stackLanesWithoutNodes(layout);
   }
 
   const titleBandSize = LANE_TITLE_BAND;
@@ -432,6 +562,13 @@ export function applyLrDirectionTransform(
       bottom: laneBottom,
     };
   }
+
+  placeEmptyLanes(nodes, edges, new Set(laneBounds.map((entry) => entry.lane)), {
+    centerX,
+    laneLeft,
+    laneWidth,
+    fontSize: laneFontSize(layout),
+  });
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');

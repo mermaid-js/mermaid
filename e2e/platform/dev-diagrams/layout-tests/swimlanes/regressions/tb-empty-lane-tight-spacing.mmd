@@ -1,0 +1,17 @@
+---
+config:
+  flowchart:
+    nodeSpacing: 10
+---
+%% The empty lane of tb-empty-lane.mmd with a node spacing so tight that neighbouring lanes
+%% overlap: the lane after it must move right together with its nodes, and clear the new column.
+swimlane-beta TB
+  subgraph L1[Sales]
+    A
+  end
+  subgraph L2[Legal]
+  end
+  subgraph L3[Warehouse]
+    C
+  end
+  A --> C
