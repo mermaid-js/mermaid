@@ -596,9 +596,9 @@ linkStyleStatement
     ;
 
 numList: NUM
-        {$$ = [$NUM]}
+        {$$ = [Number($NUM)]}
     | numList COMMA NUM
-        {$numList.push($NUM);$$ = $numList;}
+        {$numList.push(Number($NUM));$$ = $numList;}
     ;
 
 stylesOpt: style
