@@ -30,7 +30,7 @@ const renderLayered = createCommonLayoutRenderer({
 });
 
 // Subgraphs are painted in turn, each one's filled box over what came before, so every subgraph
-// goes before the subgraphs inside it (#8821). Flowchart lists them in the order they are
+// goes before the subgraphs inside it (#8821). Diagrams list them in the order they are
 // declared, which can put a subgraph after the ones it holds. Ties, and the other nodes, keep
 // their order.
 function paintOrder(nodes: LayoutData['nodes']): LayoutData['nodes'] {

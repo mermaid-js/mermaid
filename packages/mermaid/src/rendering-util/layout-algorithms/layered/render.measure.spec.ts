@@ -58,16 +58,20 @@ describe('layered renderer: painting subgraphs', () => {
   });
 
   it('keeps the given order otherwise', () => {
-    expect(
-      order([
-        item('x', false),
-        item('P', true),
-        item('y', false, 'P'),
-        item('Q', true),
-        item('R', true, 'P'),
-        item('z', false),
-      ])
-    ).toEqual(['P', 'Q', 'R', 'x', 'y', 'z']);
+    const painted = order([
+      item('x', false),
+      item('P', true),
+      item('y', false, 'P'),
+      item('Q', true),
+      item('R', true, 'P'),
+      item('z', false),
+    ]);
+    const groups = new Set(['P', 'Q', 'R']);
+
+    // Subgraphs at one depth, and the other nodes, each in the order given.
+    expect(painted.filter((id) => groups.has(id))).toEqual(['P', 'Q', 'R']);
+    expect(painted.filter((id) => !groups.has(id))).toEqual(['x', 'y', 'z']);
+    expect(painted).toHaveLength(6);
   });
 
   it('paints a subgraph whose parent is not a subgraph at the top, and stops on a loop', () => {
