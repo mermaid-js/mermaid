@@ -660,10 +660,13 @@ function parseNeoDashArray(style: string): NeoDashArray | null {
   if (!match) {
     return null;
   }
-  const values = match[1]
-    .trim()
-    .split(/[\s,]+/)
-    .map(Number);
+  const raw = match[1].trim();
+  // edges.js writes space-separated values; leave any other form (e.g. a
+  // user's comma-separated dasharray) untouched.
+  if (raw.includes(',')) {
+    return null;
+  }
+  const values = raw.split(/\s+/).map(Number);
   if (values.length < 4 || values[0] !== 0 || values.some((v) => !Number.isFinite(v))) {
     return null;
   }

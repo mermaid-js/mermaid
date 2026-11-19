@@ -822,6 +822,39 @@ describe('lineJump', () => {
       expect(horizPath.getAttribute('style')).toContain('stroke-dasharray: 0 0 5 3 5 3 5 3 9;');
     });
 
+    it('leaves a comma-separated custom dasharray untouched', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,0 L10,20' },
+      ]);
+      const horizPath = group.node()!.querySelector('path[data-id="horiz"]')!;
+      horizPath.setAttribute('style', 'stroke-dasharray: 0,4,2,4; stroke: #000;');
+      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 36;
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      expect(horizPath.getAttribute('style')).toContain('stroke-dasharray: 0,4,2,4;');
+    });
+
     it('does nothing when disabled', () => {
       const edges: EdgeGeom[] = [
         {
