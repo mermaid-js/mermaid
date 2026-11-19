@@ -12,6 +12,28 @@ html:not(.dark) [img-dark] {
   transform: scale(0.9);
 }
 
+/*
+ * The top nav never wraps (`white-space: nowrap`) and VitePress shows the full
+ * menu from 768px up, but our seven items need ~1440px. Below that the
+ * right-hand part (search, extra menu, theme switch, social links) is pushed
+ * off the screen and, below ~960px, the page scrolls sideways. Drop the lower
+ * priority items as the bar gets narrower. The pages stay reachable from the
+ * sidebar ("Menu" below 960px) and the hamburger menu (below 768px) lists every
+ * item, including the version/changelog.
+ */
+@media (min-width: 768px) and (max-width: 1439px) {
+  .VPNavBarMenu .VPNavBarMenuGroup, /* version / changelog */
+  .VPNavBarMenu .VPNavBarMenuLink[href*='/news/announcements'] {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1099px) {
+  .VPNavBarMenu .VPNavBarMenuLink[href*='/community/intro'] {
+    display: none;
+  }
+}
+
 .vp-doc th,
 .vp-doc td {
   padding: 6px 10px;
