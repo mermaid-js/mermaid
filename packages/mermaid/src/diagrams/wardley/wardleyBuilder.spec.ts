@@ -36,3 +36,36 @@ describe('WardleyBuilder.resolveNodeId', () => {
     expect(builder.resolveNodeId('Beta')).toBe('Beta');
   });
 });
+
+describe('WardleyBuilder.attitudes', () => {
+  let builder: WardleyBuilder;
+
+  beforeEach(() => {
+    builder = new WardleyBuilder();
+    builder.addNode({ id: 'A', label: 'A', x: 0, y: 0 });
+  });
+
+  it('stores attitudes in build output', () => {
+    builder.addAttitude({ kind: 'pioneers', x1: 10, y1: 90, x2: 30, y2: 70 });
+    builder.addAttitude({ kind: 'settlers', x1: 40, y1: 70, x2: 60, y2: 50 });
+    builder.addAttitude({ kind: 'townplanners', x1: 70, y1: 50, x2: 95, y2: 30 });
+
+    const result = builder.build();
+    expect(result.attitudes).toHaveLength(3);
+    expect(result.attitudes.map((a) => a.kind)).toEqual(['pioneers', 'settlers', 'townplanners']);
+    expect(result.attitudes[0]).toEqual({
+      kind: 'pioneers',
+      x1: 10,
+      y1: 90,
+      x2: 30,
+      y2: 70,
+    });
+  });
+
+  it('clears attitudes on reset', () => {
+    builder.addAttitude({ kind: 'pioneers', x1: 10, y1: 90, x2: 30, y2: 70 });
+    builder.clear();
+    builder.addNode({ id: 'A', label: 'A', x: 0, y: 0 });
+    expect(builder.build().attitudes).toEqual([]);
+  });
+});
