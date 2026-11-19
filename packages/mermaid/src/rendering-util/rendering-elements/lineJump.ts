@@ -643,6 +643,56 @@ function decodeDataPoints(raw: string | null): Point[] | null {
   }
 }
 
+interface NeoDashArray {
+  oValueS: number;
+  oValueE: number;
+  /** Dash and gap lengths of a dotted/dashed edge; undefined for a solid edge. */
+  pattern?: { dash: number; gap: number };
+}
+
+/**
+ * Parses the `stroke-dasharray` that edges.js writes for the `neo` look:
+ * `0 <oValueS> <on> <oValueE>` for solid edges, or
+ * `0 <oValueS> <dash> <gap> ... <oValueE>` for dotted and dashed ones.
+ */
+function parseNeoDashArray(style: string): NeoDashArray | null {
+  const match = /stroke-dasharray\s*:\s*([^;]*)/.exec(style);
+  if (!match) {
+    return null;
+  }
+  const raw = match[1].trim();
+  // edges.js writes space-separated values; leave any other form (e.g. a
+  // user's comma-separated dasharray) untouched.
+  if (raw.includes(',')) {
+    return null;
+  }
+  const values = raw.split(/\s+/).map(Number);
+  if (values.length < 4 || values[0] !== 0 || values.some((v) => !Number.isFinite(v))) {
+    return null;
+  }
+  const oValueS = values[1];
+  const oValueE = values[values.length - 1];
+  const middle = values.slice(2, -1);
+  if (middle.length >= 2) {
+    return { oValueS, oValueE, pattern: { dash: middle[0], gap: middle[1] } };
+  }
+  return { oValueS, oValueE };
+}
+
+/** Rebuilds a neo-look dasharray for a path of the given total length. */
+function buildNeoDashArray({ oValueS, oValueE, pattern }: NeoDashArray, len: number): string {
+  const middleLength = Math.max(0, len - oValueS - oValueE);
+  if (!pattern || pattern.dash + pattern.gap <= 0) {
+    return `0 ${oValueS} ${middleLength} ${oValueE}`;
+  }
+  // Same pattern shape as generateDashArray in edges.js.
+  const pairs = Math.floor(middleLength / (pattern.dash + pattern.gap));
+  const middle = Array(Number.isFinite(pairs) ? Math.max(0, pairs) : 0)
+    .fill(`${pattern.dash} ${pattern.gap}`)
+    .join(' ');
+  return `0 ${oValueS} ${middle} ${oValueE}`;
+}
+
 /**
  * Patches the rendered SVG paths in `edgePathsGroup` for any edges that
  * cross. The true geometry is read from each path's `data-points` attribute
@@ -739,24 +789,17 @@ export function applyLineJumpsToSvg(
     // — this is what actually prevents the stroke from poking into the arrow
     // marker body. Our rewritten path has a different length, so without
     // updating the "on" portion the hidden tail ends up in the wrong place.
+    // Dotted and dashed neo edges emit `0 <oValueS> <dash> <gap> ... <oValueE>`
+    // instead; their dash pattern has to be kept, not collapsed into one solid run.
     const originalStyle = pathEl.getAttribute('style') ?? '';
-    const dasharrayMatch = /stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)/.exec(
-      originalStyle
-    );
-    const preservedOValueS = dasharrayMatch ? Number.parseFloat(dasharrayMatch[1]) : null;
-    const preservedOValueE = dasharrayMatch ? Number.parseFloat(dasharrayMatch[2]) : null;
+    const neoDashArray = parseNeoDashArray(originalStyle);
 
     const newD = rewriteEdgePath(renderedEdge, jumps, config);
     pathEl.setAttribute('d', newD);
 
-    if (
-      preservedOValueS !== null &&
-      preservedOValueE !== null &&
-      typeof (pathEl as SVGPathElement).getTotalLength === 'function'
-    ) {
+    if (neoDashArray && typeof (pathEl as SVGPathElement).getTotalLength === 'function') {
       const newLen = (pathEl as SVGPathElement).getTotalLength();
-      const onLen = Math.max(0, newLen - preservedOValueS - preservedOValueE);
-      const newDasharray = `0 ${preservedOValueS} ${onLen} ${preservedOValueE}`;
+      const newDasharray = buildNeoDashArray(neoDashArray, newLen);
       const cleaned = originalStyle
         .replace(/stroke-dasharray\s*:[^;]*;?/g, `stroke-dasharray: ${newDasharray};`)
         .replace(/;\s*;+/g, ';');

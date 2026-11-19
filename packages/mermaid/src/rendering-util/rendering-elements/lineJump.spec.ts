@@ -743,6 +743,118 @@ describe('lineJump', () => {
       expect(style).toMatch(/stroke:\s*#000/);
     });
 
+    it('keeps the dash pattern of a dotted neo edge when it gets a hop', () => {
+      // Dotted and dashed neo edges emit 0 <oValueS> <dash> <gap> ... <oValueE>.
+      // The rewrite used to read that as 0 <oValueS> <on> <oValueE> and wrote a
+      // solid dasharray, so only the dotted edges that cross another edge
+      // turned solid.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,0 L10,20' },
+      ]);
+      // The horizontal edge is the one that gets the hop.
+      const horizPath = group.node()!.querySelector('path[data-id="horiz"]')!;
+      horizPath.setAttribute(
+        'style',
+        'stroke-dasharray: 0 9 2 2 2 2 2 2 9; stroke-dashoffset: 0; stroke: #000;'
+      );
+      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 36;
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const style = horizPath.getAttribute('style') ?? '';
+      // (36 - 9 - 9) = 18 px in the middle → four 2/2 pairs, ends kept.
+      expect(style).toContain('stroke-dasharray: 0 9 2 2 2 2 2 2 2 2 9;');
+      expect(style).toMatch(/stroke:\s*#000/);
+    });
+
+    it('keeps a dashed pattern with other dash and gap lengths', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,0 L10,20' },
+      ]);
+      // The horizontal edge is the one that gets the hop.
+      const horizPath = group.node()!.querySelector('path[data-id="horiz"]')!;
+      horizPath.setAttribute('style', 'stroke-dasharray: 0 0 5 3 5 3 9; stroke: #000;');
+      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 35;
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      // (35 - 0 - 9) = 26 px → three 5/3 pairs.
+      expect(horizPath.getAttribute('style')).toContain('stroke-dasharray: 0 0 5 3 5 3 5 3 9;');
+    });
+
+    it('leaves a comma-separated custom dasharray untouched', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,0 L10,20' },
+      ]);
+      const horizPath = group.node()!.querySelector('path[data-id="horiz"]')!;
+      horizPath.setAttribute('style', 'stroke-dasharray: 0,4,2,4; stroke: #000;');
+      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 36;
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      expect(horizPath.getAttribute('style')).toContain('stroke-dasharray: 0,4,2,4;');
+    });
+
     it('does nothing when disabled', () => {
       const edges: EdgeGeom[] = [
         {
