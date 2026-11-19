@@ -102,8 +102,9 @@ function deepestNestedInset(nodes: readonly Node[], isLane: (id: string) => bool
 
 /**
  * The gap between the nodes of neighbouring lanes in TB and BT: twice the node spacing, but at
- * least the padding both lanes keep around their nodes plus the padding of any group nested at
- * the lane's edge, so lanes touch instead of overlapping.
+ * least the padding both lanes keep around their nodes plus the inset of the deepest group nested
+ * in any lane, so lanes touch instead of overlapping. Every seam gets the same gap, also between
+ * lanes that hold no nested group.
  */
 export function topLaneGap(nodes: readonly Node[], nodeSpacing: number): number {
   const model = buildLaneModel([...nodes]);
