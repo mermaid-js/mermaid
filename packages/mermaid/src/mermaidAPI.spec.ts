@@ -153,39 +153,44 @@ describe('mermaidAPI', () => {
               different.push(text);
             }
           }
-          texts = texts.flatMap((text) => pieces.map((piece) => text + piece));
+          if (length < 5) {
+            texts = texts.flatMap((text) => pieces.map((piece) => text + piece));
+          }
         }
         expect(different).toEqual([]);
       });
 
-      it('scales linearly on a line without a ; after the #', () => {
-        // Same measurement as in regexes.spec.ts: the minimum over a few trials, because noise on
-        // a shared runner only ever adds time.
-        const fastestRun = (run: () => unknown, trials = 5, iterations = 5): number => {
-          let fastest = Infinity;
-          for (let trial = 0; trial < trials; trial++) {
-            const t0 = performance.now();
-            for (let i = 0; i < iterations; i++) {
-              run();
+      it.each(['style', 'classDef'])(
+        'scales linearly on a %s line without a ; after the #',
+        (keyword) => {
+          // Same measurement as in regexes.spec.ts: the minimum over a few trials, because noise on
+          // a shared runner only ever adds time.
+          const fastestRun = (run: () => unknown, trials = 5, iterations = 5): number => {
+            let fastest = Infinity;
+            for (let trial = 0; trial < trials; trial++) {
+              const t0 = performance.now();
+              for (let i = 0; i < iterations; i++) {
+                run();
+              }
+              fastest = Math.min(fastest, (performance.now() - t0) / iterations);
             }
-            fastest = Math.min(fastest, (performance.now() - t0) / iterations);
-          }
-          return fastest;
-        };
-        const measure = (n: number) => {
-          // The shape from #6507: many places to start, many `:` and many `#`, but no `;` behind
-          // them, so the old expressions tried every combination before giving up.
-          const text = 'style'.repeat(n) + '#;' + ':'.repeat(n) + '#'.repeat(n);
-          encodeEntities(text);
-          return fastestRun(() => encodeEntities(text));
-        };
+            return fastest;
+          };
+          const measure = (n: number) => {
+            // The shape from #6507: many places to start, many `:` and many `#`, but no `;` behind
+            // them, so the old expressions tried every combination before giving up.
+            const text = keyword.repeat(n) + '#;' + ':'.repeat(n) + '#'.repeat(n);
+            encodeEntities(text);
+            return fastestRun(() => encodeEntities(text));
+          };
 
-        const small = measure(30);
-        const large = measure(120);
+          const small = measure(30);
+          const large = measure(120);
 
-        // 4x the input. Linear predicts ~4x; the old expressions took ~250x.
-        expect(large / Math.max(small, 0.01)).toBeLessThan(8);
-      });
+          // 4x the input. Linear predicts ~4x; the old expressions took ~250x.
+          expect(large / Math.max(small, 0.01)).toBeLessThan(8);
+        }
+      );
     });
   });
 
