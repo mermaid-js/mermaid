@@ -286,4 +286,15 @@ row2`;
     `)
     ).not.toThrow();
   });
+
+  it('should reject a task line with four metadata items with a clear error (issue #8188)', function () {
+    expect(() =>
+      parser.parse(`gantt
+      title Four metadata items
+      dateFormat YYYY-MM-DD
+      Alpha :a1, 2026-01-05, 3d
+      Beta :b1, 2026-01-12, 2d, extra
+      `)
+    ).toThrowError('Invalid task data: ":b1, 2026-01-12, 2d, extra" has 4 metadata items');
+  });
 });
