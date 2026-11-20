@@ -123,7 +123,7 @@ Marble diagrams take these options under the `marble` key:
 | Option            | Type    | Default | Description                                                                    |
 | ----------------- | ------- | ------- | ------------------------------------------------------------------------------ |
 | `columnWidth`     | number  | `24`    | Horizontal distance, in pixels, between two columns                            |
-| `laneHeight`      | number  | `56`    | Minimum height of a lane; lanes with stacked labels grow beyond it             |
+| `laneHeight`      | number  | `56`    | Minimum height of a lane; all lanes grow together when labels need more room   |
 | `marbleRadius`    | number  | `10`    | Radius of an event marble                                                      |
 | `laneLabelGap`    | number  | `16`    | Space between a lane's name and its timeline                                   |
 | `padding`         | number  | `16`    | Padding around the diagram                                                     |
@@ -163,10 +163,12 @@ Marble diagrams follow the theme, and every color can be overridden with these t
 | `marbleSpanStroke`     | Outline of unlabelled spans         | `lineColor`          |
 | `marbleSpanTextColor`  | Text inside unlabelled spans        | `secondaryTextColor` |
 | `marbleCompleteColor`  | Completion bar `\|`                 | `lineColor`          |
-| `marbleErrorColor`     | Error cross `#`                     | `errorTextColor`     |
+| `marbleErrorColor`     | Error cross `#`                     | `critBkgColor`       |
 | `marbleCancelColor`    | Cancellation cross `x`              | `lineColor`          |
 | `marbleBreakColor`     | Break marks `/`                     | `lineColor`          |
 | `marbleBreakBkg`       | Gap behind break marks              | `background`         |
+
+On a dark background, spans are outlined in `marbleSpanStroke`, and a span whose fill is close to black is mixed a quarter of the way towards that outline, so spans stay visible against the background.
 
 Labelled characters are colored from the theme's palette: the n-th label uses `cScale<n>` for its fill, `cScalePeer<n>` for its outline and `cScaleLabel<n>` for the character inside it, cycling after twelve.
 

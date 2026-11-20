@@ -2729,8 +2729,9 @@ export interface MarbleDiagramConfig extends BaseDiagramConfig {
    */
   columnWidth?: number;
   /**
-   * Minimum vertical space, in pixels, given to each lane. Lanes with labels above or
-   * below their marbles grow beyond this.
+   * Minimum vertical space, in pixels, given to each lane. All lanes share one height,
+   * so when stacked labels need more room every lane grows and the lanes stay evenly
+   * spaced.
    *
    */
   laneHeight?: number;

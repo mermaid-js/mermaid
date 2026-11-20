@@ -3,10 +3,12 @@ import type { Diagram } from '../../Diagram.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { createRoundedRectPathD } from '../../rendering-util/rendering-elements/shapes/roundedRectPath.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import { FONT_SIZE, PALETTE_SIZE, labelRowOffset, layoutMarble } from './marbleLayout.js';
 import type { LaidOutLane, MarbleLayout } from './marbleLayout.js';
 import type { MarbleDB, MarbleItem, MarbleLabel, MarbleSpanItem } from './marbleTypes.js';
+import { spanColors } from './styles.js';
 
 export const colorClass = (label: MarbleLabel | undefined): string =>
   label ? ` marble-color-${label.colorIndex % PALETTE_SIZE}` : '';
@@ -39,10 +41,10 @@ class Pen {
         return slot === undefined
           ? { stroke: v.marbleEventStroke, fill: v.marbleEventFill }
           : { stroke: v[`cScalePeer${slot}`], fill: v[`cScale${slot}`] };
-      case 'span':
-        return slot === undefined
-          ? { stroke: v.marbleSpanStroke, fill: v.marbleSpanFill }
-          : { stroke: v[`cScalePeer${slot}`], fill: v[`cScale${slot}`] };
+      case 'span': {
+        const { stroke, fill } = spanColors(v, slot);
+        return { stroke, fill };
+      }
       case 'line':
         return { stroke: v.marbleLaneColor, fill: undefined };
       case 'terminal':
@@ -106,8 +108,13 @@ class Pen {
     [x, y, width, height]: [number, number, number, number],
     label?: MarbleLabel
   ) {
+    const radius = Math.min(height, width) / 2;
     if (this.rough) {
-      const node = this.rough.rectangle(x, y, width, height, this.roughOptions('span', label));
+      // A pill, like the plain rect with rx below; rough.rectangle would square it off.
+      const node = this.rough.path(
+        createRoundedRectPathD(x, y, width, height, radius),
+        this.roughOptions('span', label)
+      );
       node.setAttribute('class', className);
       group.node()?.appendChild(node);
       return;
@@ -119,7 +126,7 @@ class Pen {
       .attr('y', y)
       .attr('width', width)
       .attr('height', height)
-      .attr('rx', height / 2);
+      .attr('rx', radius);
   }
 }
 

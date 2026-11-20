@@ -1,3 +1,5 @@
+// @ts-expect-error Incorrect khroma types
+import { isDark, luminance, mix } from 'khroma';
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { FONT_SIZE, PALETTE_SIZE } from './marbleLayout.js';
 import type { MarbleStyleOptions } from './marbleTypes.js';
@@ -12,6 +14,57 @@ const colorOf = (
   return typeof value === 'string' && value ? value : fallback;
 };
 
+/** Fills darker than this sink into a dark background, so spans lift them towards their outline. */
+const DARK_FILL_LUMINANCE = 0.05;
+
+const isDarkColor = (color: string | undefined): boolean => {
+  try {
+    return !!color && isDark(color);
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Fill, outline and text colour of a span, unlabelled or in palette slot `slot`. Used by the
+ * stylesheet and by the hand-drawn pen, so both agree.
+ *
+ * On a dark background the theme's `cScale` and secondary colours sit close to the background
+ * itself, so a span there is outlined in `marbleSpanStroke` and a near-black fill is mixed a
+ * quarter of the way towards that outline. Light themes keep their colours as they are.
+ */
+export const spanColors = (
+  options: MarbleStyleOptions,
+  slot?: number
+): { fill?: string; stroke?: string; text?: string } => {
+  const colors =
+    slot === undefined
+      ? {
+          fill: options.marbleSpanFill,
+          stroke: options.marbleSpanStroke,
+          text: options.marbleSpanTextColor,
+        }
+      : {
+          fill: colorOf(options, `cScale${slot}`),
+          stroke: colorOf(options, `cScalePeer${slot}`, options.marbleEventStroke),
+          text: colorOf(options, `cScaleLabel${slot}`, options.marbleEventTextColor),
+        };
+  const background = colorOf(options, 'background');
+  if (!isDarkColor(background) || !colors.fill || !options.marbleSpanStroke) {
+    return colors;
+  }
+  const outline = options.marbleSpanStroke;
+  let fill = colors.fill;
+  try {
+    if (luminance(fill) < DARK_FILL_LUMINANCE) {
+      fill = mix(outline, fill, 25);
+    }
+  } catch {
+    // not a colour khroma can read; leave it to the browser
+  }
+  return { ...colors, fill, stroke: outline };
+};
+
 /** Palette slots, one per `label` statement in declaration order, coloured from `cScale`. */
 const paletteRules = (options: MarbleStyleOptions): string => {
   const rules: string[] = [];
@@ -22,11 +75,15 @@ const paletteRules = (options: MarbleStyleOptions): string => {
     if (!fill || !stroke || !text) {
       continue;
     }
+    const span = spanColors(options, i);
     rules.push(`
-  .marble-color-${i} .marble-event-circle,
-  .marble-color-${i} .marble-span-body {
+  .marble-color-${i} .marble-event-circle {
     fill: ${fill};
     stroke: ${stroke};
+  }
+  .marble-color-${i} .marble-span-body {
+    fill: ${span.fill};
+    stroke: ${span.stroke};
   }
   .marble-color-${i} .marble-event-symbol,
   .marble-color-${i} .marble-span-label {
@@ -40,7 +97,9 @@ const paletteRules = (options: MarbleStyleOptions): string => {
   return rules.join('');
 };
 
-const getStyles: DiagramStylesProvider = (options: MarbleStyleOptions = {}) => `
+const getStyles: DiagramStylesProvider = (options: MarbleStyleOptions = {}) => {
+  const span = spanColors(options);
+  return `
   .marble-title {
     font-size: ${FONT_SIZE.title}px;
     font-weight: bold;
@@ -79,8 +138,8 @@ const getStyles: DiagramStylesProvider = (options: MarbleStyleOptions = {}) => `
     font-family: ${options.fontFamily};
   }
   .marble-span-body {
-    fill: ${options.marbleSpanFill};
-    stroke: ${options.marbleSpanStroke};
+    fill: ${span.fill};
+    stroke: ${span.stroke};
     stroke-width: 1;
   }
   .marble-span-label {
@@ -130,5 +189,6 @@ const getStyles: DiagramStylesProvider = (options: MarbleStyleOptions = {}) => `
   }
   ${paletteRules(options)}
 `;
+};
 
 export default getStyles;

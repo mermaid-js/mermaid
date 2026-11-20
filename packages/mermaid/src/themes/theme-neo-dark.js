@@ -294,7 +294,7 @@ class Theme {
     this.marbleSpanStroke = this.marbleSpanStroke ?? this.lineColor;
     this.marbleSpanTextColor = this.marbleSpanTextColor ?? this.secondaryTextColor;
     this.marbleCompleteColor = this.marbleCompleteColor ?? this.lineColor;
-    this.marbleErrorColor = this.marbleErrorColor ?? this.errorTextColor;
+    this.marbleErrorColor = this.marbleErrorColor ?? this.critBkgColor;
     this.marbleCancelColor = this.marbleCancelColor ?? this.lineColor;
     this.marbleBreakColor = this.marbleBreakColor ?? this.lineColor;
     this.marbleBreakBkg = this.marbleBreakBkg ?? this.background;

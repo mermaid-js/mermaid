@@ -8,7 +8,7 @@ import themes from '../../themes/index.js';
 import { estimateTextWidth, labelRowOffset, layoutMarble } from './marbleLayout.js';
 import { buildTimeline } from './marbleTimeline.js';
 import type { MarbleLabel } from './marbleTypes.js';
-import getStyles from './styles.js';
+import getStyles, { spanColors } from './styles.js';
 
 addDiagrams();
 
@@ -25,6 +25,24 @@ describe('layoutMarble', () => {
   it('stacks lanes at least laneHeight apart', () => {
     const layout = layoutMarble(buildTimeline([lane('a', '-a-'), lane('b', '-b-')]), [], config);
     expect(layout.lanes[1].y - layout.lanes[0].y).toBeGreaterThanOrEqual(config.laneHeight);
+  });
+
+  it('spaces lanes evenly when only some of them carry labels', () => {
+    const labels: MarbleLabel[] = [
+      { symbol: 'a', text: 'a rather long label', colorIndex: 0 },
+      { symbol: 'b', text: 'another long label', colorIndex: 1 },
+      { symbol: 'c', text: 'and a third one', colorIndex: 2 },
+    ];
+    const layout = layoutMarble(
+      buildTimeline([lane('p', '-1-'), lane('q', '-a-b-c-'), lane('r', '-2-'), lane('s', '-c-')]),
+      labels,
+      config
+    );
+    const ys = layout.lanes.map(({ y }) => y);
+    const gaps = ys.slice(1).map((y, i) => y - ys[i]);
+    expect(new Set(gaps).size).toBe(1);
+    expect(gaps[0]).toBeGreaterThan(config.laneHeight);
+    expect(layout.bottom - ys.at(-1)!).toBe(gaps[0] - (ys[0] - layout.top));
   });
 
   it('reserves room for the title and the axis above the first lane', () => {
@@ -147,6 +165,8 @@ ${source}`
     const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
     expect(doc.querySelectorAll('g.marble-event-circle path').length).toBeGreaterThan(0);
     expect(doc.querySelectorAll('circle.marble-event-circle')).toHaveLength(0);
+    expect(doc.querySelectorAll('g.marble-span-body path').length).toBeGreaterThan(0);
+    expect(doc.querySelectorAll('rect.marble-span-body')).toHaveLength(0);
   });
 });
 
@@ -156,6 +176,36 @@ describe('marble styles', () => {
     expect(css).not.toContain('undefined');
     expect(css).toContain('.marble-color-11 .marble-event-circle');
   });
+
+  it('outlines spans in the span stroke and lifts near-black fills on a dark background', () => {
+    const dark = themes.dark.getThemeVariables({}) as unknown as Record<string, string>;
+    const slot0 = spanColors(dark, 0);
+    expect(slot0.stroke).toBe(dark.marbleSpanStroke);
+    expect(slot0.fill).not.toBe(dark.cScale0);
+    expect(getStyles(dark)).toContain(`.marble-color-0 .marble-span-body {
+    fill: ${slot0.fill};
+    stroke: ${dark.marbleSpanStroke};`);
+  });
+
+  it('keeps the theme palette for spans on a light background', () => {
+    const light = themes.default.getThemeVariables({}) as unknown as Record<string, string>;
+    expect(spanColors(light, 0)).toEqual({
+      fill: light.cScale0,
+      stroke: light.cScalePeer0,
+      text: light.cScaleLabel0,
+    });
+  });
+
+  it.each(['default', 'dark', 'neutral', 'forest', 'base'] as const)(
+    'draws the error cross in the critical colour under the %s theme',
+    (name) => {
+      const variables = themes[name].getThemeVariables({});
+      expect(variables.marbleErrorColor).toBe(variables.critBkgColor);
+      expect(getStyles(variables)).toMatch(
+        new RegExp(`\\.marble-error-mark {\\s*fill: none;\\s*stroke: ${variables.critBkgColor};`)
+      );
+    }
+  );
 
   it('follows a theme variable override', () => {
     const variables = themes.default.getThemeVariables({ marbleLaneColor: '#123456' });

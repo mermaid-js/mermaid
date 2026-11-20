@@ -166,15 +166,26 @@ export const layoutMarble = (
   }
   const top = y;
 
-  const lanes = timeline.lanes.map((lane): LaidOutLane => {
-    const { labels: placed, innerSpanLabels } = placeLabels(lane, labels, x, config);
+  // Every lane gets the same band, tall enough for the lane with the most label rows, so the
+  // lane lines stay evenly spaced whichever lanes carry labels.
+  const placedLanes = timeline.lanes.map((lane) => ({
+    lane,
+    ...placeLabels(lane, labels, x, config),
+  }));
+  let above = radius + 6;
+  let below = radius + 6;
+  for (const { labels: placed } of placedLanes) {
     const rows = placed.reduce((most, label) => Math.max(most, label.row + 1), 0);
-    const above = radius + 6 + (rows > 1 ? LABEL_ROW : 0);
     const belowRows = rows === 0 ? 0 : rows === 1 ? 1 : rows - 1;
-    const below = radius + 6 + belowRows * LABEL_ROW;
-    const slack = Math.max(0, config.laneHeight - above - below) / 2;
-    const laneY = y + slack + above;
-    y += above + below + 2 * slack;
+    above = Math.max(above, radius + 6 + (rows > 1 ? LABEL_ROW : 0));
+    below = Math.max(below, radius + 6 + belowRows * LABEL_ROW);
+  }
+  const pitch = Math.max(config.laneHeight, above + below);
+  const offset = (pitch - above - below) / 2 + above;
+
+  const lanes = placedLanes.map(({ lane, labels: placed, innerSpanLabels }): LaidOutLane => {
+    const laneY = y + offset;
+    y += pitch;
     return { lane, y: laneY, labels: placed, innerSpanLabels };
   });
 
