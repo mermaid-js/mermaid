@@ -17,6 +17,7 @@
     "git": { "label": "Graph: Git", "keywords": ["gitGraph"] },
     "ishikawa": { "label": "Graph: Ishikawa", "keywords": ["ishikawa"] },
     "kanban": { "label": "Graph: Kanban", "keywords": ["kanban"] },
+    "marble": { "label": "Graph: Marble", "keywords": ["marble"] },
     "mindmap": { "label": "Graph: Mindmap", "keywords": ["mindmap"] },
     "packet": { "label": "Graph: Packet", "keywords": ["packet"] },
     "pie": { "label": "Graph: Pie", "keywords": ["pie"] },

@@ -34,6 +34,7 @@ import { treemap } from '../diagrams/treemap/detector.js';
 import { usecase } from '../diagrams/usecase/usecaseDetector.js';
 import wardley from '../diagrams/wardley/wardleyDetector.js';
 import { cynefin } from '../diagrams/cynefin/cynefinDetector.js';
+import { marble } from '../diagrams/marble/marbleDetector.js';
 import { railroad } from '../diagrams/railroad/railroadDetector.js';
 import { railroadEbnf } from '../diagrams/railroad/ebnfDetector.js';
 import { railroadAbnf } from '../diagrams/railroad/abnfDetector.js';
@@ -121,6 +122,7 @@ export const addDiagrams = () => {
     venn,
     wardley,
     cynefin,
+    marble,
     usecase
   );
 };

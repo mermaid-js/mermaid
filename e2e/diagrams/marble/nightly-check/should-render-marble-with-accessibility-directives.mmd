@@ -1,0 +1,9 @@
+---
+description: >-
+  Marble diagram carrying accTitle and accDescr, which must not affect layout.
+---
+marble-beta
+  accTitle: debounceTime(3)
+  accDescr: Keystrokes a, b and c arrive close together, so only c is emitted, three ticks after it.
+  input  : -a-b-c-----|
+  output : --------c--|

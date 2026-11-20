@@ -280,6 +280,25 @@ class Theme {
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
+    /* marble */
+    this.marbleTitleColor = this.marbleTitleColor ?? this.titleColor;
+    this.marbleLaneColor = this.marbleLaneColor ?? this.lineColor;
+    this.marbleLaneLabelColor = this.marbleLaneLabelColor ?? this.textColor;
+    this.marbleAxisTextColor = this.marbleAxisTextColor ?? this.textColor;
+    this.marbleGridColor = this.marbleGridColor ?? this.lineColor;
+    this.marbleEventFill = this.marbleEventFill ?? this.primaryColor;
+    this.marbleEventStroke = this.marbleEventStroke ?? this.lineColor;
+    this.marbleEventTextColor = this.marbleEventTextColor ?? this.primaryTextColor;
+    this.marbleLabelColor = this.marbleLabelColor ?? this.textColor;
+    this.marbleSpanFill = this.marbleSpanFill ?? this.secondaryColor;
+    this.marbleSpanStroke = this.marbleSpanStroke ?? this.lineColor;
+    this.marbleSpanTextColor = this.marbleSpanTextColor ?? this.secondaryTextColor;
+    this.marbleCompleteColor = this.marbleCompleteColor ?? this.lineColor;
+    this.marbleErrorColor = this.marbleErrorColor ?? this.errorTextColor;
+    this.marbleCancelColor = this.marbleCancelColor ?? this.lineColor;
+    this.marbleBreakColor = this.marbleBreakColor ?? this.lineColor;
+    this.marbleBreakBkg = this.marbleBreakBkg ?? this.background;
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });

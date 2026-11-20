@@ -1,0 +1,17 @@
+---
+description: >-
+  Marble diagram in hand-drawn look, drawing lanes, marbles and spans through
+  rough.js with a fixed seed: exhaustMap ignoring clicks while a request is in
+  flight.
+config:
+  look: handDrawn
+  handDrawnSeed: 1
+---
+marble-beta
+  title exhaustMap
+  clicks   : -a--b-c-----d----|
+  requests :  [=====]     [===]
+  output   : -------A--------D|
+  label = "request"
+  label b "ignored"
+  label c "ignored"

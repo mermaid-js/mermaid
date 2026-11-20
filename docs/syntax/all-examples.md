@@ -3581,6 +3581,105 @@ cynefin-beta
 
 </details>
 
+## Marble Diagram
+
+RxJS-style timelines of events, spans, cancellations and completions
+
+### debounceTime
+
+```mermaid
+marble-beta
+  title debounceTime(3)
+  axis   : 0    5    10   15
+  input  : -a-b-c-----d---|
+  output : --------c-----d|
+  label c "emitted"
+
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+marble-beta
+  title debounceTime(3)
+  axis   : 0    5    10   15
+  input  : -a-b-c-----d---|
+  output : --------c-----d|
+  label c "emitted"
+
+```
+
+</details>
+
+### switchMap
+
+```mermaid
+marble-beta
+  title switchMap: a new search cancels the one in flight
+  axis       : 0    5    10   15
+  input      : -a-----b--c--------|
+  "search a" :  [=====x
+  "search b" :        [==x
+  "search c" :           [=====]
+  output     : ----------------r--|
+  label = "request"
+  label x "cancelled"
+  label r "results for c"
+
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+marble-beta
+  title switchMap: a new search cancels the one in flight
+  axis       : 0    5    10   15
+  input      : -a-----b--c--------|
+  "search a" :  [=====x
+  "search b" :        [==x
+  "search c" :           [=====]
+  output     : ----------------r--|
+  label = "request"
+  label x "cancelled"
+  label r "results for c"
+
+```
+
+</details>
+
+### timeout and retry
+
+```mermaid
+marble-beta
+  title timeout(5) then retry once after 1h
+  axis    : 0    5    /  1h
+  request : -[====x---/--[====#
+  result  : ----------/-------#
+  label = "attempt"
+  label x "timed out"
+  label # "TimeoutError"
+
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+marble-beta
+  title timeout(5) then retry once after 1h
+  axis    : 0    5    /  1h
+  request : -[====x---/--[====#
+  result  : ----------/-------#
+  label = "attempt"
+  label x "timed out"
+  label # "TimeoutError"
+
+```
+
+</details>
+
 ## Railroad Diagram (IR)
 
 Visualize grammar rules using railroad diagram IR primitives for direct layout control

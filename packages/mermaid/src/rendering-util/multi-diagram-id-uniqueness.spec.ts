@@ -209,6 +209,13 @@ union A, B`,
     chaotic
       "Page on-call"`,
 
+  marbleDiagram: `marble-beta
+    title Debounce
+    axis   : 0   5   10
+    input  : -a-b-c----|
+    output : ------c---|
+    label c "emitted"`,
+
   usecase: `usecase-beta
     actor User
     Login("Sign in")

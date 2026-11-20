@@ -1,0 +1,13 @@
+---
+description: >-
+  Marble diagram with an error terminating a lane, a cancelled attempt, and a
+  "/" time break drawn across every active lane and the axis: timeout(5)
+  followed by one retry after an hour.
+---
+marble-beta
+  axis    : 0    5    /  1h
+  request : -[====x---/--[====#
+  result  : ----------/-------#
+  label = "attempt"
+  label x "timed out"
+  label # "TimeoutError"
