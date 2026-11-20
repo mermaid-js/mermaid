@@ -92,8 +92,8 @@ flowchart LR
       <section>
         <h2>Nested subgraphs and inner edges</h2>
         <p>
-          Edges between a subgraph and a node inside it run along the flow, and the subgraph grows
-          to keep their labels clear.
+          An edge between a subgraph and a node inside it (Outer → Parse) runs along the flow, and
+          the subgraph grows to keep its label clear.
         </p>
         <pre class="mermaid">
 ---
@@ -107,6 +107,7 @@ flowchart TB
       a1[Parse] --> a2[Check]
     end
     Inner -->|report| b1[Store]
+    Outer -->|start| a1
   end
   Outer -->|done| Out[Output]
   a2 --> Out
@@ -155,7 +156,10 @@ flowchart TD
 
       <section>
         <h2>Edge routing: curved</h2>
-        <p>Each edge runs as smooth curves between ranks and keeps its own interpolation.</p>
+        <p>
+          Each edge runs as smooth curves between ranks and keeps its own interpolation, so A → B is
+          straight.
+        </p>
         <pre class="mermaid">
 ---
 config:
@@ -170,6 +174,7 @@ flowchart TD
   B --> E
   C --> E
   D --> E
+  linkStyle 0 interpolate linear
         </pre>
       </section>
 
@@ -241,7 +246,10 @@ flowchart TD
 
       <section>
         <h2>Edge labels, self-loops and parallel edges</h2>
-        <p>Labels are placed on their edges, and self-loops get room for their labels.</p>
+        <p>
+          Labels are placed on their edges, self-loops get room for their labels, and parallel edges
+          run side by side.
+        </p>
         <pre class="mermaid">
 ---
 config:
@@ -251,6 +259,7 @@ flowchart LR
   Idle -->|start| Running
   Running -->|tick| Running
   Running -->|pause| Paused
+  Running -->|suspend| Paused
   Paused -->|resume| Running
   Running -->|stop| Idle
   Running -->|fail| Error
@@ -366,6 +375,34 @@ erDiagram
       </section>
 
       <section>
+        <h2>Requirement diagram</h2>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+requirementDiagram
+  requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement test_req2 {
+    id: 1.1
+    text: the second test text.
+    risk: low
+    verifymethod: inspection
+  }
+  element test_entity {
+    type: simulation
+  }
+  test_entity - satisfies -> test_req2
+  test_req - contains -> test_req2
+        </pre>
+      </section>
+
+      <section>
         <h2>Mindmap</h2>
         <p>Mindmaps are drawn as a top-down tree.</p>
         <pre class="mermaid">
@@ -394,7 +431,6 @@ mindmap
       mermaid.initialize({
         startOnLoad: true,
         logLevel: 3,
-        securityLevel: 'loose',
       });
     </script>
   </body>
