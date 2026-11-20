@@ -267,6 +267,7 @@ Communication tools and platforms
 
 ### Other
 
+- [Archimaid: ArchiMate® 3.2 diagrams as an external Mermaid diagram type](https://archimaid.org) - Plugin, validation CLI and [browser playground](https://try.archimaid.org)
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
