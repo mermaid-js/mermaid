@@ -15,6 +15,7 @@ import {
   generateRoundedPath,
   insertEdge,
   resolveEdgeCurveType,
+  resolveEdgeLabelPosition,
   setTerminalWidth,
 } from './edges.js';
 import { resolveEdgeCornerRadius } from '../edgeCornerRadius.js';
@@ -1155,6 +1156,35 @@ describe('insertEdge subgraph boundary clipping', () => {
     expect(start[0]).toBeCloseTo(shape.start[0], 3);
     expect(start[1]).toBeCloseTo(shape.start[1], 3);
     expect(path).toMatch(/L256,50$/);
+  });
+
+  it('uses the clipped route for the label when only the source port moved', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      ...createEdge(),
+      toCluster: undefined,
+      x: 50,
+      y: 0,
+      points: [
+        { x: 0, y: 0 },
+        { x: 100, y: 0 },
+      ],
+    };
+    const clippedStart = { x: 70, y: 0 };
+    const paths = insertEdge(
+      svg,
+      edge,
+      clusterDb,
+      'flowchart',
+      { intersect: () => clippedStart },
+      { ...target, clusterNode: true },
+      'diagram',
+      false,
+      'dagre'
+    );
+
+    expect(resolveEdgeLabelPosition(edge, paths)).toEqual({ x: 85, y: 0 });
   });
 
   it('preserves the source port on an extracted subgraph edge when intersection is skipped', () => {

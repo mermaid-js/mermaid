@@ -800,6 +800,7 @@ export const insertEdge = function (
     points.push(head.intersect(points[points.length - 1]));
   } else if (!axisRoute && tail.intersect && head.clusterNode && !skipIntersect) {
     points = [tail.intersect(points[1]), ...points.slice(1)];
+    pointsHasChanged = true;
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster && !axisRoute) {
