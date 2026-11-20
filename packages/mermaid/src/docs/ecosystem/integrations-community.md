@@ -272,6 +272,7 @@ Communication tools and platforms
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
+- [Kliv](https://kliv.dev) - AI web app builder that renders Mermaid diagrams in its builder chat ✅
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
@@ -287,4 +288,4 @@ Communication tools and platforms
 - [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
-<!--- cspell:ignore Blazorade HueHive --->
+<!--- cspell:ignore Blazorade HueHive Kliv --->
