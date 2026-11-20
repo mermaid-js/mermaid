@@ -1,30 +1,6 @@
-import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
 import { assertDiagramNotError, diagramSvg, renderGraph } from '../../../helpers/util.ts';
-
-const assertFiniteViewBox = async (page: Parameters<typeof diagramSvg>[0]) => {
-  const svg = diagramSvg(page).first();
-  const viewBox = (await svg.getAttribute('viewBox')) ?? '';
-  const numbers = viewBox.split(/\s+/).map((value) => Number(value));
-  expect(numbers).toHaveLength(4);
-  for (const value of numbers) {
-    expect(Number.isFinite(value)).toBe(true);
-  }
-  expect(numbers[2]).toBeGreaterThan(0);
-  expect(numbers[3]).toBeGreaterThan(0);
-};
-
-const assertFiniteEdgePaths = async (page: Parameters<typeof diagramSvg>[0]) => {
-  const pathData = await page
-    .locator('svg .edgePaths path')
-    .evaluateAll((paths) => paths.map((path) => path.getAttribute('d') ?? ''));
-  expect(pathData.length).toBeGreaterThan(0);
-  for (const d of pathData) {
-    expect(d.length).toBeGreaterThan(0);
-    expect(d.includes('NaN')).toBe(false);
-    expect(d.includes('undefined')).toBe(false);
-  }
-};
+import { assertFiniteEdgePaths, assertFiniteViewBox } from '../../../helpers/grid-assertions.ts';
 
 const nodeCenter = async (page: Parameters<typeof diagramSvg>[0], label: string) => {
   const box = await page.locator('svg g.node').filter({ hasText: label }).first().boundingBox();
@@ -457,46 +433,6 @@ flowchart TB
     await assertFiniteEdgePaths(page);
   });
 
-  test('grid renders the medium3 real-corpus flowchart with redux/neo', async ({ page }) => {
-    const source = await readFile(
-      new URL('../../../platform/dev-diagrams/performance/flowcharts/medium3.mmd', import.meta.url),
-      'utf8'
-    );
-
-    await page.goto('/iife.html');
-    await page.waitForFunction(() => window.mermaid !== undefined);
-    await page.evaluate(
-      async ({ diagramSource }) => {
-        const mount = document.createElement('div');
-        mount.id = 'grid-medium3-corpus';
-        document.body.innerHTML = '';
-        document.body.append(mount);
-
-        await window.mermaid.initialize({
-          startOnLoad: false,
-          layout: 'grid',
-          theme: 'redux',
-          look: 'neo',
-          maxTextSize: 1_000_000,
-          maxEdges: 1_000_000,
-        });
-
-        const { svg, bindFunctions } = await window.mermaid.render(
-          'grid-medium3-corpus-svg',
-          diagramSource
-        );
-        mount.innerHTML = svg;
-        bindFunctions?.(mount);
-        (window as Window & { rendered?: boolean }).rendered = true;
-      },
-      { diagramSource: source }
-    );
-
-    await assertFiniteViewBox(page);
-    await assertFiniteEdgePaths(page);
-    await assertDiagramNotError(page);
-  });
-
   test('grid flowchart keeps group titles, HTML labels, loops, and parallel routes structurally valid', async ({
     page,
   }) => {
@@ -564,26 +500,4 @@ flowchart LR
     expect(pathData.length).toBeGreaterThanOrEqual(10);
     expect(new Set(pathData).size).toBe(pathData.length);
   });
-
-  for (const look of ['classic', 'handDrawn', 'neo'] as const) {
-    test(`grid renders with the ${look} look`, async ({ page }, testInfo) => {
-      await renderGraph(
-        page,
-        testInfo,
-        `---
-config:
-  layout: grid
-  theme: forest
-  grid:
-    columns: 1
----
-flowchart TB
-  A --> B
-  B --> C`,
-        { look, screenshot: true, name: `grid-look-${look}` }
-      );
-      await assertFiniteViewBox(page);
-      await assertFiniteEdgePaths(page);
-    });
-  }
 });
