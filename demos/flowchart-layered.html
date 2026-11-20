@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid Flowchart LAYERED Test Page</title>
+    <style>
+      body {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: Arial, sans-serif;
+      }
+
+      .examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+        gap: 1.5rem;
+      }
+
+      section {
+        min-width: 0;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+      }
+
+      section h2 {
+        margin-top: 0;
+      }
+
+      .mermaid {
+        overflow: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Flowchart LAYERED</h1>
+    <p>
+      These examples exercise the built-in layered layout (<code>layout: layered</code>): ranks,
+      subgraphs, edge routing modes, line hops, node shapes and the other graph diagrams it lays
+      out. Edit the diagrams to inspect different results.
+    </p>
+
+    <main class="examples">
+      <section>
+        <h2>Basic flow with a cycle</h2>
+        <p>
+          Nodes are placed in ranks along the diagram direction. The edge back to B is reversed.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+flowchart TD
+  A([Start]) ==> B[Step 1]
+  B ==> C{Flow 1}
+  C -- Choice 1.1 --> D[Step 2.1]
+  C -- Choice 1.3 --> I[Step 2.3]
+  C == Choice 1.2 ==> E[Step 2.2]
+  D --> F{Flow 2}
+  E ==> F
+  F == Choice 2.1 ==> H[Feedback node]
+  H ==> B
+  F == Choice 2.2 ==> G((Finish))
+        </pre>
+      </section>
+
+      <section>
+        <h2>Subgraphs with their own direction</h2>
+        <p>Edges can start or end at a subgraph, and a subgraph can set its own direction.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+flowchart LR
+  subgraph build [Build]
+    direction TB
+    compile --> test
+  end
+  subgraph release [Release]
+    tag --> publish
+  end
+  checkout --> build
+  build --> release
+        </pre>
+      </section>
+
+      <section>
+        <h2>Nested subgraphs and inner edges</h2>
+        <p>
+          An edge between a subgraph and a node inside it (Outer → Parse) runs along the flow, and
+          the subgraph grows to keep its label clear.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+flowchart TB
+  In[Input] --> Outer
+  subgraph Outer [Outer]
+    subgraph Inner [Inner]
+      a1[Parse] --> a2[Check]
+    end
+    Inner -->|report| b1[Store]
+    Outer -->|start| a1
+  end
+  Outer -->|done| Out[Output]
+  a2 --> Out
+        </pre>
+      </section>
+
+      <section>
+        <h2>Edge routing: rounded (default)</h2>
+        <p>Edges run on tracks with small circular corners.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+  layered:
+    edgeRouting: rounded
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  B --> E
+  C --> E
+  D --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Edge routing: stepped</h2>
+        <p>The same tracks, with each turn softened over at most 12 px.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+  layered:
+    edgeRouting: stepped
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  B --> E
+  C --> E
+  D --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Edge routing: curved</h2>
+        <p>
+          Each edge runs as smooth curves between ranks and keeps its own interpolation, so A → B is
+          straight.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+  layered:
+    edgeRouting: curved
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  B --> E
+  C --> E
+  D --> E
+  linkStyle 0 interpolate linear
+        </pre>
+      </section>
+
+      <section>
+        <h2>Edge routing: straight</h2>
+        <p>Each edge runs as straight lines from point to point.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+  layered:
+    edgeRouting: straight
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  B --> E
+  C --> E
+  D --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Line hops: arc (default)</h2>
+        <p>Where two edges cross, the edge that gives way hops over the other.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  A --> E
+  B --> C
+  B --> D
+  B --> E
+  C --> D
+  C --> E
+  D --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Line hops: gap</h2>
+        <p>The edge that gives way is broken around the other.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+  layered:
+    lineHops: gap
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  A --> E
+  B --> C
+  B --> D
+  B --> E
+  C --> D
+  C --> E
+  D --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Edge labels, self-loops and parallel edges</h2>
+        <p>
+          Labels are placed on their edges, self-loops get room for their labels, and parallel edges
+          run side by side.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+flowchart LR
+  Idle -->|start| Running
+  Running -->|tick| Running
+  Running -->|pause| Paused
+  Running -->|suspend| Paused
+  Paused -->|resume| Running
+  Running -->|stop| Idle
+  Running -->|fail| Error
+  Error -->|reset| Idle
+        </pre>
+      </section>
+
+      <section>
+        <h2>Node shapes</h2>
+        <p>Edges end on each shape's outline, including non-convex shapes such as the bolt.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+flowchart TB
+  start@{ shape: circle, label: "Start" } --> doc@{ shape: doc, label: "Document" }
+  start --> db@{ shape: cyl, label: "Database" }
+  doc --> bolt@{ shape: lightning-bolt }
+  db --> bolt
+  bolt --> hex@{ shape: hex, label: "Prepare" }
+  bolt --> dec@{ shape: diam, label: "Decide" }
+  hex --> stop@{ shape: dbl-circ, label: "Stop" }
+  dec --> stop
+        </pre>
+      </section>
+
+      <section>
+        <h2>Styles, classes and linkStyle</h2>
+        <p>Node classes and per-edge styles work as with the other layouts.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+flowchart LR
+  A[Request]:::in --> B{Valid?}
+  B -->|yes| C[Handle]:::ok
+  B -->|no| D[Reject]:::bad
+  C --> E[Respond]
+  D --> E
+  classDef in fill:#e3f2fd,stroke:#1565c0
+  classDef ok fill:#e8f5e9,stroke:#2e7d32
+  classDef bad fill:#ffebee,stroke:#c62828
+  linkStyle 2 stroke:#c62828,stroke-width:2px,stroke-dasharray:4 3
+        </pre>
+      </section>
+
+      <section>
+        <h2>Class diagram</h2>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+classDiagram
+  Animal <|-- Duck
+  Animal <|-- Fish
+  Animal <|-- Zebra
+  Animal : +int age
+  Animal : +String gender
+  Animal: +isMammal()
+  class Duck{
+    +String beakColor
+    +swim()
+  }
+  class Fish{
+    -int sizeInFeet
+    -canEat()
+  }
+  class Zebra{
+    +bool is_wild
+    +run()
+  }
+        </pre>
+      </section>
+
+      <section>
+        <h2>State diagram</h2>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+stateDiagram-v2
+  [*] --> Still
+  Still --> [*]
+  Still --> Moving
+  Moving --> Still
+  Moving --> Crash
+  Crash --> [*]
+  state Moving {
+    [*] --> Slow
+    Slow --> Fast
+    Fast --> Slow
+  }
+        </pre>
+      </section>
+
+      <section>
+        <h2>Entity relationship diagram</h2>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE-ITEM : contains
+  CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+  PRODUCT ||--o{ LINE-ITEM : "ordered in"
+        </pre>
+      </section>
+
+      <section>
+        <h2>Requirement diagram</h2>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+requirementDiagram
+  requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement test_req2 {
+    id: 1.1
+    text: the second test text.
+    risk: low
+    verifymethod: inspection
+  }
+  element test_entity {
+    type: simulation
+  }
+  test_entity - satisfies -> test_req2
+  test_req - contains -> test_req2
+        </pre>
+      </section>
+
+      <section>
+        <h2>Mindmap</h2>
+        <p>Mindmaps are drawn as a top-down tree.</p>
+        <pre class="mermaid">
+---
+config:
+  layout: layered
+---
+mindmap
+  root((Layered))
+    Ranks
+      Cycles
+      Long edges
+    Routing
+      Rounded
+      Stepped
+      Curved
+      Straight
+    Subgraphs
+        </pre>
+      </section>
+    </main>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 3,
+      });
+    </script>
+  </body>
+</html>
