@@ -18,6 +18,7 @@ cytoscape-cose-bilkent
 dagre
 dagre-d3
 Deepdwn
+Devtoolry
 Docsify
 Docsy
 Doctave
