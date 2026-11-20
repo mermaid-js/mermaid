@@ -1,0 +1,21 @@
+---
+description:
+  Edges into, out of and across a subgraph placed in its own grid cell, with a
+  member placed inside the subgraph's grid.
+config:
+  layout: grid
+  securityLevel: loose
+  grid:
+    rowGap: 72
+    columnGap: 96
+---
+flowchart LR
+  O["Outside"]@{ row: 1, column: 1 }
+  subgraph G["Group"]
+    M["Member"]@{ row: 1, column: 1 }
+  end
+  G@{ row: 1, column: 2 }
+
+  G --> M
+  O --> G
+  O --> M
