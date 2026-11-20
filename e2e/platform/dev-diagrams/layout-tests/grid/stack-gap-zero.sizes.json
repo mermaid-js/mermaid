@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-21T01:20:22.528Z",
+    "capturedFrom": "browser-capture layout-tests/grid/stack-gap-zero.mmd theme=default look=classic",
+    "sourceSha256": "b1914185dd8cca0f8a85ea8fa9fcaadb3b484411b93ad81a3a540a5b92d2146b"
+  },
+  "nodes": [
+    {
+      "id": "A",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "Peer",
+      "width": 152,
+      "height": 66
+    }
+  ]
+}

@@ -1,12 +1,7 @@
 import type { Point } from '../../../types.js';
 import { nonterminalSegments, type OrthogonalSegment } from './routerConstraint.js';
+import { EDGE_CLEARANCE_PX } from './routerTopology.js';
 import type { GridOrientation, RouterPoint } from './types.js';
-
-/**
- * Parallel runs of different edges closer than this are hard to tell apart, so candidates avoid them.
- * Perpendicular crossings are not affected.
- */
-export const EDGE_CLEARANCE_PX = 24;
 
 function segmentsTooClose(candidate: OrthogonalSegment, committed: OrthogonalSegment): boolean {
   if (candidate.orientation !== committed.orientation) {
