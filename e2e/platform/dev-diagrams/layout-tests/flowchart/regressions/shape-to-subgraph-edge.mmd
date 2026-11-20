@@ -1,0 +1,13 @@
+---
+title: Edges from a diamond and a circle start on the shape, not beside it (#6626)
+config:
+  layout: dagre
+---
+flowchart LR
+    subgraph c
+        i --> h
+    end
+    f{9} --> x{d}
+    f --> c
+    g((9)) --> y((d))
+    g --> c
