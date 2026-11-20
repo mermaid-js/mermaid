@@ -25,13 +25,21 @@ export interface MarbleTick {
   text: string;
 }
 
-/** How a span ends: closed by `]` or an event, cancelled by `x`, or still running (`>`). */
+/** How a span ends: closed by `]` or an event, cancelled by `!`, or still running (`>`). */
 export type MarbleSpanEnd = 'close' | 'cancel' | 'open';
+
+/** Where a value sits in a synchronous group such as `(abc)`: its place and the group's size. */
+export interface MarbleStack {
+  index: number;
+  size: number;
+}
 
 export interface MarbleEventItem {
   kind: 'event';
   symbol: string;
   col: number;
+  /** Set when the event is one of several emitted together in a `( )` group. */
+  stack?: MarbleStack;
 }
 
 export interface MarbleSpanItem {
@@ -41,15 +49,48 @@ export interface MarbleSpanItem {
   from: number;
   to: number;
   end: MarbleSpanEnd;
+  /** A subscription lane (`--^---!`) drawn as one span from `^` to `!`; its symbol is `^`. */
+  subscription?: boolean;
 }
 
 export interface MarbleTerminalItem {
-  /** `complete` is `|`, `error` is `#`, `cancel` is `x`. */
+  /** `complete` is `|`, `error` is `#`, `cancel` is `!` (unsubscription). */
   kind: 'complete' | 'error' | 'cancel';
+  col: number;
+  /** Set when the terminal is part of a `( )` group, in the same frame as its values. */
+  grouped?: boolean;
+}
+
+/** `^`: the point where the lane is subscribed to. */
+export interface MarbleSubscribeItem {
+  kind: 'subscribe';
   col: number;
 }
 
-export type MarbleItem = MarbleEventItem | MarbleSpanItem | MarbleTerminalItem;
+/** A synchronous group `( )`: its values share the column of `(`, stacked. */
+export interface MarbleGroupItem {
+  kind: 'group';
+  col: number;
+  /** Column of the closing `)`: the group takes as many frames as it has characters. */
+  to: number;
+  /** Number of values (events) in the group. */
+  size: number;
+}
+
+/** RxJS time progression such as `9ms` or `1.4s`, drawn as a labelled break in one column. */
+export interface MarbleTimeItem {
+  kind: 'time';
+  col: number;
+  text: string;
+}
+
+export type MarbleItem =
+  | MarbleEventItem
+  | MarbleSpanItem
+  | MarbleTerminalItem
+  | MarbleSubscribeItem
+  | MarbleGroupItem
+  | MarbleTimeItem;
 
 /** A stretch of columns in which the lane is active, drawn as the lane's line. */
 export interface MarbleSegment {

@@ -45,6 +45,8 @@ export interface PlacedLabel {
 export interface LaidOutLane {
   lane: MarbleLane;
   y: number;
+  /** How far marbles reach above and below the line; see `laneExtent`. */
+  extent: number;
   labels: PlacedLabel[];
   /** Spans whose label fits inside them; the others get a placed label instead. */
   innerSpanLabels: Set<MarbleSpanItem>;
@@ -72,21 +74,45 @@ const labelFor = (item: MarbleItem, labels: Map<string, MarbleLabel>): MarbleLab
     case 'span':
       return labels.get(item.symbol);
     case 'cancel':
-      return labels.get('x');
+      return labels.get('!');
     case 'error':
       return labels.get('#');
     case 'complete':
       return labels.get('|');
+    case 'subscribe':
+      return labels.get('^');
+    default:
+      return undefined;
   }
 };
 
-/** The y offset of a label row from its lane's line. */
-export const labelRowOffset = (row: number, radius: number): number => {
+/** The y offset of a label row from its lane's line, clear of marbles reaching `extent`. */
+export const labelRowOffset = (row: number, extent: number): number => {
   if (row === 1) {
-    return -(radius + 8);
+    return -(extent + 8);
   }
-  return radius + 16 + Math.max(0, row - 1) * LABEL_ROW;
+  return extent + 16 + Math.max(0, row - 1) * LABEL_ROW;
 };
+
+/** How far right of its column a completion or error inside a `( )` group is drawn, past the stack. */
+export const groupedTerminalShift = (radius: number): number => radius + 9;
+
+/** Vertical distance between the centres of two stacked marbles in a `( )` group. */
+export const stackPitch = (radius: number): number => 2 * radius + 2;
+
+/** The y offset from the lane's line of marble `index` in a stack of `size`. */
+export const stackOffset = (index: number, size: number, radius: number): number =>
+  (index - (size - 1) / 2) * stackPitch(radius);
+
+/** How far the lane's marbles reach above and below its line: a radius, or half a stack. */
+export const laneExtent = (lane: MarbleLane, radius: number): number =>
+  lane.items.reduce(
+    (most, item) =>
+      item.kind === 'group' && item.size > 1
+        ? Math.max(most, ((item.size - 1) * stackPitch(radius)) / 2 + radius)
+        : most,
+    radius
+  );
 
 /**
  * Places a lane's labels left to right, putting each in the first row where it does not
@@ -101,6 +127,10 @@ const placeLabels = (
   const innerSpanLabels = new Set<MarbleSpanItem>();
   const candidates: { text: string; anchorX: number; colorIndex?: number }[] = [];
   for (const item of lane.items) {
+    if (item.kind === 'time') {
+      candidates.push({ text: item.text, anchorX: x(item.col) });
+      continue;
+    }
     const label = labelFor(item, labels);
     if (!label?.text) {
       continue;
@@ -121,8 +151,14 @@ const placeLabels = (
       });
       continue;
     }
-    if (config.showEventLabels) {
-      candidates.push({ text: label.text, anchorX: x(item.col), colorIndex: label.colorIndex });
+    if (config.showEventLabels && 'col' in item) {
+      const shift =
+        'grouped' in item && item.grouped ? groupedTerminalShift(config.marbleRadius) : 0;
+      candidates.push({
+        text: label.text,
+        anchorX: x(item.col) + shift,
+        colorIndex: label.colorIndex,
+      });
     }
   }
   candidates.sort((a, b) => a.anchorX - b.anchorX);
@@ -170,24 +206,27 @@ export const layoutMarble = (
   // lane lines stay evenly spaced whichever lanes carry labels.
   const placedLanes = timeline.lanes.map((lane) => ({
     lane,
+    extent: laneExtent(lane, radius),
     ...placeLabels(lane, labels, x, config),
   }));
   let above = radius + 6;
   let below = radius + 6;
-  for (const { labels: placed } of placedLanes) {
+  for (const { labels: placed, extent } of placedLanes) {
     const rows = placed.reduce((most, label) => Math.max(most, label.row + 1), 0);
     const belowRows = rows === 0 ? 0 : rows === 1 ? 1 : rows - 1;
-    above = Math.max(above, radius + 6 + (rows > 1 ? LABEL_ROW : 0));
-    below = Math.max(below, radius + 6 + belowRows * LABEL_ROW);
+    above = Math.max(above, extent + 6 + (rows > 1 ? LABEL_ROW : 0));
+    below = Math.max(below, extent + 6 + belowRows * LABEL_ROW);
   }
   const pitch = Math.max(config.laneHeight, above + below);
   const offset = (pitch - above - below) / 2 + above;
 
-  const lanes = placedLanes.map(({ lane, labels: placed, innerSpanLabels }): LaidOutLane => {
-    const laneY = y + offset;
-    y += pitch;
-    return { lane, y: laneY, labels: placed, innerSpanLabels };
-  });
+  const lanes = placedLanes.map(
+    ({ lane, extent, labels: placed, innerSpanLabels }): LaidOutLane => {
+      const laneY = y + offset;
+      y += pitch;
+      return { lane, y: laneY, extent, labels: placed, innerSpanLabels };
+    }
+  );
 
   return {
     x,

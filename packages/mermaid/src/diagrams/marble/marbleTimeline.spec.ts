@@ -25,12 +25,105 @@ describe('interpretLane', () => {
     expect(lane('--a-#').items.at(-1)).toEqual({ kind: 'error', col: 4 });
   });
 
-  it('treats blanks as idle time and splits the lane line there', () => {
-    const { segments } = lane('-a-   -b-');
-    expect(segments).toEqual([
-      { from: 0, to: 2 },
-      { from: 6, to: 8 },
+  it('starts a lane later for each leading blank, and lets other whitespace take no time', () => {
+    const { items, segments, columns } = lane('  -a - b -    c |');
+    expect(items).toEqual([
+      { kind: 'event', symbol: 'a', col: 3 },
+      { kind: 'event', symbol: 'b', col: 5 },
+      { kind: 'event', symbol: 'c', col: 7 },
+      { kind: 'complete', col: 8 },
     ]);
+    expect(segments).toEqual([{ from: 2, to: 8 }]);
+    expect(columns).toBe(9);
+  });
+
+  it('stacks a sync group in the column of "(" and lets it take one column per character', () => {
+    const { items, columns } = lane('-(abc)-d');
+    expect(items).toEqual([
+      { kind: 'event', symbol: 'a', col: 1, stack: { index: 0, size: 3 } },
+      { kind: 'event', symbol: 'b', col: 1, stack: { index: 1, size: 3 } },
+      { kind: 'event', symbol: 'c', col: 1, stack: { index: 2, size: 3 } },
+      { kind: 'group', col: 1, to: 5, size: 3 },
+      { kind: 'event', symbol: 'd', col: 7 },
+    ]);
+    expect(columns).toBe(8);
+  });
+
+  it("puts a completion or error inside a group in the group's frame", () => {
+    expect(lane('--(a|)').items).toEqual([
+      { kind: 'event', symbol: 'a', col: 2, stack: { index: 0, size: 1 } },
+      { kind: 'complete', col: 2, grouped: true },
+      { kind: 'group', col: 2, to: 5, size: 1 },
+    ]);
+    expect(lane('(#)').items).toEqual([
+      { kind: 'error', col: 0, grouped: true },
+      { kind: 'group', col: 0, to: 2, size: 0 },
+    ]);
+  });
+
+  it('marks the subscription point with ^', () => {
+    expect(lane('--a--^--b--|').items).toEqual([
+      { kind: 'event', symbol: 'a', col: 2 },
+      { kind: 'subscribe', col: 5 },
+      { kind: 'event', symbol: 'b', col: 8 },
+      { kind: 'complete', col: 11 },
+    ]);
+  });
+
+  it('reads time progressions as one column each, keeping the duration', () => {
+    const { items, columns } = lane('10.2ms a 1.2s b 1m c|');
+    expect(items).toEqual([
+      { kind: 'time', col: 0, text: '10.2ms' },
+      { kind: 'event', symbol: 'a', col: 1 },
+      { kind: 'time', col: 2, text: '1.2s' },
+      { kind: 'event', symbol: 'b', col: 3 },
+      { kind: 'time', col: 4, text: '1m' },
+      { kind: 'event', symbol: 'c', col: 5 },
+      { kind: 'complete', col: 6 },
+    ]);
+    expect(columns).toBe(7);
+  });
+
+  it('reads digits and units as values when they are not a whole time progression', () => {
+    expect(
+      lane('-1ms a1s').items.map((item) => (item.kind === 'event' ? item.symbol : item.kind))
+    ).toEqual(['1', 'm', 's', 'a', '1', 's']);
+  });
+
+  it('draws a subscription-only lane as one span from ^ to !', () => {
+    expect(lane('--^---!-').items).toEqual([
+      { kind: 'span', symbol: '^', from: 2, to: 6, end: 'cancel', subscription: true },
+      { kind: 'cancel', col: 6 },
+    ]);
+    expect(lane('--^---!-').segments).toEqual([]);
+    expect(lane('^ 32ms !').items).toEqual([
+      { kind: 'span', symbol: '^', from: 0, to: 2, end: 'cancel', subscription: true },
+      { kind: 'time', col: 1, text: '32ms' },
+      { kind: 'cancel', col: 2 },
+    ]);
+    expect(lane('---^').items).toEqual([
+      { kind: 'span', symbol: '^', from: 3, to: 3, end: 'open', subscription: true },
+    ]);
+  });
+
+  it('reads x as a plain value', () => {
+    expect(lane('-x-').items).toEqual([{ kind: 'event', symbol: 'x', col: 1 }]);
+  });
+
+  it('reads span characters as values where no span can open or close', () => {
+    expect(
+      lane('-]->-=-[-').items.map((item) => (item.kind === 'event' ? item.symbol : item.kind))
+    ).toEqual([']', '>', '=', '[']);
+  });
+
+  it('draws nothing after a completion or error, but counts the time', () => {
+    const { items, segments, columns } = lane('--a--#--d--|');
+    expect(items).toEqual([
+      { kind: 'event', symbol: 'a', col: 2 },
+      { kind: 'error', col: 5 },
+    ]);
+    expect(segments).toEqual([{ from: 0, to: 5 }]);
+    expect(columns).toBe(12);
   });
 
   it('reads a bracketed span with its fill symbol', () => {
@@ -39,9 +132,9 @@ describe('interpretLane', () => {
     ]);
   });
 
-  it('defaults a bracketed span without fill to "="', () => {
-    expect(lane('-[]-').items).toEqual([
-      { kind: 'span', symbol: '=', from: 1, to: 2, end: 'close' },
+  it('lets a span run through whitespace, which takes no time', () => {
+    expect(lane('-[== =]-').items).toEqual([
+      { kind: 'span', symbol: '=', from: 1, to: 5, end: 'close' },
     ]);
   });
 
@@ -53,8 +146,8 @@ describe('interpretLane', () => {
     ]);
   });
 
-  it('cancels a span with x and keeps the lane going', () => {
-    const { items, segments } = lane('[===x--');
+  it('cancels a span with ! and keeps the lane going', () => {
+    const { items, segments } = lane('[===!--');
     expect(items).toEqual([
       { kind: 'span', symbol: '=', from: 0, to: 4, end: 'cancel' },
       { kind: 'cancel', col: 4 },
@@ -76,16 +169,10 @@ describe('interpretLane', () => {
   });
 
   it.each([
-    ['-a-|-b', '"-" follows the lane\'s completion "|"', 14],
-    ['-#a', '"a" follows the lane\'s error "#"', 12],
-    ['-]', '"]" ends a span, but no span is open', 11],
-    ['->', '">" ends a span, but no span is open', 11],
-    ['-==', '"=" fills a span, but no span is open', 11],
-    ['[=[', 'a span is already open since column 10', 12],
-    ['[== =]', 'span opened at column 10 is interrupted by a blank', 13],
-    ['-(ab)-', '"(" is reserved for future marble syntax', 11],
-    ['-^-', '"^" is reserved', 11],
-    ['-\t-', 'tabs are not allowed', 11],
+    ['-(ab', 'the group opened here is never closed with ")"', 11],
+    ['-ab)', '")" closes a group, but no group is open', 13],
+    ['(a(b))', 'groups cannot be nested; the group at column 10 is still open', 12],
+    ['\t-a', 'tabs are not allowed before a marble string', 10],
   ])('rejects %j with a positioned error', (cells, message, column) => {
     expect(() => lane(cells)).toThrow(message);
     expect(() => lane(cells)).toThrow(`at line 3, column ${column}`);

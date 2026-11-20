@@ -190,6 +190,19 @@ const getStyles: DiagramStylesProvider = (options: MarbleStyleOptions = {}) => {
     stroke-width: 2;
     stroke-linecap: round;
   }
+  .marble-subscribe-mark {
+    fill: none;
+    stroke: ${options.marbleCompleteColor};
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .marble-group-box {
+    fill: none;
+    stroke: ${options.marbleLaneColor};
+    stroke-width: 1;
+    opacity: 0.7;
+  }
   .marble-break-gap {
     fill: ${options.marbleBreakBkg};
     stroke: none;

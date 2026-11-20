@@ -3583,7 +3583,7 @@ cynefin-beta
 
 ## Marble Diagram
 
-RxJS-style timelines of events, spans, cancellations and completions
+RxJS-style timelines in RxJS marble syntax: events, groups, subscriptions, spans and completions
 
 ### debounceTime
 
@@ -3619,12 +3619,12 @@ marble-beta
   title switchMap: a new search cancels the one in flight
   axis       : 0    5    10   15
   input      : -a-----b--c--------|
-  "search a" :  [=====x
-  "search b" :        [==x
+  "search a" :  [=====!
+  "search b" :        [==!
   "search c" :           [=====]
   output     : ----------------r--|
   label = "request"
-  label x "cancelled"
+  label ! "cancelled"
   label r "results for c"
 
 ```
@@ -3637,12 +3637,12 @@ marble-beta
   title switchMap: a new search cancels the one in flight
   axis       : 0    5    10   15
   input      : -a-----b--c--------|
-  "search a" :  [=====x
-  "search b" :        [==x
+  "search a" :  [=====!
+  "search b" :        [==!
   "search c" :           [=====]
   output     : ----------------r--|
   label = "request"
-  label x "cancelled"
+  label ! "cancelled"
   label r "results for c"
 
 ```
@@ -3655,10 +3655,10 @@ marble-beta
 marble-beta
   title timeout(5) then retry once after 1h
   axis    : 0    5    /  1h
-  request : -[====x---/--[====#
+  request : -[====!---/--[====#
   result  : ----------/-------#
   label = "attempt"
-  label x "timed out"
+  label ! "timed out"
   label # "TimeoutError"
 
 ```
@@ -3670,11 +3670,44 @@ marble-beta
 marble-beta
   title timeout(5) then retry once after 1h
   axis    : 0    5    /  1h
-  request : -[====x---/--[====#
+  request : -[====!---/--[====#
   result  : ----------/-------#
   label = "attempt"
-  label x "timed out"
+  label ! "timed out"
   label # "TimeoutError"
+
+```
+
+</details>
+
+### RxJS syntax
+
+```mermaid
+marble-beta
+  title Two subscribers to a hot source
+  source : --a--a--a--a--a--a--a--
+  sub1   : --^-----------!
+  sub2   : ---------^--------!
+  first  : --a--a--a--a--
+  second : -----------a--a--a-
+  label ^ "subscribed"
+  label ! "unsubscribed"
+
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+marble-beta
+  title Two subscribers to a hot source
+  source : --a--a--a--a--a--a--a--
+  sub1   : --^-----------!
+  sub2   : ---------^--------!
+  first  : --a--a--a--a--
+  second : -----------a--a--a-
+  label ^ "subscribed"
+  label ! "unsubscribed"
 
 ```
 

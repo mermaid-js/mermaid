@@ -858,6 +858,7 @@
     "should-render-marble-errors-and-time-breaks.png",
     "should-render-marble-hand-drawn.png",
     "should-render-marble-in-the-dark-theme.png",
+    "should-render-marble-rxjs-syntax.png",
     "should-render-marble-spans-cancellations-and-labels.png",
     "should-render-marble-with-accessibility-directives.png",
     "should-render-marble-with-config-and-theme-overrides.png"

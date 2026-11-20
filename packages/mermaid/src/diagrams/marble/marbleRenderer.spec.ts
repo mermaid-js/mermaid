@@ -87,7 +87,7 @@ describe('layoutMarble', () => {
     expect(wide.lanes[0].innerSpanLabels.size).toBe(1);
     expect(wide.lanes[0].labels).toEqual([]);
 
-    const narrow = layoutMarble(buildTimeline([lane('l', '[]')]), fits, config);
+    const narrow = layoutMarble(buildTimeline([lane('l', '[=')]), fits, config);
     expect(narrow.lanes[0].innerSpanLabels.size).toBe(0);
     expect(narrow.lanes[0].labels).toHaveLength(1);
   });
@@ -111,12 +111,12 @@ describe('marble renderer', () => {
   title Every kind of marble
   axis    : 0    5    10
   source  : -a~b-------/--a~~|
-  timer   :    [======x
+  timer   :    [======!
   result  : -------------r--#
   label a "value"
   label ~ "active"
   label = "timer"
-  label x "cancelled"
+  label ! "cancelled"
 `;
 
   jsdomIt('draws lanes, marbles, spans, terminals and breaks', async () => {
@@ -146,6 +146,47 @@ describe('marble renderer', () => {
     expect([...doc.querySelectorAll('.marble-label-text')].map((t) => t.textContent)).toContain(
       'cancelled'
     );
+  });
+
+  jsdomIt('draws RxJS groups, subscriptions, unsubscriptions and time progressions', async () => {
+    const { svg } = await mermaidAPI.render(
+      'marble-rxjs-syntax',
+      `marble-beta
+  hot    : --a--^--b--(cd|)
+  subs   :      ^---!
+  timed  : -a 9ms b 1.4s (c|)
+  label ^ "subscribed"
+`
+    );
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    const lane = (name: string) => doc.querySelector(`.marble-lane[data-lane="${name}"]`)!;
+
+    const stacked = [...lane('hot').querySelectorAll('.marble-event')].filter(
+      (g) =>
+        g.getAttribute('data-col') ===
+        lane('hot').querySelector('.marble-group')?.getAttribute('data-col')
+    );
+    expect(stacked.map((g) => g.getAttribute('data-symbol'))).toEqual(['c', 'd']);
+    const ys = stacked.map((g) => g.querySelector('circle')!.getAttribute('cy'));
+    expect(new Set(ys).size).toBe(2);
+    expect(lane('hot').querySelector('.marble-group')?.getAttribute('data-size')).toBe('2');
+    expect(lane('hot').querySelectorAll('.marble-subscribe')).toHaveLength(1);
+    expect(lane('hot').querySelectorAll('.marble-complete')).toHaveLength(1);
+
+    const subscription = lane('subs').querySelector('.marble-span');
+    expect(subscription?.getAttribute('data-symbol')).toBe('^');
+    expect(subscription?.querySelector('.marble-subscribe-mark')).not.toBeNull();
+    expect(lane('subs').querySelectorAll('.marble-cancel')).toHaveLength(1);
+    expect(lane('subs').querySelectorAll('.marble-lane-line')).toHaveLength(0);
+
+    expect(
+      [...lane('timed').querySelectorAll('.marble-time')].map((g) =>
+        g.getAttribute('data-duration')
+      )
+    ).toEqual(['9ms', '1.4s']);
+    expect(
+      [...lane('timed').querySelectorAll('.marble-label-text')].map((t) => t.textContent)
+    ).toEqual(expect.arrayContaining(['9ms', '1.4s']));
   });
 
   jsdomIt('uses no element ids, so diagrams on one page cannot clash', async () => {

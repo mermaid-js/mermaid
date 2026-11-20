@@ -5,7 +5,15 @@ import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagr
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { createRoundedRectPathD } from '../../rendering-util/rendering-elements/shapes/roundedRectPath.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
-import { FONT_SIZE, PALETTE_SIZE, labelRowOffset, layoutMarble } from './marbleLayout.js';
+import {
+  FONT_SIZE,
+  PALETTE_SIZE,
+  groupedTerminalShift,
+  labelRowOffset,
+  layoutMarble,
+  stackOffset,
+  stackPitch,
+} from './marbleLayout.js';
 import type { LaidOutLane, MarbleLayout } from './marbleLayout.js';
 import type { MarbleDB, MarbleItem, MarbleLabel, MarbleSpanItem } from './marbleTypes.js';
 import { eventColors, spanColors } from './styles.js';
@@ -131,7 +139,45 @@ class Pen {
       .attr('height', height)
       .attr('rx', radius);
   }
+
+  /** An unfilled rounded box, such as the bracket around a `( )` group. */
+  outline(
+    group: SVGGroup,
+    className: string,
+    [x, y, width, height]: [number, number, number, number],
+    radius: number
+  ) {
+    if (this.rough) {
+      const node = this.rough.path(createRoundedRectPathD(x, y, width, height, radius), {
+        ...this.roughOptions('line'),
+        strokeWidth: 1,
+      });
+      node.setAttribute('class', className);
+      group.node()?.appendChild(node);
+      return;
+    }
+    group
+      .append('rect')
+      .attr('class', className)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('rx', radius);
+  }
 }
+
+/** `^`: a short upright stroke across the lane with a caret beneath it. */
+const drawSubscribe = (group: SVGGroup, cx: number, cy: number, extent: number) => {
+  const bottom = cy + extent + 2;
+  group
+    .append('path')
+    .attr('class', 'marble-subscribe-mark')
+    .attr(
+      'd',
+      `M${cx} ${cy - extent - 2} L${cx} ${bottom} M${cx - 4} ${bottom + 5} L${cx} ${bottom} L${cx + 4} ${bottom + 5}`
+    );
+};
 
 const drawSpan = (
   group: SVGGroup,
@@ -149,6 +195,9 @@ const drawSpan = (
     .attr('class', `marble-span marble-span-${item.end}${colorClass(label)}`)
     .attr('data-symbol', item.symbol);
   pen.rect(g, 'marble-span-body', [x1, laid.y - height / 2, Math.max(0, x2 - x1), height], label);
+  if (item.subscription) {
+    drawSubscribe(g, x1, laid.y, height / 2);
+  }
   if (item.end === 'open') {
     const tip = x2 - 4;
     g.append('path')
@@ -177,7 +226,9 @@ const drawTerminal = (
   layout: MarbleLayout,
   radius: number
 ) => {
-  const cx = layout.x(item.col);
+  // A terminal in a `( )` group happens in the same frame as the group's values, so it is
+  // drawn just after the stack rather than on top of it.
+  const cx = layout.x(item.col) + (item.grouped ? groupedTerminalShift(radius) : 0);
   const g = group.append('g').attr('class', `marble-${item.kind}`).attr('data-col', item.col);
   if (item.kind === 'complete') {
     pen.line(g, 'marble-complete-bar', [cx, laid.y - radius, cx, laid.y + radius], 'terminal');
@@ -194,21 +245,26 @@ const drawBreaks = (group: SVGGroup, laid: LaidOutLane, layout: MarbleLayout, br
     if (!laid.lane.segments.some(({ from, to }) => from <= col && col <= to)) {
       continue;
     }
-    const cx = layout.x(col);
-    const g = group.append('g').attr('class', 'marble-break').attr('data-col', col);
-    g.append('rect')
-      .attr('class', 'marble-break-gap')
-      .attr('x', cx - 4)
-      .attr('y', laid.y - 3)
-      .attr('width', 8)
-      .attr('height', 6);
-    g.append('path')
-      .attr('class', 'marble-break-mark')
-      .attr(
-        'd',
-        `M${cx - 7} ${laid.y + 7} L${cx - 1} ${laid.y - 7} M${cx + 1} ${laid.y + 7} L${cx + 7} ${laid.y - 7}`
-      );
+    breakMark(group, 'marble-break', layout.x(col), laid.y).attr('data-col', col);
   }
+};
+
+/** The `//` mark of a break in time, over a gap in the lane line. */
+const breakMark = (group: SVGGroup, className: string, cx: number, cy: number) => {
+  const g = group.append('g').attr('class', className);
+  g.append('rect')
+    .attr('class', 'marble-break-gap')
+    .attr('x', cx - 4)
+    .attr('y', cy - 3)
+    .attr('width', 8)
+    .attr('height', 6);
+  g.append('path')
+    .attr('class', 'marble-break-mark')
+    .attr(
+      'd',
+      `M${cx - 7} ${cy + 7} L${cx - 1} ${cy - 7} M${cx + 1} ${cy + 7} L${cx + 7} ${cy - 7}`
+    );
+  return g;
 };
 
 const drawLane = (
@@ -238,15 +294,44 @@ const drawLane = (
     }
   }
   drawBreaks(group, laid, layout, breaks);
-
   for (const item of lane.items) {
     if (item.kind === 'span') {
       drawSpan(group, pen, item, laid, layout, db.getLabel(item.symbol), radius * 1.6);
     }
   }
   for (const item of lane.items) {
+    if (item.kind === 'time') {
+      // RxJS time progression: drawn like a `/` break on this lane, its duration as a label.
+      breakMark(group, 'marble-break marble-time', layout.x(item.col), laid.y)
+        .attr('data-col', item.col)
+        .attr('data-duration', item.text);
+    }
+  }
+
+  for (const item of lane.items) {
     if (item.kind === 'complete' || item.kind === 'error' || item.kind === 'cancel') {
       drawTerminal(group, pen, item, laid, layout, radius);
+    }
+  }
+  for (const item of lane.items) {
+    if (item.kind === 'subscribe') {
+      const g = group.append('g').attr('class', 'marble-subscribe').attr('data-col', item.col);
+      drawSubscribe(g, layout.x(item.col), laid.y, radius);
+    }
+    if (item.kind === 'group') {
+      const half = item.size > 1 ? ((item.size - 1) * stackPitch(radius)) / 2 + radius : radius;
+      const cx = layout.x(item.col);
+      const g = group
+        .append('g')
+        .attr('class', 'marble-group')
+        .attr('data-col', item.col)
+        .attr('data-size', item.size);
+      pen.outline(
+        g,
+        'marble-group-box',
+        [cx - radius - 3, laid.y - half - 3, 2 * radius + 6, 2 * half + 6],
+        radius + 3
+      );
     }
   }
   for (const item of lane.items) {
@@ -255,23 +340,24 @@ const drawLane = (
     }
     const label = db.getLabel(item.symbol);
     const cx = layout.x(item.col);
+    const cy = laid.y + (item.stack ? stackOffset(item.stack.index, item.stack.size, radius) : 0);
     const g = group
       .append('g')
       .attr('class', `marble-event${colorClass(label)}`)
       .attr('data-symbol', item.symbol)
       .attr('data-col', item.col);
-    pen.circle(g, 'marble-event-circle', cx, laid.y, radius, label);
+    pen.circle(g, 'marble-event-circle', cx, cy, radius, label);
     g.append('text')
       .attr('class', 'marble-event-symbol')
       .attr('x', cx)
-      .attr('y', laid.y)
+      .attr('y', cy)
       .attr('dominant-baseline', 'central')
       .attr('text-anchor', 'middle')
       .text(item.symbol);
   }
 
   for (const placed of laid.labels) {
-    const offset = labelRowOffset(placed.row, radius);
+    const offset = labelRowOffset(placed.row, laid.extent);
     const g = group
       .append('g')
       .attr(
@@ -282,7 +368,7 @@ const drawLane = (
       g.append('line')
         .attr('class', 'marble-label-leader')
         .attr('x1', placed.anchorX)
-        .attr('y1', laid.y + radius + 2)
+        .attr('y1', laid.y + laid.extent + 2)
         .attr('x2', placed.anchorX)
         .attr('y2', laid.y + offset - FONT_SIZE.label);
     }

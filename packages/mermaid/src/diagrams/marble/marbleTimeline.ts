@@ -1,8 +1,11 @@
 import type {
+  MarbleEventItem,
   MarbleItem,
   MarbleLane,
   MarbleSegment,
   MarbleSpanEnd,
+  MarbleSpanItem,
+  MarbleTerminalItem,
   MarbleTick,
   MarbleTimeline,
   RawMarbleLine,
@@ -10,13 +13,6 @@ import type {
 
 /** Characters that fill a span. Each is also a symbol a `label` statement can name. */
 export const SPAN_FILLS = new Set(['=', '~']);
-
-/**
- * Characters kept back for RxJS marble syntax that this diagram does not draw yet:
- * `(` `)` group synchronous values, `^` marks subscription and `!` unsubscription.
- * Rejecting them now keeps that syntax available without breaking existing diagrams.
- */
-export const RESERVED = new Set(['(', ')', '^', '!']);
 
 /** Builds the error message every marble syntax error uses, with a source position. */
 export const marbleError = (message: string, line: number, column: number): Error =>
@@ -44,13 +40,68 @@ const cellsFrom = (raw: RawMarbleLine, origin: number): string => {
 };
 
 /**
- * Interprets one lane's marble string.
+ * RxJS time progression: a number and a unit (`ms`, `s` or `m`), at the start of the string or
+ * after whitespace, and followed by whitespace or the end, as in `a 9ms b` or `1.4s`.
+ */
+const DURATION = /^\d+(?:\.\d+)?(?:ms|s|m)(?=\s|$)/;
+
+const isBlank = (char: string | undefined) => char !== undefined && /\s/.test(char);
+
+/** The RxJS time progression starting at `index`, if there is one. */
+export const readDuration = (cells: string, index: number): string | undefined => {
+  if (index > 0 && !isBlank(cells[index - 1])) {
+    return undefined;
+  }
+  return DURATION.exec(cells.slice(index))?.[0];
+};
+
+/** Characters a subscription marble string may hold besides time progressions, as in RxJS. */
+const SUBSCRIPTION_CHARS = new Set(['-', '^', '!', '(', ')']);
+
+/**
+ * A lane written in RxJS subscription marble syntax, such as `--^---!` or `^ 32ms !`: only `-`,
+ * `^`, `!` and time progressions. It is drawn as one span from `^` to `!`.
+ */
+const asSubscriptionLane = (
+  cells: string,
+  items: MarbleItem[],
+  segments: MarbleSegment[],
+  end: number
+): MarbleItem[] | undefined => {
+  if (!items.some(({ kind }) => kind === 'subscribe' || kind === 'cancel')) {
+    return undefined;
+  }
+  const chars = cells.replace(/(^|\s)\d+(?:\.\d+)?(?:ms|s|m)(?=\s|$)/g, '$1').replace(/\s/g, '');
+  if (![...chars].every((char) => SUBSCRIPTION_CHARS.has(char))) {
+    return undefined;
+  }
+  const subscribe = items.find((item) => item.kind === 'subscribe');
+  const cancel = items.find((item): item is MarbleTerminalItem => item.kind === 'cancel');
+  const from = subscribe?.col ?? segments[0]?.from ?? 0;
+  const to = cancel?.col ?? Math.max(from, end - 1);
+  const span: MarbleSpanItem = {
+    kind: 'span',
+    symbol: '^',
+    from,
+    to,
+    end: cancel ? 'cancel' : 'open',
+    subscription: true,
+  };
+  return [span, ...items.filter(({ kind }) => kind === 'cancel' || kind === 'time')];
+};
+
+/**
+ * Interprets one lane's marble string. Every RxJS marble string is accepted, read with the
+ * semantics of `TestScheduler.run()`; spans and `/` breaks are this diagram's own additions.
  *
- * - `-` time passes, ` ` the lane is idle, `/` the axis breaks (time passes off-scale)
- * - `[` opens a span, `=` or `~` fills it, `]` closes it, `>` leaves it running
- * - `x` cancels: it closes an open span and the lane goes on
- * - `|` completes the lane and `#` errors it; nothing but blanks may follow either
+ * - leading blanks start the lane later (one column each); other whitespace takes no time
+ * - `-` time passes, `/` the axis breaks, `9ms`/`1.4s`/`2m` time progresses (a labelled break)
+ * - `(abc)` groups values into one frame; the group still takes one column per character
+ * - `^` marks the subscription point, `!` unsubscribes (cancels): it closes an open span
+ * - `[` followed by `=` or `~` opens a span, `]` closes it, `>` leaves it running
+ * - `|` completes the lane and `#` errors it; what follows takes time but is not drawn
  * - any other character is an event; it closes an open span, and opens one if a fill follows
+ * - a lane of only `-`, `^`, `!` and time progressions is a subscription, drawn as a span
  *
  * @param cells - The lane's characters, already aligned to the shared origin.
  * @param raw - The lane as parsed, for error positions.
@@ -60,21 +111,29 @@ export const interpretLane = (
   cells: string,
   raw: Pick<RawMarbleLine, 'line'>,
   origin: number
-): Pick<MarbleLane, 'items' | 'segments'> & { breaks: number[] } => {
+): Pick<MarbleLane, 'items' | 'segments'> & { breaks: number[]; columns: number } => {
   const items: MarbleItem[] = [];
   const segments: MarbleSegment[] = [];
   const breaks: number[] = [];
   let span: { symbol: string; from: number } | undefined;
   let segment: MarbleSegment | undefined;
-  let ended: string | undefined;
-  const fail = (message: string, col: number): never => {
-    throw marbleError(message, raw.line, origin + col);
-  };
-  const closeSpan = (col: number, end: MarbleSpanEnd) => {
+  let group:
+    | { col: number; index: number; events: MarbleEventItem[]; terminal: boolean }
+    | undefined;
+  let ended = false;
+  let started = false;
+  let col = 0;
+  const fail = (message: string, index: number): Error =>
+    marbleError(message, raw.line, origin + index);
+  const closeSpan = (at: number, end: MarbleSpanEnd) => {
     if (span) {
-      items.push({ kind: 'span', symbol: span.symbol, from: span.from, to: col, end });
+      items.push({ kind: 'span', symbol: span.symbol, from: span.from, to: at, end });
       span = undefined;
     }
+  };
+  const extend = (at: number) => {
+    segment ??= { from: at, to: at };
+    segment.to = at;
   };
   const endSegment = () => {
     if (segment) {
@@ -83,81 +142,139 @@ export const interpretLane = (
     }
   };
 
-  for (let col = 0; col < cells.length; col++) {
-    const char = cells[col];
-    if (char === ' ') {
-      if (span) {
-        fail(`span opened at column ${origin + span.from} is interrupted by a blank`, col);
+  for (let index = 0; index < cells.length; index++) {
+    const char = cells[index];
+    if (isBlank(char)) {
+      if (!started) {
+        if (char !== ' ') {
+          throw fail(
+            'tabs are not allowed before a marble string; use spaces so columns line up',
+            index
+          );
+        }
+        col++;
       }
-      endSegment();
       continue;
     }
-    if (char === '\t') {
-      fail('tabs are not allowed in a marble string; use spaces so columns line up', col);
+    started = true;
+
+    const duration = readDuration(cells, index);
+    if (duration) {
+      if (!ended) {
+        extend(col);
+        items.push({ kind: 'time', col, text: duration });
+      }
+      col++;
+      index += duration.length - 1;
+      continue;
+    }
+
+    if (char === '(') {
+      if (group) {
+        throw fail(
+          `groups cannot be nested; the group at column ${origin + group.index} is still open`,
+          index
+        );
+      }
+      group = { col, index, events: [], terminal: false };
+      if (!ended) {
+        extend(col);
+      }
+      col++;
+      continue;
+    }
+    if (char === ')') {
+      if (!group) {
+        throw fail('")" closes a group, but no group is open', index);
+      }
+      const { events } = group;
+      events.forEach((event, i) => (event.stack = { index: i, size: events.length }));
+      if (events.length > 0 || group.terminal) {
+        items.push({ kind: 'group', col: group.col, to: col, size: events.length });
+      }
+      if (!ended) {
+        extend(col);
+      }
+      group = undefined;
+      col++;
+      continue;
     }
     if (ended) {
-      fail(`"${char}" follows the lane's ${ended}; nothing can happen after it`, col);
+      col++;
+      continue;
     }
-    if (RESERVED.has(char)) {
-      fail(`"${char}" is reserved for future marble syntax`, col);
-    }
-    segment ??= { from: col, to: col };
-    segment.to = col;
 
-    if (char === '-') {
-      continue;
-    }
-    if (char === '/') {
-      breaks.push(col);
-      continue;
-    }
-    if (SPAN_FILLS.has(char)) {
-      if (!span) {
-        fail(`"${char}" fills a span, but no span is open; start one with "["`, col);
-      }
-      continue;
-    }
+    const at = group ? group.col : col;
+    extend(col);
+    const next = cells[index + 1];
+    col++;
     switch (char) {
-      case '[': {
-        if (span) {
-          fail(`a span is already open since column ${origin + span.from}`, col);
-        }
-        const next = cells[col + 1];
-        span = { symbol: next && SPAN_FILLS.has(next) ? next : '=', from: col };
+      case '-':
         continue;
-      }
-      case ']':
-      case '>': {
-        if (!span) {
-          fail(`"${char}" ends a span, but no span is open`, col);
-        }
-        closeSpan(col, char === ']' ? 'close' : 'open');
+      case '/':
+        breaks.push(at);
         continue;
-      }
-      case 'x': {
-        closeSpan(col, 'cancel');
-        items.push({ kind: 'cancel', col });
+      case '^':
+        items.push({ kind: 'subscribe', col: at });
         continue;
-      }
+      case '!':
+        closeSpan(at, 'cancel');
+        items.push({ kind: 'cancel', col: at });
+        continue;
       case '|':
-      case '#': {
-        closeSpan(col, char === '|' ? 'close' : 'cancel');
-        items.push({ kind: char === '|' ? 'complete' : 'error', col });
-        ended = char === '|' ? 'completion "|"' : 'error "#"';
+      case '#':
+        closeSpan(at, char === '|' ? 'close' : 'cancel');
+        items.push({
+          kind: char === '|' ? 'complete' : 'error',
+          col: at,
+          ...(group ? { grouped: true } : {}),
+        });
+        if (group) {
+          group.terminal = true;
+        }
+        ended = true;
+        if (segment) {
+          segment.to = at;
+        }
         endSegment();
         continue;
-      }
+      case '[':
+        if (!group && next !== undefined && SPAN_FILLS.has(next)) {
+          closeSpan(at, 'close');
+          span = { symbol: next, from: at };
+          continue;
+        }
+        break;
+      case ']':
+      case '>':
+        if (span) {
+          closeSpan(at, char === ']' ? 'close' : 'open');
+          continue;
+        }
+        break;
+      default:
+        if (span && SPAN_FILLS.has(char)) {
+          continue;
+        }
     }
-    closeSpan(col, 'close');
-    items.push({ kind: 'event', symbol: char, col });
-    const next = cells[col + 1];
-    if (next && SPAN_FILLS.has(next)) {
-      span = { symbol: next, from: col };
+    closeSpan(at, 'close');
+    const event: MarbleEventItem = { kind: 'event', symbol: char, col: at };
+    items.push(event);
+    if (group) {
+      group.events.push(event);
+    } else if (next !== undefined && SPAN_FILLS.has(next)) {
+      span = { symbol: next, from: at };
     }
   }
-  closeSpan(cells.length - 1, 'open');
+  if (group) {
+    throw fail('the group opened here is never closed with ")"', group.index);
+  }
+  closeSpan(Math.max(0, col - 1), 'open');
   endSegment();
-  return { items, segments, breaks };
+  const subscription = asSubscriptionLane(cells, items, segments, col);
+  return subscription
+    ? { items: subscription, segments: [], breaks, columns: col }
+    : { items, segments, breaks, columns: col };
 };
 
 /** Splits the axis line into tick labels, each at the column of its first character. */
@@ -177,8 +294,8 @@ export const buildTimeline = (lanes: RawMarbleLine[], axis?: RawMarbleLine): Mar
 
   const interpreted = lanes.map((raw): MarbleLane => {
     const cells = cellsFrom(raw, origin);
-    columns = Math.max(columns, cells.length);
     const lane = interpretLane(cells, raw, origin);
+    columns = Math.max(columns, lane.columns);
     lane.breaks.forEach((col) => breaks.add(col));
     return { name: raw.name, items: lane.items, segments: lane.segments };
   });

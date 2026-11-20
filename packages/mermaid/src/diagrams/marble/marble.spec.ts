@@ -110,8 +110,9 @@ describe('marble parser', () => {
     ['a duplicate lane', 'marble-beta\n  a : --\n  a : --\n', 'line 3'],
     ['a duplicate label', 'marble-beta\n  label a "x"\n  label a "y"\n', 'line 3, column 9'],
     ['a second axis', 'marble-beta\n  axis : 0\n  axis : 1\n', 'line 3'],
-    ['an event after completion', 'marble-beta\n  a : -|-a\n', 'line 2, column 9'],
-    ['a stray span close', 'marble-beta\n  a : --]\n', 'line 2, column 9'],
+    ['an unclosed group', 'marble-beta\n  a : -(ab-\n', 'line 2, column 8'],
+    ['a stray group close', 'marble-beta\n  a : --)\n', 'line 2, column 9'],
+    ['a nested group', 'marble-beta\n  a : -(a(b))\n', 'line 2, column 10'],
   ])('rejects %s with a position', async (_name, text, position) => {
     await expect(parse(text)).rejects.toThrow(position);
   });
@@ -120,7 +121,7 @@ describe('marble parser', () => {
     const db = new MarbleDB();
     db.setFrontmatterLineOffset(4);
     parser.parser!.yy = db;
-    await expect(parser.parse('marble-beta\n  a : --]\n')).rejects.toThrow('at line 6');
+    await expect(parser.parse('marble-beta\n  a : --)\n')).rejects.toThrow('at line 6');
   });
 });
 
@@ -133,8 +134,8 @@ describe('marble db', () => {
     const db = await parse(`marble-beta
   title T
   axis : 0
-  a : -x-|
-  label x "cancelled"
+  a : -!-|
+  label ! "cancelled"
 `);
     db.clear();
     expect(db.getDiagramTitle()).toBe('');
