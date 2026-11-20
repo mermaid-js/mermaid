@@ -1,0 +1,16 @@
+---
+description:
+  Routes from top left to bottom right and from bottom left to top right,
+  which cross without sharing a path.
+config:
+  layout: grid
+---
+flowchart TB
+  TL["Top left"]@{ row: 1, column: 1 }
+  TR["Top right"]@{ row: 1, column: 2 }
+  BL["Bottom left"]@{ row: 2, column: 1 }
+  BR["Bottom right"]@{ row: 2, column: 2 }
+
+  TL --> BR
+  TL --> BL
+  BL --> TR

@@ -1,0 +1,20 @@
+---
+description:
+  A mindmap with a repeated node id placed by occurrence index, in the
+  handDrawn look with the forest theme.
+config:
+  layout: grid
+  look: handDrawn
+  theme: forest
+  grid:
+    placements:
+      root: { row: 2, column: 2 }
+      service:
+        - { row: 1, column: 1 }
+        - { row: 3, column: 3 }
+---
+mindmap
+  root((Services))
+    service[First occurrence]
+    service[Second occurrence]
+    service[Automatically placed]
