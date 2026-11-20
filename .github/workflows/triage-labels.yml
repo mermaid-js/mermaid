@@ -1,0 +1,38 @@
+name: Triage labels
+
+on:
+  pull_request:
+    paths:
+      - packages/mermaid/src/diagrams/**
+      - .github/triage-labels.json
+      - scripts/triage-labels.mjs
+  push:
+    branches: [develop]
+    paths:
+      - .github/triage-labels.json
+
+permissions:
+  contents: read
+
+jobs:
+  # Fails when a diagram folder has no issue label in .github/triage-labels.json.
+  check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - run: node scripts/triage-labels.mjs check
+
+  # Creates any label listed in the file that the repository does not have yet.
+  sync:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # to create labels
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - run: node scripts/triage-labels.mjs sync
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
