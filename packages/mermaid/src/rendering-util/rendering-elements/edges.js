@@ -708,6 +708,12 @@ const generateDashArray = (len, oValueS, oValueE) => {
   return dashArray;
 };
 
+const withoutRepeatedPoints = (points) =>
+  points.filter(
+    (point, index) =>
+      index === 0 || point.x !== points[index - 1].x || point.y !== points[index - 1].y
+  );
+
 export const insertEdge = function (
   elem,
   edge,
@@ -799,16 +805,13 @@ export const insertEdge = function (
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   } else if (!axisRoute && tail.intersect && head.clusterNode && !skipIntersect) {
-    points = [tail.intersect(points[1]), ...points.slice(1)];
+    points = withoutRepeatedPoints([tail.intersect(points[1]), ...points.slice(1)]);
     pointsHasChanged = true;
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster && !axisRoute) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
-    points = cutPathAtIntersect(points, clusterDb.get(edge.toCluster).node).filter(
-      (point, index, clipped) =>
-        index === 0 || point.x !== clipped[index - 1].x || point.y !== clipped[index - 1].y
-    );
+    points = withoutRepeatedPoints(cutPathAtIntersect(points, clusterDb.get(edge.toCluster).node));
 
     pointsHasChanged = true;
   }

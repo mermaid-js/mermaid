@@ -1227,6 +1227,21 @@ describe('insertEdge subgraph boundary clipping', () => {
     expect(path).toBe('M60,40L100,50L250,75L264.223,67.889');
   });
 
+  it('draws no zero-length segment when a subgraph source already sits on its route', () => {
+    const clusterTail = { intersect: ({ x, y }) => ({ x, y }) };
+    const clusterHead = { clusterNode: true };
+    const path = render(
+      { ...createEdge(), toCluster: undefined, fromCluster: 'source' },
+      clusterTail,
+      clusterHead
+    );
+    const points = path.match(/-?[\d.]+,-?[\d.]+/g);
+    expect(points.length).toBeGreaterThan(1);
+    points.forEach((point, index) => {
+      expect(point).not.toBe(points[index - 1]);
+    });
+  });
+
   it('clips both subgraph boundaries when connecting two subgraphs', () => {
     const path = render({ ...createEdge(), fromCluster: 'source' }, shapes[2], rectangleHead);
     expect(path).toBe('M60,40L100,50L196,50');
