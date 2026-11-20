@@ -8,7 +8,7 @@ import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js
 import { FONT_SIZE, PALETTE_SIZE, labelRowOffset, layoutMarble } from './marbleLayout.js';
 import type { LaidOutLane, MarbleLayout } from './marbleLayout.js';
 import type { MarbleDB, MarbleItem, MarbleLabel, MarbleSpanItem } from './marbleTypes.js';
-import { spanColors } from './styles.js';
+import { eventColors, spanColors } from './styles.js';
 
 export const colorClass = (label: MarbleLabel | undefined): string =>
   label ? ` marble-color-${label.colorIndex % PALETTE_SIZE}` : '';
@@ -37,10 +37,13 @@ class Pen {
     const v = this.themeVariables;
     const slot = label ? label.colorIndex % PALETTE_SIZE : undefined;
     switch (role) {
-      case 'event':
-        return slot === undefined
-          ? { stroke: v.marbleEventStroke, fill: v.marbleEventFill }
-          : { stroke: v[`cScalePeer${slot}`], fill: v[`cScale${slot}`] };
+      case 'event': {
+        if (slot === undefined) {
+          return { stroke: v.marbleEventStroke, fill: v.marbleEventFill };
+        }
+        const { stroke, fill } = eventColors(v, slot);
+        return { stroke, fill };
+      }
       case 'span': {
         const { stroke, fill } = spanColors(v, slot);
         return { stroke, fill };

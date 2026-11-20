@@ -1,3 +1,5 @@
+// @ts-expect-error Incorrect khroma types
+import { luminance } from 'khroma';
 import { describe, expect, it } from 'vitest';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import type { MarbleDiagramConfig } from '../../config.type.js';
@@ -8,7 +10,7 @@ import themes from '../../themes/index.js';
 import { estimateTextWidth, labelRowOffset, layoutMarble } from './marbleLayout.js';
 import { buildTimeline } from './marbleTimeline.js';
 import type { MarbleLabel } from './marbleTypes.js';
-import getStyles, { spanColors } from './styles.js';
+import getStyles, { eventColors, spanColors } from './styles.js';
 
 addDiagrams();
 
@@ -185,6 +187,32 @@ describe('marble styles', () => {
     expect(getStyles(dark)).toContain(`.marble-color-0 .marble-span-body {
     fill: ${slot0.fill};
     stroke: ${dark.marbleSpanStroke};`);
+  });
+
+  it.each(['dark', 'neo-dark', 'redux-dark'] as const)(
+    'lifts every near-black labelled marble fill under the %s theme',
+    (name) => {
+      const variables = themes[name].getThemeVariables({}) as unknown as Record<string, string>;
+      const css = getStyles(variables);
+      for (let slot = 0; slot < 12; slot++) {
+        const { fill, stroke } = eventColors(variables, slot);
+        expect(luminance(fill)).toBeGreaterThanOrEqual(0.05);
+        expect(stroke).toBe(variables.marbleEventStroke);
+        expect(css).toContain(`.marble-color-${slot} .marble-event-circle {
+    fill: ${fill};
+    stroke: ${stroke};`);
+      }
+      expect(eventColors(variables, 0).fill).not.toBe(variables.cScale0);
+    }
+  );
+
+  it('keeps the theme palette for marbles on a light background', () => {
+    const light = themes.default.getThemeVariables({}) as unknown as Record<string, string>;
+    expect(eventColors(light, 1)).toEqual({
+      fill: light.cScale1,
+      stroke: light.cScalePeer1,
+      text: light.cScaleLabel1,
+    });
   });
 
   it('keeps the theme palette for spans on a light background', () => {

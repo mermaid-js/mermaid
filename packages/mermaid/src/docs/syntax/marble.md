@@ -168,7 +168,7 @@ Marble diagrams follow the theme, and every color can be overridden with these t
 | `marbleBreakColor`     | Break marks `/`                     | `lineColor`          |
 | `marbleBreakBkg`       | Gap behind break marks              | `background`         |
 
-On a dark background, spans are outlined in `marbleSpanStroke`, and a span whose fill is close to black is mixed a quarter of the way towards that outline, so spans stay visible against the background.
+On a dark background, spans are outlined in `marbleSpanStroke` and labelled marbles in `marbleEventStroke`, and a fill that is close to black is mixed towards that outline, so spans and marbles stay visible against the background.
 
 Labelled characters are colored from the theme's palette: the n-th label uses `cScale<n>` for its fill, `cScalePeer<n>` for its outline and `cScaleLabel<n>` for the character inside it, cycling after twelve.
 

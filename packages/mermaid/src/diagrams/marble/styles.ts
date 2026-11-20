@@ -14,7 +14,7 @@ const colorOf = (
   return typeof value === 'string' && value ? value : fallback;
 };
 
-/** Fills darker than this sink into a dark background, so spans lift them towards their outline. */
+/** Fills darker than this sink into a dark background, so they are lifted towards their outline. */
 const DARK_FILL_LUMINANCE = 0.05;
 
 const isDarkColor = (color: string | undefined): boolean => {
@@ -25,39 +25,38 @@ const isDarkColor = (color: string | undefined): boolean => {
   }
 };
 
+interface ShapeColors {
+  fill?: string;
+  stroke?: string;
+  text?: string;
+}
+
+/** A palette slot's colours from `cScale`, `cScalePeer` and `cScaleLabel`. */
+const slotColors = (options: MarbleStyleOptions, slot: number): ShapeColors => ({
+  fill: colorOf(options, `cScale${slot}`),
+  stroke: colorOf(options, `cScalePeer${slot}`, options.marbleEventStroke),
+  text: colorOf(options, `cScaleLabel${slot}`, options.marbleEventTextColor),
+});
+
 /**
- * Fill, outline and text colour of a span, unlabelled or in palette slot `slot`. Used by the
- * stylesheet and by the hand-drawn pen, so both agree.
- *
- * On a dark background the theme's `cScale` and secondary colours sit close to the background
- * itself, so a span there is outlined in `marbleSpanStroke` and a near-black fill is mixed a
- * quarter of the way towards that outline. Light themes keep their colours as they are.
+ * On a dark background the theme's `cScale` and secondary colours can sit close to the
+ * background itself (`cScale0` is the dark theme's own node colour), so a shape there is
+ * outlined in `outline` and a near-black fill is mixed towards it, from a quarter of the way
+ * on, until it clears `DARK_FILL_LUMINANCE`.
+ * Light backgrounds keep the colours as they are.
  */
-export const spanColors = (
+const readableOnDark = (
   options: MarbleStyleOptions,
-  slot?: number
-): { fill?: string; stroke?: string; text?: string } => {
-  const colors =
-    slot === undefined
-      ? {
-          fill: options.marbleSpanFill,
-          stroke: options.marbleSpanStroke,
-          text: options.marbleSpanTextColor,
-        }
-      : {
-          fill: colorOf(options, `cScale${slot}`),
-          stroke: colorOf(options, `cScalePeer${slot}`, options.marbleEventStroke),
-          text: colorOf(options, `cScaleLabel${slot}`, options.marbleEventTextColor),
-        };
-  const background = colorOf(options, 'background');
-  if (!isDarkColor(background) || !colors.fill || !options.marbleSpanStroke) {
+  colors: ShapeColors,
+  outline: string | undefined
+): ShapeColors => {
+  if (!isDarkColor(colorOf(options, 'background')) || !colors.fill || !outline) {
     return colors;
   }
-  const outline = options.marbleSpanStroke;
   let fill = colors.fill;
   try {
-    if (luminance(fill) < DARK_FILL_LUMINANCE) {
-      fill = mix(outline, fill, 25);
+    for (let weight = 25; weight <= 50 && luminance(fill) < DARK_FILL_LUMINANCE; weight += 5) {
+      fill = mix(outline, colors.fill, weight);
     }
   } catch {
     // not a colour khroma can read; leave it to the browser
@@ -65,21 +64,44 @@ export const spanColors = (
   return { ...colors, fill, stroke: outline };
 };
 
+/**
+ * Fill, outline and text colour of a span, unlabelled or in palette slot `slot`. Used by the
+ * stylesheet and by the hand-drawn pen, so both agree. See `readableOnDark` for dark themes.
+ */
+export const spanColors = (options: MarbleStyleOptions, slot?: number): ShapeColors =>
+  readableOnDark(
+    options,
+    slot === undefined
+      ? {
+          fill: options.marbleSpanFill,
+          stroke: options.marbleSpanStroke,
+          text: options.marbleSpanTextColor,
+        }
+      : slotColors(options, slot),
+    options.marbleSpanStroke
+  );
+
+/**
+ * Fill, outline and text colour of an event marble in palette slot `slot`, adjusted like spans
+ * on a dark background. Unlabelled marbles use the `marbleEvent*` variables as they are.
+ */
+export const eventColors = (options: MarbleStyleOptions, slot: number): ShapeColors =>
+  readableOnDark(options, slotColors(options, slot), options.marbleEventStroke);
+
 /** Palette slots, one per `label` statement in declaration order, coloured from `cScale`. */
 const paletteRules = (options: MarbleStyleOptions): string => {
   const rules: string[] = [];
   for (let i = 0; i < PALETTE_SIZE; i++) {
-    const fill = colorOf(options, `cScale${i}`);
-    const stroke = colorOf(options, `cScalePeer${i}`, options.marbleEventStroke);
-    const text = colorOf(options, `cScaleLabel${i}`, options.marbleEventTextColor);
+    const { fill, stroke, text } = slotColors(options, i);
     if (!fill || !stroke || !text) {
       continue;
     }
+    const event = eventColors(options, i);
     const span = spanColors(options, i);
     rules.push(`
   .marble-color-${i} .marble-event-circle {
-    fill: ${fill};
-    stroke: ${stroke};
+    fill: ${event.fill};
+    stroke: ${event.stroke};
   }
   .marble-color-${i} .marble-span-body {
     fill: ${span.fill};
