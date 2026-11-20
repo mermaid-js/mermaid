@@ -295,6 +295,6 @@ row2`;
       Alpha :a1, 2026-01-05, 3d
       Beta :b1, 2026-01-12, 2d, extra
       `)
-           ).toThrowError('Invalid task data: ":b1, 2026-01-12, 2d, extra" has 4 metadata items');
+    ).toThrowError('Invalid task data: ":b1, 2026-01-12, 2d, extra" has 4 metadata items');
   });
 });

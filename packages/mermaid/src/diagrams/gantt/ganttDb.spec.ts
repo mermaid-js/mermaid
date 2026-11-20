@@ -550,7 +550,7 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('Alpha', 'a1, 2026-01-05, 3d');
     expect(() => ganttDb.addTask('Beta', 'b1, 2026-01-12, 2d, extra')).toThrowError(
       'Invalid task data: "b1, 2026-01-12, 2d, extra" has 4 metadata items'
-      );
+    );
   });
 
   it('should reject a task line with four metadata items after a tag (issue #8188)', function () {
@@ -558,7 +558,7 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('Alpha', 'a1, 2026-01-05, 3d');
     expect(() => ganttDb.addTask('Beta', 'active, b1, 2026-01-12, 2d, extra')).toThrowError(
       'Invalid task data: "active, b1, 2026-01-12, 2d, extra"'
-      );
+    );
   });
 
   it('should handle seconds-only format with valid numeric values (issue #5496)', function () {
