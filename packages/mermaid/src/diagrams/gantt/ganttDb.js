@@ -597,8 +597,7 @@ const parseData = function (prevTaskId, dataStr) {
         );
   }
 
-  return task;
-  
+  return task; 
 };
 
 let lastTask;
