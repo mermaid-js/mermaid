@@ -347,7 +347,13 @@ const config: RequiredDeep<MermaidConfig> = {
 const keyify = (obj: any, prefix = ''): string[] =>
   Object.keys(obj).reduce((res: string[], el): string[] => {
     if (Array.isArray(obj[el])) {
-      return res;
+      // Array-valued keys (e.g. journey/timeline sectionFills) are real
+      // config keys: keep them so sanitizeDirective does not drop them
+      // from frontmatter or %%{init}%% directives (#8600). `secure`
+      // is the one array key that must stay out of directives, and
+      // `sanitize` in config.ts still strips it (and every secure key)
+      // from directives before they are merged.
+      return [...res, prefix + el];
     } else if (typeof obj[el] === 'object' && obj[el] !== null) {
       return [...res, prefix + el, ...keyify(obj[el], '')];
     }
