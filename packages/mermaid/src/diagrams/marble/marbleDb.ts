@@ -33,6 +33,9 @@ export class MarbleDB implements MarbleDBInterface {
   private timeline: MarbleTimeline = emptyTimeline();
   private lineOffset = 0;
 
+  /** Parse `%%` comments in place, so reported lines match the source the author wrote. */
+  public readonly preserveCommentsWhenParsing = true;
+
   public getConfig(): Required<MarbleDiagramConfig> {
     return cleanAndMerge({
       ...DEFAULT_CONFIG.marble,
@@ -44,7 +47,8 @@ export class MarbleDB implements MarbleDBInterface {
     this.lineOffset = offset;
   }
 
-  private sourceLine(line: number) {
+  /** Maps a line in the text the parser saw to the line in the original source. */
+  public sourceLine(line: number) {
     return line + this.lineOffset;
   }
 
@@ -67,6 +71,13 @@ export class MarbleDB implements MarbleDBInterface {
   }
 
   public addLabel(symbol: string, text: string, { line, column }: SourcePosition) {
+    if (symbol.length !== 1) {
+      throw marbleError(
+        `a label names one marble character, not "${symbol}"`,
+        this.sourceLine(line),
+        column
+      );
+    }
     if (this.labels.has(symbol)) {
       throw marbleError(`"${symbol}" is labelled twice`, this.sourceLine(line), column);
     }

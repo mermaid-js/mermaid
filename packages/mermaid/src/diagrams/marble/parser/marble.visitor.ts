@@ -1,5 +1,4 @@
 import type { CstNode, IToken } from 'chevrotain';
-import { marbleError } from '../marbleTimeline.js';
 import type { MarbleDB, RawMarbleLine } from '../marbleTypes.js';
 import { marbleParser } from './marble.parser.js';
 
@@ -118,13 +117,6 @@ class MarbleVisitor extends BaseVisitor {
 
   labelStatement(ctx: Ctx) {
     const symbol = tokenOf(ctx, 'IDENTIFIER', 'SYMBOL')!;
-    if (symbol.image.length !== 1) {
-      throw marbleError(
-        `a label names one marble character, not "${symbol.image}"`,
-        symbol.startLine ?? 1,
-        symbol.startColumn ?? 1
-      );
-    }
     const text = tokenOf(ctx, 'QUOTED_STRING')!;
     this.target.addLabel(symbol.image, unquote(text.image).trim(), {
       line: symbol.startLine ?? 1,

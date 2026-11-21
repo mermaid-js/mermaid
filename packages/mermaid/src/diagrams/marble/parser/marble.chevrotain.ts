@@ -38,6 +38,8 @@ export const parser: ParserDefinition = {
       );
     }
     marbleParser.input = [];
+    // Errors from the visitor come from the db, which already maps lines to the source.
+    let visiting = false;
     try {
       runChevrotainParse(
         {
@@ -45,15 +47,29 @@ export const parser: ParserDefinition = {
           lexer: marbleLexer,
           parser: marbleParser,
           entry: () => marbleParser.start(),
-          visit: (cst) => marbleVisitor.build(cst, db),
+          visit: (cst) => {
+            visiting = true;
+            marbleVisitor.build(cst, db);
+          },
         },
         input
       );
     } catch (error) {
-      const position = positionOf(input);
+      if (visiting) {
+        throw error;
+      }
       const message = error instanceof Error ? error.message : String(error);
-      if (position && !message.includes(' at line ')) {
-        throw new Error(`${message} at line ${position.line}, column ${position.column}`);
+      if (message.includes(' at line ')) {
+        // A lexer error: its position is relative to the text after front matter.
+        throw new Error(
+          message.replace(/ at line (\d+)/, (_, line: string) => ` at line ${db.sourceLine(+line)}`)
+        );
+      }
+      const position = positionOf(input);
+      if (position) {
+        throw new Error(
+          `${message} at line ${db.sourceLine(position.line)}, column ${position.column}`
+        );
       }
       throw error;
     }

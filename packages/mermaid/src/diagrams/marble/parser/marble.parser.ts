@@ -19,7 +19,7 @@ import {
 
 /**
  * ```
- * start       := MARBLE lineEnd line*
+ * start       := (NEWLINE | COMMENT)* MARBLE lineEnd line*
  * line        := NEWLINE | COMMENT lineEnd | statement
  * statement   := TITLE_LINE | ACC_TITLE_LINE | ACC_DESCR_LINE | ACC_DESCR_BLOCK
  *              | axis | label | lane            (each followed by lineEnd)
@@ -44,9 +44,13 @@ class MarbleParser extends CstParser {
     super(marbleTokens, { nodeLocationTracking: 'full' });
 
     this.RULE('start', () => {
+      // Comments are parsed in place, so blank lines and `%%` lines may precede the header.
+      this.MANY1(() =>
+        this.OR1([{ ALT: () => this.CONSUME1(NewLine) }, { ALT: () => this.CONSUME1(Comment) }])
+      );
       this.CONSUME(Marble);
       this.SUBRULE(this.lineEnd);
-      this.MANY(() => this.SUBRULE(this.line));
+      this.MANY2(() => this.SUBRULE(this.line));
     });
 
     this.RULE('line', () => {

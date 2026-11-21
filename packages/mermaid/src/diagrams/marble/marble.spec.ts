@@ -2,11 +2,15 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { setSiteConfig } from '../../config.js';
 import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import { preprocessDiagram } from '../../preprocess.js';
 import { MarbleDB } from './marbleDb.js';
 import { diagram } from './marbleDiagram.js';
 import { parser } from './parser/marble.chevrotain.js';
 
 addDiagrams();
+
+/** Parses `text` the way `mermaid.parse` does: front matter split off, comments kept. */
+const fromSource = (text: string) => Diagram.fromText(preprocessDiagram(text).code);
 
 const parse = async (text: string): Promise<MarbleDB> => {
   const db = new MarbleDB();
@@ -126,11 +130,38 @@ describe('marble parser', () => {
     await expect(parse(text)).rejects.toThrow(position);
   });
 
-  it('reports source lines after front matter', async () => {
+  it.each([
+    ['a timeline error', 'marble-beta\n  a : --)\n', 'at line 6, column 9'],
+    ['a parser error', 'marble-beta\n  input\n', 'at line 6'],
+    ['a lexer error', 'marble-beta\n  label a "oops\n', 'at line 6, column 11'],
+    ['a multi-character label symbol', 'marble-beta\n  label ab "x"\n', 'at line 6, column 9'],
+    ['a duplicate label', 'marble-beta\n  label a "x"\n  label a "y"\n', 'at line 7, column 9'],
+    ['a duplicate lane', 'marble-beta\n  a : --\n  a : --\n', 'at line 7'],
+  ])('reports %s on its source line after front matter', async (_name, text, position) => {
     const db = new MarbleDB();
     db.setFrontmatterLineOffset(4);
     parser.parser!.yy = db;
-    await expect(parser.parse('marble-beta\n  a : --)\n')).rejects.toThrow('at line 6');
+    const error = await Promise.resolve(parser.parse(text)).then(
+      () => expect.unreachable(),
+      (error: unknown) => (error as Error).message
+    );
+    expect(error).toContain(position);
+    expect(error.match(/ at line /g)).toHaveLength(1);
+  });
+
+  it('reports error lines that count comment lines', async () => {
+    await expect(
+      fromSource('%% leading\nmarble-beta\n  %% a comment\n  a : --\n  a : --\n')
+    ).rejects.toThrow('at line 5');
+  });
+
+  it('reports error lines that count front matter and comment lines', async () => {
+    await expect(
+      fromSource('---\ntitle: T\n---\nmarble-beta\n  %% one\n  %% two\n  input\n')
+    ).rejects.toThrow('at line 7');
+    await expect(
+      fromSource('---\ntitle: T\n---\nmarble-beta\n  %% one\n  label a "oops\n')
+    ).rejects.toThrow('at line 6, column 11');
   });
 });
 
