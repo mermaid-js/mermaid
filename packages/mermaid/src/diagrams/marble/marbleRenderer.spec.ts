@@ -283,7 +283,7 @@ describe('marble styles', () => {
   it.each(['default', 'dark', 'neutral', 'forest', 'base'] as const)(
     'draws the error cross in the critical colour under the %s theme',
     (name) => {
-      const variables = themes[name].getThemeVariables({});
+      const variables = themes[name].getThemeVariables({}) as unknown as Record<string, string>;
       expect(variables.marbleErrorColor).toBe(variables.critBkgColor);
       expect(getStyles(variables)).toMatch(
         new RegExp(`\\.marble-error-mark {\\s*fill: none;\\s*stroke: ${variables.critBkgColor};`)

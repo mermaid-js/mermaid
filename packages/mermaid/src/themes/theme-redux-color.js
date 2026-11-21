@@ -1,5 +1,10 @@
 import { darken, lighten, adjust, invert, isDark } from 'khroma';
-import { applyOverride, mkBorder } from './theme-helpers.js';
+import {
+  applyOverride,
+  deriveMarbleVariables,
+  mkBorder,
+  resetMarbleVariables,
+} from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
@@ -340,23 +345,7 @@ class Theme {
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
     /* marble */
-    this.marbleTitleColor = this.marbleTitleColor ?? this.titleColor;
-    this.marbleLaneColor = this.marbleLaneColor ?? this.lineColor;
-    this.marbleLaneLabelColor = this.marbleLaneLabelColor ?? this.textColor;
-    this.marbleAxisTextColor = this.marbleAxisTextColor ?? this.textColor;
-    this.marbleGridColor = this.marbleGridColor ?? this.lineColor;
-    this.marbleEventFill = this.marbleEventFill ?? this.primaryColor;
-    this.marbleEventStroke = this.marbleEventStroke ?? this.lineColor;
-    this.marbleEventTextColor = this.marbleEventTextColor ?? this.primaryTextColor;
-    this.marbleLabelColor = this.marbleLabelColor ?? this.textColor;
-    this.marbleSpanFill = this.marbleSpanFill ?? this.secondaryColor;
-    this.marbleSpanStroke = this.marbleSpanStroke ?? this.lineColor;
-    this.marbleSpanTextColor = this.marbleSpanTextColor ?? this.secondaryTextColor;
-    this.marbleCompleteColor = this.marbleCompleteColor ?? this.lineColor;
-    this.marbleErrorColor = this.marbleErrorColor ?? this.critBkgColor;
-    this.marbleCancelColor = this.marbleCancelColor ?? this.lineColor;
-    this.marbleBreakColor = this.marbleBreakColor ?? this.lineColor;
-    this.marbleBreakBkg = this.marbleBreakBkg ?? this.background;
+    deriveMarbleVariables(this);
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || primaryColor;
@@ -480,6 +469,7 @@ class Theme {
     /* -------------------------------------------------- */
   }
   calculate(overrides) {
+    resetMarbleVariables(this, overrides);
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
       this.updateColors();
