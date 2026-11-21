@@ -1,6 +1,8 @@
 /**
  * Marble variables default to base colours. `default` runs `updateColors()` in its
- * constructor, so those defaults must be derived again once the user's overrides are in.
+ * constructor, and every theme's `updateColors()` may replace a base colour the user set
+ * (e.g. `dark` forces `lineColor`) before `calculate()` restores it, so marble defaults
+ * must be derived again once the user's overrides are final.
  */
 import { describe, expect, it } from 'vitest';
 import themes from './index.js';
@@ -24,12 +26,25 @@ describe('marble theme variables', () => {
         'marbleCancelColor',
         'marbleBreakColor',
       ]) {
-        // `dark` forces its own `lineColor` while deriving, as it does for every diagram.
-        expect(theme[key], key).toBe(name === 'dark' ? variables('dark').lineColor : '#ff0000');
+        expect(theme[key], key).toBe('#ff0000');
       }
       expect(theme.marbleEventFill).toBe(theme.primaryColor);
       expect(theme.marbleTitleColor).toBe(theme.titleColor);
       expect(theme.marbleBreakBkg).toBe(theme.background);
+    }
+  );
+
+  it.each(Object.keys(themes) as ThemeName[])(
+    'derive the error colour from an overridden critBkgColor under the %s theme',
+    (name) => {
+      expect(variables(name, { critBkgColor: '#123456' }).marbleErrorColor).toBe('#123456');
+    }
+  );
+
+  it.each(Object.keys(themes) as ThemeName[])(
+    'derive the title colour from an overridden titleColor under the %s theme',
+    (name) => {
+      expect(variables(name, { titleColor: '#123456' }).marbleTitleColor).toBe('#123456');
     }
   );
 

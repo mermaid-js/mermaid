@@ -489,6 +489,10 @@ class Theme {
     keys.forEach((k) => {
       this[k] = applyOverride(this[k], overrides[k]);
     });
+    // An override pass may restore a base colour `updateColors()` replaced, so derive the
+    // marble variables again from the final values.
+    resetMarbleVariables(this, overrides);
+    deriveMarbleVariables(this);
   }
 }
 

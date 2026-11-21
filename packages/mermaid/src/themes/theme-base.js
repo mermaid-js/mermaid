@@ -481,6 +481,10 @@ class Theme {
     keys.forEach((k) => {
       this[k] = applyOverride(this[k], overrides[k]);
     });
+    // An override pass may restore a base colour `updateColors()` replaced, so derive the
+    // marble variables again from the final values.
+    resetMarbleVariables(this, overrides);
+    deriveMarbleVariables(this);
 
     /* `base` is the one theme documented as modifiable, so an explicit override has to be
      * the thing that actually paints.
