@@ -353,82 +353,23 @@ describe('when parsing subgraphs', function () {
     expect(edges.find((e) => e.end === 'A')).toBeUndefined();
   });
 
-  it('should handle an emoji at the start of an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph 🔴 Breaks\nA --> B\nend');
+  it.each([
+    ['an emoji at the start', '🔴 Breaks'],
+    ['an emoji at the end', 'Breaks 🔴'],
+    ['an emoji in the middle', 'Breaks 🔴 Down'],
+    ['a symbol at the start', '★ Star'],
+    ['an arrow', 'A → B'],
+    ['a symbol with a variation selector', '⚠️ Warning'],
+    ['a BMP emoji base at the start', '©️ Credits'],
+    ['other BMP emoji bases', '®️ Brand ™️'],
+    ['a Latin-1 symbol', '± Error'],
+    ['a ZWJ emoji sequence', '👩‍💻 Build'],
+  ])('should handle %s in an unquoted subgraph title', function (_label, title) {
+    flow.parser.parse(`flowchart TD\nsubgraph ${title}\nA --> B\nend`);
 
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('🔴 Breaks');
-    expect(subgraphs[0].nodes).toContain('A');
-    expect(subgraphs[0].nodes).toContain('B');
-  });
-
-  it('should handle an emoji at the end of an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph Breaks 🔴\nA --> B\nend');
-
-    const subgraphs = flow.parser.yy.getSubGraphs();
-    expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('Breaks 🔴');
-    expect(subgraphs[0].nodes).toContain('A');
-    expect(subgraphs[0].nodes).toContain('B');
-  });
-
-  it('should handle an emoji in the middle of an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph Breaks 🔴 Down\nA --> B\nend');
-
-    const subgraphs = flow.parser.yy.getSubGraphs();
-    expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('Breaks 🔴 Down');
-    expect(subgraphs[0].nodes).toContain('A');
-    expect(subgraphs[0].nodes).toContain('B');
-  });
-
-  it('should handle a symbol at the start of an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph ★ Star\nA --> B\nend');
-
-    const subgraphs = flow.parser.yy.getSubGraphs();
-    expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('★ Star');
-    expect(subgraphs[0].nodes).toContain('A');
-    expect(subgraphs[0].nodes).toContain('B');
-  });
-
-  it('should handle an arrow in an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph A → B\nA --> B\nend');
-
-    const subgraphs = flow.parser.yy.getSubGraphs();
-    expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('A → B');
-    expect(subgraphs[0].nodes).toContain('A');
-    expect(subgraphs[0].nodes).toContain('B');
-  });
-
-  it('should handle a symbol with a variation selector in an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph ⚠️ Warning\nA --> B\nend');
-
-    const subgraphs = flow.parser.yy.getSubGraphs();
-    expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('⚠️ Warning');
-    expect(subgraphs[0].nodes).toContain('A');
-    expect(subgraphs[0].nodes).toContain('B');
-  });
-
-  it('should handle a BMP emoji base at the start of an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph ©️ Credits\nA --> B\nend');
-
-    const subgraphs = flow.parser.yy.getSubGraphs();
-    expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('©️ Credits');
-    expect(subgraphs[0].nodes).toContain('A');
-    expect(subgraphs[0].nodes).toContain('B');
-  });
-
-  it('should handle other BMP emoji bases in an unquoted subgraph title', function () {
-    flow.parser.parse('flowchart TD\nsubgraph ®️ Brand ™️\nA --> B\nend');
-
-    const subgraphs = flow.parser.yy.getSubGraphs();
-    expect(subgraphs.length).toBe(1);
-    expect(subgraphs[0].title).toBe('®️ Brand ™️');
+    expect(subgraphs[0].title).toBe(title);
     expect(subgraphs[0].nodes).toContain('A');
     expect(subgraphs[0].nodes).toContain('B');
   });

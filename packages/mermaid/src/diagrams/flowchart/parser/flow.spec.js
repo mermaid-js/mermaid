@@ -54,6 +54,19 @@ describe('parsing a flow chart', function () {
     expect(edges[0].end).toBe('B');
   });
 
+  it('should handle a Latin-1 symbol as a node id', function () {
+    const res = flow.parser.parse('flowchart TD\n£ --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert.get('£').id).toBe('£');
+    expect(vert.get('B').id).toBe('B');
+    expect(edges.length).toBe(1);
+    expect(edges[0].start).toBe('£');
+    expect(edges[0].end).toBe('B');
+  });
+
   it('should accept swimlane-beta as a graph keyword', function () {
     flow.parser.parse('swimlane-beta LR;A-->B;');
 
