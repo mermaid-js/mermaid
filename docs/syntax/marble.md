@@ -300,7 +300,7 @@ Marble diagrams follow the theme, and every color can be overridden with these t
 | `marbleSpanTextColor`  | Text inside unlabelled spans        | `secondaryTextColor` |
 | `marbleCompleteColor`  | Completion bar `\|`                 | `lineColor`          |
 | `marbleErrorColor`     | Error cross `#`                     | `critBkgColor`       |
-| `marbleCancelColor`    | Cancellation cross `x`              | `lineColor`          |
+| `marbleCancelColor`    | Unsubscription cross `!`            | `lineColor`          |
 | `marbleBreakColor`     | Break marks `/`                     | `lineColor`          |
 | `marbleBreakBkg`       | Gap behind break marks              | `background`         |
 
