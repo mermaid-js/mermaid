@@ -7,6 +7,7 @@ Asciidoctor
 Astah
 automerge
 bilkent
+Bindars
 bisheng
 Blazor
 codedoc
