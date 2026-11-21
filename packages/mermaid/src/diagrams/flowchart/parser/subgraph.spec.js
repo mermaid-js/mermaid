@@ -352,4 +352,25 @@ describe('when parsing subgraphs', function () {
     expect(edges.find((e) => e.start === 'C' && e.end === 'one')).toBeDefined();
     expect(edges.find((e) => e.end === 'A')).toBeUndefined();
   });
+
+  it.each([
+    ['an emoji at the start', '🔴 Breaks'],
+    ['an emoji at the end', 'Breaks 🔴'],
+    ['an emoji in the middle', 'Breaks 🔴 Down'],
+    ['a symbol at the start', '★ Star'],
+    ['an arrow', 'A → B'],
+    ['a symbol with a variation selector', '⚠️ Warning'],
+    ['a BMP emoji base at the start', '©️ Credits'],
+    ['other BMP emoji bases', '®️ Brand ™️'],
+    ['a Latin-1 symbol', '± Error'],
+    ['a ZWJ emoji sequence', '👩‍💻 Build'],
+  ])('should handle %s in an unquoted subgraph title', function (_label, title) {
+    flow.parser.parse(`flowchart TD\nsubgraph ${title}\nA --> B\nend`);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].title).toBe(title);
+    expect(subgraphs[0].nodes).toContain('A');
+    expect(subgraphs[0].nodes).toContain('B');
+  });
 });
