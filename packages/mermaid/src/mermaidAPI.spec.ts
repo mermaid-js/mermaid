@@ -1208,6 +1208,30 @@ treeView-beta
       expect(dom.window.document.querySelector('use')).toBeNull();
     });
 
+    jsdomIt('keeps only the newest error diagram when renders fail repeatedly', async () => {
+      const bad = 'this is not a mermaid diagram definition';
+
+      await expect(mermaidAPI.render('parse-failure-1', bad)).rejects.toThrow();
+      await expect(mermaidAPI.render('parse-failure-2', bad)).rejects.toThrow();
+
+      expect(document.querySelectorAll('#dparse-failure-1').length).toBe(0);
+      expect(document.querySelectorAll('#dparse-failure-2').length).toBe(1);
+    });
+
+    jsdomIt(
+      'does not remove a retained error element later reused as a container',
+      async () => {
+        await expect(mermaidAPI.render('reuse-failure-1', 'not a diagram')).rejects.toThrow();
+        const retained = document.querySelector('#dreuse-failure-1')!;
+
+        await mermaidAPI.render('reuse-ok', 'graph TD\n  A-->B', retained);
+        await expect(mermaidAPI.render('reuse-failure-2', 'not a diagram')).rejects.toThrow();
+
+        expect(document.body.contains(retained)).toBe(true);
+      },
+      30000
+    );
+
     jsdomIt('escapes an id starting with a digit in the scoped styles', async () => {
       const { svg } = await mermaidAPI.render('02_test', 'erDiagram\n  A ||--o{ B : has');
 
