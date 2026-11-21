@@ -41,7 +41,10 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
   - [CloudScript.io Mermaid Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
   - [Mermaid plus for Confluence](https://marketplace.atlassian.com/apps/1236814/mermaid-plus-for-confluence?hosting=cloud&tab=overview)
-- [Azure Devops](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
+- [Azure Devops](https://azure.microsoft.com/en-us/products/devops) ✅
+  - [Azure Devops Wiki](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
+  - [Azure Devops Wiki PRO](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
+  - [Mermaid Viewer](https://marketplace.visualstudio.com/items?itemName=DanieleCas.azure-devops-mermaid-viewer)
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
 - [Doctave](https://www.doctave.com/) ✅
   - [Mermaid in Markdown code blocks](https://docs.doctave.com/components/mermaid) ✅
