@@ -547,6 +547,8 @@ const renderDiagram = async function (
   if (svgContainingElement !== undefined) {
     if (svgContainingElement) {
       svgContainingElement.innerHTML = '';
+      // A retained error element may be handed back in as the container; keep body cleanup off it
+      svgContainingElement.removeAttribute(ERROR_DIAGRAM_ATTR);
     }
 
     if (isSandboxed) {
