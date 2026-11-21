@@ -1,6 +1,95 @@
 import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph, FlowText } from './types.js';
 import flow from './parser/flowParser.js';
+import { jsdomIt } from '../../tests/util.js';
+
+describe('flow db tooltips', () => {
+  const bindTooltip = () => {
+    document.body.innerHTML = `
+      <div id="diagram">
+        <svg>
+          <g class="node" title="Node details"></g>
+          <g class="node" title="Second node details"></g>
+        </svg>
+      </div>
+    `;
+    const diagram = document.querySelector('#diagram');
+    if (!diagram) {
+      throw new Error('Expected diagram fixture');
+    }
+
+    const flowDb = new FlowDB();
+    flowDb.bindFunctions(diagram);
+
+    const [node, secondNode] = document.querySelectorAll<SVGGElement>('g.node');
+    const tooltip = document.querySelector<HTMLDivElement>('.mermaidTooltip');
+    if (!node || !secondNode || !tooltip) {
+      throw new Error('Expected tooltip fixture');
+    }
+    return { node, secondNode, tooltip };
+  };
+
+  jsdomIt('positions an inactive tooltip at the document origin', () => {
+    const { tooltip } = bindTooltip();
+
+    expect(tooltip.style.top).toBe('0px');
+    expect(tooltip.style.left).toBe('0px');
+  });
+
+  jsdomIt('returns the tooltip to the document origin after it fades out', async () => {
+    const { node, tooltip } = bindTooltip();
+    node.getBoundingClientRect = () =>
+      ({
+        x: 40,
+        y: 60,
+        top: 60,
+        right: 140,
+        bottom: 100,
+        left: 40,
+        width: 100,
+        height: 40,
+        toJSON: () => ({}),
+      }) satisfies DOMRect;
+
+    node.dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
+    expect(tooltip.style.top).toBe('100px');
+    expect(tooltip.style.left).toBe('90px');
+
+    node.dispatchEvent(new window.MouseEvent('mouseout', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 550));
+
+    expect(tooltip.style.top).toBe('0px');
+    expect(tooltip.style.left).toBe('0px');
+    expect(tooltip.textContent).toBe('');
+  });
+
+  jsdomIt('keeps a newly hovered tooltip visible when the previous fade is ending', async () => {
+    const { node, secondNode, tooltip } = bindTooltip();
+    node.getBoundingClientRect = () =>
+      ({
+        left: 40,
+        right: 140,
+        bottom: 100,
+      }) as DOMRect;
+    secondNode.getBoundingClientRect = () =>
+      ({
+        left: 200,
+        right: 300,
+        bottom: 240,
+      }) as DOMRect;
+
+    node.dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
+    node.dispatchEvent(new window.MouseEvent('mouseout', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 505));
+
+    secondNode.dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 40));
+
+    expect(tooltip.textContent).toBe('Second node details');
+    expect(tooltip.style.top).toBe('240px');
+    expect(tooltip.style.left).toBe('250px');
+  });
+});
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
