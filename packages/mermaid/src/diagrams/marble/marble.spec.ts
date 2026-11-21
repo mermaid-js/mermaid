@@ -71,6 +71,15 @@ describe('marble parser', () => {
     expect(db.getTimeline().lanes[0].name).toBe('title');
   });
 
+  it.each(['title  : --a|', 'title\t: --a|', 'title \t : --a|'])(
+    'keeps a lane named title apart when blanks pad the colon (%j)',
+    async (lane) => {
+      const db = await parse(`marble-beta\n  ${lane}\n`);
+      expect(db.getDiagramTitle()).toBe('');
+      expect(db.getTimeline().lanes[0].name).toBe('title');
+    }
+  );
+
   it('labels punctuation symbols', async () => {
     const db = await parse(`marble-beta
   a : -[~~]-#

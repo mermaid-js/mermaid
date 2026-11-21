@@ -70,7 +70,7 @@ export const AccTitleLine = createToken({
 /** `title` and the rest of its line. `title : ...` is left alone so it can still be a lane. */
 export const TitleLine = createToken({
   name: 'TITLE_LINE',
-  pattern: lineStatement(/^title(?:[\t ]+(?!:)[^\n\r]*)?(?=[\n\r]|$)/),
+  pattern: lineStatement(/^title(?![\t ]*:)(?:[\t ]+[^\n\r]*)?(?=[\n\r]|$)/),
   start_chars_hint: ['t'],
   line_breaks: false,
 });
