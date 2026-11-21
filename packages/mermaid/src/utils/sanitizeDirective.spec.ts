@@ -8,6 +8,34 @@ describe('sanitizeDirective', () => {
     expect(args).toEqual({ fontSize: 12 });
   });
 
+  it('keeps theme variables that the default theme does not define', () => {
+    const args = {
+      themeVariables: {
+        stateBorder: '#ff0000',
+        commitLineColor: '#00ff00',
+        requirementEdgeLabelBackground: '#0000ff',
+        packet: { startByteColor: 'red', blockFillColor: 'blue' },
+        treeView: {
+          iconColor: 'red',
+          descriptionColor: 'green',
+          highlightBg: 'yellow',
+          highlightStroke: 'orange',
+        },
+      },
+    };
+    sanitizeDirective(args);
+    expect(args.themeVariables).toEqual({
+      stateBorder: '#ff0000',
+      commitLineColor: '#00ff00',
+      requirementEdgeLabelBackground: '#0000ff',
+      packet: { startByteColor: 'red', blockFillColor: 'blue' },
+      treeView: {
+        iconColor: 'red',
+        descriptionColor: 'green',
+        highlightBg: 'yellow',
+        highlightStroke: 'orange',
+      },
+
   it.each([false, 'arc', 'gap'])('preserves grid.lineHops=%s', (lineHops) => {
     const args = { grid: { lineHops } };
 
