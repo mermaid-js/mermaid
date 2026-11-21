@@ -2,15 +2,7 @@ import type { MarbleDiagramConfig } from '../../config.type.js';
 import { getConfig as commonGetConfig } from '../../config.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { cleanAndMerge } from '../../utils.js';
-import {
-  clear as commonClear,
-  getAccDescription,
-  getAccTitle,
-  getDiagramTitle,
-  setAccDescription,
-  setAccTitle,
-  setDiagramTitle,
-} from '../common/commonDb.js';
+import { sanitizeText as commonSanitizeText } from '../common/common.js';
 import { buildTimeline, marbleError } from './marbleTimeline.js';
 import type {
   MarbleDB as MarbleDBInterface,
@@ -19,6 +11,8 @@ import type {
   RawMarbleLine,
   SourcePosition,
 } from './marbleTypes.js';
+
+const sanitizeText = (text: string): string => commonSanitizeText(text, commonGetConfig());
 
 const emptyTimeline = (): MarbleTimeline => ({ ticks: [], lanes: [], breaks: [], columns: 0 });
 
@@ -32,6 +26,9 @@ export class MarbleDB implements MarbleDBInterface {
   private labels = new Map<string, MarbleLabel>();
   private timeline: MarbleTimeline = emptyTimeline();
   private lineOffset = 0;
+  private diagramTitle = '';
+  private accTitle = '';
+  private accDescription = '';
 
   /** Parse `%%` comments in place, so reported lines match the source the author wrote. */
   public readonly preserveCommentsWhenParsing = true;
@@ -101,7 +98,9 @@ export class MarbleDB implements MarbleDBInterface {
   }
 
   public clear() {
-    commonClear();
+    this.diagramTitle = '';
+    this.accTitle = '';
+    this.accDescription = '';
     this.lanes = [];
     this.axis = undefined;
     this.labels = new Map();
@@ -109,10 +108,29 @@ export class MarbleDB implements MarbleDBInterface {
     this.lineOffset = 0;
   }
 
-  public setAccTitle = setAccTitle;
-  public getAccTitle = getAccTitle;
-  public setDiagramTitle = setDiagramTitle;
-  public getDiagramTitle = getDiagramTitle;
-  public getAccDescription = getAccDescription;
-  public setAccDescription = setAccDescription;
+  // Kept per instance rather than in commonDb's module state, so two diagrams on one page
+  // cannot read each other's titles. Sanitized the way commonDb sanitizes them.
+  public setDiagramTitle(text: string) {
+    this.diagramTitle = sanitizeText(text);
+  }
+
+  public getDiagramTitle() {
+    return this.diagramTitle;
+  }
+
+  public setAccTitle(text: string) {
+    this.accTitle = sanitizeText(text).replace(/^\s+/g, '');
+  }
+
+  public getAccTitle() {
+    return this.accTitle;
+  }
+
+  public setAccDescription(text: string) {
+    this.accDescription = sanitizeText(text).replace(/\n\s+/g, '\n');
+  }
+
+  public getAccDescription() {
+    return this.accDescription;
+  }
 }

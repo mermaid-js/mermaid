@@ -212,6 +212,17 @@ ${source}`
     expect(doc.querySelectorAll('rect.marble-span-body')).toHaveLength(0);
   });
 
+  jsdomIt('renders the title and accessibility text from its own db', async () => {
+    const { svg } = await mermaidAPI.render(
+      'marble-a11y',
+      'marble-beta\n  title Searching\n  accTitle: Search\n  accDescr: Typing is debounced\n  a : -a-|\n'
+    );
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    expect(doc.querySelector('title')?.textContent).toBe('Search');
+    expect(doc.querySelector('desc')?.textContent).toBe('Typing is debounced');
+    expect(svg).toContain('Searching');
+  });
+
   jsdomIt('takes its look from the marble config section', async () => {
     const { svg } = await mermaidAPI.render(
       'marble-section-look',

@@ -179,10 +179,32 @@ describe('marble db', () => {
 `);
     db.clear();
     expect(db.getDiagramTitle()).toBe('');
+    expect(db.getAccTitle()).toBe('');
+    expect(db.getAccDescription()).toBe('');
     expect(db.getLabels()).toEqual([]);
     expect(db.getTimeline().lanes).toEqual([]);
     db.build();
     expect(db.getTimeline()).toEqual({ ticks: [], lanes: [], breaks: [], columns: 0 });
+  });
+
+  it('keeps titles and accessibility text per instance', async () => {
+    const first = await parse('marble-beta\n  title First\n  accTitle: A1\n  accDescr: D1\n');
+    const second = await parse('marble-beta\n  title Second\n  accTitle: A2\n  accDescr: D2\n');
+    expect(first.getDiagramTitle()).toBe('First');
+    expect(first.getAccTitle()).toBe('A1');
+    expect(first.getAccDescription()).toBe('D1');
+    expect(second.getDiagramTitle()).toBe('Second');
+    expect(second.getAccTitle()).toBe('A2');
+    expect(second.getAccDescription()).toBe('D2');
+    second.clear();
+    expect(first.getDiagramTitle()).toBe('First');
+    expect(second.getAccTitle()).toBe('');
+  });
+
+  it('sanitizes titles', () => {
+    const db = new MarbleDB();
+    db.setDiagramTitle('<script>alert(1)</script>Safe');
+    expect(db.getDiagramTitle()).toBe('Safe');
   });
 
   it('merges diagram config over the defaults', () => {
