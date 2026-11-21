@@ -211,6 +211,21 @@ ${source}`
     expect(doc.querySelectorAll('g.marble-span-body path').length).toBeGreaterThan(0);
     expect(doc.querySelectorAll('rect.marble-span-body')).toHaveLength(0);
   });
+
+  jsdomIt('takes its look from the marble config section', async () => {
+    const { svg } = await mermaidAPI.render(
+      'marble-section-look',
+      `---
+config:
+  marble:
+    look: handDrawn
+---
+${source}`
+    );
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    expect(doc.querySelectorAll('g.marble-event-circle path').length).toBeGreaterThan(0);
+    expect(doc.querySelectorAll('circle.marble-event-circle')).toHaveLength(0);
+  });
 });
 
 describe('marble styles', () => {

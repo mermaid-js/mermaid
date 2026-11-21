@@ -12,6 +12,7 @@ const DIAGRAM_CONFIG_KEY_ALIASES: Record<string, string> = {
   railroadAbnf: 'railroad',
   railroadEbnf: 'railroad',
   railroadPeg: 'railroad',
+  marbleDiagram: 'marble',
 };
 
 /**
