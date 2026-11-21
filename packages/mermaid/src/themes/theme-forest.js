@@ -3,7 +3,12 @@ import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
-import { applyOverride, mkBorder } from './theme-helpers.js';
+import {
+  applyOverride,
+  deriveMarbleVariables,
+  mkBorder,
+  resetMarbleVariables,
+} from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -258,6 +263,9 @@ class Theme {
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
+    /* marble */
+    deriveMarbleVariables(this);
+
     /* cynefin */
     this.cynefin = {
       domainFontSize: this.cynefin?.domainFontSize || 16,
@@ -451,6 +459,7 @@ class Theme {
     /* -------------------------------------------------- */
   }
   calculate(overrides) {
+    resetMarbleVariables(this, overrides);
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
       this.updateColors();
@@ -470,6 +479,10 @@ class Theme {
     keys.forEach((k) => {
       this[k] = applyOverride(this[k], overrides[k]);
     });
+    // An override pass may restore a base colour `updateColors()` replaced, so derive the
+    // marble variables again from the final values.
+    resetMarbleVariables(this, overrides);
+    deriveMarbleVariables(this);
   }
 }
 

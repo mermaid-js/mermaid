@@ -1,0 +1,51 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { describe, expect } from 'vitest';
+import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import { jsdomIt } from '../../tests/util.js';
+
+addDiagrams();
+
+const documentationCandidates = [
+  resolve(process.cwd(), 'packages/mermaid/src/docs/syntax/marble.md'),
+  resolve(process.cwd(), 'src/docs/syntax/marble.md'),
+];
+
+const readDocumentation = (): string => {
+  const documentationPath = documentationCandidates.find((candidate) => existsSync(candidate));
+  if (!documentationPath) {
+    throw new Error(
+      `Canonical marble documentation was not found at: ${documentationCandidates.join(', ')}`
+    );
+  }
+  return readFileSync(documentationPath, 'utf8');
+};
+
+const extractMermaidExamples = (markdown: string): string[] =>
+  [...markdown.matchAll(/^```mermaid-example[^\n]*\r?\n([\S\s]*?)\r?\n```$/gm)].map(
+    ([, source]) => source
+  );
+
+describe('marble public documentation examples', () => {
+  jsdomIt(
+    'parses and renders every mermaid-example fence from the canonical page',
+    async () => {
+      const examples = extractMermaidExamples(readDocumentation());
+      expect(examples.length).toBeGreaterThan(0);
+
+      for (const [index, source] of examples.entries()) {
+        const id = `marble-doc-example-${index}`;
+        try {
+          const { svg } = await mermaidAPI.render(id, source);
+          expect(svg, `documentation example ${index + 1}`).toContain('<svg');
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          throw new Error(`Marble documentation example ${index + 1} failed: ${message}`);
+        }
+      }
+    },
+    // Renders every example on the page in one test, so the cost grows with the page.
+    60_000
+  );
+});

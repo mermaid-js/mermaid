@@ -474,6 +474,8 @@ properties:
     $ref: '#/$defs/WardleyDiagramConfig'
   cynefin:
     $ref: '#/$defs/CynefinDiagramConfig'
+  marble:
+    $ref: '#/$defs/MarbleDiagramConfig'
   railroad:
     $ref: '#/$defs/RailroadDiagramConfig'
   dompurifyConfig:
@@ -3338,6 +3340,48 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           regression tests to be stable.
         type: number
         default: 0
+
+  MarbleDiagramConfig:
+    title: Marble Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for marble diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      columnWidth:
+        description: Horizontal distance, in pixels, between two adjacent columns of a marble string.
+        type: number
+        minimum: 1
+        default: 24
+      laneHeight:
+        description: |
+          Minimum vertical space, in pixels, given to each lane. All lanes share one height,
+          so when stacked labels need more room every lane grows and the lanes stay evenly
+          spaced.
+        type: number
+        minimum: 1
+        default: 56
+      marbleRadius:
+        description: Radius, in pixels, of an event marble.
+        type: number
+        minimum: 1
+        default: 10
+      laneLabelGap:
+        description: Space, in pixels, between a lane's name and the start of its timeline.
+        type: number
+        minimum: 0
+        default: 16
+      padding:
+        description: Padding, in pixels, around the diagram.
+        type: number
+        minimum: 0
+        default: 16
+      showEventLabels:
+        description: |
+          Show the text of `label` statements next to the marbles they name. Span labels that
+          fit inside their span are shown either way.
+        type: boolean
+        default: true
 
   RailroadDiagramConfig:
     title: Railroad Diagram Config

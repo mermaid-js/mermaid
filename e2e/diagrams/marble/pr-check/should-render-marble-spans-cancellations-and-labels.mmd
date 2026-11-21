@@ -1,0 +1,17 @@
+---
+description: >-
+  Marble diagram with a title, an axis, quoted lane names, bracketed spans that
+  are cancelled or closed, and labels that take palette colors: switchMap
+  cancelling a search that is still in flight.
+---
+marble-beta
+  title switchMap: a new search cancels the one in flight
+  axis       : 0    5    10   15
+  input      : -a-----b--c--------|
+  "search a" :  [=====!
+  "search b" :        [==!
+  "search c" :           [=====]
+  output     : ----------------r--|
+  label = "request"
+  label ! "cancelled"
+  label r "results for c"
