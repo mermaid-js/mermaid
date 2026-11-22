@@ -208,6 +208,13 @@ that id.
     return 'NODE_STRING';
 }
 "-"                   return 'MINUS'
+// Symbols and emoji are not letters, so the letter ranges below never match
+// them and an unquoted title or id containing one was a lexical error. Match
+// a surrogate pair (any astral-plane character, e.g. emoji) as one token, plus
+// the BMP symbol blocks (arrows, geometric shapes, dingbats), so they lex as
+// UNICODE_TEXT wherever letters already do.
+[\uD800-\uDBFF][\uDC00-\uDFFF]|
+[\u2190-\u2BFF\u200D\u20D0-\u20FF\uFE00-\uFE0F]|
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
