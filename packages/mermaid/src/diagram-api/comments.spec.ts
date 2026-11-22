@@ -103,9 +103,7 @@ graph TD
   });
 
   it('should remove an inline comment with no trailing newline', () => {
-    expect(cleanupComments('graph TD\n    A-->B %% inline comment')).toBe(
-      'graph TD\n    A-->B'
-    );
+    expect(cleanupComments('graph TD\n    A-->B %% inline comment')).toBe('graph TD\n    A-->B');
   });
 
   it('should keep %% inside double-quoted strings', () => {
