@@ -46,10 +46,10 @@ describe('ELK preset configuration through initialize', () => {
   });
 
   it.each([
-    ['legacy', 'BRANDES_KOEPF', 'GREEDY'],
-    ['modelOrder', 'NETWORK_SIMPLEX', 'GREEDY_MODEL_ORDER'],
-    ['depthFirst', 'NETWORK_SIMPLEX', 'DEPTH_FIRST'],
-  ] as const)('preserves the %s preset', (preset, placement, cycleBreaking) => {
+    ['legacy', 'BRANDES_KOEPF', 'GREEDY', 'GREEDY'],
+    ['modelOrder', 'NETWORK_SIMPLEX', 'GREEDY_MODEL_ORDER', 'DEPTH_FIRST'],
+    ['depthFirst', 'NETWORK_SIMPLEX', 'DEPTH_FIRST', 'DEPTH_FIRST'],
+  ] as const)('preserves the %s preset', (preset, placement, cycleBreaking, groupCycleBreaking) => {
     const { elkGraph, nodeDb } = graphFor({ preset });
     expect(elkGraph.layoutOptions['elk.layered.nodePlacement.strategy']).toBe(placement);
     expect(nodeDb.group.layoutOptions?.['elk.layered.nodePlacement.strategy']).toBe(
@@ -57,6 +57,9 @@ describe('ELK preset configuration through initialize', () => {
     );
     expect(elkGraph.layoutOptions['elk.layered.layering.strategy']).toBe('NETWORK_SIMPLEX');
     expect(elkGraph.layoutOptions['elk.layered.cycleBreaking.strategy']).toBe(cycleBreaking);
+    expect(nodeDb.group.layoutOptions?.['elk.layered.cycleBreaking.strategy']).toBe(
+      groupCycleBreaking
+    );
     for (const options of [elkGraph.layoutOptions, nodeDb.group.layoutOptions]) {
       expect(options?.['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
     }
