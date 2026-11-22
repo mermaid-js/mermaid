@@ -128,6 +128,14 @@ export class ClassMember {
 
     const combinedText = `${this.visibility ? '\\' + this.visibility : ''}${parseGenericTypes(this.id)}${this.memberType === 'method' ? `(${parseGenericTypes(this.parameters)})${this.returnType ? ' : ' + parseGenericTypes(this.returnType) : ''}` : ''}`;
     this.text = combinedText.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    // A literal "\n" sequence in a member must render as a line break, but the
+    // label pipeline (marked) only breaks on real newlines. Translate the
+    // sequence here, in the display text only: the parsed fields keep the
+    // original sequence. A "\n" preceded by another backslash is an escaped
+    // backslash rather than a line break, so it is left untouched.
+    this.text = this.text.replace(/\\n/g, (match, offset, text) =>
+      offset > 0 && text[offset - 1] === '\\' ? match : '\n'
+    );
     if (this.text.startsWith('\\&lt;')) {
       this.text = this.text.replace('\\&lt;', '~');
     }
