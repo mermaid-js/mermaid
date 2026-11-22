@@ -113,5 +113,32 @@ describe('class diagram, ', function () {
       ]);
       expect(parser.yy.getClass('Class01').cssClasses).toBe('default pink bold');
     });
+    it('should not apply a classDef to a class whose css class only contains its name', function () {
+      const str =
+        'classDiagram\n' + 'class Animal:::important\n class Mineral\n classDef port fill:#0f0';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Animal').styles).toStrictEqual([]);
+      expect(parser.yy.getClass('Mineral').styles).toStrictEqual([]);
+    });
+    it('should not apply a classDef whose name is part of "default" to every class', function () {
+      const str = 'classDiagram\n' + 'class Animal\n class Mineral\n classDef fault fill:#f00';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Animal').styles).toStrictEqual([]);
+      expect(parser.yy.getClass('Mineral').styles).toStrictEqual([]);
+    });
+    it('should apply the default classDef to every class', function () {
+      const str =
+        'classDiagram\n' +
+        'class Animal:::pink\n class Mineral\n classDef default fill:#f96\n classDef pink color:#f9f';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Animal').styles).toStrictEqual(['fill:#f96', 'color:#f9f']);
+      expect(parser.yy.getClass('Mineral').styles).toStrictEqual(['fill:#f96']);
+    });
   });
 });
