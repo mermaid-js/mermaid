@@ -34,9 +34,11 @@ export async function composite<T extends SVGGraphicsElement>(parent: D3Selectio
     .attr('width', totalWidth)
     .attr('height', totalHeight);
 
-  if (compositeNode.positioned && compositeNode.label) {
-    // The block layout leaves room for the title above the inner blocks. Draw it there,
-    // not in the middle where the inner blocks cover it.
+  // The block layout leaves room for the title above the inner blocks. Draw it there,
+  // not in the middle where the inner blocks cover it. A composite with nothing inside
+  // is only as tall as its title, so that one stays centred.
+  const hasTitleBand = totalHeight >= bbox.height + 2 * halfPadding;
+  if (compositeNode.positioned && compositeNode.label && hasTitleBand) {
     label.attr(
       'transform',
       `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${y + halfPadding - (bbox.y - (bbox.top ?? 0))})`

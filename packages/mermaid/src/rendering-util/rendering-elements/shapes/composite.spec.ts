@@ -70,6 +70,14 @@ describe('composite title', () => {
     expect(labelTranslate()).toEqual({ x: 0, y: -50 + 4 });
   });
 
+  it('keeps the title centred in a placed composite with nothing inside', async () => {
+    // `block:id["Title"] columns 1 end` has no inner blocks, so the layout keeps the
+    // composite at its bare title height (16 here) and reserves no band for the title.
+    await composite(svg(), compositeNode({ positioned: true, width: 40, height: 16 }));
+
+    expect(labelTranslate()).toEqual({ x: 0, y: -8 });
+  });
+
   it('still centres the title while the composite is being measured', async () => {
     await composite(svg(), compositeNode({ padding: 0 }));
 
