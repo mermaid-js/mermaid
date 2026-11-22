@@ -151,4 +151,33 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
+
+  it('should handle an inline comment after a statement (#6401)', function () {
+    const res = flow.parser.parse(
+      cleanupComments('graph TD;\n    A --> B;  %%This comment works\n')
+    );
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+    expect(edges.length).toBe(1);
+    expect(edges[0].start).toBe('A');
+    expect(edges[0].end).toBe('B');
+    expect(edges[0].type).toBe('arrow_point');
+    expect(edges[0].text).toBe('');
+  });
+
+  it('should keep %% inside a quoted node label (#6401)', function () {
+    const res = flow.parser.parse(cleanupComments('graph TD\n    A["50%% off"] --> B\n'));
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('A').text).toBe('50%% off');
+    expect(vert.get('B').id).toBe('B');
+    expect(edges.length).toBe(1);
+  });
 });
