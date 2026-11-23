@@ -738,6 +738,18 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         default: 2
         minimum: 0
+      boundaryDirection:
+        description: |
+          The direction in which the elements of every boundary run.
+          A `direction` statement inside a boundary's braces overrides it for that boundary.
+          When neither is set, the layout engine decides.
+        type: string
+        enum: ['TB', 'BT', 'LR', 'RL']
+        meta:enum:
+          TB: Top-Bottom
+          BT: Bottom-Top
+          LR: Left-Right
+          RL: Right-Left
 
       # --------------------------------------------------------------------- #
       # Default font values
