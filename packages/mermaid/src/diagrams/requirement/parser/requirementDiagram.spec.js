@@ -45,6 +45,66 @@ describe('when parsing requirement diagram it...', function () {
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(0);
   });
 
+  it.each([
+    ['spaces', '  '],
+    ['a tab', '\t'],
+  ])('will accept %s at the end of lines', function (_, ws) {
+    const lines = [
+      `requirementDiagram${ws}`,
+      ``,
+      `requirement test_req {${ws}`,
+      `id: test_id${ws}`,
+      `text: the test text.${ws}`,
+      `risk: high${ws}`,
+      `verifymethod: analysis${ws}`,
+      `}${ws}`,
+      ``,
+      `element test_el {${ws}`,
+      `type: test_type${ws}`,
+      `}${ws}`,
+      ``,
+      `test_el - satisfies -> test_req${ws}`,
+    ];
+
+    reqDiagram.parser.parse(lines.join('\n'));
+
+    const foundReq = requirementDb.getRequirements().get('test_req');
+    expect(foundReq.requirementId).toBe('test_id');
+    expect(foundReq.text).toBe('the test text.');
+    expect(foundReq.risk).toBe(requirementDb.RiskLevel.HIGH_RISK);
+    expect(foundReq.verifyMethod).toBe(requirementDb.VerifyType.VERIFY_ANALYSIS);
+    expect(requirementDb.getElements().get('test_el').type).toBe('test_type');
+    expect(requirementDb.getRelationships()).toEqual([
+      { type: 'satisfies', src: 'test_el', dst: 'test_req' },
+    ]);
+  });
+
+  it.each([
+    ['spaces', '  '],
+    ['a tab', '\t'],
+    ['a carriage return', '\r'],
+  ])('will accept %s at the end of style, classDef and class lines', function (_, ws) {
+    reqDiagram.parser.parse(
+      [
+        'requirementDiagram',
+        'requirement test_req {',
+        'id: test_id',
+        '}',
+        'element test_el {',
+        '}',
+        `style test_req fill:#f00${ws}`,
+        `classDef foo stroke:#333${ws}`,
+        `class test_el foo${ws}`,
+        'test_el - satisfies -> test_req',
+      ].join('\n')
+    );
+
+    expect(requirementDb.getRequirements().get('test_req').cssStyles).toEqual(['fill:#f00']);
+    expect(requirementDb.getClasses().get('foo').styles).toEqual(['stroke:#333']);
+    expect(requirementDb.getElements().get('test_el').classes).toContain('foo');
+    expect(requirementDb.getRelationships()).toHaveLength(1);
+  });
+
   it('will accept full element definition', function () {
     const expectedName = 'test_el';
     const expectedType = 'test_type';
