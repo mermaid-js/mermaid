@@ -14,5 +14,7 @@ declare module '@zenuml/core' {
     viewBox: string;
   }
 
+  export function ensureDiagramFontsLoaded(): Promise<void>;
+
   export function renderToSvg(code: string, options?: RenderOptions): RenderResult;
 }
