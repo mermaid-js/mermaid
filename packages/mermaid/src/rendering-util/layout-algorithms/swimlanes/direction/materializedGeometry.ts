@@ -22,6 +22,8 @@ import {
   simplifyPolyline,
 } from './geometry.js';
 import type { OrthogonalSegment, Point, RectBounds, RectSide } from './geometry.js';
+import { buildRouteCrossings } from './segmentCrossingIndex.js';
+import type { RouteCrossings } from './segmentCrossingIndex.js';
 import type { Edge, Node } from '../../../types.js';
 import { EDGE_ROUTING } from '../config.js';
 import { buildLaneModel } from '../lanes.js';
@@ -1694,36 +1696,21 @@ export function shortcutRedundantOrthogonalJogs(
       return sum + Math.hypot(dx, dy);
     }, 0);
 
+  const currentRoutes = (): RouteCrossings<MaterializedEdge> =>
+    buildRouteCrossings(
+      new Map(visibleEdges.map((edge) => [edge, segmentsFor(pointsFor(edge))] as const)),
+      EPS_LOCAL
+    );
+
+  /** The crossing count after `edge` alone takes `replacement`. */
   const strictCrossingCount = (
-    replacementEdge?: MaterializedEdge,
-    replacement?: PointLite[]
-  ): number => {
-    let count = 0;
-    for (let i = 0; i < visibleEdges.length; i++) {
-      const firstSegments = segmentsFor(pointsFor(visibleEdges[i], replacementEdge, replacement));
-      for (let j = i + 1; j < visibleEdges.length; j++) {
-        const secondSegments = segmentsFor(
-          pointsFor(visibleEdges[j], replacementEdge, replacement)
-        );
-        for (const firstSegment of firstSegments) {
-          for (const secondSegment of secondSegments) {
-            if (
-              orthogonalSegmentsStrictlyCross(
-                firstSegment.a,
-                firstSegment.b,
-                secondSegment.a,
-                secondSegment.b,
-                EPS_LOCAL
-              )
-            ) {
-              count++;
-            }
-          }
-        }
-      }
-    }
-    return count;
-  };
+    routes: RouteCrossings<MaterializedEdge>,
+    edge: MaterializedEdge,
+    replacement: PointLite[]
+  ): number =>
+    routes.total -
+    routes.of(edge) +
+    routes.withOthers(edge, segmentsFor(dedupeConsecutivePoints(replacement)));
 
   const segmentRunsAlongRectBorder = (segment: SegmentLite, rect: RectLite): boolean => {
     if (segment.horizontal) {
@@ -1827,7 +1814,7 @@ export function shortcutRedundantOrthogonalJogs(
   const candidateIsSafe = (
     edge: MaterializedEdge,
     candidate: PointLite[],
-    currentCrossings: number
+    routes: RouteCrossings<MaterializedEdge>
   ): boolean => {
     const endpointIds = [(edge as { start?: string }).start, (edge as { end?: string }).end].filter(
       (id): id is string => Boolean(id)
@@ -1859,11 +1846,12 @@ export function shortcutRedundantOrthogonalJogs(
       }
     }
 
-    return strictCrossingCount(edge, candidate) <= currentCrossings;
+    return strictCrossingCount(routes, edge, candidate) <= routes.total;
   };
 
   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-    const currentCrossings = strictCrossingCount();
+    const routes = currentRoutes();
+    const currentCrossings = routes.total;
     let bestEdge: { points?: PointLite[] } | undefined;
     let bestPath: PointLite[] | undefined;
     let bestCrossings = currentCrossings;
@@ -1881,11 +1869,11 @@ export function shortcutRedundantOrthogonalJogs(
           const improvesShape =
             candidateBends < currentBends ||
             (candidateBends === currentBends && candidateLength < currentLength - EPS_LOCAL);
-          if (!improvesShape || !candidateIsSafe(edge, candidate, currentCrossings)) {
+          if (!improvesShape || !candidateIsSafe(edge, candidate, routes)) {
             continue;
           }
 
-          const candidateCrossings = strictCrossingCount(edge, candidate);
+          const candidateCrossings = strictCrossingCount(routes, edge, candidate);
           if (
             candidateCrossings > bestCrossings ||
             (candidateCrossings === bestCrossings &&
@@ -1941,9 +1929,32 @@ export function resolveRenderedOrthogonalCrossings(
     edges: MaterializedEdge[];
   }
 
+  /** One round's routes, which stay fixed while the round scores its candidates. */
+  interface RoundCrossings {
+    snapshot: CrossingSnapshot;
+    segmentsByEdge: Map<MaterializedEdge, SegmentLite[]>;
+    routes: RouteCrossings<MaterializedEdge>;
+    conflictScans: Map<string, ConflictScan>;
+  }
+
+  /** The edges, in edge order among the first `scanned`, whose route conflicts with `path`. */
+  interface ConflictScan {
+    path: PointLite[];
+    segments: SegmentLite[];
+    found: MaterializedEdge[];
+    scanned: number;
+  }
+
+  interface SingleReplacement {
+    edge: MaterializedEdge;
+    path: PointLite[];
+  }
+
   interface PairCandidate {
     path: PointLite[];
     segments: SegmentLite[];
+    /** Crossings with the round's routes of every edge except its own. */
+    otherCrossings: number;
     sharedTrackConflicts: Set<MaterializedEdge>;
     totalBends: number;
     length: number;
@@ -1962,12 +1973,11 @@ export function resolveRenderedOrthogonalCrossings(
   }
 
   interface PairScoringContext {
-    current: CrossingSnapshot;
+    round: RoundCrossings;
     currentBends: number;
     currentLength: number;
     baseBendsByEdge: Map<MaterializedEdge, number>;
     baseLengthByEdge: Map<MaterializedEdge, number>;
-    baseSegments: Map<MaterializedEdge, SegmentLite[]>;
   }
 
   const realNodes: NodeInfo[] = [];
@@ -2091,42 +2101,6 @@ export function resolveRenderedOrthogonalCrossings(
     };
   };
 
-  const crossingCountWithReplacements = (
-    current: CrossingSnapshot,
-    replacements: EdgeReplacementMap
-  ): number => {
-    const changed = new Set(replacements.keys());
-    if (changed.size === 0) {
-      return current.count;
-    }
-
-    let currentAffected = 0;
-    for (const pair of current.pairs) {
-      if (changed.has(pair.first) || changed.has(pair.second)) {
-        currentAffected += pair.count;
-      }
-    }
-
-    let replacementAffected = 0;
-    for (let i = 0; i < visibleEdges.length; i++) {
-      const first = visibleEdges[i];
-      const firstChanged = changed.has(first);
-      const firstPoints = replacementPointsFor(first, replacements);
-      for (let j = i + 1; j < visibleEdges.length; j++) {
-        const second = visibleEdges[j];
-        if (!firstChanged && !changed.has(second)) {
-          continue;
-        }
-        replacementAffected += crossingCountBetweenPaths(
-          firstPoints,
-          replacementPointsFor(second, replacements)
-        );
-      }
-    }
-
-    return current.count - currentAffected + replacementAffected;
-  };
-
   const crossingComponents = (snapshot: CrossingSnapshot): MaterializedEdge[][] => {
     const neighbors = new Map<MaterializedEdge, Set<MaterializedEdge>>();
     for (const pair of snapshot.pairs) {
@@ -2192,25 +2166,6 @@ export function resolveRenderedOrthogonalCrossings(
     return groups;
   };
 
-  const crossingCountWithSingleReplacement = (
-    current: CrossingSnapshot,
-    edge: MaterializedEdge,
-    replacement: PointLite[]
-  ): number =>
-    crossingCountWithReplacements(
-      current,
-      new Map<MaterializedEdge, PointLite[]>([[edge, replacement]])
-    );
-
-  const currentCrossingsByEdge = (current: CrossingSnapshot): Map<MaterializedEdge, number> => {
-    const result = new Map<MaterializedEdge, number>();
-    for (const pair of current.pairs) {
-      result.set(pair.first, (result.get(pair.first) ?? 0) + pair.count);
-      result.set(pair.second, (result.get(pair.second) ?? 0) + pair.count);
-    }
-    return result;
-  };
-
   const pathLength = (points: PointLite[]): number =>
     points.slice(1).reduce((sum, point, index) => {
       const previous = points[index];
@@ -2231,30 +2186,6 @@ export function resolveRenderedOrthogonalCrossings(
 
   const touchesAtBend = (first: PointLite[], second: PointLite[]): boolean =>
     routesTouchAtBend(first, second, EDGE_ROUTING.ROUTE_TOUCH_TOLERANCE);
-
-  const pathHasSegmentConflict = (
-    edge: MaterializedEdge,
-    path: PointLite[],
-    replacements: EdgeReplacementMap = new Map()
-  ): boolean => {
-    const pathSegments = segmentsFor(path);
-    for (const other of visibleEdges) {
-      if (other === edge) {
-        continue;
-      }
-      for (const candidateSegment of pathSegments) {
-        for (const otherSegment of segmentsFor(replacementPointsFor(other, replacements))) {
-          if (sameAxisSegmentOverlapLength(candidateSegment, otherSegment, 0.5) >= MIN_SHARED) {
-            return true;
-          }
-        }
-      }
-      if (touchesAtBend(path, replacementPointsFor(other, replacements))) {
-        return true;
-      }
-    }
-    return false;
-  };
 
   const pathHitsNode = (edge: MaterializedEdge, path: PointLite[]): boolean => {
     const endpointIds = [(edge as { start?: string }).start, (edge as { end?: string }).end].filter(
@@ -2564,39 +2495,95 @@ export function resolveRenderedOrthogonalCrossings(
   const currentSegmentsByEdge = (): Map<MaterializedEdge, SegmentLite[]> =>
     new Map(visibleEdges.map((edge) => [edge, segmentsFor(replacementPointsFor(edge))] as const));
 
-  const sharedTrackConflictsFor = (
-    edge: MaterializedEdge,
-    candidatePath: PointLite[],
-    candidateSegments: SegmentLite[],
-    baseSegments: Map<MaterializedEdge, SegmentLite[]>
-  ): Set<MaterializedEdge> => {
-    const conflicts = new Set<MaterializedEdge>();
-    for (const other of visibleEdges) {
-      if (other === edge) {
-        continue;
-      }
-      const otherSegments = baseSegments.get(other) ?? segmentsFor(replacementPointsFor(other));
-      if (
-        candidateSegments.some((candidateSegment) =>
-          otherSegments.some(
-            (otherSegment) =>
-              sameAxisSegmentOverlapLength(candidateSegment, otherSegment, 0.5) >= MIN_SHARED
-          )
-        ) ||
-        touchesAtBend(candidatePath, replacementPointsFor(other))
-      ) {
-        conflicts.add(other);
-      }
-    }
-    return conflicts;
+  const roundCrossings = (snapshot: CrossingSnapshot): RoundCrossings => {
+    const segmentsByEdge = currentSegmentsByEdge();
+    return {
+      snapshot,
+      segmentsByEdge,
+      routes: buildRouteCrossings(segmentsByEdge, EPS_LOCAL),
+      conflictScans: new Map(),
+    };
   };
 
-  const pairCandidatesFor = (
+  /** The round's crossing count after `edge` alone takes `replacement`. */
+  const crossingCountWithSingleReplacement = (
+    round: RoundCrossings,
     edge: MaterializedEdge,
-    current: CrossingSnapshot,
-    baseSegments: Map<MaterializedEdge, SegmentLite[]>,
-    crossingCountByEdge: Map<MaterializedEdge, number>
-  ): PairCandidate[] => {
+    replacement: PointLite[]
+  ): number =>
+    round.snapshot.count -
+    round.routes.of(edge) +
+    round.routes.withOthers(edge, segmentsFor(dedupeConsecutivePoints(replacement)));
+
+  const sharesTrackOrTouches = (
+    path: PointLite[],
+    pathSegments: SegmentLite[],
+    other: MaterializedEdge,
+    otherSegments: SegmentLite[]
+  ): boolean =>
+    pathSegments.some((pathSegment) =>
+      otherSegments.some(
+        (otherSegment) => sameAxisSegmentOverlapLength(pathSegment, otherSegment, 0.5) >= MIN_SHARED
+      )
+    ) || touchesAtBend(path, replacementPointsFor(other));
+
+  /**
+   * The scan of one candidate route against the round's routes, kept for the rest of the
+   * round under the route's exact coordinates: edges between the same two nodes try the same
+   * candidate routes, and a later edge resumes the scan where an earlier one stopped.
+   *
+   * The key omits the edge on purpose, so one scan serves different edges: `found` only grows
+   * and holds every conflict among the edges scanned so far, whichever edge asked; an edge's
+   * early-stop test only gets truer as `found` grows, and a scan that stopped too early for a
+   * later edge resumes; `sharedTrackConflictsFor` never stops early.
+   */
+  const conflictScanFor = (round: RoundCrossings, path: PointLite[]): ConflictScan => {
+    const key = path.map((point) => `${point.x},${point.y}`).join(' ');
+    let scan = round.conflictScans.get(key);
+    if (!scan) {
+      scan = { path, segments: segmentsFor(path), found: [], scanned: 0 };
+      round.conflictScans.set(key, scan);
+    }
+    return scan;
+  };
+
+  /** Tests the next edges, in edge order, until `enough(found)` holds or none is left. */
+  const scanConflicts = (
+    round: RoundCrossings,
+    scan: ConflictScan,
+    enough: (found: MaterializedEdge[]) => boolean
+  ): MaterializedEdge[] => {
+    while (scan.scanned < visibleEdges.length && !enough(scan.found)) {
+      const other = visibleEdges[scan.scanned++];
+      const otherSegments = round.segmentsByEdge.get(other) ?? [];
+      if (sharesTrackOrTouches(scan.path, scan.segments, other, otherSegments)) {
+        scan.found.push(other);
+      }
+    }
+    return scan.found;
+  };
+
+  /** True when `path` shares a track with, or touches at a bend, another edge's round route. */
+  const pathHasSegmentConflict = (
+    round: RoundCrossings,
+    edge: MaterializedEdge,
+    path: PointLite[]
+  ): boolean => {
+    const another = (found: MaterializedEdge[]): boolean => found.some((other) => other !== edge);
+    return another(scanConflicts(round, conflictScanFor(round, path), another));
+  };
+
+  const sharedTrackConflictsFor = (
+    round: RoundCrossings,
+    edge: MaterializedEdge,
+    candidatePath: PointLite[]
+  ): Set<MaterializedEdge> => {
+    const found = scanConflicts(round, conflictScanFor(round, candidatePath), () => false);
+    return new Set(found.filter((other) => other !== edge));
+  };
+
+  const pairCandidatesFor = (edge: MaterializedEdge, round: RoundCrossings): PairCandidate[] => {
+    const current = round.snapshot;
     const seen = new Set<string>();
     const candidates = candidatePathsFor(edge)
       .map((candidate) => simplifyPolyline(dedupeConsecutivePoints(candidate)))
@@ -2615,20 +2602,12 @@ export function resolveRenderedOrthogonalCrossings(
       })
       .map((candidate) => {
         const candidateSegments = segmentsFor(candidate);
-        let replacementAffected = 0;
-        for (const other of visibleEdges) {
-          if (other === edge) {
-            continue;
-          }
-          replacementAffected += crossingCountBetweenSegments(
-            candidateSegments,
-            baseSegments.get(other) ?? segmentsFor(replacementPointsFor(other))
-          );
-        }
+        const otherCrossings = round.routes.withOthers(edge, candidateSegments);
         return {
           candidate,
           candidateSegments,
-          crossings: current.count - (crossingCountByEdge.get(edge) ?? 0) + replacementAffected,
+          otherCrossings,
+          crossings: current.count - round.routes.of(edge) + otherCrossings,
           bends: countOrthogonalBends(candidate, EPS_LOCAL),
           totalBends: countOrthogonalBends(candidate),
           length: pathLength(candidate),
@@ -2640,53 +2619,39 @@ export function resolveRenderedOrthogonalCrossings(
       return {
         path: candidate.candidate,
         segments: candidate.candidateSegments,
-        sharedTrackConflicts: sharedTrackConflictsFor(
-          edge,
-          candidate.candidate,
-          candidate.candidateSegments,
-          baseSegments
-        ),
+        otherCrossings: candidate.otherCrossings,
+        sharedTrackConflicts: sharedTrackConflictsFor(round, edge, candidate.candidate),
         totalBends: candidate.totalBends,
         length: candidate.length,
       };
     });
   };
 
+  /**
+   * The round's crossing count after both edges take their candidates. Each candidate already
+   * knows its crossings with every other edge's route, so only the crossings that involve the
+   * pair itself are counted here.
+   */
   const pairCrossingCount = (
-    current: CrossingSnapshot,
+    round: RoundCrossings,
     firstEdge: MaterializedEdge,
     firstCandidate: PairCandidate,
     secondEdge: MaterializedEdge,
-    secondCandidate: PairCandidate,
-    baseSegments: Map<MaterializedEdge, SegmentLite[]>
+    secondCandidate: PairCandidate
   ): number => {
-    let currentAffected = 0;
-    for (const pair of current.pairs) {
-      if (
-        pair.first === firstEdge ||
-        pair.second === firstEdge ||
-        pair.first === secondEdge ||
-        pair.second === secondEdge
-      ) {
-        currentAffected += pair.count;
-      }
-    }
-
-    let replacementAffected = crossingCountBetweenSegments(
-      firstCandidate.segments,
-      secondCandidate.segments
-    );
-    for (const other of visibleEdges) {
-      if (other === firstEdge || other === secondEdge) {
-        continue;
-      }
-      const otherSegments = baseSegments.get(other) ?? segmentsFor(replacementPointsFor(other));
-      replacementAffected +=
-        crossingCountBetweenSegments(firstCandidate.segments, otherSegments) +
-        crossingCountBetweenSegments(secondCandidate.segments, otherSegments);
-    }
-
-    return current.count - currentAffected + replacementAffected;
+    const firstRoute = round.segmentsByEdge.get(firstEdge) ?? [];
+    const secondRoute = round.segmentsByEdge.get(secondEdge) ?? [];
+    const currentAffected =
+      round.routes.of(firstEdge) +
+      round.routes.of(secondEdge) -
+      crossingCountBetweenSegments(firstRoute, secondRoute);
+    const replacementAffected =
+      crossingCountBetweenSegments(firstCandidate.segments, secondCandidate.segments) +
+      firstCandidate.otherCrossings -
+      crossingCountBetweenSegments(firstCandidate.segments, secondRoute) +
+      secondCandidate.otherCrossings -
+      crossingCountBetweenSegments(secondCandidate.segments, firstRoute);
+    return round.snapshot.count - currentAffected + replacementAffected;
   };
 
   const conflictsOnlyWith = (candidate: PairCandidate, edge: MaterializedEdge): boolean => {
@@ -2727,14 +2692,13 @@ export function resolveRenderedOrthogonalCrossings(
     secondCandidate: PairCandidate
   ): PairReplacementScore | undefined => {
     const crossings = pairCrossingCount(
-      context.current,
+      context.round,
       first.edge,
       firstCandidate,
       second.edge,
-      secondCandidate,
-      context.baseSegments
+      secondCandidate
     );
-    if (crossings >= context.current.count) {
+    if (crossings >= context.round.snapshot.count) {
       return undefined;
     }
 
@@ -2789,11 +2753,10 @@ export function resolveRenderedOrthogonalCrossings(
     return pairBest;
   };
 
-  const bestPairedReplacement = (current: CrossingSnapshot): EdgeReplacementMap | undefined => {
+  const bestPairedReplacement = (round: RoundCrossings): EdgeReplacementMap | undefined => {
+    const current = round.snapshot;
     const currentBends = totalBends();
     const currentLength = totalLength();
-    const baseSegments = currentSegmentsByEdge();
-    const crossingCountByEdge = currentCrossingsByEdge(current);
     const baseBendsByEdge = new Map(
       visibleEdges.map((edge) => [edge, countOrthogonalBends(replacementPointsFor(edge))] as const)
     );
@@ -2807,7 +2770,7 @@ export function resolveRenderedOrthogonalCrossings(
         if (optionsByEdge.has(edge)) {
           continue;
         }
-        const candidates = pairCandidatesFor(edge, current, baseSegments, crossingCountByEdge);
+        const candidates = pairCandidatesFor(edge, round);
         if (candidates.length > 0) {
           optionsByEdge.set(edge, { edge, candidates });
         }
@@ -2821,12 +2784,11 @@ export function resolveRenderedOrthogonalCrossings(
       length: currentLength,
     };
     const scoringContext: PairScoringContext = {
-      current,
+      round,
       currentBends,
       currentLength,
       baseBendsByEdge,
       baseLengthByEdge,
-      baseSegments,
     };
 
     for (const group of groups) {
@@ -2849,54 +2811,61 @@ export function resolveRenderedOrthogonalCrossings(
     return best.replacements.size > 0 ? best.replacements : undefined;
   };
 
-  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-    const current = crossingSnapshot();
-    const currentCrossings = current.count;
-    if (currentCrossings === 0) {
-      return;
-    }
+  /** Fewer crossings, or as many crossings and fewer bends. */
+  const fewerCrossingsOrBends = (
+    crossings: number,
+    bends: number,
+    thanCrossings: number,
+    thanBends: number
+  ): boolean => crossings < thanCrossings || (crossings === thanCrossings && bends < thanBends);
 
-    let bestEdge: { points?: PointLite[] } | undefined;
-    let bestPath: PointLite[] | undefined;
-    let bestCrossings = currentCrossings;
+  /**
+   * The single reroute that gains the most, if any: the candidate with the fewest crossings,
+   * then the fewest bends, among those that improve their own edge and neither run through a
+   * node nor share a track with another route. The first such candidate wins a tie.
+   */
+  const bestSingleReplacement = (round: RoundCrossings): SingleReplacement | undefined => {
+    let best: SingleReplacement | undefined;
+    let bestCrossings = round.snapshot.count;
     let bestBends = Number.POSITIVE_INFINITY;
-
-    for (const edge of current.edges) {
+    for (const edge of round.snapshot.edges) {
       const currentEdgeBends = countOrthogonalBends(replacementPointsFor(edge), EPS_LOCAL);
-      for (const candidate of candidatePathsFor(edge)) {
-        const candidateHitsNode = pathHitsNode(edge, candidate);
-        const candidateHasSegmentConflict =
-          !candidateHitsNode && pathHasSegmentConflict(edge, candidate);
-        const candidateCrossings = crossingCountWithSingleReplacement(current, edge, candidate);
-        const candidateBends = countOrthogonalBends(candidate, EPS_LOCAL);
-        if (candidateHitsNode || candidateHasSegmentConflict) {
-          continue;
-        }
-        const improvesCurrentEdge =
-          candidateCrossings < currentCrossings ||
-          (candidateCrossings === currentCrossings && candidateBends < currentEdgeBends);
-        if (!improvesCurrentEdge) {
-          continue;
-        }
+      for (const path of candidatePathsFor(edge)) {
+        const crossings = crossingCountWithSingleReplacement(round, edge, path);
+        const bends = countOrthogonalBends(path, EPS_LOCAL);
         if (
-          candidateCrossings > bestCrossings ||
-          (candidateCrossings === bestCrossings && candidateBends >= bestBends)
+          !fewerCrossingsOrBends(crossings, bends, round.snapshot.count, currentEdgeBends) ||
+          !fewerCrossingsOrBends(crossings, bends, bestCrossings, bestBends)
         ) {
           continue;
         }
-        bestEdge = edge;
-        bestPath = candidate;
-        bestCrossings = candidateCrossings;
-        bestBends = candidateBends;
+        // The route tests cost the most, so they run only for a candidate that would be the
+        // new best. No test has side effects, so their order does not change the choice.
+        if (pathHitsNode(edge, path) || pathHasSegmentConflict(round, edge, path)) {
+          continue;
+        }
+        best = { edge, path };
+        bestCrossings = crossings;
+        bestBends = bends;
       }
     }
+    return best;
+  };
 
-    if (bestEdge && bestPath) {
-      bestEdge.points = bestPath;
+  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    const current = crossingSnapshot();
+    if (current.count === 0) {
+      return;
+    }
+
+    const round = roundCrossings(current);
+    const single = bestSingleReplacement(round);
+    if (single) {
+      single.edge.points = single.path;
       continue;
     }
 
-    const pairedReplacement = bestPairedReplacement(current);
+    const pairedReplacement = bestPairedReplacement(round);
     if (!pairedReplacement) {
       return;
     }
