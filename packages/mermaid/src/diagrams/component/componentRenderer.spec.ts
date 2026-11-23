@@ -46,7 +46,7 @@ describe('component accessible names', () => {
   it('names an actor with its stereotype', () => {
     expect(
       getComponentNodeAccessibleName(
-        node({ label: 'Bank', shape: 'usecaseActor', stereotype: 'external' })
+        node({ label: 'Bank', shape: 'umlActor', stereotype: 'external' })
       )
     ).toBe('actor Bank, stereotype external');
   });

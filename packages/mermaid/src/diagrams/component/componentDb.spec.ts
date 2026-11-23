@@ -105,7 +105,7 @@ class User vip
 `);
     const data = db.getData();
     const user = data.nodes.find((n) => n.id === 'User')!;
-    expect(user).toMatchObject({ shape: 'usecaseActor', label: 'Customer', stereotype: 'human' });
+    expect(user).toMatchObject({ shape: 'umlActor', label: 'Customer', stereotype: 'human' });
     expect(user.cssClasses).toContain('component-actor');
     expect(user.cssClasses).toContain('vip');
     const requires = data.edges.find((e) => e.relationKind === 'requires')!;

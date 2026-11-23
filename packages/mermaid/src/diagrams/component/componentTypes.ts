@@ -97,7 +97,7 @@ export type ComponentLayoutNodeShape =
   | 'umlComponent'
   | 'umlInterface'
   | 'umlPort'
-  | 'usecaseActor'
+  | 'umlActor'
   | 'note';
 
 export type ComponentLayoutNode = Omit<NonClusterNode, 'shape'> & {

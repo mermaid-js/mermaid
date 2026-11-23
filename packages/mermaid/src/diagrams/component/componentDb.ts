@@ -362,7 +362,7 @@ const getData = (): ComponentLayoutData => {
       id: actor.id,
       label: sanitize(actor.label),
       labelType: 'text',
-      shape: 'usecaseActor',
+      shape: 'umlActor',
       isGroup: false,
       look: globalConfig.look,
       cssClasses: classNames('default', 'component-actor', ...actor.classes),
