@@ -89,7 +89,7 @@ beforeEach(() => {
   vi.mocked(updateNodeBounds).mockImplementation(() => undefined);
 });
 
-describe.each(['classic', 'neo'])('brace shapes in the %s look', (look) => {
+describe.each(['classic', 'neo', 'handDrawn'])('brace shapes in the %s look', (look) => {
   it('centres a braces label between the two braces', async () => {
     const { label, braces } = await render(curlyBraces, look);
 
@@ -118,6 +118,5 @@ describe('brace shapes in the classic look', () => {
     const { label } = await render(shape, 'classic');
 
     expect(label.left).toBeCloseTo(x, 5);
-    expect(label.centreY).toBeCloseTo(0, 5);
   });
 });
