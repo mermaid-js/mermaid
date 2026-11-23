@@ -760,3 +760,64 @@ describe('given text representing an attribute', () => {
     });
   });
 });
+
+describe('given a member containing a literal \\n line break (#6160), ', function () {
+  it('should turn the line break into a real newline in a method member text', function () {
+    const str = '+ Method(arg1:Arg1, \\n arg2:Arg2)';
+
+    const classMember = new ClassMember(str, 'method');
+
+    // The display text used by the renderer must carry a real newline so the
+    // markdown pipeline renders a line break instead of the literal "\n".
+    expect(classMember.text).toBe('\\+ Method(arg1:Arg1, \n arg2:Arg2)');
+    expect(classMember.text).not.toContain('\\n');
+  });
+
+  it('should turn the line break into a real newline in an attribute member text', function () {
+    const str = '+longFieldName \\n continued';
+
+    const classMember = new ClassMember(str, 'attribute');
+
+    expect(classMember.text).toBe('\\+longFieldName \n continued');
+    expect(classMember.text).not.toContain('\\n');
+  });
+
+  it('should turn every literal \\n into a real newline', function () {
+    const str = '+ Method(\\n arg1:Arg1, \\n arg2:Arg2)';
+
+    const classMember = new ClassMember(str, 'method');
+
+    expect(classMember.text).toBe('\\+ Method(\n arg1:Arg1, \n arg2:Arg2)');
+  });
+
+  it('should not turn an escaped backslash into a line break', function () {
+    // Input carries two backslashes followed by "n": no real newline may appear.
+    const str = '+ Method(a\\\\n b)';
+
+    const classMember = new ClassMember(str, 'method');
+
+    expect(classMember.text).not.toContain('\n');
+    expect(classMember.text).toContain('\\\\n');
+  });
+
+  it('should leave KaTeX commands inside $$...$$ spans untouched', function () {
+    // "\nabla" starts with a literal "\n" sequence, but it is a KaTeX command,
+    // not a line break: converting it would insert a real newline that
+    // katexRegex cannot span, so KaTeX rendering would be lost.
+    const str = '+field $$\\nabla f$$';
+
+    const classMember = new ClassMember(str, 'attribute');
+
+    expect(classMember.text).toContain('$$\\nabla f$$');
+    expect(classMember.text).not.toContain('\n');
+  });
+
+  it('should still convert a literal \\n outside a $$...$$ span', function () {
+    const str = '+field $$\\nabla f$$ \\n continued';
+
+    const classMember = new ClassMember(str, 'attribute');
+
+    expect(classMember.text).toContain('$$\\nabla f$$');
+    expect(classMember.text).toContain('\n');
+  });
+});

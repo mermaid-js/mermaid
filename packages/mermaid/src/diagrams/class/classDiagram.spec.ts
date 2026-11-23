@@ -2250,3 +2250,26 @@ describe('class db class', () => {
     }
   });
 });
+
+describe('given a class diagram with a line break in a member (#6160), ', function () {
+  describe('when a method contains a literal \\n', function () {
+    let classDb: ClassDB;
+    beforeEach(function () {
+      classDb = new ClassDB();
+      parser.yy = classDb;
+    });
+    it('should keep a real line break in the parsed member text', () => {
+      const str = `classDiagram
+    class Try{
+        + Method(arg1:Arg1, \\n arg2:Arg2)
+    }`;
+
+      parser.parse(str);
+
+      const cls = classDb.getClass('Try');
+      expect(cls.methods).toHaveLength(1);
+      expect(cls.methods[0].text).toBe('\\+ Method(arg1:Arg1, \n arg2:Arg2)');
+      expect(cls.methods[0].text).not.toContain('\\n');
+    });
+  });
+});
