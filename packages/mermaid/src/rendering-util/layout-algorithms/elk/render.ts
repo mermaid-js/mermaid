@@ -1104,7 +1104,10 @@ function createElkNode(node: Node): NodeWithVertex {
  * node-level `elk.spacing.portPort` and `elk.spacing.portsSurrounding`
  * options are ignored for implicit ports (measured with elkjs 0.12.0), and
  * the root's corner margin still bounds the spread: ports sit 2px inside
- * it, so a 38px side holds three ports 9px apart.
+ * it, so a 38px side holds three ports 9px apart. It spreads every side of
+ * the node: the per-side `elk.portAlignment.north`, `.south`, `.east` and
+ * `.west` are ignored for implicit ports as well, so one side cannot be
+ * spread alone.
  */
 function spreadPorts(elkNode: NodeWithVertex): void {
   elkNode.layoutOptions = {
@@ -1146,7 +1149,10 @@ function spreadCrowdedArrowheads(
     cornerMargin: PORTS_SURROUNDING_MARGIN,
   });
   for (const id of crowded) {
-    spreadPorts(nodeDb[id]);
+    const elkNode = nodeDb[id];
+    if (elkNode) {
+      spreadPorts(elkNode);
+    }
   }
 }
 
