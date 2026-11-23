@@ -21,33 +21,31 @@ export async function umlComponent<T extends SVGGraphicsElement>(
   } as RectOptions;
   const shapeSvg = await drawRect(parent, node, options);
 
-  // The icon is a fixed-size decoration, so it is skipped under handDrawn: roughjs
+  // The icon is drawn with plain SVG in every look, handDrawn included: roughjs
   // sketch lines at this size read as noise rather than as the UML glyph.
-  if (node.look !== 'handDrawn') {
-    const { themeVariables } = getConfig();
-    const iconWidth = 14;
-    const iconHeight = 10;
-    const x = node.width ? node.width / 2 - iconWidth - 4 : 0;
-    const y = node.height ? -node.height / 2 + 6 : 0;
-    const icon = shapeSvg.insert('g').attr('class', 'component-icon');
+  const { themeVariables } = getConfig();
+  const iconWidth = 14;
+  const iconHeight = 10;
+  const x = node.width ? node.width / 2 - iconWidth - 4 : 0;
+  const y = node.height ? -node.height / 2 + 6 : 0;
+  const icon = shapeSvg.insert('g').attr('class', 'component-icon');
+  icon
+    .append('rect')
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', iconWidth)
+    .attr('height', iconHeight)
+    .attr('fill', themeVariables.mainBkg)
+    .attr('stroke', themeVariables.nodeBorder ?? themeVariables.primaryColor);
+  for (const offset of [2, 6]) {
     icon
       .append('rect')
-      .attr('x', x)
-      .attr('y', y)
-      .attr('width', iconWidth)
-      .attr('height', iconHeight)
+      .attr('x', x - 3)
+      .attr('y', y + offset)
+      .attr('width', 6)
+      .attr('height', 3)
       .attr('fill', themeVariables.mainBkg)
       .attr('stroke', themeVariables.nodeBorder ?? themeVariables.primaryColor);
-    for (const offset of [2, 6]) {
-      icon
-        .append('rect')
-        .attr('x', x - 3)
-        .attr('y', y + offset)
-        .attr('width', 6)
-        .attr('height', 3)
-        .attr('fill', themeVariables.mainBkg)
-        .attr('stroke', themeVariables.nodeBorder ?? themeVariables.primaryColor);
-    }
   }
 
   return shapeSvg;

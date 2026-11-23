@@ -1,4 +1,5 @@
 import { select } from 'd3';
+import rough from 'roughjs';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
@@ -35,7 +36,7 @@ export const getComponentNodeAccessibleName = (node: ComponentLayoutNode): strin
   if (node.shape === 'umlPort') {
     return `port ${label}`;
   }
-  if (node.shape === 'usecaseActor') {
+  if (node.shape === 'umlActor') {
     return `actor ${label}${node.stereotype ? `, stereotype ${node.stereotype}` : ''}`;
   }
   const stereotype = node.stereotype ? `, stereotype ${node.stereotype}` : '';
@@ -65,7 +66,7 @@ const prepareComponentLayoutData = (
     // A shape label with `stereotype` set takes the generic stacked-label path, which
     // drops the « » marks; fold it into the label instead, as UML writes it.
     // The actor shape draws its own stereotype line.
-    if (node.stereotype && node.shape !== 'usecaseActor') {
+    if (node.stereotype && node.shape !== 'umlActor') {
       const label = node.label ?? node.id;
       node.label = node.isGroup
         ? `«${node.stereotype}» ${label}`
@@ -204,6 +205,30 @@ const snapPortsToBorders = (svg: SVG, data: ComponentLayoutData): void => {
   }
 };
 
+/** Redraw plain edge paths with the same roughjs settings the handDrawn edge renderer uses. */
+const sketchEdges = (svg: SVG, edges: ComponentLayoutEdge[]): void => {
+  if (edges.length === 0) {
+    return;
+  }
+  const { handDrawnSeed } = getConfig();
+  const rc = rough.svg(svg.node()!);
+  for (const edge of edges) {
+    edge.look = 'handDrawn';
+    const path = svg.select<SVGPathElement>(
+      `path[data-et="edge"][data-id="${edge.id.replace(/["\\]/g, '\\$&')}"]`
+    );
+    const d = path.attr('d');
+    if (!d) {
+      continue;
+    }
+    const sketched = rc.path(d, { roughness: 0.3, seed: handDrawnSeed });
+    const sketchedD = sketched.querySelector('path')?.getAttribute('d');
+    if (sketchedD) {
+      path.attr('d', sketchedD).attr('data-look', 'handDrawn').classed('transition', true);
+    }
+  }
+};
+
 const draw: DrawDefinition = async (_text, id, _version, diag) => {
   log.info('Drawing component diagram (unified)', id);
   const { layout } = getConfig();
@@ -223,10 +248,22 @@ const draw: DrawDefinition = async (_text, id, _version, diag) => {
   );
   prepareComponentLayoutData(data4Layout, id);
 
-  await render(data4Layout, svg);
-  if (data4Layout.config.look !== 'handDrawn') {
-    snapPortsToBorders(svg, data4Layout);
+  // Port snapping edits straight path coordinates, which roughjs replaces with jittered
+  // curves. Under handDrawn, draw port edges plain first and sketch them after snapping.
+  const handDrawn = data4Layout.config.look === 'handDrawn';
+  const portIds = new Set(
+    data4Layout.nodes.filter((node) => node.shape === 'umlPort').map((node) => node.id)
+  );
+  const portEdges = handDrawn
+    ? data4Layout.edges.filter((edge) => portIds.has(edge.start) || portIds.has(edge.end))
+    : [];
+  for (const edge of portEdges) {
+    edge.look = 'classic';
   }
+
+  await render(data4Layout, svg);
+  snapPortsToBorders(svg, data4Layout);
+  sketchEdges(svg, portEdges);
   annotateComponentElements(svg, data4Layout, nodeNames);
 
   const padding = data4Layout.diagramPadding;
