@@ -14,6 +14,7 @@
 %x dir
 %x vertex
 %x text
+%x pipeText
 %x ellipseText
 %x trapText
 %x edgeText
@@ -172,20 +173,20 @@ that id.
 <ellipseText>[^\(\)\[\]\{\}]|-\!\)+       return "TEXT"
 <*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
 
-<text>"])"                { this.popState(); return 'STADIUMEND'; }
+<text,pipeText>"])"                { this.popState(); return 'STADIUMEND'; }
 <*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
 
-<text>"]]"                { this.popState(); return 'SUBROUTINEEND'; }
+<text,pipeText>"]]"                { this.popState(); return 'SUBROUTINEEND'; }
 <*>"[["                   { this.pushState("text"); return 'SUBROUTINESTART'; }
 
 "[|"                      { return 'VERTEX_WITH_PROPS_START'; }
 
 \>                    { this.pushState("text"); return 'TAGEND'; }
 
-<text>")]"                { this.popState(); return 'CYLINDEREND'; }
+<text,pipeText>")]"                { this.popState(); return 'CYLINDEREND'; }
 <*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }
 
-<text>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
+<text,pipeText>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
 <*>"((("                  { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
 
 <trapText>[\\(?=\])][\]]  { this.popState(); return 'TRAPEND'; }
@@ -271,18 +272,23 @@ that id.
 [\uFFD2-\uFFD7\uFFDA-\uFFDC]
                       return 'UNICODE_TEXT';
 
-<text>"|"             { this.popState(); return 'PIPE'; }
-<*>"|"                { this.pushState("text"); return 'PIPE'; }
+/*
+A pipe opens and closes an edge label ("pipeText"). Inside a node label ("text")
+it has no special meaning and is part of the label, e.g. A[Low | High].
+*/
+<pipeText>"|"         { this.popState(); return 'PIPE'; }
+<text>"|"             return 'TEXT';
+<*>"|"                { this.pushState("pipeText"); return 'PIPE'; }
 
-<text>")"             { this.popState(); return 'PE'; }
+<text,pipeText>")"             { this.popState(); return 'PE'; }
 <*>"("                { this.pushState("text"); return 'PS'; }
 
-<text>"]"            { this.popState(); return 'SQE'; }
+<text,pipeText>"]"            { this.popState(); return 'SQE'; }
 <*>"["                { this.pushState("text"); return 'SQS'; }
 
-<text>(\})            { this.popState(); return 'DIAMOND_STOP' }
+<text,pipeText>(\})            { this.popState(); return 'DIAMOND_STOP' }
 <*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
-<text>[^\[\]\(\)\{\}\|\"]+    return "TEXT";
+<text,pipeText>[^\[\]\(\)\{\}\|\"]+    return "TEXT";
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';

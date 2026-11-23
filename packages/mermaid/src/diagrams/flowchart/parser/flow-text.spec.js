@@ -606,4 +606,45 @@ describe('[Text] when parsing', () => {
     const str = `graph TD; node[hello ) world] --> works`;
     expect(() => flow.parser.parse(str)).toThrowError("got 'PE'");
   });
+
+  describe('it should handle a pipe in vertex text', function () {
+    it.each([
+      ['square', 'B[Low | High]'],
+      ['round', 'B(Low | High)'],
+      ['diamond', 'B{Low | High}'],
+      ['stadium', 'B([Low | High])'],
+      ['subroutine', 'B[[Low | High]]'],
+      ['cylinder', 'B[(Low | High)]'],
+      ['circle', 'B((Low | High))'],
+      ['doublecircle', 'B(((Low | High)))'],
+      ['hexagon', 'B{{Low | High}}'],
+      ['odd', 'B>Low | High]'],
+    ])('should handle a pipe in %s vertex text', function (type, vertex) {
+      flow.parser.parse(`graph TD;A-->${vertex};`);
+
+      const vert = flow.parser.yy.getVertices();
+
+      expect(vert.get('B').type).toBe(type);
+      expect(vert.get('B').text).toBe('Low | High');
+    });
+
+    it('should handle several pipes in vertex text', function () {
+      flow.parser.parse('graph TD;A-->B[Bronze | Silver | Gold];');
+
+      const vert = flow.parser.yy.getVertices();
+
+      expect(vert.get('B').text).toBe('Bronze | Silver | Gold');
+    });
+
+    it('should still end an edge label on a pipe', function () {
+      flow.parser.parse('graph TD;A[a | b]-->|edge text|B[c | d];');
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+
+      expect(vert.get('A').text).toBe('a | b');
+      expect(vert.get('B').text).toBe('c | d');
+      expect(edges[0].text).toBe('edge text');
+    });
+  });
 });

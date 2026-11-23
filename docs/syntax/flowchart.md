@@ -1634,6 +1634,20 @@ It is possible to escape characters using the syntax exemplified here.
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
 
+### Pipes in node text
+
+A pipe (`|`) can be used in the text of a node without quotes. A pipe at the very start of the text still needs quotes.
+
+```mermaid
+flowchart LR
+    A[Low | High] --> B["| starts with a pipe"]
+```
+
+```mermaid-example
+flowchart LR
+    A[Low | High] --> B["| starts with a pipe"]
+```
+
 ## Subgraphs
 
 ```
