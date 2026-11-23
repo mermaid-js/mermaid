@@ -1,0 +1,20 @@
+---
+config:
+  layout: elk
+  elk:
+    wrappingStrategy: MULTI_EDGE
+    aspectRatio: 1.78
+---
+stateDiagram-v2
+  direction LR
+  [*] --> Draft
+  Draft --> Submitted: submit
+  Submitted --> InReview: assign
+  InReview --> Approved: approve
+  Approved --> Scheduled: schedule
+  Scheduled --> Building: start
+  Building --> Testing: build done
+  Testing --> Staging: tests pass
+  Staging --> Released: release
+  Released --> Archived: archive
+  Archived --> [*]
