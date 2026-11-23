@@ -405,7 +405,9 @@ export class SequenceDB implements DiagramDB {
     } else {
       const style = new Option().style;
       style.color = color;
-      if (style.color !== color) {
+      // An invalid color leaves the property empty. A valid one may read back
+      // normalized ('Purple' -> 'purple', 'rgb(1,2,3)' -> 'rgb(1, 2, 3)').
+      if (!style.color) {
         color = 'transparent';
         title = str.trim();
       }
