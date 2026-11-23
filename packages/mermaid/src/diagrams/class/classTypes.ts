@@ -112,7 +112,10 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (/[$*]/.exec(lastChar)) {
+      // A trailing "$" that closes a KaTeX span ($$...$$) is a delimiter, not a
+      // classifier: consuming it would unbalance the span and defeat KaTeX
+      // detection downstream. Only a lone trailing "$" (or "*") is a classifier.
+      if (/[$*]/.exec(lastChar) && !(lastChar === '$' && input[length - 2] === '$')) {
         potentialClassifier = lastChar;
       }
 
@@ -132,10 +135,16 @@ export class ClassMember {
     // label pipeline (marked) only breaks on real newlines. Translate the
     // sequence here, in the display text only: the parsed fields keep the
     // original sequence. A "\n" preceded by another backslash is an escaped
-    // backslash rather than a line break, so it is left untouched.
-    this.text = this.text.replace(/\\n/g, (match, offset, text) =>
-      offset > 0 && text[offset - 1] === '\\' ? match : '\n'
-    );
+    // backslash rather than a line break, so it is left untouched. KaTeX spans
+    // ($$...$$) are left untouched as well: their commands (e.g. \nabla)
+    // contain "\n" sequences that must survive, because katexRegex does not
+    // span line feeds and a newline inside a span would defeat KaTeX detection.
+    this.text = this.text.replace(/\$\$[\S\s]*?\$\$|\\n/g, (match, offset, text) => {
+      if (match.startsWith('$$')) {
+        return match;
+      }
+      return offset > 0 && text[offset - 1] === '\\' ? match : '\n';
+    });
     if (this.text.startsWith('\\&lt;')) {
       this.text = this.text.replace('\\&lt;', '~');
     }
