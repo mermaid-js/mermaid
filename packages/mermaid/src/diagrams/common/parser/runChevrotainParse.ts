@@ -2,6 +2,7 @@ import type { CstNode, CstParser, Lexer } from 'chevrotain';
 
 interface ChevrotainParseConfig {
   diagramType: string;
+  lineOffset?: number;
   lexer: Lexer;
   parser: CstParser;
   entry: () => CstNode;
@@ -24,7 +25,7 @@ export function runChevrotainParse(config: ChevrotainParseConfig, input: string)
     const end = start + (isKnownLocation(lexError.length) ? lexError.length : 0);
     throw new Error(
       `Error lexing ${config.diagramType} diagram: ${lexError.message} at line ${
-        lexError.line ?? 1
+        (lexError.line ?? 1) + (config.lineOffset ?? 0)
       }, column ${lexError.column ?? 1} [${start},${end})`
     );
   }

@@ -71,13 +71,17 @@ in `diagrams/common/commonDb.ts`:
 export const diagram: DiagramDefinition = { parser, db, renderer, styles };
 ```
 
+If the parser closes over its db, provide an optional `createInstance()` factory on
+the definition instead. `Diagram` calls it for each diagram to obtain a fresh db
+and a parser bound to that same db, along with the renderer and other instance fields.
+
 Prefer the getter in a new diagram. Isolation is then structural — a field added later cannot be
 forgotten in `clear()`, which is the way the shared form goes wrong. The use case diagram used as
 the reference here takes the shared form, and pays for it by keeping every mutable field on one
 `state` object that `clear()` replaces wholesale, rather than resetting fields one by one.
 
-Either way the rule underneath is the same: all mutable state lives on the db, never in module
-scope. Module-level state survives `clear()` in both forms, and two diagrams of the same type on
+In all forms the rule underneath is the same: all mutable state lives on the db, never in module
+scope. Module-level state survives `clear()`, and two diagrams of the same type on
 one page will leak into each other.
 
 ## Step 1: Grammar and parsing
