@@ -6,7 +6,7 @@ export interface TopBarBanner {
 
 // Pacific time: PST is UTC-8 for the whole campaign.
 const NOVEMBER_FLOW_START = Date.parse('2026-11-19T00:01:00-08:00');
-const NOVEMBER_FLOW_END = Date.parse('2026-12-11T23:59:00-08:00');
+const NOVEMBER_FLOW_END = Date.parse('2026-12-31T23:59:00-08:00');
 
 export const getTopBarBanner = (now: Date, utmSource: string): TopBarBanner => {
   const time = now.getTime();

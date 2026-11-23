@@ -9,13 +9,13 @@ describe('getTopBarBanner', () => {
     expect(campaignAt('2026-11-19T00:00:59-08:00')).toBe('oss_coupon');
   });
 
-  it('shows Mermaid Flow from November 19th to December 11th, Pacific time', () => {
+  it('shows Mermaid Flow from November 19th to December 31st, Pacific time', () => {
     expect(campaignAt('2026-11-19T00:01:00-08:00')).toBe('november_flow');
-    expect(campaignAt('2026-12-11T23:58:59-08:00')).toBe('november_flow');
+    expect(campaignAt('2026-12-31T23:58:59-08:00')).toBe('november_flow');
   });
 
-  it('goes back to the JS26 coupon at 11:59 PM PT on December 11th', () => {
-    expect(campaignAt('2026-12-11T23:59:00-08:00')).toBe('oss_coupon');
+  it('goes back to the JS26 coupon at 11:59 PM PT on December 31st', () => {
+    expect(campaignAt('2026-12-31T23:59:00-08:00')).toBe('oss_coupon');
   });
 
   it('sends Flow clicks through sign-up to a new Flow with the ticket UTMs', () => {
