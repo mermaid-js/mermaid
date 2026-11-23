@@ -349,79 +349,7 @@ A@{ shape: 'rect' }
     expect(edges[1].length).toBe(1);
   });
 
-      describe('dotted edges starting with a dot (#5381)', function () {
-        it('should handle .-> attached to the preceding node id', function () {
-          const res = flow.parser.parse(
-            'flowchart TD\n\tstart[First]--"label"-->second[Second]\n\tsecond.->third[[Third]]\n\tsecond.->fourth(Fourth)\n'
-            );
-          const vert = flow.parser.yy.getVertices();
-          const edges = flow.parser.yy.getEdges();
-
-          expect(vert.get('second').id).toBe('second');
-          expect(vert.get('third').id).toBe('third');
-          expect(vert.get('fourth').id).toBe('fourth');
-          expect(edges.length).toBe(3);
-          expect(edges[1].start).toBe('second');
-          expect(edges[1].end).toBe('third');
-          expect(edges[1].type).toBe('arrow_point');
-          expect(edges[1].stroke).toBe('dotted');
-          expect(edges[2].start).toBe('second');
-          expect(edges[2].end).toBe('fourth');
-          expect(edges[2].type).toBe('arrow_point');
-          expect(edges[2].stroke).toBe('dotted');
-        });
-
-        it('should handle ..-> attached to the preceding node id', function () {
-          const res = flow.parser.parse('graph TD;\nA..->B;');
-
-          const edges = flow.parser.yy.getEdges();
-
-          expect(edges.length).toBe(1);
-          expect(edges[0].start).toBe('A');
-          expect(edges[0].end).toBe('B');
-          expect(edges[0].type).toBe('arrow_point');
-          expect(edges[0].stroke).toBe('dotted');
-        });
-
-        it('should keep dots inside node ids', function () {
-          const res = flow.parser.parse('graph TD;\nA.B-->C;');
-
-          const vert = flow.parser.yy.getVertices();
-          const edges = flow.parser.yy.getEdges();
-
-          expect(vert.get('A.B').id).toBe('A.B');
-          expect(edges.length).toBe(1);
-          expect(edges[0].start).toBe('A.B');
-          expect(edges[0].end).toBe('C');
-          expect(edges[0].stroke).toBe('normal');
-        });
-
-        it('should keep a double dot inside node ids', function () {
-          const res = flow.parser.parse('graph TD;\nA..B-->C;');
-
-          const vert = flow.parser.yy.getVertices();
-          const edges = flow.parser.yy.getEdges();
-
-          expect(vert.get('A..B').id).toBe('A..B');
-          expect(edges.length).toBe(1);
-          expect(edges[0].start).toBe('A..B');
-          expect(edges[0].end).toBe('C');
-          expect(edges[0].stroke).toBe('normal');
-        });
-
-        it('should keep a node id ending in a dot followed by a dash', function () {
-          const res = flow.parser.parse('graph TD;\nA.-B;');
-
-          const vert = flow.parser.yy.getVertices();
-
-          expect(vert.get('A.-B').id).toBe('A.-B');
-          expect(flow.parser.yy.getEdges().length).toBe(0);
-        });
-
-      });
-
-
-            describe('edge length', function () {
+  describe('edge length', function () {
     for (let length = 1; length <= 3; ++length) {
       it(`should handle normal edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'-'.repeat(length)}- B;`);
@@ -706,6 +634,115 @@ A@{ shape: 'rect' }
         expect(edges[0].length).toBe(length);
       });
     }
+
+    for (let length = 1; length <= 3; ++length) {
+      it(`should handle dotted labelled edges with length ${length}`, function () {
+        const res = flow.parser.parse(`graph TD;\nA -. Label ${'.'.repeat(length)}- B;`);
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_open');
+        expect(edges[0].text).toBe('Label');
+        expect(edges[0].stroke).toBe('dotted');
+        expect(edges[0].length).toBe(length);
+      });
+    }
+
+    for (let length = 1; length <= 3; ++length) {
+      it(`should handle dotted edges with arrows with length ${length}`, function () {
+        const res = flow.parser.parse(`graph TD;\nA -${'.'.repeat(length)}-> B;`);
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert.get('A').id).toBe('A');
+        expect(vert.get('B').id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('dotted');
+        expect(edges[0].length).toBe(length);
+      });
+    }
+
+    describe('dotted edges starting with a dot (#5381)', function () {
+      it('should handle .-> attached to the preceding node id', function () {
+        const res = flow.parser.parse(
+          'flowchart TD\n\tstart[First]--"label"-->second[Second]\n\tsecond.->third[[Third]]\n\tsecond.->fourth(Fourth)\n'
+        );
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert.get('second').id).toBe('second');
+        expect(vert.get('third').id).toBe('third');
+        expect(vert.get('fourth').id).toBe('fourth');
+        expect(edges.length).toBe(3);
+        expect(edges[1].start).toBe('second');
+        expect(edges[1].end).toBe('third');
+        expect(edges[1].type).toBe('arrow_point');
+        expect(edges[1].stroke).toBe('dotted');
+        expect(edges[2].start).toBe('second');
+        expect(edges[2].end).toBe('fourth');
+        expect(edges[2].type).toBe('arrow_point');
+        expect(edges[2].stroke).toBe('dotted');
+      });
+
+      it('should handle ..-> attached to the preceding node id', function () {
+        const res = flow.parser.parse('graph TD;\nA..->B;');
+
+        const edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].stroke).toBe('dotted');
+      });
+
+      it('should keep dots inside node ids', function () {
+        const res = flow.parser.parse('graph TD;\nA.B-->C;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert.get('A.B').id).toBe('A.B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A.B');
+        expect(edges[0].end).toBe('C');
+        expect(edges[0].stroke).toBe('normal');
+      });
+
+      it('should keep a double dot inside node ids', function () {
+        const res = flow.parser.parse('graph TD;\nA..B-->C;');
+
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+
+        expect(vert.get('A..B').id).toBe('A..B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A..B');
+        expect(edges[0].end).toBe('C');
+        expect(edges[0].stroke).toBe('normal');
+      });
+
+      it('should keep a node id ending in a dot followed by a dash', function () {
+        const res = flow.parser.parse('graph TD;\nA.-B;');
+
+        const vert = flow.parser.yy.getVertices();
+
+        expect(vert.get('A.-B').id).toBe('A.-B');
+        expect(flow.parser.yy.getEdges().length).toBe(0);
+      });
+    });
 
     for (let length = 1; length <= 3; ++length) {
       it(`should handle dotted labelled edges with arrows with length ${length}`, function () {
