@@ -1,5 +1,12 @@
 import { line } from 'd3';
-import type { DrawableElem, LinePlotData, TextElem, XYChartConfig } from '../../interfaces.js';
+import { pickBadgeTextColor } from '../../../../../rendering-util/rendering-elements/edgeStepAnimation.js';
+import type {
+  DrawableElem,
+  LinePlotData,
+  TextElem,
+  XYChartConfig,
+  XYChartThemeConfig,
+} from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
 
 export class LinePlot {
@@ -8,7 +15,8 @@ export class LinePlot {
     private xAxis: Axis,
     private yAxis: Axis,
     private orientation: XYChartConfig['chartOrientation'],
-    private plotIndex: number
+    private plotIndex: number,
+    private labelTheme: Pick<XYChartThemeConfig, 'backgroundColor' | 'titleColor'>
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -47,6 +55,10 @@ export class LinePlot {
 
     if (this.plotData.pointLabels && this.plotData.pointLabels.length > 0) {
       const labelOffset = 10;
+      const labelColor = pickBadgeTextColor(this.labelTheme.backgroundColor, [
+        this.plotData.strokeFill,
+        this.labelTheme.titleColor,
+      ]);
       const fontSize = 12;
       const textData: TextElem[] = [];
 
@@ -61,7 +73,7 @@ export class LinePlot {
             x: py + labelOffset,
             y: px,
             text: label,
-            fill: this.plotData.strokeFill,
+            fill: labelColor,
             verticalPos: 'middle',
             horizontalPos: 'left',
             fontSize,
@@ -72,7 +84,7 @@ export class LinePlot {
             x: px,
             y: py - labelOffset,
             text: label,
-            fill: this.plotData.strokeFill,
+            fill: labelColor,
             verticalPos: 'middle',
             horizontalPos: 'center',
             fontSize,
