@@ -6,6 +6,7 @@ import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
 import { buildTarget } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
+import { chevrotainDeadEvalPlugin } from './chevrotainDeadEvalPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -46,7 +47,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
-    plugins: [jisonPlugin, jsonSchemaPlugin],
+    plugins: [jisonPlugin, jsonSchemaPlugin, chevrotainDeadEvalPlugin],
     sourcemap: coverageBuild ? 'linked' : 'external',
     ...override,
   };
