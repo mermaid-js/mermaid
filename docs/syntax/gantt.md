@@ -145,6 +145,33 @@ After processing the tags, the remaining metadata items are interpreted as follo
 > **Note**
 > Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 
+#### Task label placeholders
+
+Task labels can include placeholders for values calculated from their metadata:
+
+| Placeholder  | Value                                                                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `%startdate` | Task start date, formatted using `dateFormat`                                                                                        |
+| `%enddate`   | Task end date, formatted using `dateFormat`                                                                                          |
+| `%duration`  | The duration as written (for example, `2w`) when a duration is specified; otherwise, the elapsed time between the task dates in days |
+
+`axisFormat` only changes the date labels on the chart axis; task date placeholders use `dateFormat`.
+Unsupported placeholders are left as written.
+
+```mermaid
+gantt
+    dateFormat YYYY-MM-DD
+    My task ends %enddate after %duration :task1, 2020-02-20, 2w
+```
+
+```mermaid-example
+gantt
+    dateFormat YYYY-MM-DD
+    My task ends %enddate after %duration :task1, 2020-02-20, 2w
+```
+
+The task label displays `My task ends 2020-03-05 after 2w`.
+
 #### Duration format
 
 When specifying a `<length>`, use a number followed by one of these unit suffixes:
