@@ -1,5 +1,6 @@
 import type { BarPlotData, BoundingRect, DrawableElem, XYChartConfig } from '../../interfaces.js';
 import type { Axis } from '../axis/index.js';
+import { LinearAxis } from '../axis/linearAxis.js';
 
 export class BarPlot {
   constructor(
@@ -23,31 +24,47 @@ export class BarPlot {
   }
 
   /**
+   * Whether the value scale's domain is collapsed (min === max), read
+   * explicitly from the axis. Distinct values can round to the same
+   * coordinate on a healthy scale (e.g. 0 and 1e-18 on [-1, 1]), so a
+   * collapsed domain must never be inferred from equal scaled
+   * coordinates. Only a linear axis carries a numeric domain; any other
+   * axis type is never degenerate here.
+   */
+  private isValueScaleDegenerate(): boolean {
+    if (!(this.yAxis instanceof LinearAxis)) {
+      return false;
+    }
+    const [min, max] = this.yAxis.getDomain();
+    return min === max;
+  }
+
+  /**
    * The [start, end] interval a bar spans along the value axis, clipped to
    * the plot rect. The renderer draws rects without plot clipping, so an
    * out-of-domain bar must not spill outside the plot: the whole
    * value-to-baseline interval is intersected with the plot bounds, and a
    * bar whose interval misses the plot entirely comes back zero-length.
    *
-   * A degenerate value scale (a collapsed domain such as [5, 5]) maps every
-   * input — zero included — to one point, so the interval would collapse
-   * and a nonzero bar would vanish. For a nonzero bar the interval then
-   * falls back to the pre-baseline anchor, the plot edge, restoring the
-   * rendering constant datasets had before bars were anchored at zero.
-   * Genuinely zero-valued bars keep their zero length.
+   * On a degenerate value scale (a collapsed domain such as [5, 5]) every
+   * input maps to one point, so the interval would collapse and a nonzero
+   * bar would vanish. For a nonzero bar the interval then falls back to
+   * the pre-baseline anchor, the plot edge, restoring the rendering
+   * constant datasets had before bars were anchored at zero. Genuinely
+   * zero-valued bars keep their zero length.
    */
   private getBarInterval(
     scaledValue: number,
     rawValue: number,
     baseline: number,
-    rawBaseline: number,
+    degenerate: boolean,
     plotMin: number,
     plotMax: number,
     fallbackEdge: number
   ): [number, number] {
     let lo = Math.min(scaledValue, baseline);
     let hi = Math.max(scaledValue, baseline);
-    if (scaledValue === rawBaseline && rawValue !== 0) {
+    if (degenerate && rawValue !== 0) {
       lo = Math.min(scaledValue, fallbackEdge);
       hi = Math.max(scaledValue, fallbackEdge);
     }
@@ -64,10 +81,9 @@ export class BarPlot {
       (1 - barPaddingPercent);
     const barWidthHalf = barWidth / 2;
 
-    // The unclamped position of zero: comparing each bar's scaled value
-    // against it, rather than the clamped baseline, is what exposes a
-    // degenerate value scale.
-    const rawBaseline = this.yAxis.getScaleValue(0);
+    // Read once: whether the fallback for a collapsed domain applies is a
+    // property of the scale, not of any one bar's coordinates.
+    const degenerate = this.isValueScaleDegenerate();
 
     if (this.orientation === 'horizontal') {
       const plotMin = this.boundingRect.x;
@@ -82,7 +98,7 @@ export class BarPlot {
               this.yAxis.getScaleValue(d[1]),
               d[1],
               baseline,
-              rawBaseline,
+              degenerate,
               plotMin,
               plotMax,
               plotMin
@@ -112,7 +128,7 @@ export class BarPlot {
             this.yAxis.getScaleValue(d[1]),
             d[1],
             baseline,
-            rawBaseline,
+            degenerate,
             plotMin,
             plotMax,
             plotMax

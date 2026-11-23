@@ -257,6 +257,23 @@ describe('BarPlot collapsed nonzero domain (real LinearAxis)', () => {
   });
 });
 
+describe('BarPlot rounding collision (real LinearAxis)', () => {
+  it('vertical: a tiny nonzero value on a healthy domain does not take the plot-edge fallback', () => {
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createRealLinearAxis([-1, 1], [boundingRect.y, plotBottom], 'left');
+    // d3 rounds both 0 and 1e-18 to the same coordinate on [-1, 1], so
+    // equal scaled coordinates must not be read as a collapsed domain.
+    expect(valueAxis.getScaleValue(1e-18)).toBe(valueAxis.getScaleValue(0));
+    const baseline = valueAxis.getScaleValue(0);
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 1e-18]], categoryAxis, valueAxis).getDrawableElement()
+    );
+    expect(rect.y + rect.height).toBeCloseTo(baseline);
+    expect(rect.height).toBe(0);
+  });
+});
+
 describe('BarPlot interval clipping', () => {
   it('vertical: a bar wholly outside the plot draws nothing', () => {
     // Reviewer's case: domain [10, 20], padding 15, value 5 scales to 440
