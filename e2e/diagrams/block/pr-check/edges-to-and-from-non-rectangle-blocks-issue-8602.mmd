@@ -1,0 +1,11 @@
+---
+description: >-
+  Edges into and out of non-rectangle blocks (diamond and round) should render
+  with arrowheads on the shape outline instead of failing with
+  `this.calcIntersect is not a function` (issue #8602).
+---
+block
+  columns 3
+  a{"Decide?"} b["Next"] c("Round")
+  a --> b
+  b --> c
