@@ -129,4 +129,44 @@ graph TD
       cleanupComments("%%{init: {'theme': 'forest'}}%% %% comment\ngraph TD\n    A-->B\n")
     ).toBe("%%{init: {'theme': 'forest'}}%%\ngraph TD\n    A-->B\n");
   });
+
+  it('should not let a stray quote stop comment removal on later lines', () => {
+    // A `"` in a sequence message (e.g. 6" wide) is ordinary text: the
+    // message ends at the line, so the comment on the next line is removed.
+    expect(
+      cleanupComments(
+        'sequenceDiagram\nAlice->>Bob: The board is 6" wide\nBob->>Alice: OK %% remove\n'
+      )
+    ).toBe('sequenceDiagram\nAlice->>Bob: The board is 6" wide\nBob->>Alice: OK\n');
+  });
+
+  it('should keep quote protection across lines where the grammar allows it', () => {
+    // A flowchart label can span lines inside quotes, so `%%` in the label
+    // stays literal while the trailing comment is still removed.
+    expect(cleanupComments('graph TD\nA["50%% off\nmore text"] --> B %% remove\n')).toBe(
+      'graph TD\nA["50%% off\nmore text"] --> B\n'
+    );
+  });
+
+  it('should not treat %%{ as a directive without a preceding boundary', () => {
+    // `50%%{off]` is literal text, not a directive: scanning continues past
+    // it instead of swallowing the rest, so both trailing comments are removed.
+    expect(cleanupComments('graph TD\nA[50%%{off] --> B %% remove\nC --> D %% remove\n')).toBe(
+      'graph TD\nA[50%%{off] --> B\nC --> D\n'
+    );
+  });
+
+  it('should keep a directive that follows code after whitespace', () => {
+    expect(cleanupComments('graph TD %%{init: {"theme": "forest"}}%%\n    A-->B\n')).toBe(
+      'graph TD %%{init: {"theme": "forest"}}%%\n    A-->B\n'
+    );
+  });
+
+  it('should keep %% with no whitespace before it at the end of a statement', () => {
+    // An inline comment needs whitespace before `%%`; without it the text is
+    // literal and the parser sees it.
+    expect(cleanupComments('graph TD\n    A --> B;%%hidden\n    C-->D\n')).toBe(
+      'graph TD\n    A --> B;%%hidden\n    C-->D\n'
+    );
+  });
 });
