@@ -1,0 +1,14 @@
+%%{init: {'layout': 'elk', 'elk': {'directedSubgraphs': 'aligned'}}}%%
+%% With elk.directedSubgraphs aligned, LR subgraphs in a TB flowchart are full-width rows with straight links between them (issue #4648).
+flowchart TB
+    Buyer(["Buyer"])
+    subgraph shop ["Web shop"]
+        direction LR
+        Cart["Cart"] --> Order["Order"] --> Pay["Payment"] --> Receipt["Receipt"]
+    end
+    subgraph wh ["Warehouse"]
+        direction LR
+        Pick["Pick"] --> Pack["Pack"] --> Ship["Ship"]
+    end
+    Buyer --> Cart
+    Order -- "paid" --> Pick

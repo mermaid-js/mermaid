@@ -1,0 +1,35 @@
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+%% A row of four steps over a band of four columns puts each step over the column it feeds.
+flowchart TB
+    subgraph orders [" "]
+        direction LR
+        Take[Take order] --> Check[Check stock] --> Pay[Take payment] --> Plan[Plan route]
+    end
+    subgraph depots [" "]
+        direction LR
+        subgraph north [North]
+            direction TB
+            N1[Receive] --> N2[Shelve]
+        end
+        subgraph south [South]
+            direction TB
+            S1[Receive] --> S2[Shelve] --> S3[Count]
+        end
+        subgraph east [East]
+            direction TB
+            E1[Receive] --> E2[Shelve]
+        end
+        subgraph west [West]
+            direction TB
+            W1[Receive] --> W2[Shelve]
+        end
+    end
+    Take --> N1
+    Check --> S1
+    Pay --> E1
+    Plan --> W1

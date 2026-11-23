@@ -1,0 +1,17 @@
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+%% A row of two linked nodes under a wide row is not spread to its ends, so the short link between them does not stretch across the diagram.
+flowchart TB
+    subgraph wide [" "]
+        direction LR
+        Collect --> Sort --> Weigh --> Pack --> Label --> Ship
+    end
+    subgraph pair [" "]
+        direction LR
+        Measure["Measure the parcel"] --> Price["Price the parcel"]
+    end
+    Collect --> Measure

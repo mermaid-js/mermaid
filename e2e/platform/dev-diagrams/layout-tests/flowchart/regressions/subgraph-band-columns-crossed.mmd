@@ -1,0 +1,75 @@
+---
+config:
+  layout: elk
+  flowchart:
+    nodeSpacing: 25
+    rankSpacing: 25
+  elk:
+    directedSubgraphs: aligned
+---
+%% A lead row of four over a band of four columns sits over the columns, though two of its links then turn.
+flowchart TB
+    subgraph N1 ["alpha bravo cargo d"]
+        direction LR
+style N1 fill:#e8f4fd,stroke:#4a90d9
+        N8["river saddle tim<br/>umber velvet willow xeno<br/>yonder zephyr alp"]
+        N9["bravo cargo delta ec<br/>ferry garden harbor islan"]
+        N10["jungle kiosk l<br/>market nectar orch"]
+        N11["pepper quartz r<br/>saddle timb"]
+        N11 ~~~ N8
+    end
+    subgraph N2 ["e"]
+        direction LR
+        subgraph N3 ["ferry garden harbo"]
+            direction TB
+    style N3 fill:#f0f0f0,stroke:#888
+            N12["umber velvet will<br/>xenon yonder"]
+            N13["zephyr alpha<br/>bravo cargo delta"]
+            N14["echo ferry garden"]
+        end
+        subgraph N4 ["island ju"]
+            direction TB
+    style N4 fill:#fef3e0,stroke:#e6a817
+            N15["harbor islan<br/>jungle"]
+            N16["kiosk lem<br/>market n"]
+            N17["orchard pepper quar<br/>river"]
+            N18["saddle timber umb<br/>velvet will"]
+        end
+        subgraph N5 ["kiosk lem"]
+            direction TB
+    style N5 fill:#fde8f4,stroke:#d94a90
+            N19["xenon yonder zephyr alpha<br/>bravo"]
+            N20["cargo delta echo ferry gar<br/>harbor i"]
+            N21["jungle ki<br/>lemon"]
+            N22["market nectar orchard<br/>pepper quar"]
+        end
+        subgraph N6 ["market ne"]
+            direction TB
+    style N6 fill:#e8fde8,stroke:#4a9950
+            N23["river saddle<br/>timber"]
+            N24["umber vel<br/>willow x"]
+            N25["yonder zephyr alpha<br/>bravo"]
+            N26["cargo delta echo fe<br/>garden harb"]
+        end
+    end
+    subgraph N7 ["orchard pepper quartz"]
+        direction LR
+style N7 fill:#f0f0f0,stroke:#888
+        N27["island jungle kiosk le<br/>market nectar orch"]
+        N28["pepper quartz river sad"]
+    end
+    style N2 fill:transparent,stroke:transparent
+    N8 --> N9 --> N10
+    N10 --> N15 --> N16 --> N17 --> N18
+    N10 --> N23 --> N24 --> N25 --> N26
+    N8 --> N19 --> N20 --> N21 --> N22
+    N9 -.->|"timber umber vel"| N15
+    N9 -.->|"willow xenon yon"| N23
+    N10 -.->|"zephyr alpha b<br/>cargo delta ech"| N16
+    N10 -.->|"ferry garden h<br/>island jungle k"| N24
+    N21 -.->|"lemon market n<br/>orchard pepper qu"| N16
+    N21 -.->|"river saddle t<br/>umber velvet will"| N24
+    N11 --> N12
+    N12 --> N13
+    N13 --> N27
+    N27 --> N28

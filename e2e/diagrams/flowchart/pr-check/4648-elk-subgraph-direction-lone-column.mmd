@@ -1,0 +1,15 @@
+%%{init: {'layout': 'elk'}}%%
+%% A TB subgraph with no link inside it and no directed subgraph beside it is left to ELK, as with elk.directedSubgraphs ports (issue #4648).
+flowchart LR
+  subgraph Stages
+    draft --> review --> publish
+  end
+  subgraph Targets
+    direction TB
+    web([web])
+    print([print])
+    archive([archive])
+  end
+  draft -.-> web
+  review -.-> print
+  publish -.-> archive

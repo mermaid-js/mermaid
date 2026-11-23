@@ -1,0 +1,15 @@
+%%{init: {'layout': 'elk', 'flowchart': {'nodeSpacing': 10, 'rankSpacing': 10}, 'elk': {'directedSubgraphs': 'aligned'}}}%%
+%% With elk.directedSubgraphs aligned, a spread row keeps room for the label of a link between two of its nodes (issue #4648).
+flowchart TB
+    subgraph left [" "]
+        direction LR
+        A["Intake form"] --> B["Review queue"]
+        B -->|"asks the reviewer"| C["Reviewer panel"]
+    end
+    subgraph right [" "]
+        direction RL
+        D["Show result"] --> E["Score"]
+        E --> F["Update model"]
+        F --> G["Next round"]
+    end
+    C --> D

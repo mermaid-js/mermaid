@@ -39,6 +39,7 @@ const config: RequiredDeep<MermaidConfig> = {
     considerModelOrder: 'NODES_AND_EDGES',
     keepEntryNodeOnTop: false,
     orientFeedbackEdges: true,
+    directedSubgraphs: 'aligned',
   },
   // The schema's nested defaults only apply to sections listed here, so `configKeys` (and with
   // it a `layered:` directive) finds this one.
