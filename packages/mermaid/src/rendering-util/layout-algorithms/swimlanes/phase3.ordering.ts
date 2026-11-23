@@ -1,6 +1,7 @@
 import type { Graph, Layering, OrderedLayers, NodeId, Edge } from './helpers.js';
 import { buildLayerIndex, countInversions } from './phase0.helpers.js';
 import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
+import { compareStrings } from './compare.js';
 
 type SweepDirection = 'down' | 'up';
 
@@ -53,7 +54,7 @@ function currentOrderTieBreak(
 ): number {
   const ia = currentLayerIndex.get(a) ?? 0;
   const ib = currentLayerIndex.get(b) ?? 0;
-  return ia !== ib ? ia - ib : a.localeCompare(b);
+  return ia !== ib ? ia - ib : compareStrings(a, b);
 }
 
 function countCrossingsBetweenAdjacent(upper: NodeId[], lower: NodeId[], edges: Edge[]): number {

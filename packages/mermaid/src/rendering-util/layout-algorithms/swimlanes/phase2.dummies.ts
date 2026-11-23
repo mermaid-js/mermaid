@@ -1,5 +1,6 @@
 import type { Graph, Layering, Node, NodeId, EdgeRef } from './helpers.js';
 import { normalizeGraph } from './phase0.helpers.js';
+import { compareStrings } from './compare.js';
 
 export function makeProperLayering(
   layering: Layering,
@@ -31,9 +32,9 @@ export function makeProperLayering(
   const edgesSorted = [...g.edges].sort((a, b) =>
     a.id === b.id
       ? a.src === b.src
-        ? a.dst.localeCompare(b.dst)
-        : a.src.localeCompare(b.src)
-      : a.id.localeCompare(b.id)
+        ? compareStrings(a.dst, b.dst)
+        : compareStrings(a.src, b.src)
+      : compareStrings(a.id, b.id)
   );
 
   const newEdges: EdgeRef[] = [];
