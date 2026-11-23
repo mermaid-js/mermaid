@@ -1299,6 +1299,12 @@ function configureSubgraphNodes(
       elkContext.algorithm,
       elkContext.log
     );
+    // ELK's network-simplex node placer throws "NEdge must have a source and
+    // target NNode specified" on a self-loop of a node with nodeFlexibility
+    // set, so a group with a self-transition keeps ELK's default (NONE).
+    if (data4Layout.edges.some((edge) => edge.start === node.id && edge.end === node.id)) {
+      delete node.layoutOptions['elk.layered.nodePlacement.networkSimplex.nodeFlexibility'];
+    }
     delete node.x;
     delete node.y;
     delete node.width;
