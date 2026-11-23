@@ -2015,7 +2015,7 @@ Beginner's tip—a full example using interactive links in a html context:
 
 ### Comments
 
-Comments can be entered within a flow diagram, which will be ignored by the parser. Comments must be prefaced with `%%` (double percent signs) and any text after their start to the next newline will be treated as a comment, including any flow syntax. They can be on their own line or at the end of a statement.
+Comments can be entered within a flow diagram, which will be ignored by the parser. Comments must be prefaced with `%%` (double percent signs) and any text after their start to the next newline will be treated as a comment, including any flow syntax. They can be on their own line or at the end of a statement. An inline comment needs whitespace before the `%%`, so `A --> B;%% hidden` is not a comment. `%%` inside double-quoted text is kept as label text, and `%%{...}%%` directives are preserved.
 
 ```mermaid
 flowchart LR
