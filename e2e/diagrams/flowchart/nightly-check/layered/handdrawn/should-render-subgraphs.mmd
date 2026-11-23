@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that a basic named subgraph containing nodes and an edge renders
+  correctly, under the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  fontFamily: courier
+copyOf: flowchart/nightly-check/handdrawn/should-render-subgraphs.mmd
+---
+graph TB
+  subgraph One
+  a1-->a2
+  end

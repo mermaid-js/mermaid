@@ -1,0 +1,18 @@
+---
+description: >-
+  Verifies that when an outer subgraph is marked collapsed (outer@{ view:
+  collapsed }), its nested child subgraph (Inner, containing A --> B) collapses
+  along with it into the single outermost collapsed ancestor node, rather than
+  the inner subgraph remaining separately visible.
+config:
+  layout: layered
+copyOf: flowchart/visual-check/should-collapse-nested-subgraphs-to-the-outermost-collapsed-ancestor.mmd
+---
+flowchart TD
+  Start --> inner
+  subgraph outer [Outer]
+    subgraph inner [Inner]
+      A --> B
+    end
+  end
+  outer@{ view: collapsed }

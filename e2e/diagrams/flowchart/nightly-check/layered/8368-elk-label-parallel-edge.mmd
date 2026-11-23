@@ -1,0 +1,11 @@
+---
+config:
+  layout: layered
+copyOf: flowchart/pr-check/8368-elk-label-parallel-edge.mmd
+---
+%%{init: {'layout': 'layered', 'htmlLabels': false, 'flowchart': {'minNodeWidth': 0}}}%%
+%% A label on a straightened ELK edge stays clear of the parallel edge; narrow nodes bring the edges close (issue #8368).
+flowchart LR
+  A[Draft] --> B{Review}
+  B -->|approved| C[Published]
+  B -->|changes| A

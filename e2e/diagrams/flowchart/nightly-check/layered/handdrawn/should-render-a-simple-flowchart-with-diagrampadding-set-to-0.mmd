@@ -1,0 +1,19 @@
+---
+description:
+  Verifies that the flowchart diagramPadding configuration option can be set to
+  zero, removing the padding around the rendered diagram, under the hand-drawn
+  look.
+config:
+  layout: layered
+  look: handDrawn
+  flowchart:
+    diagramPadding: 0
+copyOf: flowchart/nightly-check/handdrawn/should-render-a-simple-flowchart-with-diagrampadding-set-to-0.mmd
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  %% this is a comment
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

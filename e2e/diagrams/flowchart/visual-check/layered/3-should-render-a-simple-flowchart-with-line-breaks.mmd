@@ -1,0 +1,16 @@
+---
+description:
+  Verifies that a decision-diamond node label containing multiple `<br/>` line
+  breaks with long text per line renders correctly and wraps without distorting
+  the diamond shape's layout.
+config:
+  layout: layered
+  fontFamily: courier
+copyOf: flowchart/visual-check/3-should-render-a-simple-flowchart-with-line-breaks.mmd
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me thinksssss<br/>ssssssssssssssssssssss<br/>sssssssssssssssssssssssssss}
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[Car]

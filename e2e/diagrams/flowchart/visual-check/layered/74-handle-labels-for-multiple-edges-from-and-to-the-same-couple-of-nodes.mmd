@@ -1,0 +1,19 @@
+---
+description:
+  Verifies that two separate edges connecting the same pair of nodes (a1 to a2),
+  each carrying its own distinct label (l1 and l2), render as two distinct
+  parallel edges rather than being merged, within a subgraph laid out in RL
+  direction.
+config:
+  layout: layered
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/visual-check/74-handle-labels-for-multiple-edges-from-and-to-the-same-couple-of-nodes.mmd
+---
+flowchart RL
+  subgraph one
+  a1 -- l1 --> a2
+  a1 -- l2 --> a2
+  end

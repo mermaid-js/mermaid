@@ -1,0 +1,11 @@
+---
+description:
+  Checks that a node whose id/label is purely numeric ('1') parses and renders
+  correctly inside a subgraph, using semicolon-terminated statement syntax
+  (graph TB;subgraph ...;1;end;).
+config:
+  layout: layered
+  fontFamily: courier
+copyOf: flowchart/visual-check/8-should-render-labels-with-numbers-at-the-start.mmd
+---
+graph TB;subgraph "number as labels";1;end;

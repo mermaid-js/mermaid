@@ -1,0 +1,20 @@
+---
+description: >-
+  Verifies the flowchart.inheritDir option: subgraph B declares no explicit
+  direction of its own, so it should inherit the outer flowchart's LR direction,
+  while sibling subgraph A explicitly overrides with its own TB direction.
+config:
+  layout: layered
+  fontFamily: courier
+copyOf: flowchart/visual-check/69-should-inherit-global-direction-when-inheritdir-is-true.mmd
+---
+%%{init: {"flowchart": { "inheritDir": true }}}%%
+flowchart TB
+  direction LR
+  subgraph A
+  direction TB
+  a --> b
+  end
+  subgraph B
+  c --> d
+  end

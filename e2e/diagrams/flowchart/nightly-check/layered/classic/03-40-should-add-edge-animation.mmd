@@ -1,0 +1,16 @@
+---
+description: >-
+  Verifies that edges can be annotated with @{ animation: slow|fast } metadata
+  to render animated dashed-line edges, alongside independent node styling via
+  style directives.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/classic/03-40-should-add-edge-animation.mmd
+---
+
+      flowchart TD
+          A(["Start"]) L_A_B_0@--> B{"Decision"}
+          B --> C["Option A"] & D["Option B"]
+          style C stroke-width:4px,stroke-dasharray: 5
+          L_A_B_0@{ animation: slow }
+          L_B_D_0@{ animation: fast }

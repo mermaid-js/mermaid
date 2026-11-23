@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a classDef named default applies to all unstyled nodes,
+  including one whose node id is literally 'default', without an id/class naming
+  collision, under the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/nightly-check/handdrawn/apply-class-called-default-on-node-called-default.mmd
+---
+graph TD
+  classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff
+  hello --> default

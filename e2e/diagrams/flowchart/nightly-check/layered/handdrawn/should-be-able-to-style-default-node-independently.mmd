@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that a node named 'default' can still be targeted directly by its own
+  style directive independently of the classDef default class rule, under the
+  hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/nightly-check/handdrawn/should-be-able-to-style-default-node-independently.mmd
+---
+flowchart TD
+  classDef default fill:#a34
+  hello --> default
+
+  style default stroke:#000,stroke-width:4px

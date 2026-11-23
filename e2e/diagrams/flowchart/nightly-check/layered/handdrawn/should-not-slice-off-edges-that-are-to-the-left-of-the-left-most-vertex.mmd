@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that edges routed to the left of the left-most node in a small cyclic
+  graph are not clipped by the diagram's bounding box, under the hand-drawn
+  look.
+config:
+  layout: layered
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+copyOf: flowchart/nightly-check/handdrawn/should-not-slice-off-edges-that-are-to-the-left-of-the-left-most-vertex.mmd
+---
+graph TD
+  work --> sleep
+  sleep --> work
+  eat --> sleep
+  work --> eat

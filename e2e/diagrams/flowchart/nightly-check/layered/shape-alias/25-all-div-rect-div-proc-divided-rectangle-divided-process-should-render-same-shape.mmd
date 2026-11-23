@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that the `div-rect`, `div-proc`, `divided-rectangle`, and
+  `divided-process` names all render the same divided-rectangle process shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/25-all-div-rect-div-proc-divided-rectangle-divided-process-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: div-rect, label: "div-rect" }
+ n1@{ shape: div-proc, label: "div-proc" }
+ n2@{ shape: divided-rectangle, label: "divided-rectangle" }
+ n3@{ shape: divided-process, label: "divided-process" }

@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that the `tag-rect`, `tag-proc`, `tagged-rectangle`, and
+  `tagged-process` names all render the same tagged-rectangle process shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/39-all-tag-rect-tag-proc-tagged-rectangle-tagged-process-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: tag-rect, label: "tag-rect" }
+ n1@{ shape: tag-proc, label: "tag-proc" }
+ n2@{ shape: tagged-rectangle, label: "tagged-rectangle" }
+ n3@{ shape: tagged-process, label: "tagged-process" }

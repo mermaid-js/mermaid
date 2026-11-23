@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that a subgraph can set its internal layout direction to 'TD' (an
+  alias for top-down/TB) independently of the outer flowchart's LR direction.
+config:
+  layout: layered
+  fontFamily: courier
+copyOf: flowchart/visual-check/70-should-render-a-subgraph-with-direction-td.mmd
+---
+flowchart LR
+  subgraph A
+  direction TD
+  a --> b
+  end

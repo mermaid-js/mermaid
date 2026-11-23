@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `sm-circ`, `small-circle`, and `start` names all render the
+  same small-circle start-point shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/14-all-sm-circ-small-circle-start-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: sm-circ, label: "sm-circ" }
+ n1@{ shape: small-circle, label: "small-circle" }
+ n2@{ shape: start, label: "start" }

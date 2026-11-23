@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that the `procs`, `processes`, `st-rect`, and `stacked-rectangle`
+  names all render the same stacked-rectangle multi-process shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/34-all-procs-processes-st-rect-stacked-rectangle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: procs, label: "procs" }
+ n1@{ shape: processes, label: "processes" }
+ n2@{ shape: st-rect, label: "st-rect" }
+ n3@{ shape: stacked-rectangle, label: "stacked-rectangle" }
