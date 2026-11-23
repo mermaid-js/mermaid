@@ -30,6 +30,7 @@ function applyStyle<T extends Element>(
 
 // We assume that nobody will want to create labels larger than 16384 pixels wide
 const maxSafeSizeForWidth = 16384;
+const maxRoundingError = 1;
 
 async function addHtmlSpan(
   element: D3Selection<SVGGElement>,
@@ -71,7 +72,7 @@ async function addHtmlSpan(
   }
 
   const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
-  if (bbox.width === width) {
+  if (bbox.width >= width - maxRoundingError) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
