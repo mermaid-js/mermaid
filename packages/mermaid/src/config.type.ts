@@ -391,6 +391,7 @@ export interface MermaidConfig {
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
+  marble?: MarbleDiagramConfig;
   railroad?: RailroadDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
@@ -2715,6 +2716,43 @@ export interface CynefinDiagramConfig extends BaseDiagramConfig {
    *
    */
   seed?: number;
+}
+/**
+ * The object containing configurations specific for marble diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "MarbleDiagramConfig".
+ */
+export interface MarbleDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Horizontal distance, in pixels, between two adjacent columns of a marble string.
+   */
+  columnWidth?: number;
+  /**
+   * Minimum vertical space, in pixels, given to each lane. All lanes share one height,
+   * so when stacked labels need more room every lane grows and the lanes stay evenly
+   * spaced.
+   *
+   */
+  laneHeight?: number;
+  /**
+   * Radius, in pixels, of an event marble.
+   */
+  marbleRadius?: number;
+  /**
+   * Space, in pixels, between a lane's name and the start of its timeline.
+   */
+  laneLabelGap?: number;
+  /**
+   * Padding, in pixels, around the diagram.
+   */
+  padding?: number;
+  /**
+   * Show the text of `label` statements next to the marbles they name. Span labels that
+   * fit inside their span are shown either way.
+   *
+   */
+  showEventLabels?: boolean;
 }
 /**
  * Configuration for Railroad (Syntax) Diagrams

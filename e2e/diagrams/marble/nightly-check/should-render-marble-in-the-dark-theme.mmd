@@ -1,0 +1,17 @@
+---
+description: >-
+  Marble diagram under the dark theme, checking that every marble color comes
+  from theme variables rather than hardcoded values: retry(2) resubscribing to
+  a source that errors.
+config:
+  theme: dark
+---
+marble-beta
+  title retry(2)
+  axis    : 0    5
+  "try 1" : -a-#
+  "try 2" :    -a-#
+  "try 3" :       -a-#
+  result  : -a--a--a-#
+  label a "value"
+  label # "error"

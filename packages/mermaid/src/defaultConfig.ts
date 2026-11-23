@@ -346,6 +346,9 @@ const config: RequiredDeep<MermaidConfig> = {
   cynefin: {
     ...defaultConfigJson.cynefin,
   },
+  marble: {
+    ...defaultConfigJson.marble,
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

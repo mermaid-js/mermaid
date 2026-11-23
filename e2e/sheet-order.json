@@ -853,6 +853,16 @@
     "3-should-render-a-katex-flowchart-containing-set-theory-symbols.png",
     "4-should-render-consecutive-latex-equations-separated-by-text.png"
   ],
+  "diagrams/marble": [
+    "should-render-a-simple-marble-diagram.png",
+    "should-render-marble-errors-and-time-breaks.png",
+    "should-render-marble-hand-drawn.png",
+    "should-render-marble-in-the-dark-theme.png",
+    "should-render-marble-rxjs-syntax.png",
+    "should-render-marble-spans-cancellations-and-labels.png",
+    "should-render-marble-with-accessibility-directives.png",
+    "should-render-marble-with-config-and-theme-overrides.png"
+  ],
   "diagrams/mindmap": [
     "1-tidy-tree-should-render-a-simple-mindmap-without-children.png",
     "2-tidy-tree-should-render-a-simple-mindmap.png",

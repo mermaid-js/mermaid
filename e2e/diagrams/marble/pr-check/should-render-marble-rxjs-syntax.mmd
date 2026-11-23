@@ -1,0 +1,14 @@
+---
+description: >-
+  Marble diagram written in RxJS marble syntax: a sync group stacked in one
+  column, a completion inside a group, a subscription point, a
+  subscription-only lane drawn as a span, and time progressions drawn as
+  labelled breaks.
+---
+marble-beta
+  title RxJS syntax: groups, subscriptions, time progression
+  hot      : --a--^--b--(cd|)
+  subs     : -----^---!
+  expected : -- 9ms a 9ms b 9ms (c|)
+  label ^ "subscribed"
+  label ! "unsubscribed"
