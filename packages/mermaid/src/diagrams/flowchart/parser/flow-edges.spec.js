@@ -421,8 +421,7 @@ A@{ shape: 'rect' }
       });
 
 
-            
-  describe('edge length', function () {
+            describe('edge length', function () {
     for (let length = 1; length <= 3; ++length) {
       it(`should handle normal edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'-'.repeat(length)}- B;`);
