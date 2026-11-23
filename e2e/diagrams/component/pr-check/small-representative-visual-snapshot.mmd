@@ -28,7 +28,7 @@ Payments.api --() IPay
 Orders --( IPay
 Payments ..> Ledger : writes to
 Web --> Orders : calls
-Web -- Ledger
+Ledger -- Web
 note for Orders "handles checkout"
 
 classDef hot fill:#f96,stroke:#333
