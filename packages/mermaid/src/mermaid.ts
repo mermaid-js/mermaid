@@ -169,11 +169,36 @@ const runThrowsErrors = async function (
 
     const id = `mermaid-${idGenerator.next()}`;
 
-    // Fetch the graph definition including tags
-    txt = element.innerHTML;
+    // Highlighters escape the source before adding their markup.
+    const highlightingSelector = [
+      '.hljs',
+      'span.token.keyword, span.token.punctuation',
+      'span.line > span[style]',
+    ].join(', ');
+    const highlighted =
+      element.matches(highlightingSelector) ||
+      element.querySelector(highlightingSelector) !== null ||
+      [element, ...element.querySelectorAll('[class], span')].some((node) => {
+        if ([...node.classList].some((className) => className.startsWith('hljs-'))) {
+          return true;
+        }
+        if (!node.matches('span')) {
+          return false;
+        }
+        for (let ancestor = node.parentElement; ancestor; ancestor = ancestor.parentElement) {
+          if (
+            ancestor.matches('code') &&
+            [...ancestor.classList].some((className) => className.startsWith('language-'))
+          ) {
+            return true;
+          }
+        }
+        return false;
+      });
+    txt = highlighted ? (element.textContent ?? '') : utils.entityDecode(element.innerHTML);
 
     // transforms the html to pure text
-    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
+    txt = dedent(txt) // removes indentation, required for YAML parsing
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
