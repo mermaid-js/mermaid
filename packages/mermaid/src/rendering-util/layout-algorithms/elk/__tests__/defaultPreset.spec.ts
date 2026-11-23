@@ -46,21 +46,37 @@ describe('ELK preset configuration through initialize', () => {
   });
 
   it.each([
-    ['legacy', 'BRANDES_KOEPF', 'GREEDY'],
-    ['modelOrder', 'NETWORK_SIMPLEX', 'GREEDY_MODEL_ORDER'],
-    ['depthFirst', 'NETWORK_SIMPLEX', 'DEPTH_FIRST'],
-  ] as const)('preserves the %s preset', (preset, placement, cycleBreaking) => {
+    ['legacy', 'BRANDES_KOEPF', 'GREEDY', 'GREEDY'],
+    ['modelOrder', 'NETWORK_SIMPLEX', 'GREEDY_MODEL_ORDER', 'DEPTH_FIRST'],
+    ['depthFirst', 'NETWORK_SIMPLEX', 'DEPTH_FIRST', 'DEPTH_FIRST'],
+  ] as const)('preserves the %s preset', (preset, placement, cycleBreaking, groupCycleBreaking) => {
     const { elkGraph, nodeDb } = graphFor({ preset });
     expect(elkGraph.layoutOptions['elk.layered.nodePlacement.strategy']).toBe(placement);
     expect(nodeDb.group.layoutOptions?.['elk.layered.nodePlacement.strategy']).toBe(
       'BRANDES_KOEPF'
     );
     expect(elkGraph.layoutOptions['elk.layered.layering.strategy']).toBe('NETWORK_SIMPLEX');
+    expect(elkGraph.layoutOptions['elk.layered.cycleBreaking.strategy']).toBe(cycleBreaking);
+    expect(nodeDb.group.layoutOptions?.['elk.layered.cycleBreaking.strategy']).toBe(
+      groupCycleBreaking
+    );
     for (const options of [elkGraph.layoutOptions, nodeDb.group.layoutOptions]) {
       expect(options?.['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
-      expect(options?.['elk.layered.cycleBreaking.strategy']).toBe(cycleBreaking);
     }
   });
+
+  it.each(['MODEL_ORDER', 'GREEDY_MODEL_ORDER'] as const)(
+    'keeps %s off a subgraph laid out with the root',
+    (cycleBreakingStrategy) => {
+      const { elkGraph, nodeDb } = graphFor({ cycleBreakingStrategy });
+      expect(elkGraph.layoutOptions['elk.layered.cycleBreaking.strategy']).toBe(
+        cycleBreakingStrategy
+      );
+      expect(nodeDb.group.layoutOptions?.['elk.layered.cycleBreaking.strategy']).toBe(
+        'DEPTH_FIRST'
+      );
+    }
+  );
 
   it.each(['default', 'legacy', 'modelOrder', 'depthFirst'] as const)(
     'honors explicit placement and NONE alignment with %s',
@@ -327,4 +343,57 @@ it('centers the initial transition to TV with defaults and keeps the entry strai
   for (const point of points) {
     expect(point.x).toBeCloseTo(points[0].x, 3);
   }
+});
+
+describe('model order cycle breaking with subgraphs', () => {
+  const node = (id: string, parentId: string) => ({
+    id,
+    parentId,
+    label: id,
+    width: 40,
+    height: 40,
+  });
+  const group = (id: string, dir?: string) => ({ id, isGroup: true, label: id, padding: 8, dir });
+  const edge = (id: string, start: string, end: string) => ({ id, start, end, label: '' });
+  const layout = async (elk: MermaidConfig['elk'], nodes: any[], edges: any[]) => {
+    mermaidAPI.initialize({ elk });
+    const data = { nodes, edges, direction: 'TB', config: getConfig() } as any;
+    await runElkLayoutCore(data, {
+      helpers: context,
+      options: { algorithm: 'elk.layered' },
+    } as any);
+    return data;
+  };
+
+  it('lays out a subgraph linked to another subgraph with MODEL_ORDER', async () => {
+    const data = await layout(
+      { cycleBreakingStrategy: 'MODEL_ORDER' },
+      [group('S1'), node('a', 'S1'), node('b', 'S1'), group('S2'), node('c', 'S2')],
+      [edge('e1', 'a', 'b'), edge('e2', 'a', 'c')]
+    );
+    expect(data.edges.every((e: any) => e.points?.length)).toBe(true);
+  });
+
+  it('lays out a cycle inside a subgraph with the modelOrder preset', async () => {
+    const data = await layout(
+      { preset: 'modelOrder' },
+      [group('S'), node('a', 'S'), node('b', 'S'), node('c', 'S')],
+      [edge('e1', 'a', 'b'), edge('e2', 'b', 'c'), edge('e3', 'c', 'a')]
+    );
+    expect(data.edges.every((e: any) => e.points?.length)).toBe(true);
+  });
+
+  it('keeps MODEL_ORDER on a subgraph with its own direction', () => {
+    mermaidAPI.initialize({ elk: { cycleBreakingStrategy: 'MODEL_ORDER' } });
+    const { nodeDb } = buildElkGraphFromLayoutData(
+      {
+        direction: 'TB',
+        config: getConfig(),
+        edges: [],
+        nodes: [group('S', 'TB'), node('a', 'S')],
+      } as any,
+      context
+    );
+    expect(nodeDb.S.layoutOptions?.['elk.layered.cycleBreaking.strategy']).toBe('MODEL_ORDER');
+  });
 });

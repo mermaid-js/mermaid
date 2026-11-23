@@ -724,6 +724,7 @@ export function buildElkGraphFromLayoutData(
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  keepModelOrderOffIncludedContainers(nodeDb);
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
@@ -1358,6 +1359,28 @@ function setIncludeChildrenPolicy(
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
   if (node.id !== ancestorId && node.parentId) {
     setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log);
+  }
+}
+
+/**
+ * ELK cannot break cycles by model order in a container laid out as part of its parent's run
+ * (`INCLUDE_CHILDREN`) and throws instead (eclipse-elk/elk#1182), so such containers fall back to
+ * `DEPTH_FIRST`. A container with its own run keeps the strategy it was given.
+ */
+function keepModelOrderOffIncludedContainers(nodeDb: Record<string, NodeWithVertex>): void {
+  const hasOwnRun = (node: NodeWithVertex | undefined): boolean => {
+    const handling = node?.layoutOptions?.['elk.hierarchyHandling'];
+    if (handling) {
+      return handling === 'SEPARATE_CHILDREN';
+    }
+    return node?.parentId ? hasOwnRun(nodeDb[node.parentId]) : false;
+  };
+
+  for (const node of Object.values(nodeDb)) {
+    const strategy = node.layoutOptions?.['elk.layered.cycleBreaking.strategy'];
+    if ((strategy === 'MODEL_ORDER' || strategy === 'GREEDY_MODEL_ORDER') && !hasOwnRun(node)) {
+      node.layoutOptions!['elk.layered.cycleBreaking.strategy'] = 'DEPTH_FIRST';
+    }
   }
 }
 
