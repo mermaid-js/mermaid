@@ -205,6 +205,72 @@ const snapPortsToBorders = (svg: SVG, data: ComponentLayoutData): void => {
   }
 };
 
+// Below the ~7px corner radius the edge renderer rounds bends with, so moving a corner's
+// control point by this much keeps the bend a clean curve.
+const MAX_INTERFACE_ALIGN_SHIFT = 6;
+
+/**
+ * Edges that share a side of an interface ball are spread a few pixels apart by the
+ * router, so they meet the ball off its centre line and a `socket` arc on such an edge
+ * sits off-centre around the ball. Move the straight run each edge meets the ball on
+ * onto the ball's centre line; the bend before it absorbs the shift.
+ */
+const centerInterfaceEdges = (svg: SVG, data: ComponentLayoutData): void => {
+  for (const iface of data.nodes) {
+    if (iface.shape !== 'umlInterface' || iface.x === undefined || iface.y === undefined) {
+      continue;
+    }
+    const center = [iface.x, iface.y];
+    for (const edge of data.edges) {
+      if (edge.start !== iface.id && edge.end !== iface.id) {
+        continue;
+      }
+      const path = svg.select<SVGPathElement>(
+        `path[data-et="edge"][data-id="${edge.id.replace(/["\\]/g, '\\$&')}"]`
+      );
+      const d = path.attr('d');
+      if (!d) {
+        continue;
+      }
+      const pairs = [...d.matchAll(NUMBER_PAIR)].map((match) => ({
+        index: match.index,
+        length: match[0].length,
+        point: [Number(match[1]), Number(match[2])],
+      }));
+      const ordered = edge.start === iface.id ? pairs : [...pairs].reverse();
+      if (ordered.length < 2) {
+        continue;
+      }
+      // The run is horizontal when its first two points share y, vertical when they share x.
+      const [first, second] = ordered;
+      const across = Math.abs(first.point[1] - second.point[1]) < 0.5 ? 1 : 0;
+      if (Math.abs(first.point[1 - across] - second.point[1 - across]) < 0.5) {
+        continue;
+      }
+      const shift = center[across] - first.point[across];
+      if (Math.abs(shift) < 0.5 || Math.abs(shift) > MAX_INTERFACE_ALIGN_SHIFT) {
+        continue;
+      }
+      const run = [first];
+      for (const pair of ordered.slice(1)) {
+        if (Math.abs(pair.point[across] - first.point[across]) >= 0.5) {
+          break;
+        }
+        run.push(pair);
+      }
+      let next = d;
+      for (const pair of [...run].sort((a, b) => b.index - a.index)) {
+        pair.point[across] += shift;
+        next =
+          next.slice(0, pair.index) +
+          `${pair.point[0]},${pair.point[1]}` +
+          next.slice(pair.index + pair.length);
+      }
+      path.attr('d', next);
+    }
+  }
+};
+
 /** Redraw plain edge paths with the same roughjs settings the handDrawn edge renderer uses. */
 const sketchEdges = (svg: SVG, edges: ComponentLayoutEdge[]): void => {
   if (edges.length === 0) {
@@ -248,22 +314,26 @@ const draw: DrawDefinition = async (_text, id, _version, diag) => {
   );
   prepareComponentLayoutData(data4Layout, id);
 
-  // Port snapping edits straight path coordinates, which roughjs replaces with jittered
-  // curves. Under handDrawn, draw port edges plain first and sketch them after snapping.
+  // Port snapping and interface alignment edit straight path coordinates, which roughjs
+  // replaces with jittered curves. Under handDrawn, draw those edges plain first and
+  // sketch them once they are adjusted.
   const handDrawn = data4Layout.config.look === 'handDrawn';
-  const portIds = new Set(
-    data4Layout.nodes.filter((node) => node.shape === 'umlPort').map((node) => node.id)
+  const glyphIds = new Set(
+    data4Layout.nodes
+      .filter((node) => node.shape === 'umlPort' || node.shape === 'umlInterface')
+      .map((node) => node.id)
   );
-  const portEdges = handDrawn
-    ? data4Layout.edges.filter((edge) => portIds.has(edge.start) || portIds.has(edge.end))
+  const adjustedEdges = handDrawn
+    ? data4Layout.edges.filter((edge) => glyphIds.has(edge.start) || glyphIds.has(edge.end))
     : [];
-  for (const edge of portEdges) {
+  for (const edge of adjustedEdges) {
     edge.look = 'classic';
   }
 
   await render(data4Layout, svg);
   snapPortsToBorders(svg, data4Layout);
-  sketchEdges(svg, portEdges);
+  centerInterfaceEdges(svg, data4Layout);
+  sketchEdges(svg, adjustedEdges);
   annotateComponentElements(svg, data4Layout, nodeNames);
 
   const padding = data4Layout.diagramPadding;
