@@ -406,6 +406,25 @@ class Theme {
     this.commitLineColor = this.commitLineColor ?? '#BDBCCC';
 
     /* -------------------------------------------------- */
+    /* Event Modeling diagrams                             */
+
+    this.emUiFill = this.emUiFill || '#2d2d2d';
+    this.emUiStroke = this.emUiStroke || '#555';
+    this.emProcessorFill = this.emProcessorFill || '#5a3d5c';
+    this.emProcessorStroke = this.emProcessorStroke || '#8a6d8c';
+    this.emReadModelFill = this.emReadModelFill || '#3d5a2d';
+    this.emReadModelStroke = this.emReadModelStroke || '#6d8c5c';
+    this.emCommandFill = this.emCommandFill || '#2d3d5a';
+    this.emCommandStroke = this.emCommandStroke || '#5c6d8c';
+    this.emEventFill = this.emEventFill || '#5a452d';
+    this.emEventStroke = this.emEventStroke || '#8c755c';
+    this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || lighten(this.background, 5);
+    this.emSwimlaneBackgroundStroke =
+      this.emSwimlaneBackgroundStroke || lighten(this.background, 12);
+    this.emArrowhead = this.emArrowhead || this.lineColor;
+    this.emRelationStroke = this.emRelationStroke || this.lineColor;
+
+    /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
     this.erEdgeLabelBackground = '#16141F';
     this.attributeBackgroundColorOdd =

@@ -11,7 +11,8 @@ const DEFAULT_EVENTMODELING_CONFIG = DEFAULT_CONFIG?.eventmodeling;
 
 function renderD3Box(
   diagram: Selection<BaseType, unknown, HTMLElement, any>,
-  diagramProps: DiagramProps
+  diagramProps: DiagramProps,
+  themeVariables: Record<string, string | undefined>
 ) {
   return (box: Box) => {
     const y = box.swimlane.y + diagramProps.swimlanePadding;
@@ -43,6 +44,7 @@ function renderD3Box(
     text
       .append('span')
       .style('display', 'table-cell')
+      .style('color', themeVariables.textColor ?? 'inherit')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
       .html(box.text);
@@ -144,7 +146,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   state.sortedSwimlanesArray.forEach(
     renderD3Swimlane(diagram, state.maxR, diagramProps, themeVariables)
   );
-  state.boxes.forEach(renderD3Box(diagram, diagramProps));
+  state.boxes.forEach(renderD3Box(diagram, diagramProps, themeVariables));
   state.relations.forEach(renderD3Relation(diagram, diagramProps, arrowheadId, themeVariables));
 
   const marker = diagram
