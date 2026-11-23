@@ -25,10 +25,10 @@
 
 "title"\s[^#\n;]+  { return 'TITLE'; }
 "venn-beta"        { return 'VENN'; }
-"set"              { return 'SET'; }
-"union"            { return 'UNION'; }
-"text"             { if (yy.consumeIndentText) { yy.consumeIndentText = false; } else { return 'TEXT'; } }
-"style"            { return 'STYLE'; }
+"set"(?![A-Za-z0-9\-_])    { return 'SET'; }
+"union"(?![A-Za-z0-9\-_])  { return 'UNION'; }
+"text"(?![A-Za-z0-9\-_])   { if (yy.consumeIndentText) { yy.consumeIndentText = false; } else { return 'TEXT'; } }
+"style"(?![A-Za-z0-9\-_])  { return 'STYLE'; }
 
 \[\"[^\"]*\"\]                                                    { yytext = yytext.slice(2, -2); return 'BRACKET_LABEL'; }
 \[[^\]\"]+\]                                                      { yytext = yytext.slice(1, -1).trim(); return 'BRACKET_LABEL'; }
@@ -37,7 +37,7 @@
 \#[0-9a-fA-F]{3,8}                                                    { return 'HEXCOLOR'; }
 rgba\(\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*\) { return 'RGBACOLOR'; }
 rgb\(\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*\)                  { return 'RGBCOLOR'; }
-[A-Za-z_][A-Za-z0-9\-_]*                                              { return 'IDENTIFIER'; }
+[A-Za-z_][A-Za-z0-9\-_]*                                              { if (yy.consumeIndentText) { yy.consumeIndentText = false; } return 'IDENTIFIER'; }
 \"[^\"]*\"                                                            { return 'STRING'; }
 
 ","  { return 'COMMA'; }
