@@ -1,0 +1,22 @@
+---
+config:
+  flowchart:
+    subGraphTitleMargin:
+      top: 40
+      bottom: 0
+---
+%% An edge into a node *inside* a nested subgraph gives both TOP and B1 an external
+%% connection, so they stay compound instead of being extracted into their own
+%% sub-graphs. That is the shape in which a nested subgraph's title shares a box with
+%% its children, so its height has to be reserved above them. The sibling fixtures
+%% only use cluster-to-cluster edges, where every cluster is extracted and the nested
+%% case never arises.
+flowchart TB
+  subgraph TOP
+      subgraph B1
+          i1 --> f1
+      end
+      i2 --> f2
+  end
+  A --> i1
+  f2 --> B
