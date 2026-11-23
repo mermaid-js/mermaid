@@ -100,3 +100,53 @@ describe('createText', () => {
     }
   );
 });
+
+describe('createText HTML label wrapping', () => {
+  const renderWithMeasuredWidth = async (measuredWidth: number, width = 120) => {
+    const rectSpy = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockReturnValue({ width: measuredWidth, height: 24 } as DOMRect);
+    try {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+      const output = await createText(
+        select(svgGroup),
+        'Is the arrangement structured through a separate vehicle?',
+        { useHtmlLabels: true, width }
+      );
+      return output.querySelector('div')!;
+    } finally {
+      rectSpy.mockRestore();
+    }
+  };
+
+  it('wraps a label clamped to exactly the wrapping width', async () => {
+    const div = await renderWithMeasuredWidth(120);
+    expect(div.style.whiteSpace).toBe('break-spaces');
+    expect(div.style.width).toBe('120px');
+  });
+
+  it('wraps a label measured a fraction of a pixel under the wrapping width', async () => {
+    // What a page zoom of 110% reports for a label clamped to 120px
+    const div = await renderWithMeasuredWidth(119.99999237060547);
+    expect(div.style.whiteSpace).toBe('break-spaces');
+    expect(div.style.width).toBe('120px');
+  });
+
+  it('wraps a label that measures wider than the wrapping width', async () => {
+    const div = await renderWithMeasuredWidth(180.5);
+    expect(div.style.whiteSpace).toBe('break-spaces');
+    expect(div.style.width).toBe('120px');
+  });
+
+  it('keeps a short label on one line', async () => {
+    const div = await renderWithMeasuredWidth(60);
+    expect(div.style.whiteSpace).toBe('nowrap');
+    expect(div.style.width).toBe('');
+  });
+
+  it('never wraps when the width is unbounded', async () => {
+    const div = await renderWithMeasuredWidth(5000, Number.POSITIVE_INFINITY);
+    expect(div.style.whiteSpace).toBe('nowrap');
+  });
+});

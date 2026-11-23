@@ -31,6 +31,9 @@ function applyStyle<T extends Element>(
 // We assume that nobody will want to create labels larger than 16384 pixels wide
 const maxSafeSizeForWidth = 16384;
 
+// How close (in px) a measured label must be to its max width to count as clamped
+const wrapTolerance = 0.5;
+
 async function addHtmlSpan(
   element: D3Selection<SVGGElement>,
   node: { label: string; labelStyle: string; isNode: boolean },
@@ -71,7 +74,11 @@ async function addHtmlSpan(
   }
 
   const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
-  if (bbox.width === width) {
+  // `max-width` clamps a label that is too long to `width`, but the measured
+  // width can come back a fraction of a pixel off (zoom, device pixel ratio,
+  // font metrics), and a label that overflows the box can measure wider than
+  // it. Treat anything at or beyond the limit as needing to wrap.
+  if (bbox.width >= width - wrapTolerance) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
