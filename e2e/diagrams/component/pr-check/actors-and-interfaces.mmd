@@ -1,0 +1,16 @@
+---
+description: >-
+  Actors next to components: a plain actor requiring an interface, a labelled actor
+  with a stereotype, and an actor linked to a component with an association.
+---
+component-beta
+direction LR
+actor Customer
+actor Support["Support agent"] <<staff>>
+component Portal["Customer portal"]
+component Tickets["Ticket system"]
+interface IPortal["Portal UI"]
+Portal --() IPortal
+Customer --( IPortal
+Support --> Tickets : works on
+Portal --> Tickets : opens

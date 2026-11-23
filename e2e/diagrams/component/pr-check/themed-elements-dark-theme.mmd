@@ -1,0 +1,21 @@
+---
+description: >-
+  Component diagram covering every themed element (component, stereotype,
+  interface, port, package, note) under the "dark" theme. Deliberately carries
+  no classDef/style overrides, so every colour on screen comes from theme
+  variables.
+config:
+  theme: dark
+---
+component-beta
+component Web["Web shop"]
+component Orders["Order service"] <<service>>
+interface IOrders["Orders API"]
+package Backend {
+  component Payments {
+    port api
+  }
+}
+Orders --() IOrders
+Web --( IOrders
+note for Orders "handles checkout"
