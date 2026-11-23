@@ -5,7 +5,12 @@ import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import {
+  keepBoundsUnpainted,
+  keepIconArtworkPaint,
+  labelHelper,
+  updateNodeBounds,
+} from './util.js';
 import type { D3Selection } from '../../../types.js';
 
 export async function iconSquare<T extends SVGGraphicsElement>(
@@ -23,7 +28,7 @@ export async function iconSquare<T extends SVGGraphicsElement>(
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
-    'icon-shape default'
+    `${node.cssClasses ?? ''} icon-shape default`
   );
 
   const topLabel = node.pos === 't';
@@ -62,6 +67,7 @@ export async function iconSquare<T extends SVGGraphicsElement>(
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   const outerShape = shapeSvg.insert(() => outerNode);
+  keepBoundsUnpainted(outerShape);
 
   if (node.icon) {
     const iconElem = shapeSvg.append('g');
@@ -72,6 +78,7 @@ export async function iconSquare<T extends SVGGraphicsElement>(
         fallbackPrefix: '',
       })}</g>`
     );
+    keepIconArtworkPaint(iconElem);
     const iconBBox = iconElem.node()!.getBBox();
     const iconWidth = iconBBox.width;
     const iconHeight = iconBBox.height;

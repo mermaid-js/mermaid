@@ -1,0 +1,16 @@
+---
+config:
+  htmlLabels: false
+---
+flowchart LR
+  %% A class on an icon node with SVG labels paints the icon's shape, not the
+  %% invisible rectangle that sets the node's bounds: every label stays readable,
+  %% and the circle variant's icon is not covered by an orange box
+  A@{ icon: "fa:user", label: "icon" }
+  B@{ icon: "fa:user", form: "circle", label: "circle" }
+  C@{ icon: "fa:user", form: "rounded", label: "rounded" }
+  D@{ icon: "fa:user", form: "square", label: "square" }
+  E@{ icon: "fa:user", form: "square", label: "no class" }
+  A --> B --> C --> D --> E
+  classDef hot fill:#f96,stroke:#333
+  class A,B,C,D hot
