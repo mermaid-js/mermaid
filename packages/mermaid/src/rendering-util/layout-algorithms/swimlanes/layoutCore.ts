@@ -1,6 +1,6 @@
 import type { LayoutData } from '../../types.js';
 import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProcessing.js';
-import { toGraphView, writeBackToLayoutData } from './helpers.js';
+import { toGraphView, topLaneGap, writeBackToLayoutData } from './helpers.js';
 import { sugiyamaLayout } from './pipeline.js';
 import { routeEdgesOrthogonal } from './orthogonalRouter/router.js';
 
@@ -26,15 +26,17 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
   const automaticLaneOrdering = data4Layout.config.swimlane?.automaticLaneOrdering ?? false;
   const direction = getSwimlaneDirection(data4Layout);
 
+  const columnsAcross = direction === 'TB' || direction === 'BT';
   const { ordered, coordinates } = sugiyamaLayout(g, {
     nodeGap,
+    laneGap: columnsAcross ? topLaneGap(data4Layout.nodes ?? [], nodeGap) : undefined,
     layerGap,
     ignoreCrossLaneEdges,
     optimizeRanksByCrossings,
     automaticLaneOrdering,
     direction,
   });
-  writeBackToLayoutData(g, ordered, coordinates, { nodeGap, layerGap });
+  writeBackToLayoutData(g, ordered, coordinates, { nodeGap, layerGap, direction });
 
   // The layout phases above position nodes only; they do not emit edge routing.
   // Reset any edge points carried on the input so routeEdgesOrthogonal below is

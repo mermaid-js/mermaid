@@ -1,4 +1,4 @@
-import type { Graph, NodeId } from './helpers.js';
+import type { Graph, Node, NodeId } from './helpers.js';
 import { buildLaneModel, readLaneIndex } from './lanes.js';
 
 /**
@@ -36,7 +36,10 @@ export function createTopLaneResolver(g: Graph): (id: NodeId) => string | null {
 }
 
 export function buildTopLaneOrder(g: Graph): string[] {
-  const nodes = g.layout.nodes ?? [];
+  return topLaneOrderOf(g.layout.nodes ?? []);
+}
+
+export function topLaneOrderOf(nodes: Node[]): string[] {
   const model = buildLaneModel(nodes);
   const laneNodes = nodes.filter((node) => model.isLane(node.id));
 
