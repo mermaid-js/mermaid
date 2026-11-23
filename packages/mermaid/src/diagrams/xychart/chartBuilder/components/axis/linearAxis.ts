@@ -24,6 +24,15 @@ export class LinearAxis extends BaseAxis {
     return this.scale.ticks();
   }
 
+  /**
+   * The domain this axis was built with, copied so callers cannot mutate
+   * the axis state. Used by plots that must distinguish a collapsed
+   * domain from distinct values rounding to one coordinate.
+   */
+  getDomain(): [number, number] {
+    return [...this.domain];
+  }
+
   recalculateScale(): void {
     const domain = [...this.domain]; // copy the array so if reverse is called two times it should not cancel the reverse effect
     if (this.axisPosition === 'left') {
