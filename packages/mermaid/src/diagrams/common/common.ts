@@ -209,7 +209,7 @@ export const getMin = function (...values: number[]): number {
  * // returns "Array<Array<string>>"
  * parseGenericTypes('Array~Array~string~~');
  * ```
- * @param text - The text to convert
+ * @param input - The text to convert
  * @returns The converted string
  */
 export const parseGenericTypes = function (input: string): string {
