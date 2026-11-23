@@ -12,6 +12,63 @@ describe('when parsing subgraphs', function () {
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
+  it('should handle subgraph with emoji at the start of an unquoted title', function () {
+    const res = flow.parser.parse('flowchart TD\nsubgraph 🔴 Breaks\nA --> B\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].title).toBe('🔴 Breaks');
+    expect(subgraphs[0].id).toBe('subGraph0');
+    expect(subgraphs[0].nodes).toContain('A');
+    expect(subgraphs[0].nodes).toContain('B');
+  });
+
+  it('should handle subgraph with emoji and symbols at the end and in the middle of an unquoted title', function () {
+    const symbols = ['✅', '🚀', '⚠️', '★', '→'];
+    for (const symbol of symbols) {
+      flow.parser.yy.clear();
+      flow.parser.yy.setGen('gen-2');
+      flow.parser.parse(`graph TB\nsubgraph Breaks ${symbol}\n\ta1-->a2\nend`);
+      expect(flow.parser.yy.getSubGraphs()[0].title).toBe(`Breaks ${symbol}`);
+      flow.parser.yy.clear();
+      flow.parser.yy.setGen('gen-2');
+      flow.parser.parse(`graph TB\nsubgraph Break ${symbol} Down\n\ta1-->a2\nend`);
+      expect(flow.parser.yy.getSubGraphs()[0].title).toBe(`Break ${symbol} Down`);
+    }
+  });
+
+  it('should handle an emoji as a node id', function () {
+    const res = flow.parser.parse('graph TB\n🔴 --> B');
+    const vert = flow.parser.yy.getVertices();
+    expect(vert.get('🔴')).toBeDefined();
+    expect(vert.get('B')).toBeDefined();
+    expect(flow.parser.yy.getEdges()[0].start).toBe('🔴');
+  });
+
+  it('should handle BMP emoji base characters in an unquoted subgraph title', function () {
+    // © ® ‼ ⁉ ™ 〰 〽 ㊗ ㊙ are listed as emoji by Unicode but sit outside the
+    // letter and symbol blocks, so a title starting with one was a lexical error.
+    // The first entry carries a variation selector, as in `©️`.
+    const symbols = ['©️', '©', '®', '™', '‼', '⁉', '〰', '〽', '㊗', '㊙'];
+    for (const symbol of symbols) {
+      flow.parser.yy.clear();
+      flow.parser.yy.setGen('gen-2');
+      flow.parser.parse(`graph TB\nsubgraph ${symbol} Status\nA-->B\nend`);
+      expect(flow.parser.yy.getSubGraphs()[0].title).toBe(`${symbol} Status`);
+    }
+  });
+
+  it('should handle a BMP emoji base character as a node id', function () {
+    for (const id of ['©', '®', '™']) {
+      flow.parser.yy.clear();
+      flow.parser.yy.setGen('gen-2');
+      flow.parser.parse(`graph TB\n${id} --> B`);
+      const vert = flow.parser.yy.getVertices();
+      expect(vert.get(id)).toBeDefined();
+      expect(vert.get('B')).toBeDefined();
+      expect(flow.parser.yy.getEdges()[0].start).toBe(id);
+    }
+  });
+
   it('should handle subgraph with tab indentation', function () {
     const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
