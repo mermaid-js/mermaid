@@ -48,8 +48,8 @@ import { toBase64 } from './utils/base64.js';
 import { sanitizeCss } from './utils/sanitizeDirective.js';
 
 const MAX_TEXTLENGTH = 50_000;
-const MAX_TEXTLENGTH_EXCEEDED_MSG =
-  'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+const maxTextLengthExceededMsg = (length: number, maxTextSize: number) =>
+  `graph TB;a["Maximum text size in diagram exceeded (${length} characters, maxTextSize is ${maxTextSize}). Increase maxTextSize in mermaid.initialize()"];style a fill:#faa`;
 
 const SECURITY_LVL_SANDBOX = 'sandbox';
 const SECURITY_LVL_LOOSE = 'loose';
@@ -508,8 +508,9 @@ const renderDiagram = async function (
   // Check the maximum allowed text size. `Diagram.fromText` separately caps the
   // comment-preserving variant, which only diagrams that report source
   // positions ever parse.
-  if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
-    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+  const maxTextSize = config?.maxTextSize ?? MAX_TEXTLENGTH;
+  if (text.length > maxTextSize) {
+    text = maxTextLengthExceededMsg(text.length, maxTextSize);
     code = { raw: text, cleaned: text };
   }
 

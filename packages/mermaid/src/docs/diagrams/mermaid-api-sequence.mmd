@@ -101,7 +101,7 @@ sequenceDiagram
     Config-->>API: current configuration
     
     opt text length > maxTextSize
-        API->>API: text = MAX_TEXTLENGTH_EXCEEDED_MSG
+        API->>API: text = maxTextLengthExceededMsg(text.length, maxTextSize)
     end
     
     API->>API: setup id selectors and element IDs
