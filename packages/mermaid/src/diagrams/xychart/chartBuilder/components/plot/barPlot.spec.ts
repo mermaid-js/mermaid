@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { Axis } from '../axis/index.js';
-import type { BarPlotData, BoundingRect, DrawableElem, RectElem } from '../../interfaces.js';
+import { LinearAxis } from '../axis/linearAxis.js';
+import type {
+  BarPlotData,
+  BoundingRect,
+  DrawableElem,
+  RectElem,
+  XYChartAxisConfig,
+  XYChartAxisThemeConfig,
+} from '../../interfaces.js';
+import type { TextDimensionCalculator } from '../../textDimensionCalculator.js';
 import { BarPlot } from './barPlot.js';
 
 /**
@@ -165,5 +174,156 @@ describe('BarPlot zero baseline', () => {
     );
     expect(rect.x + rect.width).toBeCloseTo(zeroLine);
     expect(rect.width).toBeCloseTo(zeroLine - valueAxis.getScaleValue(-2));
+  });
+});
+
+/**
+ * Real LinearAxis, so the tests exercise d3's scale behaviour — including
+ * the degenerate-domain case, where d3 maps every input to the range
+ * midpoint and the linear fake above would divide by zero instead.
+ */
+function createRealLinearAxis(
+  domain: [number, number],
+  range: [number, number],
+  position: 'left' | 'top'
+): Axis {
+  const axisConfig: XYChartAxisConfig = {
+    showLabel: false,
+    labelFontSize: 12,
+    labelPadding: 5,
+    showTitle: false,
+    titleFontSize: 12,
+    titlePadding: 5,
+    showTick: false,
+    tickLength: 5,
+    tickWidth: 1,
+    showAxisLine: false,
+    axisLineWidth: 1,
+    labelRotation: 0,
+  };
+  const themeConfig: XYChartAxisThemeConfig = {
+    titleColor: '',
+    labelColor: '',
+    tickColor: '',
+    axisLineColor: '',
+  };
+  const textDimensionCalculator: TextDimensionCalculator = {
+    getMaxDimension: () => ({ width: 0, height: 0 }),
+  };
+  const axis = new LinearAxis(axisConfig, themeConfig, domain, '', textDimensionCalculator);
+  axis.setAxisPosition(position);
+  axis.setRange(range);
+  return axis;
+}
+
+describe('BarPlot collapsed nonzero domain (real LinearAxis)', () => {
+  it('vertical: constant nonzero bars stay visible instead of vanishing', () => {
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createRealLinearAxis([5, 5], [boundingRect.y, plotBottom], 'left');
+    // d3 maps every input to the range midpoint on a degenerate domain.
+    const midpoint = valueAxis.getScaleValue(5);
+    expect(valueAxis.getScaleValue(0)).toBe(midpoint);
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 5]], categoryAxis, valueAxis).getDrawableElement()
+    );
+    expect(rect.y).toBeCloseTo(midpoint);
+    expect(rect.y + rect.height).toBeCloseTo(plotBottom);
+    expect(rect.height).toBeGreaterThan(0);
+  });
+
+  it('horizontal: constant nonzero bars stay visible instead of vanishing', () => {
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createRealLinearAxis([5, 5], [boundingRect.x, plotRight], 'top');
+    const midpoint = valueAxis.getScaleValue(5);
+    expect(valueAxis.getScaleValue(0)).toBe(midpoint);
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 5]], categoryAxis, valueAxis, 'horizontal').getDrawableElement()
+    );
+    expect(rect.x).toBeCloseTo(boundingRect.x);
+    expect(rect.x + rect.width).toBeCloseTo(midpoint);
+    expect(rect.width).toBeGreaterThan(0);
+  });
+
+  it('vertical: genuinely zero bars stay zero length on a collapsed zero domain', () => {
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createRealLinearAxis([0, 0], [boundingRect.y, plotBottom], 'left');
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 0]], categoryAxis, valueAxis).getDrawableElement()
+    );
+    expect(rect.height).toBe(0);
+  });
+});
+
+describe('BarPlot interval clipping', () => {
+  it('vertical: a bar wholly outside the plot draws nothing', () => {
+    // Reviewer's case: domain [10, 20], padding 15, value 5 scales to 440
+    // while the baseline clamps to the plot bottom (320).
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createLinearAxisFake({
+      domain: [10, 20],
+      range: [boundingRect.y, plotBottom],
+      reverseDomain: true,
+      outerPadding: 15,
+    });
+    expect(valueAxis.getScaleValue(5)).toBeCloseTo(440);
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 5]], categoryAxis, valueAxis).getDrawableElement()
+    );
+    expect(rect.height).toBe(0);
+    expect(rect.y).toBeGreaterThanOrEqual(boundingRect.y);
+    expect(rect.y + rect.height).toBeLessThanOrEqual(plotBottom);
+  });
+
+  it('horizontal: a bar wholly outside the plot draws nothing', () => {
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createLinearAxisFake({
+      domain: [10, 20],
+      range: [boundingRect.x, plotRight],
+      outerPadding: 15,
+    });
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 5]], categoryAxis, valueAxis, 'horizontal').getDrawableElement()
+    );
+    expect(rect.width).toBe(0);
+    expect(rect.x).toBeGreaterThanOrEqual(boundingRect.x);
+    expect(rect.x + rect.width).toBeLessThanOrEqual(plotRight);
+  });
+
+  it('vertical: a bar straddling the plot edge is clipped to the edge', () => {
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createLinearAxisFake({
+      domain: [0, 10],
+      range: [boundingRect.y, plotBottom],
+      reverseDomain: true,
+      outerPadding: 15,
+    });
+    const zeroLine = valueAxis.getScaleValue(0);
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 12]], categoryAxis, valueAxis).getDrawableElement()
+    );
+    expect(rect.y).toBeCloseTo(boundingRect.y);
+    expect(rect.y + rect.height).toBeCloseTo(zeroLine);
+  });
+
+  it('horizontal: a bar straddling the plot edge is clipped to the edge', () => {
+    const categoryAxis = createAxisFake(() => 200, { outerPadding: 10, tickDistance: 60 });
+    const valueAxis = createLinearAxisFake({
+      domain: [0, 10],
+      range: [boundingRect.x, plotRight],
+      outerPadding: 15,
+    });
+    const zeroLine = valueAxis.getScaleValue(0);
+
+    const rect = getFirstRect(
+      createBarPlot([['a', 12]], categoryAxis, valueAxis, 'horizontal').getDrawableElement()
+    );
+    expect(rect.x).toBeCloseTo(zeroLine);
+    expect(rect.x + rect.width).toBeCloseTo(plotRight);
   });
 });

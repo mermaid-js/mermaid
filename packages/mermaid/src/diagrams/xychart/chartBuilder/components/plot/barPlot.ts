@@ -22,12 +22,41 @@ export class BarPlot {
     return Math.min(Math.max(this.yAxis.getScaleValue(0), min), max);
   }
 
-  getDrawableElement(): DrawableElem[] {
-    const finalData: [number, number][] = this.barData.data.map((d) => [
-      this.xAxis.getScaleValue(d[0]),
-      this.yAxis.getScaleValue(d[1]),
-    ]);
+  /**
+   * The [start, end] interval a bar spans along the value axis, clipped to
+   * the plot rect. The renderer draws rects without plot clipping, so an
+   * out-of-domain bar must not spill outside the plot: the whole
+   * value-to-baseline interval is intersected with the plot bounds, and a
+   * bar whose interval misses the plot entirely comes back zero-length.
+   *
+   * A degenerate value scale (a collapsed domain such as [5, 5]) maps every
+   * input — zero included — to one point, so the interval would collapse
+   * and a nonzero bar would vanish. For a nonzero bar the interval then
+   * falls back to the pre-baseline anchor, the plot edge, restoring the
+   * rendering constant datasets had before bars were anchored at zero.
+   * Genuinely zero-valued bars keep their zero length.
+   */
+  private getBarInterval(
+    scaledValue: number,
+    rawValue: number,
+    baseline: number,
+    rawBaseline: number,
+    plotMin: number,
+    plotMax: number,
+    fallbackEdge: number
+  ): [number, number] {
+    let lo = Math.min(scaledValue, baseline);
+    let hi = Math.max(scaledValue, baseline);
+    if (scaledValue === rawBaseline && rawValue !== 0) {
+      lo = Math.min(scaledValue, fallbackEdge);
+      hi = Math.max(scaledValue, fallbackEdge);
+    }
+    lo = Math.max(lo, plotMin);
+    hi = Math.min(hi, plotMax);
+    return [lo, Math.max(hi, lo)];
+  }
 
+  getDrawableElement(): DrawableElem[] {
     const barPaddingPercent = 0.05;
 
     const barWidth =
@@ -35,44 +64,69 @@ export class BarPlot {
       (1 - barPaddingPercent);
     const barWidthHalf = barWidth / 2;
 
+    // The unclamped position of zero: comparing each bar's scaled value
+    // against it, rather than the clamped baseline, is what exposes a
+    // degenerate value scale.
+    const rawBaseline = this.yAxis.getScaleValue(0);
+
     if (this.orientation === 'horizontal') {
-      const baseline = this.getZeroBaseline(
-        this.boundingRect.x,
-        this.boundingRect.x + this.boundingRect.width
-      );
+      const plotMin = this.boundingRect.x;
+      const plotMax = this.boundingRect.x + this.boundingRect.width;
+      const baseline = this.getZeroBaseline(plotMin, plotMax);
       return [
         {
           groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
           type: 'rect',
-          data: finalData.map((data) => ({
-            x: Math.min(baseline, data[1]),
-            y: data[0] - barWidthHalf,
-            height: barWidth,
-            width: Math.abs(data[1] - baseline),
-            fill: this.barData.fill,
-            strokeWidth: 0,
-            strokeFill: this.barData.fill,
-          })),
+          data: this.barData.data.map((d) => {
+            const [lo, hi] = this.getBarInterval(
+              this.yAxis.getScaleValue(d[1]),
+              d[1],
+              baseline,
+              rawBaseline,
+              plotMin,
+              plotMax,
+              plotMin
+            );
+            return {
+              x: lo,
+              y: this.xAxis.getScaleValue(d[0]) - barWidthHalf,
+              height: barWidth,
+              width: hi - lo,
+              fill: this.barData.fill,
+              strokeWidth: 0,
+              strokeFill: this.barData.fill,
+            };
+          }),
         },
       ];
     }
-    const baseline = this.getZeroBaseline(
-      this.boundingRect.y,
-      this.boundingRect.y + this.boundingRect.height
-    );
+    const plotMin = this.boundingRect.y;
+    const plotMax = this.boundingRect.y + this.boundingRect.height;
+    const baseline = this.getZeroBaseline(plotMin, plotMax);
     return [
       {
         groupTexts: ['plot', `bar-plot-${this.plotIndex}`],
         type: 'rect',
-        data: finalData.map((data) => ({
-          x: data[0] - barWidthHalf,
-          y: Math.min(data[1], baseline),
-          width: barWidth,
-          height: Math.abs(baseline - data[1]),
-          fill: this.barData.fill,
-          strokeWidth: 0,
-          strokeFill: this.barData.fill,
-        })),
+        data: this.barData.data.map((d) => {
+          const [lo, hi] = this.getBarInterval(
+            this.yAxis.getScaleValue(d[1]),
+            d[1],
+            baseline,
+            rawBaseline,
+            plotMin,
+            plotMax,
+            plotMax
+          );
+          return {
+            x: this.xAxis.getScaleValue(d[0]) - barWidthHalf,
+            y: lo,
+            width: barWidth,
+            height: hi - lo,
+            fill: this.barData.fill,
+            strokeWidth: 0,
+            strokeFill: this.barData.fill,
+          };
+        }),
       },
     ];
   }
