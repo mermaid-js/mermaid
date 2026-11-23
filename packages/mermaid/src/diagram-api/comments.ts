@@ -7,7 +7,16 @@
  * when it is preceded by whitespace or the start of a line, so `50%%` inside
  * text is left alone, and when it is not inside a double-quoted string, where
  * `%%` is literal label text (e.g. `A["50%% off"]`). `%%{...}%%` directives
- * are preserved.
+ * are preserved, but only when the `%%{` has the same preceding boundary —
+ * without one, e.g. `A[50%%{off]`, it is literal text and scanning continues
+ * past it instead of swallowing the rest of the diagram.
+ *
+ * A double-quoted string protects `%%` only as far as its diagram type's
+ * grammar lets quoted text run: in diagrams whose lexers accept newlines
+ * inside a quoted string (flowchart, class, C4, block, quadrant, requirement,
+ * xychart, agentflow) the protection spans lines, while in every other type
+ * it ends at the line, so a stray quote such as `6"` in a sequence message
+ * cannot stop comment removal on later lines.
  *
  * A comment on its own line also takes its indentation and newline with it,
  * so no blank line is left behind; a trailing comment keeps the newline, so
@@ -23,6 +32,7 @@ export const cleanupComments = (text: string): string => {
   let out = '';
   let i = 0;
   let inString = false;
+  const multilineStrings = allowsMultilineStrings(text);
 
   while (i < text.length) {
     const char = text[i];
@@ -30,6 +40,10 @@ export const cleanupComments = (text: string): string => {
     if (inString) {
       out += char;
       if (char === '"') {
+        inString = false;
+      } else if (char === '\n' && !multilineStrings) {
+        // The diagram's grammar ends message text at the line, so the quote
+        // does not protect anything past it.
         inString = false;
       }
       i++;
@@ -44,8 +58,13 @@ export const cleanupComments = (text: string): string => {
     }
 
     if (char === '%' && text[i + 1] === '%') {
+      // A `%%` only starts a comment or a directive when it is preceded by
+      // whitespace or the start of a line. Anything else, e.g. `50%%` or
+      // `50%%{off]`, is literal text.
+      const prev = i === 0 ? '\n' : text[i - 1];
+
       // `%%{...}%%` directive: keep it whole, including any quotes inside it.
-      if (text[i + 2] === '{') {
+      if (text[i + 2] === '{' && isWhitespace(prev)) {
         const end = text.indexOf('}%%', i + 3);
         if (end === -1) {
           out += text.slice(i);
@@ -58,7 +77,6 @@ export const cleanupComments = (text: string): string => {
 
       // A comment starts at the beginning of a line (only whitespace before
       // it) or after whitespace. Anything else, e.g. `50%%`, is literal text.
-      const prev = i === 0 ? '\n' : text[i - 1];
       if (isWhitespace(prev)) {
         let end = text.indexOf('\n', i);
         if (end === -1) {
@@ -83,4 +101,29 @@ export const cleanupComments = (text: string): string => {
   }
 
   return out.trimStart();
+};
+
+/**
+ * Diagram declarations whose grammars let a double-quoted string span lines:
+ * their lexers accept any character except `"` inside a quoted string,
+ * newlines included. Every other diagram type ends message text at the line.
+ */
+const MULTILINE_STRING_DECLARATION =
+  /^(graph|flowchart|classDiagram|C4(?:Context|Container|Component|Dynamic|Deployment)|block(?:-beta)?|quadrantChart|requirement(?:Diagram)?|xychart(?:-beta)?|agentflow-beta)\b/;
+
+/**
+ * Whether the diagram in `text` allows a double-quoted string to span lines,
+ * decided from its declaration line (the first line that is not blank and not
+ * itself a `%%` comment or directive). False when no declaration is found, so
+ * quote protection ends at the line by default.
+ */
+const allowsMultilineStrings = (text: string): boolean => {
+  for (const line of text.split('\n')) {
+    const trimmed = line.trim();
+    if (trimmed === '' || trimmed.startsWith('%%')) {
+      continue;
+    }
+    return MULTILINE_STRING_DECLARATION.test(trimmed);
+  }
+  return false;
 };
