@@ -1,0 +1,14 @@
+---
+description: >-
+  A subgraph with no id nested inside one declared with the id subGraph0: the
+  inner box is drawn inside the outer one. The two used to be merged into a
+  single box.
+---
+flowchart LR
+  subgraph subGraph0 [Outer]
+    subgraph
+      a1 --> a2
+    end
+    b1
+  end
+  a2 --> b1

@@ -1,0 +1,10 @@
+---
+description: >-
+  A subgraph with neither an id nor a title is drawn around its nodes. It used
+  to throw a TypeError instead of rendering.
+---
+flowchart LR
+  subgraph
+    a1 --> a2
+  end
+  a2 --> b
