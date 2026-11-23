@@ -286,6 +286,7 @@ that id.
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
+\r(?!\n)              /* skip bare carriage return */
 [^\S\n\r]+            return 'SPACE';
 <<EOF>>               return 'EOF';
 
