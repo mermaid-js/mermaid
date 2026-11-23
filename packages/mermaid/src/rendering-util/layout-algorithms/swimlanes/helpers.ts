@@ -7,6 +7,8 @@ import type {
 } from '../../types.js';
 import { buildLaneModel, type LaneModel } from './lanes.js';
 import { collectAnchoredIds, resolveAnchorHostId } from './anchoredNodes.js';
+import type { SwimlaneDirection } from './layoutCore.js';
+import { buildTopLaneOrder } from './phase2.options.js';
 
 export type Layout = LayoutData;
 export type Node = MermaidNode;
@@ -50,11 +52,21 @@ export const DEFAULT_SWIMLANE_ID = '__swimlane_default__';
 export interface WriteBackOptions {
   layerGap?: number;
   nodeGap?: number;
+  /** In TB and BT, a lane with no nodes gets a column of its own. */
+  direction?: SwimlaneDirection;
 }
 
 // Captured swimlane fixtures use 21px as the stable single-line label height.
 const TOP_LANE_TITLE_BAND_HEIGHT = 21;
 const MIN_TOP_LANE_HORIZONTAL_PADDING = 20;
+const MIN_LANE_HEADER_MARGIN = 36;
+// Twice the 36px title band of an LR lane: the narrowest column an empty lane gets.
+const EMPTY_LANE_MIN_WIDTH = 72;
+// Average advance of a label character as a fraction of the font size, for titles not yet measured.
+const TITLE_CHAR_WIDTH_PER_FONT_SIZE = 0.55;
+const DEFAULT_FONT_SIZE = 16;
+// Lane centres, and a node's centre against a column boundary, this close count as the same place.
+const COLUMN_BOUNDARY_TOLERANCE = 0.5;
 
 function topLaneHorizontalPadding(lane: Node): number {
   return Math.max(lane.padding ?? MIN_TOP_LANE_HORIZONTAL_PADDING, MIN_TOP_LANE_HORIZONTAL_PADDING);
@@ -382,8 +394,7 @@ export function writeBackToLayoutData(
     }
     if (globalMinY !== Infinity && globalMaxY !== -Infinity) {
       const contentHeight = Math.max(0, globalMaxY - globalMinY);
-      const minHeaderMargin = 36;
-      const verticalMargin = Math.max(maxPad, minHeaderMargin);
+      const verticalMargin = Math.max(maxPad, MIN_LANE_HEADER_MARGIN);
       const laneHeight = contentHeight + 2 * verticalMargin;
       const centerY = (globalMinY + globalMaxY) / 2;
       for (const lane of topLevelGroups) {
@@ -467,4 +478,138 @@ export function writeBackToLayoutData(
       }
     }
   }
+
+  placeEmptyTopLanes(g, topLevelGroups, new Set(groupBounds.keys()), opts?.direction);
+}
+
+function laneFontSize(layout: LayoutData): number {
+  return (
+    Number.parseFloat(String(layout.config?.fontSize ?? DEFAULT_FONT_SIZE)) || DEFAULT_FONT_SIZE
+  );
+}
+
+/** Width of an empty lane's column: room for its title and padding, at least the minimum. */
+function emptyLaneWidth(lane: Node, fontSize: number): number {
+  const titleRun =
+    (typeof lane.label === 'string' ? lane.label.length : 0) *
+    fontSize *
+    TITLE_CHAR_WIDTH_PER_FONT_SIZE;
+  return Math.max(EMPTY_LANE_MIN_WIDTH, titleRun + 2 * topLaneHorizontalPadding(lane));
+}
+
+const leftOf = (node: Node): number => (node.x ?? 0) - (node.width ?? 0) / 2;
+const rightOf = (node: Node): number => (node.x ?? 0) + (node.width ?? 0) / 2;
+
+/**
+ * Opens a column `width` wide at `line` by moving `lanes` right, each with everything it holds,
+ * so a lane and its nodes never part, however the lane width solve left neighbouring lanes
+ * overlapping. The moved lanes also clear the new column: the leftmost of them starts where it
+ * ends. A node outside every lane moves when its centre is at or right of the line. Pools are
+ * left alone.
+ */
+function openColumnAt(
+  nodes: Node[],
+  model: LaneModel,
+  lanes: readonly Node[],
+  line: number,
+  width: number
+): void {
+  const moving = new Set(lanes.map((lane) => lane.id));
+  const by = width + Math.max(0, line - Math.min(line, ...lanes.map(leftOf)));
+  for (const node of nodes) {
+    if (model.isPool(node.id) || typeof node.x !== 'number') {
+      continue;
+    }
+    const laneId = model.isLane(node.id) ? node.id : model.laneIdOf(node.id);
+    const moves = laneId === null ? node.x >= line - COLUMN_BOUNDARY_TOLERANCE : moving.has(laneId);
+    if (!moves) {
+      continue;
+    }
+    node.x += by;
+    if (node.groupTitleRect) {
+      node.groupTitleRect.left += by;
+      node.groupTitleRect.right += by;
+    }
+  }
+}
+
+/**
+ * The placed lanes an empty lane pushes right: those standing right of `before`, or else those
+ * from `after` on. They are judged by where the lanes stand, not by their edges or by the order
+ * they were declared in: with a tight node spacing a narrow lane can lie under the edge of the
+ * lane before it, and with `automaticLaneOrdering` a lane declared after the empty one can stand
+ * left of the line.
+ */
+function lanesRightOfInsertion(
+  placed: ReadonlySet<Node>,
+  before: Node | undefined,
+  after: Node | undefined
+): Node[] {
+  const centre = (lane: Node): number => lane.x ?? 0;
+  if (before) {
+    return [...placed].filter((lane) => centre(lane) > centre(before) + COLUMN_BOUNDARY_TOLERANCE);
+  }
+  if (after) {
+    return [...placed].filter((lane) => centre(lane) >= centre(after) - COLUMN_BOUNDARY_TOLERANCE);
+  }
+  return [];
+}
+
+type LaneNode = Node & { swimlaneContentTop?: number };
+
+/** Gives an empty lane the column from `left`, as tall as the lane `rowFrom` (or the minimum). */
+function placeEmptyLane(
+  lane: LaneNode,
+  left: number,
+  width: number,
+  rowFrom: LaneNode | undefined
+): void {
+  const minHeight = 2 * Math.max(lane.padding ?? 0, MIN_LANE_HEADER_MARGIN);
+  lane.x = left + width / 2;
+  lane.width = width;
+  lane.y = rowFrom?.y ?? minHeight / 2;
+  lane.height = rowFrom?.height ?? minHeight;
+  lane.swimlaneContentTop = rowFrom?.swimlaneContentTop ?? lane.y;
+  assignTopLaneTitleRect(lane);
+}
+
+/**
+ * Gives each top-level lane without nodes a column of its own, in declared order: right of
+ * the nearest placed lane declared before it, or else left of the nearest one declared after
+ * it, shifting everything beyond. When no lane has nodes, the lanes stand side by side from 0.
+ * Only TB and BT; LR and RL leave such a lane as it is.
+ */
+function placeEmptyTopLanes(
+  g: Graph,
+  lanes: Node[],
+  populated: Set<NodeId>,
+  direction: SwimlaneDirection | undefined
+): void {
+  if (direction !== 'TB' && direction !== 'BT') {
+    return;
+  }
+  if (lanes.every((lane) => populated.has(lane.id))) {
+    return;
+  }
+  const nodes = g.layout.nodes ?? [];
+  const model = buildLaneModel(nodes);
+  const fontSize = laneFontSize(g.layout);
+  const byId = new Map(lanes.map((lane) => [lane.id, lane]));
+  const order = buildTopLaneOrder(g)
+    .map((id) => byId.get(id))
+    .filter((lane): lane is Node => lane !== undefined);
+  const placed = new Set(lanes.filter((lane) => populated.has(lane.id)));
+  const rowFrom = [...placed][0];
+  order.forEach((lane, index) => {
+    if (placed.has(lane)) {
+      return;
+    }
+    const before = order.slice(0, index).findLast((other) => placed.has(other));
+    const after = order.slice(index + 1).find((other) => placed.has(other));
+    const line = before ? rightOf(before) : after ? leftOf(after) : 0;
+    const width = emptyLaneWidth(lane, fontSize);
+    openColumnAt(nodes, model, lanesRightOfInsertion(placed, before, after), line, width);
+    placeEmptyLane(lane, line, width, rowFrom);
+    placed.add(lane);
+  });
 }
