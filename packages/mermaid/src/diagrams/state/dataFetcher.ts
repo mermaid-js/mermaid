@@ -194,6 +194,33 @@ const getDir = (parsedItem: { doc?: Stmt[] }, defaultDir = DEFAULT_NESTED_DOC_DI
   return dir;
 };
 
+/**
+ * Whether `candidateId` is the state `stateId` itself or one of the states containing it.
+ * A transition inside a composite can name that composite (`Boot --> Running` inside
+ * `state Boot`); such a state must not be filed under the one it contains.
+ */
+function isSelfOrAncestor(nodes: NodeData[], candidateId: string, stateId: string): boolean {
+  const parentOf = new Map(nodes.map((node) => [node.id, node.parentId]));
+  for (let id: string | undefined = stateId; id !== undefined; id = parentOf.get(id)) {
+    if (id === candidateId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** The composite a state is declared in, or `undefined` at the top level. */
+function containerId(
+  nodes: NodeData[],
+  parent: StateStmt | undefined,
+  itemId: string
+): string | undefined {
+  if (!parent || parent.id === 'root' || isSelfOrAncestor(nodes, itemId, parent.id)) {
+    return undefined;
+  }
+  return parent.id;
+}
+
 function insertOrUpdateNode(
   nodes: NodeData[],
   nodeData: NodeData,
@@ -369,9 +396,10 @@ export const dataFetcher = (
       nodeData.label = '';
     }
 
-    if (parent && parent.id !== 'root') {
-      log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
-      nodeData.parentId = parent.id;
+    const parentId = containerId(nodes, parent, itemId);
+    if (parentId !== undefined) {
+      log.trace('Setting node ', itemId, ' to be child of its parent ', parentId);
+      nodeData.parentId = parentId;
     }
 
     nodeData.centerLabel = true;
