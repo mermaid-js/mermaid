@@ -213,9 +213,11 @@ export const drawTask = function (elem, task, conf, diagramId) {
     .attr('stroke-dasharray', '4 2')
     .attr('stroke', '#666');
 
+  // Scores are documented as 1 to 5. Keep the face on the task line for scores outside that range.
+  const faceScore = Math.min(Math.max(task.score, 1), 5);
   drawFace(g, {
     cx: center,
-    cy: 300 + (5 - task.score) * 30,
+    cy: 300 + (5 - faceScore) * 30,
     score: task.score,
   });
 
