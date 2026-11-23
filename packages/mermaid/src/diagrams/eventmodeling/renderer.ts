@@ -159,7 +159,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   marker.append('polygon').attr('points', '0 0, 10 3.5, 0 7').attr('fill', arrowheadColor);
 
-  setupGraphViewbox(undefined, diagram, config?.padding ?? 30, config?.useMaxWidth);
+  setupGraphViewbox(diagram, config?.padding ?? 30, config?.useMaxWidth);
 };
 
 export default {
