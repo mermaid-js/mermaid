@@ -20,7 +20,7 @@
 
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
-"mindmap"		       return 'MINDMAP';
+"mindmap"(?:(?:[^\S\n]*\n)+(?=[^\S\n]*\S))?		       return 'MINDMAP';
 ":::"              { this.begin('CLASS'); }
 <CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}

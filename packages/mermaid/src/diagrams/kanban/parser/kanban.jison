@@ -47,7 +47,7 @@
                                                 }
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
-"kanban"		       {return 'KANBAN';}
+"kanban"(?:(?:[^\S\n]*\n)+(?=[^\S\n]*\S))?		       {return 'KANBAN';}
 ":::"              { this.begin('CLASS'); }
 <CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}
