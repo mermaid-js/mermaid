@@ -23,6 +23,7 @@ import packetDiagram from './examples/packet.js';
 import blockDiagram from './examples/block.js';
 import treemapDiagram from './examples/treemap.js';
 import usecaseDiagram from './examples/usecase.js';
+import componentDiagram from './examples/component.js';
 import eventmodelingDiagram from './examples/eventmodeling.js';
 import vennDiagram from './examples/venn.js';
 import treeViewDiagram from './examples/tree-view.js';
@@ -58,6 +59,7 @@ export const diagramData: DiagramMetadata[] = [
   blockDiagram,
   treemapDiagram,
   usecaseDiagram,
+  componentDiagram,
   eventmodelingDiagram,
   vennDiagram,
   treeViewDiagram,
