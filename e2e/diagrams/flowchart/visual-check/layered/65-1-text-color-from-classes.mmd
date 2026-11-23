@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a classDef defining a white text color (color:#fff) alongside
+  fill/stroke applies correctly when selectively assigned via `class` to two of
+  three nodes in a chain, leaving the middle node unstyled.
+config:
+  layout: layered
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/visual-check/65-1-text-color-from-classes.mmd
+---
+flowchart LR
+  classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
+  Lorem --> Ipsum --> Dolor
+  class Lorem,Dolor dark

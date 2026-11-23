@@ -1,0 +1,23 @@
+---
+description:
+  Tests edge resolution between two sibling subgraphs and their child nodes (a
+  subgraph-to-subgraph edge plus a subgraph-to-inner-node edge) laid out in the
+  right-to-left (RL) flowchart direction.
+config:
+  layout: layered
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/visual-check/67-more-nested-subgraph-cases-rl.mmd
+---
+flowchart RL
+  subgraph two
+  b1
+  end
+  subgraph three
+  c2
+  end
+
+  three --> two
+  two --> c2

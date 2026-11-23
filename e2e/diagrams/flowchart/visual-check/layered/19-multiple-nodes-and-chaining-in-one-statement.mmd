@@ -1,0 +1,14 @@
+---
+description: >-
+  Verifies that the `&` multi-node operator combined with chained arrows in a
+  single statement (`a --> b & c --> d`) correctly produces four edges: a->b,
+  a->c, b->d, and c->d.
+config:
+  layout: layered
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+copyOf: flowchart/visual-check/19-multiple-nodes-and-chaining-in-one-statement.mmd
+---
+graph LR
+  a --> b & c--> d

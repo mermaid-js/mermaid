@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `sl-rect`, `manual-input`, and `sloped-rectangle` names all
+  render the same sloped-rectangle manual-input shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/32-all-sl-rect-manual-input-sloped-rectangle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: sl-rect, label: "sl-rect" }
+ n1@{ shape: manual-input, label: "manual-input" }
+ n2@{ shape: sloped-rectangle, label: "sloped-rectangle" }

@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `collate` and `hourglass` names render the same hourglass
+  collate shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/40-all-collate-hourglass-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: collate, label: "collate" }
+ n1@{ shape: hourglass, label: "hourglass" }

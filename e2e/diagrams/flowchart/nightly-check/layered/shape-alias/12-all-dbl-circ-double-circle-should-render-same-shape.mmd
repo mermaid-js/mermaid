@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `dbl-circ` and `double-circle` names render the same
+  double-circle stop-point shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/12-all-dbl-circ-double-circle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: dbl-circ, label: "dbl-circ" }
+ n1@{ shape: double-circle, label: "double-circle" }

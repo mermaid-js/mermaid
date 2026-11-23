@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a classDef style (fill, stroke, color, stroke-dasharray) can be
+  applied to an edge's label by assigning a class to the edge itself, using the
+  edge-id syntax (link@-- ... -->) introduced to let edges be targeted
+  independently of their endpoint nodes.
+config:
+  layout: layered
+copyOf: flowchart/visual-check/v2-17-should-apply-class-def-colour-to-edge-label.mmd
+---
+graph LR
+  id1(Start) link@-- "Label" -->id2(Stop)
+  style id1 fill:#f9f,stroke:#333,stroke-width:4px
+
+  class id2 myClass
+  classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasharray: 5 5
+  class link myClass

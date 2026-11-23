@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that a classDef controlling text color applies correctly to selected
+  nodes in a chain while nodes without the class keep default styling, under the
+  hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/nightly-check/handdrawn/text-color-from-classes.mmd
+---
+flowchart LR
+  classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
+  Lorem --> Ipsum --> Dolor
+  class Lorem,Dolor dark

@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `delay` and `half-rounded-rectangle` names render the same
+  half-rounded-rectangle delay shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/21-all-delay-half-rounded-rectangle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: delay, label: "delay" }
+ n1@{ shape: half-rounded-rectangle, label: "half-rounded-rectangle" }

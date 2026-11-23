@@ -1,0 +1,12 @@
+---
+description: >-
+  Regression check that a lone AWS icon-shaped node (via @{ icon: "aws:..." }),
+  with no other nodes or edges present, renders at full opacity rather than
+  appearing faded, guarding against a bug where icon shapes picked up unintended
+  transparency.
+config:
+  layout: layered
+copyOf: flowchart/visual-check/should-render-single-aws-icon-with-rect-elements-without-unintended-opacity.mmd
+---
+flowchart TB
+  Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch" }

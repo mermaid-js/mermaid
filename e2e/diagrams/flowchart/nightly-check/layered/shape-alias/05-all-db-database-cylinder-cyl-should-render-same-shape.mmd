@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that the `db`, `database`, `cylinder`, and `cyl` names all render the
+  same cylinder database-storage shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/05-all-db-database-cylinder-cyl-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: db, label: "db" }
+ n1@{ shape: database, label: "database" }
+ n2@{ shape: cylinder, label: "cylinder" }
+ n3@{ shape: cyl, label: "cyl" }

@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `datastore` and `data-store` names render the same
+  data-store shape used in data-flow diagrams.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/41-all-datastore-data-store-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: datastore, label: "datastore" }
+ n1@{ shape: data-store, label: "data-store" }
