@@ -162,6 +162,30 @@ graph TD
     );
   });
 
+  it('should keep a state description that spans lines intact', () => {
+    // A state description may span lines, so `%%` on the continuation line
+    // is inside the quoted description and must be kept.
+    expect(
+      cleanupComments(
+        'stateDiagram-v2\n    state "first\n    second %% note" as S\n    [*] --> S\n'
+      )
+    ).toBe('stateDiagram-v2\n    state "first\n    second %% note" as S\n    [*] --> S\n');
+  });
+
+  it('should not let a stray quote in a state diagram protect later lines', () => {
+    // Only a `state "..."` description spans lines; a quote in a transition
+    // description is line-scoped, so the comment on the next line is removed.
+    expect(
+      cleanupComments('stateDiagram-v2\n    [*] --> A: say "hi\n    A --> B %% remove\n')
+    ).toBe('stateDiagram-v2\n    [*] --> A: say "hi\n    A --> B\n');
+  });
+
+  it('should remove a trailing comment after a one-line state description', () => {
+    expect(
+      cleanupComments('stateDiagram-v2\n    state "first" as S %% note\n    [*] --> S\n')
+    ).toBe('stateDiagram-v2\n    state "first" as S\n    [*] --> S\n');
+  });
+
   it('should keep %% with no whitespace before it at the end of a statement', () => {
     // An inline comment needs whitespace before `%%`; without it the text is
     // literal and the parser sees it.
