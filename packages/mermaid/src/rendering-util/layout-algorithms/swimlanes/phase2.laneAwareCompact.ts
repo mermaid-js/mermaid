@@ -10,6 +10,7 @@ import {
 } from './phase0.helpers.js';
 import type { LayeringOptions } from './phase2.options.js';
 import { createTopLaneResolver } from './phase2.options.js';
+import { compareIds } from './compareIds.js';
 
 // cspell:ignore indeg preds topo
 
@@ -30,7 +31,7 @@ function topoSortByGenerationIfAcyclic(g: Graph): NodeId[] | null {
         }
       }
     }
-    frontier = nextFrontier.sort((a, b) => a.localeCompare(b));
+    frontier = nextFrontier.sort(compareIds);
   }
 
   return order.length === g.nodes.length ? order : null;
