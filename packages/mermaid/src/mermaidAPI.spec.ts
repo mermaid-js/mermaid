@@ -1236,10 +1236,16 @@ treeView-beta
 
     jsdomIt('shows the text size and the limit when maxTextSize is exceeded', async () => {
       mermaidAPI.initialize({ maxTextSize: 20 });
-      const { svg } = await mermaidAPI.render('max-text-size', 'flowchart TD\n  A --> B --> C');
-      mermaidAPI.initialize({ maxTextSize: 50_000 });
+      let svg: string;
+      try {
+        ({ svg } = await mermaidAPI.render('max-text-size', 'flowchart TD\n  A --> B --> C'));
+      } finally {
+        mermaidAPI.initialize({});
+      }
 
-      expect(svg).toContain('Maximum text size in diagram exceeded (28 &gt; 20)');
+      expect(svg).toContain(
+        'Maximum text size in diagram exceeded (28 characters, maxTextSize is 20)'
+      );
       expect(svg).toContain('Increase maxTextSize in mermaid.initialize()');
     });
 

@@ -49,7 +49,7 @@ import { sanitizeCss } from './utils/sanitizeDirective.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const maxTextLengthExceededMsg = (length: number, maxTextSize: number) =>
-  `graph TB;a["Maximum text size in diagram exceeded (${length} > ${maxTextSize}). Increase maxTextSize in mermaid.initialize()"];style a fill:#faa`;
+  `graph TB;a["Maximum text size in diagram exceeded (${length} characters, maxTextSize is ${maxTextSize}). Increase maxTextSize in mermaid.initialize()"];style a fill:#faa`;
 
 const SECURITY_LVL_SANDBOX = 'sandbox';
 const SECURITY_LVL_LOOSE = 'loose';
