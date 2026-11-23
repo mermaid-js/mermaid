@@ -62,7 +62,13 @@ export async function umlInterface<T extends SVGGraphicsElement>(
   if (node.look === 'handDrawn') {
     // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, { fill: 'transparent' });
+    // roughjs draws a circle this small as a jittered 9-point polygon by default,
+    // which reads as angular; more points and less jitter keep it a ball.
+    const options = userNodeOverrides(node, {
+      fill: 'transparent',
+      roughness: 0.3,
+      curveStepCount: 32,
+    });
     const roughNode = rc.circle(0, 0, INTERFACE_RADIUS * 2, options);
     circleElem = shapeSvg.insert(() => roughNode, ':first-child');
     circleElem.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
