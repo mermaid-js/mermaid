@@ -328,3 +328,75 @@ it('centers the initial transition to TV with defaults and keeps the entry strai
     expect(point.x).toBeCloseTo(points[0].x, 3);
   }
 });
+
+// #8869: ELK's network-simplex node placer throws "NEdge must have a source and
+// target NNode specified" for a self-loop on a node with nodeFlexibility set.
+describe('self-transition on a composite state', () => {
+  const selfLoopFixture = {
+    nodes: [
+      { id: 'root_start', label: '', shape: 'stateStart', padding: 8, width: 14, height: 14 },
+      {
+        id: 'A',
+        isGroup: true,
+        label: 'A',
+        shape: 'roundedWithTitle',
+        dir: 'TB',
+        padding: 8,
+        labelBBox: { width: 9, height: 24 },
+      },
+      {
+        id: 'A_start',
+        parentId: 'A',
+        label: '',
+        shape: 'stateStart',
+        padding: 8,
+        width: 14,
+        height: 14,
+      },
+      {
+        id: 'x',
+        parentId: 'A',
+        label: 'x',
+        shape: 'roundedRect',
+        padding: 8,
+        width: 40,
+        height: 40,
+      },
+      {
+        id: 'y',
+        parentId: 'A',
+        label: 'y',
+        shape: 'roundedRect',
+        padding: 8,
+        width: 40,
+        height: 40,
+      },
+    ],
+    edges: [
+      { id: 'edge0', start: 'root_start', end: 'A', label: '', arrowTypeEnd: 'arrow_barb' },
+      { id: 'edge1', start: 'A_start', end: 'x', label: '', arrowTypeEnd: 'arrow_barb' },
+      { id: 'edge2', start: 'x', end: 'y', label: '', arrowTypeEnd: 'arrow_barb' },
+      { id: 'edge3', start: 'A', end: 'A', label: '', arrowTypeEnd: 'arrow_barb' },
+    ],
+  };
+
+  it.each([
+    { preset: 'depthFirst' },
+    { preset: 'modelOrder' },
+    { nodePlacementStrategy: 'NETWORK_SIMPLEX' },
+    { preset: 'default' },
+  ] as const)('lays out with %o', async (elk) => {
+    mermaidAPI.initialize({ elk });
+    const data = {
+      ...structuredClone(selfLoopFixture),
+      direction: 'TB',
+      config: getConfig(),
+    } as any;
+    await runElkLayoutCore(data, {
+      helpers: context,
+      options: { algorithm: 'elk.layered' },
+    } as any);
+    const loop = data.edges.find((edge: any) => edge.id === 'edge3');
+    expect(loop.points?.length).toBeGreaterThan(1);
+  });
+});
