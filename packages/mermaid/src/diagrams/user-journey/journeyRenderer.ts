@@ -3,6 +3,7 @@ import { select } from 'd3';
 import svgDraw from './svgDraw.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { getUserDefinedConfig } from '../../config.js';
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -278,11 +279,17 @@ export const bounds = {
   },
 };
 
-const fills = conf.sectionFills;
-const textColours = conf.sectionColours;
-
 export const drawTasks = function (diagram, tasks, verticalPos, diagramId) {
   const conf = getConfig().journey;
+  // The merged config appends a user's array to the default one, so the user's own arrays are read first
+  const userConf = getUserDefinedConfig().journey;
+  const userFills = userConf?.sectionFills?.length ? userConf.sectionFills : undefined;
+  const userColours = userConf?.sectionColours?.length ? userConf.sectionColours : undefined;
+  const fills = userFills ?? conf.sectionFills;
+  const textColours = userColours ?? conf.sectionColours;
+  // The theme's rules beat fill attributes and label colours, so colours the user set also go in the style
+  const styleFill = Boolean(userFills);
+  const styleColour = Boolean(userColours);
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   const taskPos = verticalPos + sectionVHeight;
@@ -315,6 +322,8 @@ export const drawTasks = function (diagram, tasks, verticalPos, diagramId) {
         y: 50,
         text: task.section,
         fill,
+        styleFill,
+        styleColour,
         num,
         colour,
         taskCount: taskInSectionCount,
@@ -341,6 +350,8 @@ export const drawTasks = function (diagram, tasks, verticalPos, diagramId) {
     task.height = conf.diagramMarginY;
     task.colour = colour;
     task.fill = fill;
+    task.styleFill = styleFill;
+    task.styleColour = styleColour;
     task.num = num;
     task.actors = taskActors;
 
