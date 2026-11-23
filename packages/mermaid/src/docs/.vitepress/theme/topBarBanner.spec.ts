@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { getTopBarBanner } from './topBarBanner.js';
 
-const campaignAt = (now: string) =>
-  new URL(getTopBarBanner(new Date(now), 'mermaid_js').href).searchParams.get('utm_campaign');
+const bannerAt = (now: string) => getTopBarBanner(new Date(now), 'mermaid_js');
+
+const campaignAt = (now: string) => {
+  const href = bannerAt(now)?.href;
+  return href && new URL(href).searchParams.get('utm_campaign');
+};
 
 describe('getTopBarBanner', () => {
   it('shows the JS26 coupon before 12:01 AM PT on November 19th', () => {
@@ -19,11 +23,18 @@ describe('getTopBarBanner', () => {
   });
 
   it('sends Flow clicks through sign-up to a new Flow with the ticket UTMs', () => {
-    const banner = getTopBarBanner(new Date('2026-11-23T12:00:00Z'), 'mermaid_js');
-    expect(banner.label).toBe('AI workflows you can read, review, and run.');
-    expect(banner.button).toBe('Try Mermaid Flow');
-    expect(banner.href).toBe(
-      'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=november_flow&redirect=%2Fflow%2Fnew'
-    );
+    expect(bannerAt('2026-11-23T12:00:00Z')).toEqual({
+      label: 'AI workflows you can read, review, and run.',
+      button: 'Try Mermaid Flow',
+      href: 'https://mermaid.ai/app/sign-up?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=november_flow&redirect=%2Fflow%2Fnew',
+    });
+  });
+
+  it('keeps the JS26 coupon link', () => {
+    expect(bannerAt('2027-01-15T12:00:00Z')).toEqual({
+      label: 'Try Mermaid Advanced Editor — OSS users get 10% off with code JS26',
+      button: 'Get started',
+      href: 'https://mermaid.ai/app/user/billing/checkout?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=oss_coupon&coupon=arDfyFT8',
+    });
   });
 });
