@@ -733,18 +733,26 @@ export function applyLineJumpsToSvg(
     }
 
     // Read the ORIGINAL stroke-dasharray before rewriting so we can
-    // recompute it against the new total length. The `neo` look emits:
+    // recompute it against the new total length. The `neo` look emits either:
     //   stroke-dasharray: 0 <oValueS> <len - oValueS - oValueE> <oValueE>;
-    // which hides the first oValueS and last oValueE pixels of the stroke
-    // — this is what actually prevents the stroke from poking into the arrow
-    // marker body. Our rewritten path has a different length, so without
-    // updating the "on" portion the hidden tail ends up in the wrong place.
+    // for solid edges, or:
+    //   stroke-dasharray: 0 <oValueS> <dash> <gap> ... <oValueE>;
+    // for dotted/dashed edges, which hides the first oValueS and last oValueE
+    // pixels of the stroke — preventing it from poking into the arrow marker
+    // body. Our rewritten path has a different length, so without updating the
+    // middle portion the hidden tail ends up in the wrong place.
     const originalStyle = pathEl.getAttribute('style') ?? '';
-    const dasharrayMatch = /stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)/.exec(
-      originalStyle
-    );
-    const preservedOValueS = dasharrayMatch ? Number.parseFloat(dasharrayMatch[1]) : null;
-    const preservedOValueE = dasharrayMatch ? Number.parseFloat(dasharrayMatch[2]) : null;
+    const dasharrayMatch = /stroke-dasharray\s*:\s*([^;]+)/.exec(originalStyle);
+    const fields = dasharrayMatch
+      ? dasharrayMatch[1]
+          .trim()
+          .split(/\s+/)
+          .map((n) => Number.parseFloat(n))
+          .filter((n) => Number.isFinite(n))
+      : [];
+    const isClearancePattern = fields.length >= 4 && fields[0] === 0;
+    const preservedOValueS = isClearancePattern ? fields[1] : null;
+    const preservedOValueE = isClearancePattern ? fields[fields.length - 1] : null;
 
     const newD = rewriteEdgePath(renderedEdge, jumps, config);
     pathEl.setAttribute('d', newD);
@@ -755,10 +763,23 @@ export function applyLineJumpsToSvg(
       typeof (pathEl as SVGPathElement).getTotalLength === 'function'
     ) {
       const newLen = (pathEl as SVGPathElement).getTotalLength();
-      const onLen = Math.max(0, newLen - preservedOValueS - preservedOValueE);
-      const newDasharray = `0 ${preservedOValueS} ${onLen} ${preservedOValueE}`;
+      const middleLen = Math.max(0, newLen - preservedOValueS - preservedOValueE);
+      let newDasharray: string;
+      if (fields.length > 4) {
+        const dash = fields[2];
+        const gap = fields[3];
+        const pairLen = dash + gap;
+        const rawPairs = pairLen > 0 ? Math.floor(middleLen / pairLen) : 0;
+        const pairs = Number.isFinite(rawPairs) ? Math.max(0, rawPairs) : 0;
+        const middlePattern = new Array(pairs).fill(`${dash} ${gap}`).join(' ');
+        newDasharray = `0 ${preservedOValueS} ${middlePattern} ${preservedOValueE}`;
+      } else {
+        newDasharray = `0 ${preservedOValueS} ${middleLen} ${preservedOValueE}`;
+      }
+      // Replace only the first `stroke-dasharray` declaration so any later
+      // classDef/user `stroke-dasharray` in the style attribute is preserved.
       const cleaned = originalStyle
-        .replace(/stroke-dasharray\s*:[^;]*;?/g, `stroke-dasharray: ${newDasharray};`)
+        .replace(/stroke-dasharray\s*:[^;]*;?/, `stroke-dasharray: ${newDasharray};`)
         .replace(/;\s*;+/g, ';');
       pathEl.setAttribute('style', cleaned);
     }
