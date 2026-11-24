@@ -463,6 +463,55 @@ data D {
       expect(result.lexerErrors.length).toBeGreaterThan(0);
     });
 
+    it('should require the closing brace of a data block on its own line', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+abc}
+`);
+      // `}` must start a line: `calculateTextProps` strips the char before it.
+      expect(result.lexerErrors.length + result.parserErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should keep prose apostrophes inside data payloads', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem \`jsobj\`{note: Don't stop}
+data D {
+  text: Don't stop
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe("{note: Don't stop}");
+      expect(result.value.dataEntities[0].dataBlockValue).toContain("Don't stop");
+    });
+
+    it('should keep a literal `{` inside a standalone quoted value', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem \`jsobj\`"Type {"\n`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('"Type {"');
+    });
+
+    it('should allow a literal `{` inside a gwt scenario label', () => {
+      const result = parse(`eventmodeling
+gwt 01 "Type {" given cmd AddItem then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities[0].label).toBe('"Type {"');
+    });
+
     it('should end a gwt scenario label at its closing quote', () => {
       const result = parse(`eventmodeling
 gwt 01 "Scenario" given cmd AddItem {"id":"123"} then evt ItemAdded
