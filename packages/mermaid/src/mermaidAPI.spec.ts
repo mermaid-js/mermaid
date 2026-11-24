@@ -69,6 +69,10 @@ describe('mermaidAPI', () => {
         'classDef this; is ; everything :something#not-nothing; and this too'
       );
     });
+    it('removes the ending ; from linkStyle [text1]:[optional word]#[text2]; (issue #5498)', () => {
+      const text = 'linkStyle 0 stroke-width:4px,stroke:#FF69B4;';
+      expect(encodeEntities(text)).toEqual('linkStyle 0 stroke-width:4px,stroke:#FF69B4');
+    });
 
     describe('replaces words starting with # and ending with ;', () => {
       const testStr = 'Hello #there;';

@@ -895,10 +895,7 @@ export default {
 export const encodeEntities = function (text: string): string {
   let txt = text;
 
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
+  txt = txt.replace(/(style|classDef|linkStyle).*:\S*#.*;/g, function (s): string {
     return s.substring(0, s.length - 1);
   });
 
