@@ -106,6 +106,92 @@ describe('mermaidAPI', () => {
           'Hello ﬂ°there¶ß ﬂ°andHere¶ßﬂ°°77653¶ß'
       );
     });
+
+    describe('style and classDef lines', () => {
+      // encodeEntities as it was before #6507. It is the oracle: the line scanner has to remove
+      // the same `;` as the two expressions at the top, it only may not backtrack.
+      const legacyEncodeEntities = (text: string) =>
+        text
+          .replace(/style.*:\S*#.*;/g, (s) => s.substring(0, s.length - 1))
+          .replace(/classDef.*:\S*#.*;/g, (s) => s.substring(0, s.length - 1))
+          .replace(/#\w+;/g, (s) => {
+            const innerTxt = s.substring(1, s.length - 1);
+            return (/^\+?\d+$/.test(innerTxt) ? 'ﬂ°°' : 'ﬂ°') + innerTxt + '¶ß';
+          });
+
+      it.each([
+        ['style A fill:#f9f;', 'style A fill:#f9f'],
+        ['style A fill:#f9f,stroke:#333 ; %% note;', 'style A fill:#f9f,stroke:#333 ; %% note'],
+        ['classDef big fill:#f9f;', 'classDef big fill:#f9f'],
+        // No `#` after a `:`, a space between them, or the `;` before the `#`: nothing to remove.
+        ['style A fill:red;', 'style A fill:red;'],
+        ['style A fill: #f9f ;', 'style A fill: #f9f ;'],
+        ['style A; fill:#f9f', 'style A; fill:#f9f'],
+        // The keyword has to come before the `:`.
+        ['fill:#f9f ; style', 'fill:#f9f ; style'],
+        // Each line is handled on its own.
+        ['style A fill:#f9f\n;', 'style A fill:#f9f\n;'],
+        [
+          'style A fill:#f9f;\r\nclassDef b fill:#000;',
+          'style A fill:#f9f\r\nclassDef b fill:#000',
+        ],
+        // A line with both keywords loses a `;` for each of them.
+        ['style classDef a:#b;c;', 'style classDef a:#bc'],
+      ])('turns %j into %j', (text, expected) => {
+        expect(encodeEntities(text)).toEqual(expected);
+        expect(legacyEncodeEntities(text)).toEqual(expected);
+      });
+
+      it('gives the same result as the expressions it replaces on every short text', () => {
+        // Every sequence of up to 5 of these pieces, 37449 texts in total.
+        const pieces = ['style', 'classDef', ':', '#', ';', ' ', 'a', '\n'];
+        let texts = [''];
+        const different: string[] = [];
+        for (let length = 0; length <= 5; length++) {
+          for (const text of texts) {
+            if (encodeEntities(text) !== legacyEncodeEntities(text)) {
+              different.push(text);
+            }
+          }
+          if (length < 5) {
+            texts = texts.flatMap((text) => pieces.map((piece) => text + piece));
+          }
+        }
+        expect(different).toEqual([]);
+      });
+
+      it.each(['style', 'classDef'])(
+        'scales linearly on a %s line without a ; after the #',
+        (keyword) => {
+          // Same measurement as in regexes.spec.ts: the minimum over a few trials, because noise on
+          // a shared runner only ever adds time.
+          const fastestRun = (run: () => unknown, trials = 5, iterations = 5): number => {
+            let fastest = Infinity;
+            for (let trial = 0; trial < trials; trial++) {
+              const t0 = performance.now();
+              for (let i = 0; i < iterations; i++) {
+                run();
+              }
+              fastest = Math.min(fastest, (performance.now() - t0) / iterations);
+            }
+            return fastest;
+          };
+          const measure = (n: number) => {
+            // The shape from #6507: many places to start, many `:` and many `#`, but no `;` behind
+            // them, so the old expressions tried every combination before giving up.
+            const text = keyword.repeat(n) + '#;' + ':'.repeat(n) + '#'.repeat(n);
+            encodeEntities(text);
+            return fastestRun(() => encodeEntities(text));
+          };
+
+          const small = measure(30);
+          const large = measure(120);
+
+          // 4x the input. Linear predicts ~4x; the old expressions took ~250x.
+          expect(large / Math.max(small, 0.01)).toBeLessThan(8);
+        }
+      );
+    });
   });
 
   describe('decodeEntities', () => {
