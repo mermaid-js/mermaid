@@ -283,7 +283,7 @@ export const draw = function (text, id, version, diagObj) {
 
     // Render the tasks with links
     // Render the other tasks
-    rectangles
+    const taskRectangles = rectangles
       .append('rect')
       .attr('id', function (d) {
         return id + '-' + d.id;
@@ -390,6 +390,13 @@ export const draw = function (text, id, version, diagObj) {
 
         return res + taskClass;
       });
+
+    const dateFormat = diagObj.db.getDateFormat() || 'YYYY-MM-DD';
+    taskRectangles
+      .append('title')
+      .text(
+        (d) => `${dayjs(d.startTime).format(dateFormat)} - ${dayjs(d.endTime).format(dateFormat)}`
+      );
 
     // Append task labels
     rectangles
