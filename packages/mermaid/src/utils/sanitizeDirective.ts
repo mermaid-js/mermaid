@@ -1,5 +1,6 @@
 import { configKeys } from '../defaultConfig.js';
 import { log } from '../logger.js';
+import { sanitizeGridPlacements } from './gridPlacement.js';
 
 /**
  * Dictionary-style configs have arbitrary user-defined keys, so instead of
@@ -31,11 +32,11 @@ const sanitizeDictionaryConfig = (dict: Record<string, unknown>, valuePattern: R
 };
 
 /**
- * Sanitizes directive objects
- *
- * @param args - Directive's JSON
+ * Sanitizes directive values in place, removing unsupported keys and filtering CSS options.
+ * Tracks the parent section so grid placements use shape validation instead of treating authored
+ * node IDs as config keys. Invalid placement coordinates propagate as errors.
  */
-export const sanitizeDirective = (args: any): void => {
+const sanitizeDirectiveValue = (args: any, parentKey?: string): void => {
   log.debug('sanitizeDirective called with', args);
 
   // Return if not an object
@@ -45,7 +46,7 @@ export const sanitizeDirective = (args: any): void => {
 
   // Sanitize each element if an array
   if (Array.isArray(args)) {
-    args.forEach((arg) => sanitizeDirective(arg));
+    args.forEach((arg) => sanitizeDirectiveValue(arg, parentKey));
     return;
   }
 
@@ -70,9 +71,11 @@ export const sanitizeDirective = (args: any): void => {
       const valuePattern = DICTIONARY_CONFIG_PATTERNS[key];
       if (valuePattern) {
         sanitizeDictionaryConfig(args[key], valuePattern);
+      } else if (parentKey === 'grid' && key === 'placements') {
+        sanitizeGridPlacements(args[key]);
       } else {
         log.debug('sanitizing object', key);
-        sanitizeDirective(args[key]);
+        sanitizeDirectiveValue(args[key], key);
       }
       continue;
     }
@@ -95,6 +98,15 @@ export const sanitizeDirective = (args: any): void => {
     }
   }
   log.debug('After sanitization', args);
+};
+
+/**
+ * Sanitizes directive objects
+ *
+ * @param args - Directive's JSON
+ */
+export const sanitizeDirective = (args: any): void => {
+  sanitizeDirectiveValue(args);
 };
 
 export const sanitizeCss = (str: string): string => {

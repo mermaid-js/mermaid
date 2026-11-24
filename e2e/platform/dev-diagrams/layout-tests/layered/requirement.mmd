@@ -1,0 +1,37 @@
+---
+description:
+  A requirement diagram under the layered layout, with requirements, elements
+  and labelled relationships of several kinds.
+config:
+  layout: layered
+---
+requirementDiagram
+  requirement login {
+    id: 1
+    text: Users can sign in.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement reset {
+    id: 1.1
+    text: Users can reset a password.
+    risk: medium
+    verifymethod: inspection
+  }
+  performanceRequirement speed {
+    id: 1.2
+    text: Signing in takes under a second.
+    risk: low
+    verifymethod: analysis
+  }
+  element auth_service {
+    type: service
+  }
+  element load_test {
+    type: "load suite"
+  }
+  login - contains -> reset
+  login - contains -> speed
+  auth_service - satisfies -> login
+  load_test - verifies -> speed
+  reset - derives -> login

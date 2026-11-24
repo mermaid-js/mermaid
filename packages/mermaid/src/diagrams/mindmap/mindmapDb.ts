@@ -1,5 +1,4 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { v4 } from 'uuid';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
@@ -269,6 +268,8 @@ export class MindmapDB {
 
     const processedNode: MindmapLayoutNode = {
       id: node.id.toString(),
+      // Edges use the numeric tree ID; layout configuration should use the authored node ID.
+      placementId: node.nodeId,
       domId: 'node_' + node.id.toString(),
       label: node.descr,
       labelType: 'markdown',
@@ -410,7 +411,6 @@ export class MindmapDB {
       shapes: Object.fromEntries(shapes),
       // Additional properties that layout algorithms might expect
       type: 'mindmap',
-      diagramId: 'mindmap-' + v4(),
     };
   }
 

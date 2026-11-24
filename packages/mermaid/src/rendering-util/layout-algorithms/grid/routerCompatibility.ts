@@ -4,6 +4,11 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { manhattanLength, polylineIntersectsRect, rectForNode } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
 import { isAncestorGroup } from './groups.js';
+import {
+  GRID_LABEL_CLEARANCE,
+  GRID_LABEL_SPAN_MARGIN,
+  type GridLabelSpanRequirement,
+} from './labelGeometry.js';
 import type { GridRoutingTestOptions } from './router.js';
 import {
   routerRect,
@@ -20,10 +25,8 @@ import {
   type EdgeRoutePlan,
   type PreparedEdgeRoutes,
 } from './routerPlanning.js';
-import {
-  GridRoutingResourceLimitError,
-  type GridRoutingInstrumentation,
-} from './routerInstrumentation.js';
+import { GridRoutingResourceLimitError } from './routerErrors.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import {
   buildContainerRoutingTopology,
   DEFAULT_MAX_ROUTING_ESTIMATED_BYTES,
@@ -50,11 +53,15 @@ export const SELF_LOOP_PORT_GAP = 18;
 
 const SELF_LOOP_APPROACH = 14;
 
+// validateLayout rejects endpoints within 3 px of a node corner.
+const SELF_LOOP_CORNER_CLEARANCE = 4;
+
 const SELF_LOOP_TRACK_GAP = 18;
 
 export const SELF_LOOP_PORT_OFFSET_STEP = 4;
 
 export interface PreparedRoutingModes {
+  overlapAvoidanceEnabled: boolean;
   compatibilityFastRoutes: Map<string, Point[]>;
   sparseHierarchyIds: Set<string>;
   sparseLcaIds: Set<string>;
@@ -62,7 +69,7 @@ export interface PreparedRoutingModes {
   routeOccupancy: Map<GridContainerId, RouteOccupancyIndex>;
 }
 
-const MAX_PLANS_FOR_OVERLAP_DEMOTION = 64;
+const MAX_PLANS_FOR_OVERLAP_AVOIDANCE = 64;
 const MAX_FAST_ROUTE_SEPARATION_STEPS = 4;
 
 /**
@@ -479,6 +486,147 @@ function routeSelfLoop(owner: Node, side: GridSide, index: number, demandCoord: 
   }
 }
 
+export function labelAwareSelfLoopCandidates(
+  owner: Node,
+  side: GridSide,
+  index: number,
+  demandCoord: number,
+  requirement: GridLabelSpanRequirement
+): Point[][] {
+  const rect = rectForNode(owner);
+  const baseDepth = SELF_LOOP_APPROACH + (index + 1) * SELF_LOOP_TRACK_GAP;
+  const portOffset = index * SELF_LOOP_PORT_OFFSET_STEP;
+  const baseSpan = SELF_LOOP_PORT_GAP + portOffset * 2;
+  const verticalSide = side === 'left' || side === 'right';
+  const span = Math.max(
+    baseSpan,
+    (verticalSide ? requirement.cross : requirement.along) +
+      GRID_LABEL_CLEARANCE * 2 +
+      GRID_LABEL_SPAN_MARGIN
+  );
+  const depth = Math.max(
+    baseDepth,
+    (verticalSide ? requirement.along : requirement.cross) / 2 + GRID_LABEL_CLEARANCE
+  );
+  const interval = verticalSide ? [rect.top, rect.bottom] : [rect.left, rect.right];
+  const directStart = demandCoord - span / 2;
+  const directEnd = demandCoord + span / 2;
+
+  if (
+    directStart - interval[0] >= SELF_LOOP_CORNER_CLEARANCE &&
+    interval[1] - directEnd >= SELF_LOOP_CORNER_CLEARANCE
+  ) {
+    switch (side) {
+      case 'right':
+        return [
+          normalizePolyline([
+            { x: rect.right, y: directStart },
+            { x: rect.right + depth, y: directStart },
+            { x: rect.right + depth, y: directEnd },
+            { x: rect.right, y: directEnd },
+          ]).points,
+        ];
+      case 'left':
+        return [
+          normalizePolyline([
+            { x: rect.left, y: directStart },
+            { x: rect.left - depth, y: directStart },
+            { x: rect.left - depth, y: directEnd },
+            { x: rect.left, y: directEnd },
+          ]).points,
+        ];
+      case 'top':
+        return [
+          normalizePolyline([
+            { x: directStart, y: rect.top },
+            { x: directStart, y: rect.top - depth },
+            { x: directEnd, y: rect.top - depth },
+            { x: directEnd, y: rect.top },
+          ]).points,
+        ];
+      case 'bottom':
+        return [
+          normalizePolyline([
+            { x: directStart, y: rect.bottom },
+            { x: directStart, y: rect.bottom + depth },
+            { x: directEnd, y: rect.bottom + depth },
+            { x: directEnd, y: rect.bottom },
+          ]).points,
+        ];
+    }
+  }
+
+  const portStart = demandCoord - SELF_LOOP_PORT_GAP / 2 - portOffset;
+  const portEnd = demandCoord + SELF_LOOP_PORT_GAP / 2 + portOffset;
+  if (portStart < interval[0] || portEnd > interval[1]) {
+    return [];
+  }
+  const outerStart = demandCoord - span / 2;
+  const outerEnd = demandCoord + span / 2;
+  const shoulderApproach = Math.max(SELF_LOOP_APPROACH, TERMINAL_APPROACH_PX);
+  // Keep the label clear of the return shoulders as well as the owner.
+  const shoulderDepth = Math.max(
+    depth,
+    shoulderApproach +
+      (verticalSide ? requirement.along : requirement.cross) / 2 +
+      GRID_LABEL_CLEARANCE
+  );
+  switch (side) {
+    case 'right':
+      return [
+        normalizePolyline([
+          { x: rect.right, y: portStart },
+          { x: rect.right + shoulderApproach, y: portStart },
+          { x: rect.right + shoulderApproach, y: outerStart },
+          { x: rect.right + shoulderDepth, y: outerStart },
+          { x: rect.right + shoulderDepth, y: outerEnd },
+          { x: rect.right + shoulderApproach, y: outerEnd },
+          { x: rect.right + shoulderApproach, y: portEnd },
+          { x: rect.right, y: portEnd },
+        ]).points,
+      ];
+    case 'left':
+      return [
+        normalizePolyline([
+          { x: rect.left, y: portStart },
+          { x: rect.left - shoulderApproach, y: portStart },
+          { x: rect.left - shoulderApproach, y: outerStart },
+          { x: rect.left - shoulderDepth, y: outerStart },
+          { x: rect.left - shoulderDepth, y: outerEnd },
+          { x: rect.left - shoulderApproach, y: outerEnd },
+          { x: rect.left - shoulderApproach, y: portEnd },
+          { x: rect.left, y: portEnd },
+        ]).points,
+      ];
+    case 'top':
+      return [
+        normalizePolyline([
+          { x: portStart, y: rect.top },
+          { x: portStart, y: rect.top - shoulderApproach },
+          { x: outerStart, y: rect.top - shoulderApproach },
+          { x: outerStart, y: rect.top - shoulderDepth },
+          { x: outerEnd, y: rect.top - shoulderDepth },
+          { x: outerEnd, y: rect.top - shoulderApproach },
+          { x: portEnd, y: rect.top - shoulderApproach },
+          { x: portEnd, y: rect.top },
+        ]).points,
+      ];
+    case 'bottom':
+      return [
+        normalizePolyline([
+          { x: portStart, y: rect.bottom },
+          { x: portStart, y: rect.bottom + shoulderApproach },
+          { x: outerStart, y: rect.bottom + shoulderApproach },
+          { x: outerStart, y: rect.bottom + shoulderDepth },
+          { x: outerEnd, y: rect.bottom + shoulderDepth },
+          { x: outerEnd, y: rect.bottom + shoulderApproach },
+          { x: portEnd, y: rect.bottom + shoulderApproach },
+          { x: portEnd, y: rect.bottom },
+        ]).points,
+      ];
+  }
+}
+
 export function orderedSelfLoopSides(
   node: Node,
   counts: Map<string, number>,
@@ -522,7 +670,9 @@ export function routeObstacleClearSelfLoop(
   owner: Node,
   ownerSideCounts: Map<string, number>,
   selfLoopCounts: Map<string, number>,
-  result: GridLayoutResult
+  result: GridLayoutResult,
+  labelRequirement?: GridLabelSpanRequirement,
+  metrics?: GridRoutingInstrumentation
 ): { points: Point[]; side: GridSide; index: number } {
   // Side load determines preference, but fixed side ordering breaks ties deterministically.
   const rect = rectForNode(owner);
@@ -531,9 +681,16 @@ export function routeObstacleClearSelfLoop(
     const countKey = `${owner.id}:${side}`;
     const index = selfLoopCounts.get(countKey) ?? 0;
     const demandCoord = side === 'left' || side === 'right' ? rect.cy : rect.cx;
-    const points = routeSelfLoop(owner, side, index, demandCoord);
-    if (!obstacles.some((obstacle) => polylineIntersectsRect(points, obstacle))) {
-      return { points, side, index };
+    const candidates = labelRequirement
+      ? labelAwareSelfLoopCandidates(owner, side, index, demandCoord, labelRequirement)
+      : [routeSelfLoop(owner, side, index, demandCoord)];
+    if (labelRequirement && metrics) {
+      metrics.labelAwareSelfLoopCandidates += candidates.length;
+    }
+    for (const points of candidates) {
+      if (!obstacles.some((obstacle) => polylineIntersectsRect(points, obstacle))) {
+        return { points, side, index };
+      }
     }
   }
   throw gridError('GRID_ROUTE_NOT_FOUND', `No obstacle-clear self-loop route for "${owner.id}"`, {
@@ -919,6 +1076,7 @@ function prepareRoutingModes(
     demandCoords,
     endpointCandidatesByEdge,
     endpointIncidentCounts,
+    coordinatedEndpointIds,
   } = prepared;
   const hasIsolatedEndpoints = (plan: EdgeRoutePlan): boolean =>
     (endpointIncidentCounts.get(plan.edge.start!) ?? 0) === plan.bundleSize &&
@@ -935,11 +1093,15 @@ function prepareRoutingModes(
   };
   const compatibilityFastRoutes = new Map<string, Point[]>();
   const routeOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
+  const overlapAvoidanceEnabled = plans.length <= MAX_PLANS_FOR_OVERLAP_AVOIDANCE;
   const compatibilityFastPathEnabled =
     options.topologyCaps === undefined &&
     options.searchCaps === undefined &&
     options.onDualRouteComparison === undefined;
   for (const plan of compatibilityFastPathEnabled ? eligiblePlans : []) {
+    if (coordinatedEndpointIds.has(plan.edge.id)) {
+      continue;
+    }
     const candidates = endpointCandidatesByEdge.get(plan.edge.id);
     if (plan.bundleSize !== 1 || !candidates?.sources.length || !candidates.targets.length) {
       continue;
@@ -997,7 +1159,7 @@ function prepareRoutingModes(
       routeOccupancy.set(plan.lcaContainerId, occupancy);
     }
     const conflicting = occupancy.conflictsWithRoute(normalized.points, plan.pairKey);
-    if (conflicting && eligiblePlans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
+    if (conflicting && overlapAvoidanceEnabled) {
       // The sparse router can choose other ports and corridors, which reads better than a nudge.
       continue;
     }
@@ -1014,18 +1176,48 @@ function prepareRoutingModes(
     occupancy.add(finalRoute, plan.pairKey);
     compatibilityFastRoutes.set(plan.edge.id, finalRoute);
   }
-  const sparseHierarchyIds = new Set(
-    plans
-      .filter(
-        (plan) =>
-          !eligibleIds.has(plan.edge.id) &&
-          plan.edge.start !== plan.edge.end &&
-          (plan.bundleSize > 1 ||
-            hasIsolatedEndpoints(plan) ||
-            !compatibilityPlanIsValid(plan, result, demandCoords))
-      )
-      .map(({ edge }) => edge.id)
-  );
+  const sparseCandidate = (plan: EdgeRoutePlan): boolean =>
+    !eligibleIds.has(plan.edge.id) &&
+    plan.edge.start !== plan.edge.end &&
+    (plan.bundleSize > 1 ||
+      hasIsolatedEndpoints(plan) ||
+      !compatibilityPlanIsValid(plan, result, demandCoords));
+  const planningOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
+  const overlappingHierarchyIds = new Set<string>();
+  if (overlapAvoidanceEnabled) {
+    for (const plan of prepared.orderedPlans) {
+      if (
+        eligibleIds.has(plan.edge.id) ||
+        plan.edge.start === plan.edge.end ||
+        hasAncestorEndpoint(plan) ||
+        sparseCandidate(plan)
+      ) {
+        continue;
+      }
+      const attachments = compatibilityLcaAttachments(plan, result, demandCoords);
+      const route = routeWithinContainer(
+        plan.lcaContainerId,
+        result,
+        attachments.start,
+        attachments.end,
+        plan.laneIndex
+      );
+      let occupancy = planningOccupancy.get(plan.lcaContainerId);
+      if (!occupancy) {
+        occupancy = new RouteOccupancyIndex();
+        planningOccupancy.set(plan.lcaContainerId, occupancy);
+      }
+      if (occupancy.conflictsWithRoute(route, plan.pairKey)) {
+        overlappingHierarchyIds.add(plan.edge.id);
+      } else {
+        occupancy.add(route, plan.pairKey);
+      }
+    }
+  }
+  const sparseHierarchyIds = new Set([
+    ...plans.filter(sparseCandidate).map(({ edge }) => edge.id),
+    ...overlappingHierarchyIds,
+  ]);
   const sparseLcaIds = new Set([
     ...sparseHierarchyIds,
     ...plans.filter(hasAncestorEndpoint).map(({ edge }) => edge.id),
@@ -1043,6 +1235,7 @@ function prepareRoutingModes(
       ...plan.target.chain.slice(1).map(({ ownerId }) => ownerId),
     ]);
   return {
+    overlapAvoidanceEnabled,
     compatibilityFastRoutes,
     sparseHierarchyIds,
     sparseLcaIds,

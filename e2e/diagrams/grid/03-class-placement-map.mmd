@@ -1,0 +1,17 @@
+---
+config:
+  layout: grid
+  grid:
+    columnGap: 100
+    rowGap: 100
+    placements:
+      Customer: { row: 1, column: 1 }
+      Order: { row: 1, column: 2 }
+      Payment: { row: 2, column: 2 }
+      Shipment: { row: 1, column: 3 }
+---
+classDiagram
+  Customer --> Order : places
+  Customer --> Payment : makes
+  Order --> Payment : pays with
+  Order --> Shipment : creates

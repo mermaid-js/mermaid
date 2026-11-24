@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`layered: DDLT checks on fixtures > records crossing counts 1`] = `
+{
+  "K3,3": 9,
+  "chain BT": 0,
+  "chain RL": 0,
+  "chain TB": 0,
+  "cycle": 0,
+  "disconnected parts": 0,
+  "docs decision flow": 0,
+  "edge crossing into a directed group": 0,
+  "empty graph": 0,
+  "empty group": 0,
+  "labelled LR with minLen": 0,
+  "nested subgraphs with own direction": 0,
+  "parallel edges": 0,
+  "self loop LR": 0,
+  "self loops": 0,
+  "single node": 0,
+  "stepped routing": 0,
+  "straight routing": 0,
+  "subgraphs": 0,
+  "tree 50": 0,
+  "tree 500": 0,
+}
+`;

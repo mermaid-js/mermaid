@@ -38,7 +38,7 @@
     "unocss": "^66.5.12",
     "unplugin-icons": "^23.0.1",
     "unplugin-vue-components": "^28.8.0",
-    "vite": "^7.3.6",
+    "vite": "^7.3.7",
     "vite-plugin-pwa": "^1.0.3",
     "vitepress": "1.6.4",
     "workbox-window": "^7.3.0"

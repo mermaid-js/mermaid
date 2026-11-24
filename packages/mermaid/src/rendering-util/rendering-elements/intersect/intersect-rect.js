@@ -1,4 +1,20 @@
+import { getLineIntersectionOrigin } from './intersection-query.js';
+import intersectPolygon from './intersect-polygon.js';
+
 const intersectRect = (node, point) => {
+  if (getLineIntersectionOrigin(point, node) !== node) {
+    return intersectPolygon(
+      node,
+      [
+        { x: 0, y: 0 },
+        { x: node.width, y: 0 },
+        { x: node.width, y: node.height },
+        { x: 0, y: node.height },
+      ],
+      point
+    );
+  }
+
   var x = node.x;
   var y = node.y;
 

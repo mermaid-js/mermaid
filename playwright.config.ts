@@ -42,7 +42,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 4 : undefined,
   timeout: 60_000,
   expect: {
     timeout: 15_000,
@@ -68,7 +68,7 @@ export default defineConfig({
     // Render at 2x device pixels so diagram screenshots have enough resolution to
     // stay sharp when the Argos grid enlarges them to fill a cell.
     deviceScaleFactor: 2,
-    trace: 'retain-on-failure',
+    trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
   snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',

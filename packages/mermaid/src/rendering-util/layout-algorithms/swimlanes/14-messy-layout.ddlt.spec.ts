@@ -24,7 +24,7 @@ async function runMessyLayout(autoLaneOrdering?: boolean): Promise<LayoutData> {
   const mmdPath = resolve(process.cwd(), FIXTURES_DIR, `${FIXTURE_ID}.mmd`);
   const sizesPath = resolve(process.cwd(), FIXTURES_DIR, `${FIXTURE_ID}.sizes.json`);
   const sizes = loadFreshSizesFixture(sizesPath, mmdPath, FIXTURE_ID);
-  const layout = await parseMmdFileToLayoutData(mmdPath, { stampFlowchartRendererFields: true });
+  const layout = await parseMmdFileToLayoutData(mmdPath, { stampRendererFields: true });
   (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'swimlane';
   const swimlane = { ...layout.config?.swimlane };
   if (autoLaneOrdering != null) {

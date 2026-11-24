@@ -1,0 +1,39 @@
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 100
+    columnGap: 60
+    placements:
+      start: { row: 2, column: 1 }
+      target: { row: 2, column: 7 }
+      top1: { row: 1, column: 2 }
+      bottom1: { row: 3, column: 2 }
+      top2: { row: 1, column: 3 }
+      bottom2: { row: 3, column: 3 }
+      top3: { row: 1, column: 4 }
+      bottom3: { row: 3, column: 4 }
+      top4: { row: 1, column: 5 }
+      bottom4: { row: 3, column: 5 }
+      top5: { row: 1, column: 6 }
+      bottom5: { row: 3, column: 6 }
+---
+flowchart TB
+  start[Start]
+  target[Target]
+  top1[Top 1]
+  bottom1[Bottom 1]
+  top2[Top 2]
+  bottom2[Bottom 2]
+  top3[Top 3]
+  bottom3[Bottom 3]
+  top4[Top 4]
+  bottom4[Bottom 4]
+  top5[Top 5]
+  bottom5[Bottom 5]
+  start -->|A very wide label surrounded by several crossing edges| target
+  top1 --> bottom1
+  top2 --> bottom2
+  top3 --> bottom3
+  top4 --> bottom4
+  top5 --> bottom5

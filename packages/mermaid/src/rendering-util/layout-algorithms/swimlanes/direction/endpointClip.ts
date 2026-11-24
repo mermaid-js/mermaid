@@ -12,7 +12,8 @@ import type { Point, RectBounds } from './geometry.js';
 
 const EPS = 1e-3;
 const INSIDE_EPS = 0.5;
-const CORNER_CLEARANCE = 4;
+/** How far endpoint clipping keeps a terminal leg from a node's corner. */
+export const CORNER_CLEARANCE = 4;
 
 type NodeRect = RectBounds;
 

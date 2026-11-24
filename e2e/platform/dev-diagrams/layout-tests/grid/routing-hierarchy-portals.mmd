@@ -1,0 +1,22 @@
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 72
+    columnGap: 96
+---
+flowchart LR
+  subgraph LEFT["Left group"]
+    subgraph NESTED["Nested group"]
+      SOURCE["Source"]@{ row: 1, column: 1 }
+    end
+    NESTED@{ row: 1, column: 1 }
+  end
+  LEFT@{ row: 1, column: 1 }
+
+  subgraph RIGHT["Right group"]
+    TARGET["Target"]@{ row: 1, column: 1 }
+  end
+  RIGHT@{ row: 1, column: 2 }
+
+  SOURCE --> TARGET

@@ -121,11 +121,11 @@ type MermaidTheme =
   | 'redux-dark'
   | 'redux-color'
   | 'redux-dark-color';
-type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane';
+type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane' | 'grid';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
-const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane'];
+const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane', 'grid'];
 
 // Phases emitted by the profiler tree, in display order. "total" is taken from
 // the root `render` span. See packages/mermaid/src/profiler.ts.
@@ -323,8 +323,16 @@ function isTheme(v: unknown): v is MermaidTheme {
   );
 }
 
+/** Narrows persisted viewer settings to layout names supported by the explorer. */
 function isLayout(v: unknown): v is MermaidLayout {
-  return v === 'dagre' || v === 'elk' || v === 'domus' || v === 'hola' || v === 'swimlane';
+  return (
+    v === 'dagre' ||
+    v === 'elk' ||
+    v === 'domus' ||
+    v === 'hola' ||
+    v === 'swimlane' ||
+    v === 'grid'
+  );
 }
 
 function isLook(v: unknown): v is MermaidLook {
@@ -337,11 +345,21 @@ function isMermaidLogLevel(v: unknown): v is MermaidLogLevel {
   );
 }
 
+/**
+ * Maps legacy `dagre-d3` and `dagre-wrapper` renderer settings to `dagre`.
+ * Current layout names pass through; unsupported values return `null`.
+ */
 function normalizeLayout(v: unknown): MermaidLayout | null {
-  // Back-compat:
-  // - older UI used `renderer=dagre-d3|dagre-wrapper|elk`
-  // - new UI uses `layout=dagre|elk|domus`
-  if (v === 'dagre' || v === 'elk' || v === 'domus' || v === 'hola' || v === 'swimlane') return v;
+  if (
+    v === 'dagre' ||
+    v === 'elk' ||
+    v === 'domus' ||
+    v === 'hola' ||
+    v === 'swimlane' ||
+    v === 'grid'
+  ) {
+    return v;
+  }
   if (v === 'dagre-d3' || v === 'dagre-wrapper') return 'dagre';
   return null;
 }

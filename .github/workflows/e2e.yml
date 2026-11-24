@@ -403,7 +403,7 @@ jobs:
           echo '' >> "$GITHUB_STEP_SUMMARY"
           pnpm exec tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY" || echo '_Bundle size baseline unavailable (snapshot cache miss)._' >> "$GITHUB_STEP_SUMMARY"
 
-      # Rebuild the served bundle with inline source maps so the Playwright run
+      # Rebuild the served bundle with linked source maps so the Playwright run
       # can collect native V8 coverage and map it back to source (no
       # instrumentation). Gated to runs whose coverage is uploaded.
       - name: Build coverage bundle for e2e coverage

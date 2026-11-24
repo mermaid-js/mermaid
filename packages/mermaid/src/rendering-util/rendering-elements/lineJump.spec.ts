@@ -4,6 +4,7 @@ import {
   applyLineJumpsToSvg,
   findEdgeIntersections,
   isStraightPath,
+  normalizeLineHops,
   processEdgesWithJumps,
   type EdgeGeom,
   type LineJumpConfig,
@@ -17,6 +18,21 @@ const ARC_CONFIG: LineJumpConfig = {
 };
 
 describe('lineJump', () => {
+  describe('normalizeLineHops', () => {
+    it.each([
+      { value: false, expected: false },
+      { value: 'arc', expected: 'arc' },
+      { value: 'gap', expected: 'gap' },
+      { value: true, expected: 'arc' },
+      { value: undefined, expected: 'arc' },
+      { value: 'foo', expected: 'arc' },
+      { value: null, expected: 'arc' },
+      { value: 0, expected: 'arc' },
+    ])('normalizes $value to $expected', ({ value, expected }) => {
+      expect(normalizeLineHops(value)).toBe(expected);
+    });
+  });
+
   describe('findEdgeIntersections', () => {
     it('detects a single perpendicular crossing and assigns the jump to the horizontal edge', () => {
       const edges: EdgeGeom[] = [
@@ -492,6 +508,40 @@ describe('lineJump', () => {
       expect(newD).toContain('A1,1 0 0 1');
       // Corner rounding is preserved — Q at the bend point (20, 5).
       expect(newD).toMatch(/Q20,5/);
+    });
+
+    it('preserves a custom corner radius when rewriting a rounded edge', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'verticalLine',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 25 },
+          ],
+          curve: 'rounded',
+          cornerRadius: 12,
+        },
+        {
+          id: 'horizontalBend',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+            { x: 20, y: 25 },
+          ],
+          curve: 'rounded',
+          cornerRadius: 12,
+        },
+      ];
+      const { group } = makeGroup([
+        { id: 'verticalLine', d: 'M5,0 L5,25' },
+        { id: 'horizontalBend', d: 'M0,5 L10,5 Q20,5 20,15 L20,25' },
+      ]);
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const rewritten = group.node()!.querySelector('path[data-id="horizontalBend"]')!;
+      expect(rewritten.getAttribute('d')).toContain('A1,1 0 0 1');
+      expect(rewritten.getAttribute('d')).toContain('L10,5 Q20,5 20,15');
     });
 
     it('skips edges whose curve hint is a true smoothing curve', () => {

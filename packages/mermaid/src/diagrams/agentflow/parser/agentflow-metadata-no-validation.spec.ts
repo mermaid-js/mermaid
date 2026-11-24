@@ -33,6 +33,19 @@ describe('issue #64: parser does not validate metadata (semantics owns it)', () 
       expect(diags(db)).toHaveLength(0);
     });
 
+    it('keeps grid metadata on a vertex without validating it', () => {
+      const db = parse(`agentflow-beta TB
+  a["A"]
+  a@{ row: 2, column: 3, horizontalAlign: "left", verticalAlign: "bottom" }`);
+      expect(vertex(db, 'a')?.metadata).toMatchObject({
+        row: 2,
+        column: 3,
+        horizontalAlign: 'left',
+        verticalAlign: 'bottom',
+      });
+      expect(diags(db)).toHaveLength(0);
+    });
+
     it('keeps an unknown metadata key on a flow without warning', () => {
       const db = parse(`agentflow-beta TB
   flow f["F"]

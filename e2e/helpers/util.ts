@@ -127,6 +127,11 @@ export const assertDiagramNotError = async (page: Page): Promise<void> => {
   await expect(svg.locator('.error-icon')).toHaveCount(0);
 };
 
+/**
+ * Opens a diagram URL, waits for rendering, and runs optional validation and screenshot checks.
+ * Rejects executed XSS payloads and, by default, error-diagram fallbacks. Sandbox validation
+ * receives the iframe instead of the diagram SVG; browser errors supplement render timeouts.
+ */
 export const openURLAndVerifyRendering = async (
   page: Page,
   testInfo: TestInfo,
@@ -157,7 +162,8 @@ export const openURLAndVerifyRendering = async (
     });
   } catch {
     try {
-      await diagramSvg(page).first().waitFor({ state: 'visible', timeout: 15_000 });
+      const renderedSvg = diagramSvg(page).first();
+      await renderedSvg.waitFor({ state: 'visible', timeout: 15_000 });
     } catch (error) {
       const details = [...pageErrors, ...consoleErrors];
       if (details.length > 0) {
@@ -283,14 +289,16 @@ export const verifyScreenshot = async (
     const snapshotName = `${name}.png`;
     const snapshotPath = testInfo.snapshotPath(snapshotName, { kind: 'screenshot' });
 
+    const screenshotOptions = { animations: 'disabled', scale: 'device' } as const;
+
     if (!existsSync(snapshotPath)) {
       mkdirSync(dirname(snapshotPath), { recursive: true });
-      const screenshot = await target.screenshot({ animations: 'disabled', scale: 'device' });
+      const screenshot = await target.screenshot(screenshotOptions);
       writeFileSync(snapshotPath, screenshot);
       return;
     }
 
-    await expect(target).toHaveScreenshot(snapshotName);
+    await expect(target).toHaveScreenshot(snapshotName, screenshotOptions);
   }
 };
 

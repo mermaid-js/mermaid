@@ -1,0 +1,44 @@
+name: v13 alpha bug report
+description: Report a problem with a Mermaid v13 alpha build
+title: '[v13] '
+labels:
+  - 'v13'
+  - 'Status: Triage'
+
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        Thanks for trying the v13 alpha. Please retest on the newest alpha build before you report: the problem may already be fixed.
+
+        Opinions about the direction of v13 belong in the v13 discussion, not in an issue.
+  - type: input
+    attributes:
+      label: Alpha build
+      description: The exact build you used. `npm ls mermaid` shows it.
+      placeholder: 13.0.0-alpha.0
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Diagram source
+      description: The diagram text that shows the problem.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected
+      description: What you expected to happen, or what v12 renders.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual
+      description: What you got instead. A screenshot helps.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Environment
+      description: Where you render (browser, Node, Deno, worker, CLI), your bundler, and any config you pass to `initialize()`.
