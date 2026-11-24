@@ -84,6 +84,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 - [Microsoft Loop](https://loop.cloud.microsoft) ✅
+- [Devtoolry Mermaid Editor](https://devtoolry.com/developer-tools/mermaid-editor) - Free browser-based Mermaid editor with live preview, SVG/PNG export and shareable links
 
 ### LLM integrations
 
