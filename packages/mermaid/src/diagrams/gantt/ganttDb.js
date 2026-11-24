@@ -584,6 +584,17 @@ const parseData = function (prevTaskId, dataStr) {
       };
       break;
     default:
+      // A task line accepts at most 3 metadata items (id, start, end).
+      // Without this, startTime/endTime stay undefined and compileTask
+      // later throws a bare TypeError that names neither the line nor
+      // the extra item (issue #8188).
+      throw new Error(
+        'Invalid task data: "' +
+          dataStr +
+          '" has ' +
+          data.length +
+          ' metadata items, but a task accepts at most 3 (id, start, end)'
+      );
   }
 
   return task;
