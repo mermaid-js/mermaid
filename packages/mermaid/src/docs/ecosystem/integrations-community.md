@@ -123,6 +123,8 @@ Content Management Systems/Enterprise Content Management
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams Plugin](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
+- [SharePoint](https://www.microsoft.com/microsoft-365/sharepoint/collaboration)
+  - [Mermaid Web Part for SharePoint](https://www.kalmstrom.com/products/Mermaid-WP/) (SharePoint Online and SharePoint Server 2013 to Subscription Edition)
 - [Tiki Wiki CMS Groupware](https://tiki.org)
   - [Tracker Entity Relationship Diagram](https://doc.tiki.org/Tracker-Entity-Relationship-Diagram)
 - [VitePress](https://vitepress.vuejs.org/)
