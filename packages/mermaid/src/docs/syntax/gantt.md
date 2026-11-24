@@ -322,7 +322,7 @@ gantt
 
 ## Comments
 
-Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
+Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax. A # comment can also follow a task on the same line, or stand on its own line: everything from the # to the end of the line is ignored. A # at the start of a task name is part of the name, not a comment.
 
 ```mermaid
 gantt
