@@ -895,9 +895,14 @@ export default {
 export const encodeEntities = function (text: string): string {
   let txt = text;
 
-  txt = txt.replace(/(style|classDef|linkStyle).*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
+  // Only strip a `;` that ends the declaration line: `;` separating statements
+  // on the same line (e.g. `A-->B;linkStyle ...;C-->D`) must stay.
+  txt = txt.replace(
+    /(style|classDef|linkStyle).*:\S*#.*;(?=[^\S\n\r]*(?:\r?\n|$))/g,
+    function (s): string {
+      return s.substring(0, s.length - 1);
+    }
+  );
 
   txt = txt.replace(/#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);

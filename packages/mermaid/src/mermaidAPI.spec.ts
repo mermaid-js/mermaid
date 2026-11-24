@@ -74,6 +74,17 @@ describe('mermaidAPI', () => {
       expect(encodeEntities(text)).toEqual('linkStyle 0 stroke-width:4px,stroke:#FF69B4');
     });
 
+    it('keeps ; that separate statements on the same line (issue #5498)', () => {
+      const text = 'graph TD;A-->B;linkStyle 0 stroke:#f00,stroke-width:4px;B-->C;D-->E';
+      expect(encodeEntities(text)).toEqual(text);
+    });
+
+    it('keeps a ; inside a quoted label that mentions linkStyle (issue #5498)', () => {
+      const text = 'A["linkStyle:ref#35; total;"]';
+      // `#35;` still encodes as a numeric entity, but no `;` is stripped.
+      expect(encodeEntities(text)).toEqual('A["linkStyle:refﬂ°°35¶ß total;"]');
+    });
+
     describe('replaces words starting with # and ending with ;', () => {
       const testStr = 'Hello #there;';
 
