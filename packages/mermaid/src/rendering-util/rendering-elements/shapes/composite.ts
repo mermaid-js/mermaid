@@ -12,7 +12,7 @@ type CompositeNode = Node & {
 export async function composite<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const compositeNode = node as CompositeNode;
   const classes = ['node', compositeNode.cssClasses, compositeNode.class].filter(Boolean).join(' ');
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, compositeNode, classes);
+  const { shapeSvg, bbox, halfPadding, label } = await labelHelper(parent, compositeNode, classes);
   const rect = shapeSvg.insert('rect', ':first-child');
   const nodePadding = compositeNode.padding ?? 0;
   const totalWidth = compositeNode.positioned
@@ -33,6 +33,17 @@ export async function composite<T extends SVGGraphicsElement>(parent: D3Selectio
     .attr('y', y)
     .attr('width', totalWidth)
     .attr('height', totalHeight);
+
+  // The block layout leaves room for the title above the inner blocks. Draw it there,
+  // not in the middle where the inner blocks cover it. A composite with nothing inside
+  // is only as tall as its title, so that one stays centred.
+  const hasTitleBand = totalHeight >= bbox.height + 2 * halfPadding;
+  if (compositeNode.positioned && compositeNode.label && hasTitleBand) {
+    label.attr(
+      'transform',
+      `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${y + halfPadding - (bbox.y - (bbox.top ?? 0))})`
+    );
+  }
 
   updateNodeBounds(compositeNode, rect);
 

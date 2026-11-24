@@ -38,7 +38,11 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     case 'composite':
       radius = 0;
       shape = 'composite';
-      padding = 0;
+      // Measured without padding, so its size is its title's. Once placed it takes the
+      // block padding like any other block, which sets the gap above the title.
+      if (!positioned) {
+        padding = 0;
+      }
       break;
     case 'square':
       shape = 'rect';
@@ -150,6 +154,10 @@ async function calculateBlockSize(
   const boundingBox = nodeEl.node()?.getBBox() ?? { width: 0, height: 0 };
   const obj = db.getBlock(node.id);
   obj.size = { width: boundingBox.width, height: boundingBox.height, x: 0, y: 0, node: nodeEl };
+  if (block.type === 'composite' && block.label) {
+    // Unplaced, a composite measures as its bare title
+    obj.titleHeight = boundingBox.height;
+  }
   db.setBlock(obj);
   nodeEl.remove();
 }
