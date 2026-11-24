@@ -176,4 +176,14 @@ class B cold
     }
     expect([...db.getClassDefs().keys()]).toEqual(['hot', 'cold']);
   });
+
+  it('lets a port share its name with a top-level element, in either order', async () => {
+    await parser.parse('component-beta\ncomponent api\ncomponent A {\n  port api\n}\n');
+    expect(db.getComponents().has('api')).toBe(true);
+    expect(db.getPorts().has('A.api')).toBe(true);
+
+    await parser.parse('component-beta\ncomponent A {\n  port api\n}\ncomponent api\n');
+    expect(db.getComponents().has('api')).toBe(true);
+    expect(db.getPorts().has('A.api')).toBe(true);
+  });
 });

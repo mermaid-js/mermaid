@@ -75,12 +75,16 @@ const setDirection = (direction: Direction): void => {
   state.direction = direction;
 };
 
-const assertUnused = (id: string): void => {
-  // `A.b` is how a port is referenced, so a declared id must not contain a dot itself:
-  // a dotted declaration could not be told apart from, or referenced like, a port.
+// `A.b` is how a port is referenced, so a declared id must not contain a dot itself:
+// a dotted declaration could not be told apart from, or referenced like, a port.
+const assertBareId = (id: string): void => {
   if (id.includes('.')) {
     throw new Error(`Cannot declare "${id}": an id must not contain a dot`);
   }
+};
+
+const assertUnused = (id: string): void => {
+  assertBareId(id);
   if (state.symbols.has(id)) {
     throw new Error(`Cannot declare "${id}": the id is already in use`);
   }
@@ -131,7 +135,9 @@ const addPort = (parentId: string, id: string): void => {
   if (!component) {
     throw new Error(`Cannot declare port "${id}": unknown component "${parentId}"`);
   }
-  assertUnused(id);
+  // The port's own name only has to be bare; it is unique as `parent.name`, so a
+  // top-level element may share the name.
+  assertBareId(id);
   const qualifiedId = `${parentId}.${id}`;
   if (state.symbols.has(qualifiedId)) {
     throw new Error(`Cannot declare "${qualifiedId}": the id is already in use`);
