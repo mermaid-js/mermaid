@@ -1,6 +1,6 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
-import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
+import { NON_BREAKING_SPACE, parseFontSize } from '../../utils.js';
 import common, {
   calculateMathMLDimensions,
   hasKatex,
@@ -295,7 +295,7 @@ export const drawText = function (elem, textData) {
       textElem.attr('dy', dy);
     }
 
-    const text = line || ZERO_WIDTH_SPACE;
+    const text = line.trim() === '' ? NON_BREAKING_SPACE : line;
     if (textData.tspan) {
       const span = textElem.append('tspan');
       span.attr('x', textData.x);
