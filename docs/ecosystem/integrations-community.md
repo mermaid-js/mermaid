@@ -42,6 +42,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [CloudScript.io Mermaid Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
   - [Mermaid plus for Confluence](https://marketplace.atlassian.com/apps/1236814/mermaid-plus-for-confluence?hosting=cloud&tab=overview)
 - [Azure Devops](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
+- [CalderFlow Mermaid Viewer](https://www.calderflow.com/mermaid-viewer) - Free browser-based Mermaid viewer with twelve themes, a slide view and PNG/SVG export. Flowcharts and ER diagrams open as editable charts.
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
 - [Doctave](https://www.doctave.com/) ✅
   - [Mermaid in Markdown code blocks](https://docs.doctave.com/components/mermaid) ✅
