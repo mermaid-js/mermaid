@@ -273,6 +273,7 @@ Communication tools and platforms
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
+- [MD2X: Mermaid to PNG](https://markdown2x.com/mermaid-to-png) - Browser-based Mermaid to PNG converter with live preview and theme-matched colors; also turns Markdown with Mermaid diagrams into X (Twitter) Articles
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io) ✅
