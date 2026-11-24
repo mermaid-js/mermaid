@@ -60,6 +60,6 @@ Alignment:
 // terminal only matches there; otherwise 'L', 'R', 'T' and 'B' must stay part
 // of the surrounding identifier (e.g. `service TH(disk)` or `L:Backend`).
 // Whitespace may separate the letter from its colon (e.g. `a: B -- T :b`).
-terminal ARROW_DIRECTION: /[LRTB](?=[ \t]*:)|(?<=:[ \t]*)[LRTB](?![-\w])/;
+terminal ARROW_DIRECTION: /[LRTB](?=[ \t]*:)|(?<=:[ \t]*)[LRTB](?!\w|-(?![-\[]))/;
 terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /<|>/;

@@ -220,6 +220,21 @@ describe('architecture', () => {
             service Backend(disk)
             a:R -- L:Backend
             `,
+      `architecture-beta
+            service a(disk)
+            service b(disk)
+            a:R--L:b
+            `,
+      `architecture-beta
+            service a(disk)
+            service b(disk)
+            a:R-[title]-L:b
+            `,
+      `architecture-beta
+            service a(disk)
+            service B-api(disk)
+            a:R -- L:B-api
+            `,
     ])(
       'should read an edge endpoint whose id starts with a direction letter',
       (context: string) => {
