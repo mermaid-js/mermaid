@@ -581,6 +581,21 @@ class C13["With Città foreign language"]
       parser.parse(str);
     });
 
+    it('should render \\n in a note as a line break', function () {
+      parser.parse(String.raw`classDiagram
+        note for Duck "can fly\ncan swim\ncan dive"
+        note "From Duck\ntill Zebra"`);
+
+      const noteLabels = classDb
+        .getData()
+        .nodes.filter((node) => node.shape === 'note')
+        .map((node) => node.label);
+      expect(noteLabels).toEqual([
+        'can fly<br />can swim<br />can dive',
+        'From Duck<br />till Zebra',
+      ]);
+    });
+
     const keywords = [
       'direction',
       'classDiagram',
