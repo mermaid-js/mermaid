@@ -26,6 +26,37 @@ describe('Venn diagram', function () {
     ]);
   });
 
+  test.each([
+    ['LF', '\n'],
+    ['CRLF', '\r\n'],
+    ['CR', '\r'],
+  ])('rejects a bare title followed by a %s newline', (_name, newline) => {
+    const input = ['venn-beta', '  title', '  set A', '  set B'].join(newline);
+
+    expect(() => venn.parse(input)).toThrow();
+  });
+
+  test.each([
+    ['space', ' '],
+    ['tab', '\t'],
+  ])('parses a title separated by a %s without consuming sets', (_name, separator) => {
+    const input = `venn-beta\n  title${separator}Sales Report\n  set A\n  set B`;
+
+    venn.parse(input);
+
+    expect(db.getDiagramTitle()).toBe('Sales Report');
+    expect(db.getSubsetData()).toEqual([
+      expect.objectContaining({ sets: ['A'], size: 10 }),
+      expect.objectContaining({ sets: ['B'], size: 10 }),
+    ]);
+  });
+
+  test('rejects a bare title at the end of the input', () => {
+    const input = 'venn-beta\n  set A\n  title';
+
+    expect(() => venn.parse(input)).toThrow();
+  });
+
   test('with bracket labels', () => {
     const str = `venn-beta
           set A["Alpha"]
