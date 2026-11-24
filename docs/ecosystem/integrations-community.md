@@ -89,6 +89,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 
 LLM integrations to create mermaid diagrams using AI from text descriptions.
 
+- [AI Flowchart](https://aiflowchart.io/mcp) - Create Mermaid flowcharts, sequence diagrams and mind maps from plain English in ChatGPT, Claude or any MCP client, and render Mermaid to PNG/SVG images. Remote MCP server with OAuth.
 - [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
 - [MCP Server Mermaid](https://github.com/hustcc/mcp-mermaid) - Generate mermaid diagram and chart with AI MCP dynamically.
 - [Mermaid Studio](https://mermaidstudio.dev) - Leverage Mermaid Studio's code intelligence and diagram generation capabilities via MCP to create high-quality diagrams (requires a [JetBrains IDE](https://jetbrains.com/ides)) using your favorite coding agent.
