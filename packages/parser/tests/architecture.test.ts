@@ -208,6 +208,21 @@ describe('architecture', () => {
       expect(edge?.lhsDir).toBe('B');
       expect(edge?.rhsDir).toBe('T');
     });
+
+    it('should read direction letters separated from their colon by whitespace', () => {
+      const context = `architecture-beta
+            service a(disk)
+            service b(disk)
+            a: B -- T :b
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture.$type);
+
+      const edge = result.value.edges?.[0];
+      expect(edge?.lhsDir).toBe('B');
+      expect(edge?.rhsDir).toBe('T');
+    });
   });
 
   describe('should handle non-ASCII and punctuation in unquoted titles', () => {
