@@ -403,6 +403,50 @@ gwt 01 given evt ItemAdded {
       expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('ItemAdded');
     });
 
+    it('should keep a `}` inside a quoted string from closing an inline payload', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem \`json\`{"text":"}"}\n`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('{"text":"}"}');
+    });
+
+    it('should keep a `}` inside a quoted string from closing a data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  text: "}"
+  id: 1
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('id: 1');
+    });
+
+    it('should capture a quoted payload that contains quotes and braces', () => {
+      const result = parse(
+        `eventmodeling\ntf 01 evt X ->> 01 \`json\`" { "a": { "c": true } } "\n`
+      );
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('" { "a": { "c": true } } "');
+    });
+
     it('should parse an indented closing brace in a data block', () => {
       const result = parse(`eventmodeling
 tf 01 cmd AddItem [[D]]
