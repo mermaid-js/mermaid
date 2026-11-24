@@ -438,6 +438,10 @@ vertexStatement: vertexStatement link withShape
 
 node: styledVertex
         { /*console.warn('nod', $styledVertex);*/ $$ = [$styledVertex];}
+    | node SPACE STYLE_SEPARATOR SPACE idString
+        { $$ = $node; yy.setClass($node[$node.length-1], $idString) }
+    | node SPACE STYLE_SEPARATOR idString
+        { $$ = $node; yy.setClass($node[$node.length-1], $idString) }
     | withShape spaceList AMP spaceList styledVertex
         {  yy.addVertex($withShape.nodes[$withShape.nodes.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$withShape.shapeData); $$ = $withShape.nodes.concat($styledVertex); /*console.warn('pip2', $withShape.nodes[0], $styledVertex, $$);*/  }
     | node spaceList AMP spaceList styledVertex
@@ -447,6 +451,8 @@ node: styledVertex
 styledVertex: vertex
         { /* console.warn('nodc', $vertex);*/ $$ = $vertex;}
     | vertex STYLE_SEPARATOR idString
+        {$$ = $vertex;yy.setClass($vertex,$idString)}
+    | vertex STYLE_SEPARATOR SPACE idString
         {$$ = $vertex;yy.setClass($vertex,$idString)}
     ;
 
