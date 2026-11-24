@@ -4,13 +4,52 @@ on:
     - cron: '0 7 * * 1'
   workflow_dispatch:
 
+# A job-level permissions block can only narrow this one, so the write grant lives here and the
+# update job, which runs a package straight from the registry, holds read only.
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-browser-list:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - run: npx update-browserslist-db@latest
+      - name: Record the update
+        run: git diff > browserslist.patch
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: browserslist-patch
+          path: browserslist.patch
+          if-no-files-found: error
+
+  publish:
+    needs: update-browser-list
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          name: browserslist-patch
+      - name: Apply the update
+        run: |
+          if [ -s browserslist.patch ]; then
+            git apply --check browserslist.patch
+            git apply browserslist.patch
+          else
+            echo "No browserslist changes this week."
+          fi
+      - name: Drop the transfer file
+        run: rm -f browserslist.patch
       - name: Commit changes
         uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9.1.4
         with:
