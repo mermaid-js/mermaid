@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mermaid timing diagrams</title>
+  </head>
+  <body>
+    <h1>Timing diagrams</h1>
+    <pre class="mermaid">
+timingDiagram-beta
+  title Synchronous bus read
+  timeUnit ns
+  clock CLK as "Clock" : period 2
+  binary EN as "Enable"
+  bus DATA as "Data bus"
+  state S as "Controller" : Idle, Reading
+  analog V as "Voltage" : min 0, max 5
+  EN : 0 x2, 1 x4, 0 x2
+  DATA : Z x2, "D0", "D1", "D2", "D3", Z x2
+  at 0
+    S is Idle
+    V is 0
+  at 2
+    S is Reading
+    V is 3.3
+  at 6
+    S is Idle
+    V is 5
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

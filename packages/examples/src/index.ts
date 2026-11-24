@@ -10,6 +10,7 @@ import userJourneyDiagram from './examples/user-journey.js';
 import mindmapDiagram from './examples/mindmap.js';
 import requirementDiagram from './examples/requirement.js';
 import radarDiagram from './examples/radar.js';
+import timingDiagram from './examples/timing.js';
 import stateDiagram from './examples/state.js';
 import erDiagram from './examples/er.js';
 import gitDiagram from './examples/git.js';
@@ -45,6 +46,7 @@ export const diagramData: DiagramMetadata[] = [
   mindmapDiagram,
   requirementDiagram,
   radarDiagram,
+  timingDiagram,
   stateDiagram,
   erDiagram,
   gitDiagram,
