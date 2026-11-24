@@ -99,4 +99,16 @@ describe('createText', () => {
       expect(output.textContent).toEqual(expected);
     }
   );
+
+  it('keeps HTML label foreignObject size writes from being transitioned', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(select(svgGroup), 'fetch', {
+      useHtmlLabels: true,
+      markdown: false,
+    });
+    expect(output.tagName).toBe('foreignObject');
+    expect(output.style.getPropertyPriority('transition')).toBe('important');
+    expect(output.style.getPropertyValue('transition')).toBe('none');
+  });
 });
