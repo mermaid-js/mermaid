@@ -1,0 +1,24 @@
+---
+description: >-
+  Sequence diagram with KaTeX in actor names, a message, and loop/alt/else/par/and
+  block titles (#7681). Block titles containing $$...$$ must not be split by
+  label wrapping, section titles must sit below their dashed divider, and math
+  actor labels must use the same font size as plain actor labels.
+---
+sequenceDiagram
+  participant A as $$\alpha$$lex
+  participant B as Bob
+  A->>B: Hello, does $$\frac{1}{2}+1=2$$?
+  loop Every $$\frac{1}{2}$$ minute
+    B->>B: Recheck value
+  end
+  alt $$x > 0$$
+    A->>B: Yes
+  else $$x \le 0$$
+    A->>B: No
+  end
+  par $$\theta$$ branch
+    A->>B: one
+  and $$\beta$$ branch
+    B->>A: two
+  end
