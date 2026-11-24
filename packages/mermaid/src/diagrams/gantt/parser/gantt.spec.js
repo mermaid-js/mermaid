@@ -137,6 +137,48 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].id).toEqual('des1');
     expect(tasks[0].task).toEqual('Design jison grammar');
   });
+  it('should report a trailing comma after a full task line', function () {
+    // The empty field left by the trailing comma pushes the count past the three the
+    // parser handles, so the task used to be built without a startTime and only failed
+    // at render with "Cannot read properties of undefined (reading 'type')".
+    const str =
+      'gantt\n' + 'dateFormat YYYY-MM-DD\n' + 'section S\n' + 'Task A :a1, 2024-01-01, 30d,\n';
+
+    expect(parserFnConstructor(str)).toThrow(
+      'Invalid task definition ":a1, 2024-01-01, 30d,": a task takes at most 3 comma-separated fields (id, start, end), but 4 were given.'
+    );
+  });
+
+  it('should report a task carrying more fields than it can have', function () {
+    const str =
+      'gantt\n' + 'dateFormat YYYY-MM-DD\n' + 'section S\n' + 'Task A :a1, 2024-01-01, 30d, junk\n';
+
+    expect(parserFnConstructor(str)).toThrow(
+      'Invalid task definition ":a1, 2024-01-01, 30d, junk": a task takes at most 3 comma-separated fields (id, start, end), but 4 were given.'
+    );
+  });
+
+  it('should keep the empty end field of a vert marker', function () {
+    // `vert, 01,` is two fields once the tag is stripped — a start with the end left
+    // empty — and is the form the vert-tag rendering fixture uses. Treating the empty
+    // field as a stray trailing comma and dropping it would re-read the `01` as the end
+    // and move the marker off its start.
+    const str =
+      'gantt\n' +
+      'dateFormat ss\n' +
+      'section S\n' +
+      'A task    : a1, 00, 6s\n' +
+      'Milestone : vert, 01,\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const marker = parser.yy.getTasks()[1];
+
+    expect(marker.vert).toBe(true);
+    expect(marker.startTime).toEqual(marker.endTime);
+    expect(marker.startTime.getSeconds()).toEqual(1);
+  });
+
   it('should handle a task with start/end time relative to other tasks', function () {
     const str =
       'gantt\n' +
