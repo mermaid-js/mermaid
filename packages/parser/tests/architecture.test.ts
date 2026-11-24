@@ -209,6 +209,27 @@ describe('architecture', () => {
       expect(edge?.rhsDir).toBe('T');
     });
 
+    it.each([
+      `architecture-beta
+            service T(disk)
+            service a(disk)
+            T:R -- L:a
+            `,
+      `architecture-beta
+            service a(disk)
+            service Backend(disk)
+            a:R -- L:Backend
+            `,
+    ])(
+      'should read an edge endpoint whose id starts with a direction letter',
+      (context: string) => {
+        const result = parse(context);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Architecture.$type);
+        expect(result.value.edges).toHaveLength(1);
+      }
+    );
+
     it('should read direction letters separated from their colon by whitespace', () => {
       const context = `architecture-beta
             service a(disk)
