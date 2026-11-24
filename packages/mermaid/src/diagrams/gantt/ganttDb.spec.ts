@@ -268,6 +268,26 @@ describe('when using the ganttDb', function () {
     expect(tasks[6].task).toEqual('test7');
   });
 
+  it('should not extend explicit end dates given in the chart dateFormat for excludes (issue #6794)', function () {
+    ganttDb.setDateFormat('DD/MM/YY');
+    ganttDb.setExcludes('weekends');
+    ganttDb.addSection('weekends skip test');
+    ganttDb.addTask('test1', 'id1,01/07/25,25/07/25');
+    ganttDb.addTask('test2', 'id2,01/07/25,5d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(dayjs('01/07/25', 'DD/MM/YY').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('25/07/25', 'DD/MM/YY').toDate());
+    expect(tasks[0].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[0].manualEndTime).toBeTruthy();
+
+    // Tasks declared with a duration still get extended by `excludes`
+    expect(tasks[1].startTime).toEqual(dayjs('01/07/25', 'DD/MM/YY').toDate());
+    expect(tasks[1].endTime).toEqual(dayjs('08/07/25', 'DD/MM/YY').toDate());
+    expect(tasks[1].manualEndTime).toBeFalsy();
+  });
+
   it('should ignore weekends starting on friday', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.setExcludes('weekends');

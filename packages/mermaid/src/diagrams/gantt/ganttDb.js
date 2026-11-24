@@ -288,6 +288,19 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
 };
 
 /**
+ * Checks whether the task's end was given as an explicit date (rather than a
+ * duration or an `until` statement). Explicit end dates are honored as-is, so
+ * `excludes` must not extend them.
+ *
+ * @param {string} str - The raw end time string.
+ * @param {string} dateFormat - Dayjs date format string.
+ * @returns {boolean} True when `str` parses as a date literal.
+ */
+const isDateLiteral = function (str, dateFormat) {
+  return dayjs(str, dateFormat.trim(), true).isValid() || dayjs(str, 'YYYY-MM-DD', true).isValid();
+};
+
+/**
  * Logs a warning about task ids that an `after` or `until` statement could not resolve.
  *
  * Unknown references fail silently and fall back to today's date, which makes typos and
@@ -526,7 +539,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = isDateLiteral(endTimeData, dateFormat);
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -682,11 +695,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+        rawTasks[pos].manualEndTime = isDateLiteral(rawTasks[pos].raw.endTime.data, dateFormat);
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
