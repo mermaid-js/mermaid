@@ -837,11 +837,13 @@ In Mermaid, by default the branches are shown in the order of their definition o
 
 Sometimes you may want to customize the order of the branches. You can do this by using the `order` keyword next the branch definition. You can set it to a positive number.
 
-Mermaid follows the given precedence order of the `order` keyword.
+Mermaid sorts the branches by an order value, from the lowest value to the highest:
 
-- Main branch is always shown first as it has default order value of `0`. (unless its order is modified and changed from `0` using the `mainBranchOrder` keyword in the config)
-- Next, All branches without an `order` are shown in the order of their appearance in the diagram code.
-- Next, All branches with an `order` are shown in the order of their `order` value.
+- A branch defined with the `order` keyword uses that value.
+- The main branch uses `0` by default. This value can be changed using the `mainBranchOrder` keyword in the config.
+- A branch without an `order` gets an implicit value that is lower than `1`, based on where it appears in the diagram code. Branches without an `order` are therefore shown in the order of their appearance, before any branch with an `order` of `1` or higher.
+
+With the default settings, the main branch is shown first, then all branches without an `order`, and then the branches with an `order`, sorted by their `order` value. The main branch is only shown first as long as its value is lower than the values of the other branches, so setting `mainBranchOrder` to a higher value moves it, as the second example below shows.
 
 To fully control the order of all the branches, you must define `order` for all the branches.
 
