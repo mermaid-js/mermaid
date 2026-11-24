@@ -27,6 +27,10 @@ export const styles: DiagramStylesProvider = ({
   const w: WardleyStyleOptions = cleanAndMerge(themeVariables.wardley, wardley);
 
   return `
+  /* font-family applies to every <text> in the map; themeCSS can still override it */
+  .wardley-map {
+    font-family: ${currentConfig.fontFamily};
+  }
   .wardley-background {
     fill: ${w.backgroundColor};
   }
@@ -42,13 +46,9 @@ export const styles: DiagramStylesProvider = ({
   .wardley-grid line {
     stroke: ${w.gridColor};
   }
-  .wardley-node circle {
-    fill: ${w.componentFill};
-    stroke: ${w.componentStroke};
-  }
-  .wardley-node-label {
-    fill: ${w.componentLabelColor};
-  }
+  /* Component circles and labels always get explicit fill/stroke attributes
+     from the renderer (overlays and evolved components differ per node), so a
+     rule here would clobber them. Both stay overrideable through themeCSS. */
   .wardley-link {
     stroke: ${w.linkStroke};
   }
@@ -79,7 +79,7 @@ export const styles: DiagramStylesProvider = ({
     fill: ${w.annotationTextColor};
   }
   .wardley-pipeline-box {
-    stroke: ${w.componentStroke};
+    stroke: ${w.axisColor};
   }
   .wardley-notes text {
     fill: ${w.axisTextColor};

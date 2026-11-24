@@ -82,7 +82,9 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
   const height = data.size?.height ?? configValues.height;
 
   const svg = selectSvgElement(id);
-  svg.selectAll('*').remove();
+  // The diagram's <style> element (diagram styles + themeCSS) is inserted by
+  // mermaidAPI.render before draw runs; keep it and clear everything else.
+  svg.selectAll('*:not(style)').remove();
 
   configureSvgSize(svg, height, width, configValues.useMaxWidth);
   svg.attr('viewBox', `0 0 ${width} ${height}`);
