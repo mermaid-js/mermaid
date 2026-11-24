@@ -1,0 +1,23 @@
+---
+description: >-
+  Copy of the layout-tests regression `terminal-lanes-keep-straight-connector`:
+  in a left-to-right diagram, "Triage -> Resolve" stays one straight line at
+  the centre of both boxes, while "Resolve -> Triage", which leaves Resolve's
+  left face 10 px above it, is separated from it.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph Ops
+  a[Receive]
+  b[Triage]
+  c[Resolve]
+  end
+  subgraph Qa
+  d{Pass?}
+  end
+  a --> b --> c --> d
+  d -->|No| b
+  c --> b
