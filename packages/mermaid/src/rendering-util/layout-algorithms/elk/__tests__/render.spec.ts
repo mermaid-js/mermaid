@@ -19,6 +19,8 @@ import {
 } from '../render.js';
 import { onBorder, type P } from '../geometry.js';
 import intersect from '../../../rendering-elements/intersect/index.js';
+import type { LayoutData, Node } from '../../../types.js';
+import { MindmapDB } from '../../../../diagrams/mindmap/mindmapDb.js';
 
 const log = {
   debug: () => undefined,
@@ -548,6 +550,29 @@ describe('buildElkGraphFromLayoutData', () => {
       ).toBeUndefined();
     }
   });
+
+  describe('coordinates (#8674)', () => {
+    const stateFor = (nodes: Node[]) =>
+      buildElkGraphFromLayoutData(
+        { direction: 'TB', config: { elk: {} }, nodes, edges: [] },
+        elkContext
+      );
+
+    it('hands ELK no x or y for a node whose coordinates are undefined', () => {
+      const { nodeDb } = stateFor([
+        { id: 'unset', isGroup: false, width: 50, height: 20, x: undefined, y: undefined },
+      ]);
+      expect('x' in nodeDb.unset).toBe(false);
+      expect('y' in nodeDb.unset).toBe(false);
+    });
+
+    it('keeps the coordinates a node does carry', () => {
+      const { nodeDb } = stateFor([
+        { id: 'placed', isGroup: false, width: 50, height: 20, x: 5, y: 7 },
+      ]);
+      expect(nodeDb.placed).toMatchObject({ x: 5, y: 7 });
+    });
+  });
 });
 
 describe('runElkLayoutCore', () => {
@@ -656,6 +681,50 @@ describe('runElkLayoutCore', () => {
     expect(child.offset.y).toBeCloseTo(group.offset.posY);
     expect(layoutChild.x).toBeCloseTo(child.offset.posX + child.width / 2);
     expect(layoutChild.y).toBeCloseTo(child.offset.posY + child.height / 2);
+  });
+
+  it('lays out nodes whose x and y are undefined exactly as nodes that have none (#8674)', async () => {
+    const positionsOf = async (unset: { x?: undefined; y?: undefined }) => {
+      const data: LayoutData = {
+        direction: 'TB',
+        config: { elk: {} },
+        nodes: ['A', 'B', 'C'].map((id) => ({
+          id,
+          isGroup: false,
+          width: 40,
+          height: 20,
+          label: id,
+          shape: 'rect',
+          ...unset,
+        })),
+        edges: [
+          { id: 'e1', start: 'A', end: 'B', type: 'arrow_point' },
+          { id: 'e2', start: 'A', end: 'C', type: 'arrow_point' },
+        ],
+      };
+      await runElkLayoutCore(data, elkRenderContext);
+      return data.nodes.flatMap((node) => [node.x, node.y]);
+    };
+
+    const withUndefined = await positionsOf({ x: undefined, y: undefined });
+
+    expect(withUndefined).toEqual(await positionsOf({}));
+    expect(withUndefined.every(Number.isFinite)).toBe(true);
+  });
+
+  it('lays out the nodes of a mindmap, whose x and y are not set until a layout sets them (#8674)', async () => {
+    const db = new MindmapDB();
+    db.clear();
+    db.addNode(0, 'root', 'Garden', 0);
+    db.addNode(1, 'plants', 'Plants', 0);
+    db.addNode(2, 'roses', 'Roses', 0);
+    db.addNode(1, 'tools', 'Tools', 0);
+    const data = db.getData();
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    expect(data.nodes).toHaveLength(4);
+    expect(data.nodes.flatMap((node) => [node.x, node.y]).every(Number.isFinite)).toBe(true);
   });
 });
 
