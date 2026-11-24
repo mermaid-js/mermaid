@@ -84,6 +84,12 @@ export const styles: DiagramStylesProvider = ({
   .wardley-notes text {
     fill: ${w.axisTextColor};
   }
+  .wardley-leader-line {
+    stroke: ${w.annotationStroke};
+    stroke-width: 1px;
+    stroke-opacity: 0.6;
+    fill: none;
+  }
   `;
 };
 

@@ -303,6 +303,17 @@ class Theme {
       annotationStroke: this.wardley?.annotationStroke || this.lineColor,
       annotationTextColor: this.wardley?.annotationTextColor || this.primaryTextColor,
       annotationFill: this.wardley?.annotationFill || this.background,
+      pioneersStroke: this.wardley?.pioneersStroke || '#3490dd',
+      pioneersFill: this.wardley?.pioneersFill || '#3ccaf8',
+      settlersStroke: this.wardley?.settlersStroke || '#396dc0',
+      settlersFill: this.wardley?.settlersFill || '#599afa',
+      townplannersStroke: this.wardley?.townplannersStroke || '#4768c8',
+      townplannersFill: this.wardley?.townplannersFill || '#936ff9',
+      ecosystemOuterFill: this.wardley?.ecosystemOuterFill || '#d7d7d7',
+      ecosystemMiddleFill:
+        this.wardley?.ecosystemMiddleFill || this.wardley?.componentFill || this.background,
+      ecosystemInnerFill:
+        this.wardley?.ecosystemInnerFill || this.wardley?.componentFill || this.background,
     };
 
     /* architecture */
