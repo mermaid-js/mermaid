@@ -1,0 +1,29 @@
+---
+description: >-
+  Five sequential swimlanes (Intake/Review/Build/Ship/Support) under the
+  "redux-color" theme and the handDrawn look, each expected to take a
+  distinct colour slot drawn as roughjs paths rather than plain rects.
+config:
+  theme: redux-color
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+    subgraph Intake
+      A[Request]
+    end
+    subgraph Review
+      B[Check]
+    end
+    subgraph Build
+      C[Assemble]
+    end
+    subgraph Ship
+      D[Deliver]
+    end
+    subgraph Support
+      E[Follow up]
+    end
+    A --> B --> C --> D --> E

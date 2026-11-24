@@ -1,0 +1,8 @@
+%% A subgraph id declared twice renders as one merged subgraph (issue #8326).
+flowchart LR
+subgraph S
+  x
+end
+subgraph S
+  y
+end

@@ -1,0 +1,16 @@
+---
+description: >-
+  Minimal dagre-layout, hand-drawn-look class diagram applying a direct
+  `style` statement (fill/stroke/stroke-width/color) to a single class,
+  with htmlLabels disabled to verify inline styling still renders with
+  SVG-only labels; the sibling without the "-without-htmllabels" suffix
+  repeats this with htmlLabels enabled.
+config:
+  logLevel: 1
+  htmlLabels: false
+  look: handDrawn
+  layout: dagre
+---
+classDiagram
+  class Class10
+  style Class10 fill:#f9f,stroke:#333,stroke-width:4px,color:white

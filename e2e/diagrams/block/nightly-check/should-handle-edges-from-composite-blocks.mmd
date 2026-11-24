@@ -1,0 +1,15 @@
+---
+description: >-
+  An edge (`BL --> B`) originates from a named composite block BL (which
+  contains a child block D) and points to a sibling block B — verifying
+  edges can be drawn from a composite block itself, not just from blocks
+  inside it. Counterpart to the "edges to composite blocks" fixture, which
+  reverses the edge direction.
+---
+block
+  columns 3
+  B space
+  block BL
+  D
+  end
+  BL --> B

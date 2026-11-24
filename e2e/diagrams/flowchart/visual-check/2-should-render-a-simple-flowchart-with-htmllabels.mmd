@@ -1,0 +1,16 @@
+---
+description:
+  Verifies that a basic flowchart renders correctly with `flowchart.htmlLabels`
+  explicitly set to true, using foreignObject-based HTML text labels rather than
+  plain SVG text.
+config:
+  flowchart:
+    htmlLabels: true
+  fontFamily: courier
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

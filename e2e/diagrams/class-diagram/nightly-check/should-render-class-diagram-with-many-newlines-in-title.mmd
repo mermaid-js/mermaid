@@ -1,0 +1,19 @@
+---
+description: >-
+  classDiagram with a backtick-quoted class name spanning many embedded newlines, containing
+  attributes and methods across all visibility modifiers, verifying multi-line class titles
+  render correctly.
+---
+classDiagram
+  class `This
+  Title
+  Has
+  Many
+  Newlines` {
+  +String Also
+  -String Many
+  #int Members
+  +And()
+  -Many()
+  #Methods()
+  }

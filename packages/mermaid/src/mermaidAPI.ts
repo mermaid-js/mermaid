@@ -24,7 +24,8 @@ import * as configApi from './config.js';
 import { getEffectiveHtmlLabels } from './config.js';
 import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import { detectType } from './diagram-api/detectType.js';
+import type { DiagramCode, DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
 import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
@@ -32,6 +33,7 @@ import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import { profiler } from './profiler.js';
 import { preprocessDiagram } from './preprocess.js';
+import { escapeCssIdentifier } from './rendering-util/rendering-elements/edgeStepAnimation.js';
 import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
 import type {
@@ -41,7 +43,7 @@ import type {
   ParseResult,
   RenderResult,
 } from './types.js';
-import { decodeEntities } from './utils.js';
+import { decodeEntities, getErrorMessage } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { sanitizeCss } from './utils/sanitizeDirective.js';
 
@@ -72,6 +74,15 @@ const DOMPURIFY_ATTR = ['dominant-baseline'];
 function processAndSetConfigs(text: string) {
   const processed = preprocessDiagram(text);
   configApi.reset();
+  // The config needs the diagram type to apply that type's appearance defaults. Text
+  // matching nothing leaves the global defaults in charge; parse raises the real error.
+  let diagramType: string | undefined;
+  try {
+    diagramType = detectType(processed.code.cleaned, configApi.getConfig());
+  } catch {
+    diagramType = undefined;
+  }
+  configApi.setDiagramConfigScope(diagramType);
   configApi.addDirective(processed.config ?? {});
   return processed;
 }
@@ -92,13 +103,17 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
   addDiagrams();
   try {
     const { code, config } = processAndSetConfigs(text);
-    const diagram = await getDiagramFromText(code);
+    // Pass the whole DiagramCode object so diagrams that report source
+    // positions see the same text (and frontmatter offset) that render() uses.
+    const diagram = await Diagram.fromText(code);
     return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
     }
     throw error;
+  } finally {
+    configApi.setDiagramConfigScope(undefined);
   }
 }
 
@@ -460,7 +475,7 @@ export const removeExistingElements = (
  * Deprecated for external use.
  */
 
-const render = async function (
+const renderDiagram = async function (
   id: string,
   text: string,
   svgContainingElement?: Element
@@ -471,18 +486,34 @@ const render = async function (
     profiler.start('render');
   }
 
-  const processed = processAndSetConfigs(text);
-  text = processed.code;
+  let processed: ReturnType<typeof processAndSetConfigs> | undefined;
+  let preprocessingError: unknown;
+  try {
+    processed = processAndSetConfigs(text);
+  } catch (error) {
+    // Defer the error until the SVG exists, using only the site's configuration.
+    preprocessingError = error;
+    configApi.reset();
+  }
+  // Keep the DiagramCode object, not just the cleaned string: diagrams that
+  // report source positions need `withComments` and `frontmatterLineOffset`,
+  // and dropping them here silently disabled that on the render path while
+  // `parse()` still had them.
+  let code: DiagramCode | undefined = processed?.code;
+  text = code?.cleaned ?? text;
 
   const config = configApi.getConfig();
   log.debug(config);
 
-  // Check the maximum allowed text size
+  // Check the maximum allowed text size. `Diagram.fromText` separately caps the
+  // comment-preserving variant, which only diagrams that report source
+  // positions ever parse.
   if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+    code = { raw: text, cleaned: text };
   }
 
-  const idSelector = `#${id}` as const;
+  const idSelector = `#${escapeCssIdentifier(id)}` as const;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
@@ -552,9 +583,12 @@ const render = async function (
   let parseEncounteredException;
 
   try {
+    if (!processed || !code) {
+      throw preprocessingError;
+    }
     diag = injected.profiling
-      ? await profiler.span('parse', () => Diagram.fromText(text, { title: processed.title }))
-      : await Diagram.fromText(text, { title: processed.title });
+      ? await profiler.span('parse', () => Diagram.fromText(code, { title: processed.title }))
+      : await Diagram.fromText(code, { title: processed.title });
   } catch (error) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -562,6 +596,8 @@ const render = async function (
     }
     diag = await Diagram.fromText('error');
     parseEncounteredException = error;
+    // Let the error diagram show what actually went wrong, not just "Syntax error in text"
+    diag.db.setErrorMessage?.(getErrorMessage(error));
   }
 
   // Get the temporary div element containing the svg
@@ -658,6 +694,23 @@ const render = async function (
 };
 
 /**
+ * Renders the diagram, holding the diagram config scope for exactly as long as the render.
+ * Leaving it set would make `getConfig()` report the last diagram's appearance as the
+ * global answer for every caller between renders.
+ */
+const render = async function (
+  id: string,
+  text: string,
+  svgContainingElement?: Element
+): Promise<RenderResult> {
+  try {
+    return await renderDiagram(id, text, svgContainingElement);
+  } finally {
+    configApi.setDiagramConfigScope(undefined);
+  }
+};
+
+/**
  * @param  userOptions - Initial Mermaid options
  */
 function initialize(userOptions: MermaidConfig = {}) {
@@ -673,13 +726,24 @@ function initialize(userOptions: MermaidConfig = {}) {
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
-  if (options?.theme && options.theme in theme) {
+  // Stylesheets gate their palette rules on the theme *name*, so an unrecognised name left
+  // in place loads a palette that is then never rendered. Read the fallback from
+  // `defaultConfig` so the schema's `theme.default` stays the one place it is written down.
+  const fallbackTheme = configApi.defaultConfig.theme as keyof typeof theme;
+  if (options?.theme && Object.hasOwn(theme, options.theme)) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme as keyof typeof theme].getThemeVariables(
       options.themeVariables
     );
   } else if (options) {
-    options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
+    // Two values deliberately keep their name. `'null'` is the documented sentinel for
+    // disabling the pre-defined themes, so normalising it would re-enable one; and an
+    // absent theme needs no name written in, because `defaultConfig` already supplies the
+    // same fallback. Anything else is a name no theme answers to, and is corrected here.
+    if (options.theme != null && options.theme !== 'null') {
+      options.theme = fallbackTheme;
+    }
+    options.themeVariables = theme[fallbackTheme].getThemeVariables(options.themeVariables);
   }
 
   const config =
@@ -691,6 +755,7 @@ function initialize(userOptions: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
+  // `code` is now a DiagramCode object; Diagram.fromText accepts either shape.
   return Diagram.fromText(code, metadata);
 };
 

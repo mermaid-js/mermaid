@@ -1,0 +1,13 @@
+---
+description: >-
+  CLUSTER entity declares attributes whose type includes a parenthesized
+  length or precision argument (varchar(99), string(255)), verifying
+  parameterized type syntax in attribute declarations.
+config:
+  logLevel: 1
+---
+erDiagram
+    CLUSTER {
+      varchar(99) name
+      string(255) description
+    }

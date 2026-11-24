@@ -137,6 +137,16 @@ function getState(): Context {
 }
 
 function setAst(ast: EventModel) {
+  store.ast = undefined;
+  const frameIds = new Set<string>();
+  for (const frame of ast.frames) {
+    if (frameIds.has(frame.name)) {
+      const line = frame.$cstNode?.range.start.line;
+      const location = line === undefined ? '' : ` on line ${line + 1}`;
+      throw new Error(`Duplicate event modeling frame ID "${frame.name}"${location}`);
+    }
+    frameIds.add(frame.name);
+  }
   store.ast = ast;
 }
 
@@ -570,7 +580,7 @@ function findBoxByLineIndex(
 function decidePositionRelation(state: Context, _command: Command): Event[] {
   const command = _command as PositionRelation;
 
-  if (isEmResetFrame(command.frame) || isFirstFrame(command.index, command.frame)) {
+  if (isFirstFrame(command.index, command.frame)) {
     return [];
   }
 
@@ -584,6 +594,9 @@ function decidePositionRelation(state: Context, _command: Command): Event[] {
   if (command.sourceFrame) {
     sourceBox = findBoxByFrame(state.boxes, command.sourceFrame);
   } else {
+    if (isEmResetFrame(command.frame)) {
+      return [];
+    }
     sourceBox = findBoxByLineIndex(state.boxes, targetBox.swimlane.index, command.index - 1);
   }
 
@@ -669,6 +682,7 @@ function dispatch(state: Context, command: Command): Context {
 
 export const db: EventModelingDB = {
   getConfig,
+  preserveCommentsWhenParsing: true,
 
   setOptions,
   getOptions,

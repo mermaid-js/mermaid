@@ -1,0 +1,15 @@
+---
+description: >-
+  Minimal three-state linear diagram ([*] -> State1 -> State2 -> [*])
+  under classic look and the default theme. Unlike its state-diagram/
+  siblings, this fixture uses the `stateDiagram-v2` syntax keyword rather
+  than legacy `stateDiagram`, and sets look/theme instead of
+  logLevel/fontFamily.
+config:
+  look: classic
+  theme: default
+---
+stateDiagram-v2
+  [*] --> State1
+  State1 --> State2
+  State2 --> [*]

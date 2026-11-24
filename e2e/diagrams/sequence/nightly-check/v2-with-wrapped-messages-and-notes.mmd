@@ -1,0 +1,25 @@
+---
+description: >-
+  A long message, a long multi-participant note, a par block with explicit <br>
+  line breaks, and a loop with a long note — all with sequence.wrap enabled.
+config:
+  sequence:
+    wrap: true
+---
+sequenceDiagram
+  participant A
+  participant B
+
+  A ->> B: This is a very long message that should wrap properly in the diagram rendering
+  Note over A,B: This is a very long note that should also wrap properly when rendered in the diagram
+
+  par Wrapped parallel
+    A ->> B: Parallel message 1<br>with explicit line break
+    and
+    B ->> A: Parallel message 2<br>with explicit line break
+  end
+
+  loop Wrapped loop
+    Note right of B: This is a long note<br>in a loop
+    A ->> B: Message in loop
+  end

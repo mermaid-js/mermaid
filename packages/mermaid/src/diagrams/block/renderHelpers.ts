@@ -6,6 +6,8 @@ import {
   positionEdgeLabel,
 } from '../../rendering-util/rendering-elements/edges.js';
 import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes.js';
+import { stampColorSlot } from '../common/colorThemeGate.js';
+import type { D3Selection } from '../../types.js';
 import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import { getStylesFromArray } from '../../utils.js';
 import type { BlockDB } from './blockDB.js';
@@ -127,6 +129,8 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     intersect: undefined,
     padding: padding ?? getConfig()?.block?.padding ?? 0,
     widthInColumns: vertex.widthInColumns ?? 1,
+    colorIndex: vertex.colorIndex,
+    look: getConfig().look,
   };
   return node;
 }
@@ -157,7 +161,26 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   const obj = db.getBlock(node.id);
   if (obj.type !== 'space') {
     const config = getConfig();
-    await insertNode(elem, node, { config });
+    const el = await insertNode(elem, node, { config });
+    /* Only where a slot was actually assigned -- composites. `stampColorSlot` falls back
+       to `colorIndex ?? 0`, so calling it unconditionally would stamp every plain block
+       with slot 0 and paint the whole diagram one colour. `squareRect.ts` guards the same
+       way for the same reason.
+
+       Stamped here rather than inside the shapes because `composite.ts` does not stamp
+       for itself, and doing it in the block renderer keeps the change inside the block
+       diagram: no other diagram routes through this call. */
+    if (node.colorIndex !== undefined) {
+      stampColorSlot(
+        // `insertNode` returns an anchor instead of a group when the node carries a
+        // link, and both are `SVGGraphicsElement`s -- but the union of the two selections
+        // is not assignable to one instantiation of the generic, so it is narrowed here.
+        el as D3Selection<SVGGraphicsElement>,
+        node.colorIndex,
+        config.theme,
+        config.themeVariables?.borderColorArray
+      );
+    }
     block.intersect = node?.intersect;
     positionNode(node);
   }

@@ -1,0 +1,20 @@
+---
+description: >-
+  Tests a nested tree of bare (unquoted) labels, including a dotfile
+  (.gitignore) and mixed file extensions, with showIcons enabled to confirm
+  icons render correctly when labels are not quoted.
+config:
+  treeView:
+    showIcons: true
+---
+treeView-beta
+  my-project/
+  src/
+      components/
+          Button.tsx
+          Header.tsx
+      App.tsx
+      index.js
+  .gitignore
+  package.json
+  README.md

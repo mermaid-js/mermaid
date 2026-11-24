@@ -1,0 +1,13 @@
+---
+description: >-
+  The letter "u" is used both as an entity name (CUSTOMER-u-ORDER) and as
+  part of the unspecified/"many" cardinality operator u--o{ in
+  "PROJECT u--o{ TEAM_MEMBER", verifying the parser disambiguates the
+  reserved cardinality character from an identical entity identifier.
+config:
+  logLevel: 1
+---
+erDiagram
+  CUSTOMER ||--|| u : has
+  u ||--|| ORDER : places
+  PROJECT u--o{ TEAM_MEMBER : "parent"

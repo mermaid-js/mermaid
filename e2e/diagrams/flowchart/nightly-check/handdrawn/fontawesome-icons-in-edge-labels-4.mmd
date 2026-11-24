@@ -1,0 +1,21 @@
+---
+description:
+  Verifies that edges between two subgraphs render correctly when combined with
+  a custom base theme (dark mode with custom primary and title colors) and the
+  hand-drawn look.
+config:
+  look: handDrawn
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+%%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+flowchart LR
+  subgraph A
+  a --> b
+  end
+  subgraph B
+  i -->f
+  end
+  A --> B

@@ -209,12 +209,22 @@ describe('usecase renderer integration', () => {
       getUsecaseEdgeAccessibleName(
         edge({
           relationshipType: 'include',
-          label: 'include',
+          label: '«include»',
           sourceLabel: 'Checkout',
           targetLabel: 'Payment',
         })
       )
     ).toBe('include from Checkout to Payment');
+    expect(
+      getUsecaseEdgeAccessibleName(
+        edge({
+          relationshipType: 'extend',
+          label: '«extend»',
+          sourceLabel: 'Apply coupon',
+          targetLabel: 'Checkout',
+        })
+      )
+    ).toBe('extend from Apply coupon to Checkout');
     expect(
       getUsecaseEdgeAccessibleName(
         edge({ relationshipType: 'association', label: 'includes reporting' })

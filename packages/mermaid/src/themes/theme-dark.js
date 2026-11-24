@@ -1,5 +1,5 @@
 import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { applyOverride, mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -124,6 +124,9 @@ class Theme {
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
     this.edgeLabelBackground = lighten(this.labelBackground, 25);
+
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
 
     /* Sequence Diagram variables */
 
@@ -458,7 +461,7 @@ class Theme {
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
     keys.forEach((k) => {
-      this[k] = overrides[k];
+      this[k] = applyOverride(this[k], overrides[k]);
     });
   }
 }

@@ -49,7 +49,7 @@ jobs:
         env:
           MERMAID_PORT: 9000
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-          APPLITOOLS_BATCH_ID: ${{ github.sha }}
+          APPLITOOLS_BATCH_ID: ${{ github.sha }}-${{ github.run_id }}
           # e.g. mermaid-js/mermaid/my-branch
           APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
           APPLITOOLS_PARENT_BRANCH: ${{ github.event.inputs.parent_branch }}

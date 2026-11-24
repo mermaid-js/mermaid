@@ -1,0 +1,23 @@
+---
+description: >-
+  Same unconnected three-branch structure (dev, v2, feat) as the
+  no-parallel-commits test, but with parallelCommits: true, testing
+  parallel-column layout when branches are never merged back into main.
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph
+  branch dev
+  branch v2
+  branch feat
+  commit id:"1-abcdefg"
+  commit id:"2-abcdefg"
+  checkout main
+  commit id:"3-abcdefg"
+  checkout dev
+  commit id:"4-abcdefg"
+  checkout v2
+  commit id:"5-abcdefg"
+  checkout main
+  commit id:"6-abcdefg"

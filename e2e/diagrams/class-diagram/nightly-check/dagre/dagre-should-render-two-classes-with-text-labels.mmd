@@ -1,0 +1,14 @@
+---
+description: >-
+  Dagre-layout class diagram with two classes given text labels via bracket
+  syntax, one label containing special characters ("Class 2 with chars
+  @?"), connected by a single relationship.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  class C1["Class 1 with text label"]
+  class C2["Class 2 with chars @?"]
+  C1 -->  C2

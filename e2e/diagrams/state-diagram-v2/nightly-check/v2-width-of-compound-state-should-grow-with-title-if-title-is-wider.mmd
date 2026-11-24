@@ -1,0 +1,13 @@
+---
+description: >-
+  A composite state (NotShooting) given a wide quoted title ("Long state
+  name 2") that is longer than its small nested content (a --> b) - tests
+  that the compound state's box width grows to fit its title rather than
+  shrinking to fit only its children.
+config:
+  logLevel: 0
+---
+stateDiagram-v2
+  state "Long state name 2" as NotShooting {
+  a-->b
+  }

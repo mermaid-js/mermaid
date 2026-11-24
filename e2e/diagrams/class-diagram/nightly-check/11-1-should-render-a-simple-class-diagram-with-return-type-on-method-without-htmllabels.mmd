@@ -1,0 +1,16 @@
+---
+description: >-
+  Class with a generic type parameter (`~T~`) whose methods declare array
+  parameter types and array/bool return types (`test(int[] ids) bool`,
+  `testArray() bool[]`), to check method return-type rendering. Uses a
+  top-level `htmlLabels: false` config key.
+config:
+  logLevel: 1
+  htmlLabels: false
+---
+classDiagram
+  class Class10~T~ {
+  int[] id
+  test(int[] ids) bool
+  testArray() bool[]
+  }

@@ -1,0 +1,34 @@
+---
+description: >-
+  "stateDiagram-v2" syntax, the v2-syntax sibling of the legacy-stateDiagram
+  theme fixture: same two composite states (one with three parallel concurrent
+  regions, one a simple cycle), accTitle/accDescr, and a note, rendered under
+  the "default" theme via an in-body %%{init}%% directive.
+---
+%%{init: { 'logLevel': 0, 'theme': 'default'} }%%
+stateDiagram-v2
+  accTitle: This is a title
+  accDescr: This is a description
+
+  [*] --> Active
+
+  state Active {
+      [*] --> NumLockOff
+      NumLockOff --> NumLockOn : EvNumLockPressed
+      NumLockOn --> NumLockOff : EvNumLockPressed
+      --
+      [*] --> CapsLockOff
+      CapsLockOff --> CapsLockOn : EvCapsLockPressed
+      CapsLockOn --> CapsLockOff : EvCapsLockPressed
+      --
+      [*] --> ScrollLockOff
+      ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+      ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+  }
+  state SomethingElse {
+    A --> B
+    B --> A
+  }
+
+  Active --> SomethingElse2
+  note right of SomethingElse2 : This is the note to the right.

@@ -20,7 +20,7 @@
  * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
  *   const spec = detectScope(['packages/mermaid/src/diagrams/flowchart/flowchart.ts']);
- *   // => 'e2e/rendering/flowchart/**'
+ *   // => 'e2e/rendering/flowchart/'
  */
 
 import { createInterface } from 'readline';
@@ -221,9 +221,10 @@ export function detectScope(files, options = {}) {
         break;
       }
 
-      // File inside a diagram subfolder → scope to that subfolder.
+      // File inside a diagram subfolder → scope to that subfolder. Playwright
+      // treats CLI filters as regular expressions, so keep this glob-free.
       const subFolder = rest.slice(0, slashIdx);
-      directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/**`);
+      directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/`);
       continue;
     }
 
@@ -254,7 +255,8 @@ export function detectScope(files, options = {}) {
     return '';
   }
 
-  // Build spec patterns from diagram names using filesystem discovery
+  // Build regular-expression-safe spec patterns from diagram names using
+  // filesystem discovery. A trailing slash matches every file in the folder.
   const specs = new Set(directlyChangedSpecs);
 
   /** @type {Set<string> | null} */
@@ -277,7 +279,7 @@ export function detectScope(files, options = {}) {
   for (const name of diagramNames) {
     const folder = `${specBaseDir}/${name}`;
     if (existsSync(folder)) {
-      specs.add(`${folder}/**`);
+      specs.add(`${folder}/`);
     } else if (hasFixtures(name)) {
       // Fixtures-only diagram (no per-diagram spec subfolder) — the global mmd
       // snapshot runner exercises it.

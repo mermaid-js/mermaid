@@ -1,0 +1,16 @@
+---
+description: >-
+  A three-set venn (A, B, C) with only pairwise unions (no triple union)
+  rendered under `config.theme: dark`, verifying the dark theme's colors are
+  applied correctly to a venn diagram.
+config:
+  theme: dark
+---
+venn-beta
+  title Dark Theme
+  set A
+  set B
+  set C
+  union A, B
+  union B, C
+  union A, C

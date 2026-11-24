@@ -1,0 +1,14 @@
+---
+description: >-
+  Legacy v1 state diagram using the `state "description" as id` syntax to
+  give states long human-readable labels distinct from their ids, with
+  XState2 also receiving an additional inline description line.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  state "Long state description" as XState1
+  state "Another Long state description" as XState2
+  XState2 : New line
+  XState1 --> XState2

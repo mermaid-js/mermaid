@@ -1,0 +1,18 @@
+---
+description: >-
+  A chain of associations with increasing minimum edge length (`-->`,
+  `--->`, `---->`) plus a labelled long edge, checking that extra dashes
+  reserve additional layout space between nodes.
+---
+usecase-beta
+    direction LR
+
+    actor User
+    A("Base length")
+    B("One extra dash")
+    C("Two extra dashes")
+    D("Labelled long edge")
+    User --> A
+    A ---> B
+    B ----> C
+    C -- "longer association" ----> D

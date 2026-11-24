@@ -1,0 +1,10 @@
+agentflow-beta TB
+  file_path["file_path"]
+  file_path@{ shape: input, description: "Path to the file in the GitHub repository to visualize", value: "src/HelloWorld.java" }
+
+  read_file["read_file"]
+  read_file@{ shape: tool, params: "path :: String", returns: "String" }
+
+  flow runner["Runner"]
+    file_path --> read_file
+  end

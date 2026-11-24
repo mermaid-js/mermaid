@@ -1,0 +1,13 @@
+---
+description: >-
+  An entity attribute block covering an array type and a generic type, with
+  htmlLabels disabled.
+config:
+  htmlLabels: false
+---
+erDiagram
+    BOOK {
+      string title
+      string[] authors
+      type~T~ type
+    }

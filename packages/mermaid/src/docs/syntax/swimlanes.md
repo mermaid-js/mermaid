@@ -1,4 +1,5 @@
 ---
+description: 'Divide a process into lanes by actor, team, or system to show who owns each step and where work is handed off.'
 title: Swimlanes Diagram Syntax
 outline: 'deep'
 ---
@@ -6,16 +7,76 @@ outline: 'deep'
 # Swimlanes Diagram (v11.16.0+)
 
 ```warning
-This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+Swimlane diagrams are in beta. Diagrams start with the `swimlane-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 ```
 
 A swimlane diagram shows a process divided by responsibility. Each lane represents an actor, team, system, or phase, and the nodes inside the lane show the work that happens there. Arrows show the order of work and the handoffs between lanes.
 
 Use swimlane diagrams when the most important question is not only "what happens next?" but also "who owns this step?" They are useful for approval flows, support processes, delivery workflows, and any process where work crosses teams or systems.
 
-## Basic Example
+## Default theme and look (v12.0.0+)
 
-> The rendered examples on this page use the **Neo** look and the **Redux** theme. Out of the box, swimlanes use your configured default look and theme.
+Swimlane diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+swimlane-beta LR
+  subgraph Customer
+    Browse[Browse catalogue]
+    Pay[Pay]
+  end
+  subgraph Warehouse
+    Pick[Pick items]
+    Ship[Ship order]
+  end
+  subgraph Finance
+    Invoice[Raise invoice]
+  end
+  Browse --> Pay
+  Pay --> Pick
+  Pick --> Ship
+  Pay --> Invoice
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+swimlane-beta LR
+  subgraph Customer
+    Browse[Browse catalogue]
+    Pay[Pay]
+  end
+  subgraph Warehouse
+    Pick[Pick items]
+    Ship[Ship order]
+  end
+  subgraph Finance
+    Invoice[Raise invoice]
+  end
+  Browse --> Pay
+  Pay --> Pick
+  Pick --> Ship
+  Pay --> Invoice
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ swimlane: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
+## Basic Example
 
 ```mermaid-example
 swimlane-beta LR
@@ -68,6 +129,8 @@ If no direction is set, the diagram uses `TB`.
 ### Lanes
 
 Use `subgraph` to create a lane. In a swimlane diagram, top-level subgraphs are rendered as swimlanes. A lane ends with `end`.
+
+A node belongs to one lane. If two lanes list the same node, it stays in the first lane and is not drawn in the second. The second lane is then removed, because it would be an empty band, but only when the shared node was the reason: the lane lost a member to an earlier lane, it has no nodes left, and no edge points at it. A lane you left empty yourself stays. A subgraph nested inside a lane is drawn as a plain box, not as a lane, and a node in it belongs to the lane around it. Both cases are reported as warnings in the log. Warnings only show when `logLevel` is `warn` or lower, and the default is `fatal`, so set it with `mermaid.initialize({ logLevel: 'warn' })` to see them.
 
 ```mermaid-example
 swimlane-beta

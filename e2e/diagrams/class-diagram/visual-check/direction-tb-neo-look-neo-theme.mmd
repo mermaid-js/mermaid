@@ -1,0 +1,24 @@
+---
+description: >-
+  Class diagram covering an explicit `direction TB` statement combined with
+  aggregation relationships, rendered under the "neo" look with the "neo" theme.
+config:
+  htmlLabels: true
+  look: neo
+  theme: neo
+---
+classDiagram
+  direction TB
+  class Student {
+    -idCard : IdCard
+  }
+  class IdCard{
+    -id : int
+    -name : string
+  }
+  class Bike{
+    -id : int
+    -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides

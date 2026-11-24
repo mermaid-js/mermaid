@@ -1,0 +1,25 @@
+---
+description: >-
+  Dual central-connection circles (circle at both ends) applied to the
+  reverse half-arrow family (`/|-`, `\|-`, `//-`, `\\-` and their dotted
+  forms), with Bob as sender labeled LTR -- part of a matched LTR/RTL pair
+  and the reverse-arrow counterpart of the "-dual-normal-ltr" variant.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Bob()/|-()Alice: Circles at both ends with solid top reverse (LTR)
+  Bob()\|-()Alice: Circles at both ends with solid bottom reverse (LTR)
+  Bob()//-()Alice: Circles at both ends with stick top reverse (LTR)
+  Bob()\\-()Alice: Circles at both ends with stick bottom reverse (LTR)
+  Bob()/|--()Alice: Circles at both ends with dotted solid top reverse (LTR)
+  Bob()\|--()Alice: Circles at both ends with dotted solid bottom reverse (LTR)
+  Bob()//--()Alice: Circles at both ends with dotted stick top reverse (LTR)
+  Bob()\\--()Alice: Circles at both ends with dotted stick bottom reverse (LTR)

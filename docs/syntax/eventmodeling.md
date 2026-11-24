@@ -50,14 +50,6 @@ tf 03 evt ItemAdded
 
 rendering to
 
-```mermaid-example
-eventmodeling
-
-tf 01 ui CartUI
-tf 02 cmd AddItem
-tf 03 evt ItemAdded
-```
-
 ```mermaid
 eventmodeling
 
@@ -66,7 +58,17 @@ tf 02 cmd AddItem
 tf 03 evt ItemAdded
 ```
 
+```mermaid-example
+eventmodeling
+
+tf 01 ui CartUI
+tf 02 cmd AddItem
+tf 03 evt ItemAdded
+```
+
 Each Time Frame is referenced by a **unique number** in order to distinguish one from another and also to be able to reference it when needed. Depending on the complexity of the diagram it should be enough to have just two digit number or more. Imagine you are typing a BASIC program on your ZX Spectrum always starting with a two digit number, but the order of the numbers does not matter, just the uniqueness in the whole timeline.
+
+Reusing a number for another Time Frame or Reset Frame produces an error. Give each frame its own number before referring to it with `->>`.
 
 The Time Frame also contains an **Entity Identifier**, e.g. in case of `01` Time Frame it is `CartUI`. One Entity Identifier can be used multiple times in the timeline for example when you want to express invocations of the same event in different points in time.
 
@@ -86,7 +88,7 @@ It is possible to provide data examples for individual Time Frames. An Inline Da
 
 Compact version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -94,7 +96,7 @@ tf 02 cmd AddItem { description: string }
 tf 03 evt ItemAdded { description: string }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -104,7 +106,7 @@ tf 03 evt ItemAdded { description: string }
 
 Relaxed version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -112,7 +114,7 @@ timeframe 02 command AddItem { description: string }
 timeframe 03 event ItemAdded { description: string }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -128,7 +130,7 @@ In case the same entity is repeated you need to uniquely identify the data block
 
 Compact version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -156,7 +158,7 @@ data ItemAdded {
 }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -186,7 +188,7 @@ data ItemAdded {
 
 Relaxed version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -214,7 +216,7 @@ data ItemAdded {
 }
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 timeframe 01 ui CartUI
@@ -246,9 +248,11 @@ data ItemAdded {
 
 By default the diagram builds the relations based on the inference. But modeling a more complex business flow requires to break such inference from time to time. For that you can use a different type of Time Frame called **Reset Frame**. It is represented by a `rf` / `resetframe` token.
 
+A reset frame stops the inferred relation from the preceding frame. You can still connect it to a specific earlier frame with `->>`.
+
 Compact version:
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -261,7 +265,7 @@ tf 06 cmd ChangeInventory
 tf 07 evt Cart.InventoryChanged
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -276,19 +280,6 @@ tf 07 evt Cart.InventoryChanged
 
 Relaxed version:
 
-```mermaid-example
-eventmodeling
-
-timeframe 01 ui CartUI
-timeframe 02 command AddItem
-timeframe 03 event ItemAdded
-
-resetframe 04 event External.InventoryChanged
-timeframe 05 processor InventoryProcessor
-timeframe 06 command ChangeInventory
-timeframe 07 event Cart.InventoryChanged
-```
-
 ```mermaid
 eventmodeling
 
@@ -302,11 +293,42 @@ timeframe 06 command ChangeInventory
 timeframe 07 event Cart.InventoryChanged
 ```
 
+```mermaid-example
+eventmodeling
+
+timeframe 01 ui CartUI
+timeframe 02 command AddItem
+timeframe 03 event ItemAdded
+
+resetframe 04 event External.InventoryChanged
+timeframe 05 processor InventoryProcessor
+timeframe 06 command ChangeInventory
+timeframe 07 event Cart.InventoryChanged
+```
+
+For example, this read model receives input from `ItemAdded` without inferring a relation from `OtherUI`:
+
+```mermaid
+eventmodeling
+
+tf 01 evt ItemAdded
+tf 02 ui OtherUI
+rf 03 rmo CartItems ->> 01
+```
+
+```mermaid-example
+eventmodeling
+
+tf 01 evt ItemAdded
+tf 02 ui OtherUI
+rf 03 rmo CartItems ->> 01
+```
+
 ### Multiple relations
 
 There are situations where you need to specify multiple relations for an entity. For example when a **Read Model** is built of multiple **Events**. You can use `->>` token for that.
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 rf 02 evt CartCreated
@@ -316,7 +338,7 @@ rf 05 evt CartCleared
 tf 01 rmo CartUI ->> 02 ->> 03 ->> 04 ->> 05
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 rf 02 evt CartCreated
@@ -332,7 +354,7 @@ This chapter briefly summarizes each Event Modeling pattern.
 
 ### State Change
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 01 ui CartUI
@@ -340,7 +362,7 @@ tf 02 cmd AddItem
 tf 03 evt ItemAdded
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -350,7 +372,7 @@ tf 03 evt ItemAdded
 
 ### State View
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 03 evt ItemAdded
@@ -358,7 +380,7 @@ tf 02 rmo CartItems
 tf 04 ui CartUI
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 03 evt ItemAdded
@@ -368,7 +390,7 @@ tf 04 ui CartUI
 
 ### Translation
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 tf 03 evt External.InventoryChanged
@@ -377,7 +399,7 @@ tf 04 cmd ChangeInventory
 tf 05 evt Cart.InventoryChanged
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 tf 03 evt External.InventoryChanged
@@ -430,14 +452,14 @@ Inventory.InventoryChanged
 
 **Namespace** is the first part before the `.` of the Entity Identifier. Each combination of the Namespace and Entity type forms new Swimlane. The order how they are specified in the text definition specifies the order of the Swimlanes in the diagram.
 
-```mermaid-example
+```mermaid
 eventmodeling
 
 rf 01 evt Inventory.InventoryChanged
 rf 02 evt External.InventoryChanged
 ```
 
-```mermaid
+```mermaid-example
 eventmodeling
 
 rf 01 evt Inventory.InventoryChanged

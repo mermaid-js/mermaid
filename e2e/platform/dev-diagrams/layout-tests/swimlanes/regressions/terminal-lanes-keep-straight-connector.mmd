@@ -1,0 +1,20 @@
+---
+config:
+  layout: swimlane
+  flowchart:
+    htmlLabels: false
+---
+swimlane-beta LR
+  %% "Triage -> Resolve" stays one straight line at the centre of both boxes while
+  %% "Resolve -> Triage", which leaves Resolve's left face 10 px above it, is separated from it
+  subgraph Ops
+  a[Receive]
+  b[Triage]
+  c[Resolve]
+  end
+  subgraph Qa
+  d{Pass?}
+  end
+  a --> b --> c --> d
+  d -->|No| b
+  c --> b

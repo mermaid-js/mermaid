@@ -1,0 +1,22 @@
+---
+description: >-
+  Requirement diagram covering a requirement and an element both styled directly
+  via `style` statements, rendered under the "neo" look with the
+  "redux-dark-color" theme.
+config:
+  look: neo
+  theme: redux-dark-color
+---
+requirementDiagram
+    requirement styled_req {
+        id: 1
+        text: a styled requirement.
+        risk: medium
+        verifymethod: inspection
+    }
+    element styled_entity {
+        type: component
+    }
+    styled_entity - satisfies -> styled_req
+    style styled_req fill:#f9f,stroke:blue,color:grey,font-weight:bold
+    style styled_entity fill:#bbf,stroke:green

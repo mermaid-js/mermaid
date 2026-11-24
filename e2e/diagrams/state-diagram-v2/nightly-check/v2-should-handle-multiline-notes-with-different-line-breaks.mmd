@@ -1,0 +1,15 @@
+---
+description: >-
+  A single note on State1 whose text uses five different `<br>` tag
+  spellings (`<br>`, `<br/>`, `<br />`, and one with a stray tab
+  `<br\t/>`) to force line breaks - verifies the note parser tolerates
+  varied/malformed line-break markup.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  State1
+  note right of State1
+  Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
+  end note

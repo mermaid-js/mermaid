@@ -7,6 +7,10 @@
 name: 'Dependency Review'
 on: [pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ startsWith(github.head_ref || github.ref_name, 'renovate/') }}
+
 permissions:
   contents: read
 

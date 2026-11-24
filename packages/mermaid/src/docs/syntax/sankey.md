@@ -1,10 +1,10 @@
+---
+description: 'Show flows between nodes, with link widths proportional to flow quantities, defined in a CSV-like format.'
+---
+
 # Sankey diagram (v10.3.0+)
 
 > A sankey diagram is a visualization used to depict a flow from one set of values to another.
-
-```warning
-This is an experimental diagram. Its syntax are very close to plain CSV, but it is to be extended in the nearest future.
-```
 
 The things being connected are called nodes and the connections are called links.
 

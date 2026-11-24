@@ -1,0 +1,18 @@
+---
+description: >-
+  Entities with inline double-quoted comment strings attached to individual
+  attributes (e.g. string name "comment"), verifying attribute-level
+  comment annotations render alongside the attribute name and type.
+config:
+  logLevel: 1
+---
+erDiagram
+  AUTHOR_WITH_LONG_ENTITY_NAME {
+    string name "comment"
+  }
+  AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+  BOOK {
+      string author
+      string title "author comment"
+      float price "price comment"
+    }

@@ -1,0 +1,9 @@
+{
+  "outcome": "warning",
+  "diagnostics": [
+    {
+      "id": "SHAPE_UNSUPPORTED",
+      "nodeId": "x"
+    }
+  ]
+}

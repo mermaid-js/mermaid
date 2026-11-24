@@ -1,0 +1,15 @@
+---
+description: >-
+  LR-orientation gitgraph where branch x is declared right after the first
+  commit but not checked out or committed to until after further commits
+  happen on main, exercising a branch created before it is "used".
+---
+gitGraph LR:
+  commit id:"1-abcdefg"
+  branch x
+  checkout main
+  commit id:"2-abcdefg"
+  checkout x
+  commit id:"3-abcdefg"
+  checkout main
+  merge x

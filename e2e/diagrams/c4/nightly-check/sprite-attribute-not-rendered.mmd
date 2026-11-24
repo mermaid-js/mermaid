@@ -1,0 +1,11 @@
+---
+description: >-
+  Two containers each carrying a $sprite attribute ("browser", "terminal")
+  — the current renderer accepts the attribute without erroring but does
+  not render an image or nested icon for it, falling back to the plain
+  container shape.
+---
+C4Container
+title Sprite attribute (not shown by current renderer)
+Container(a, "Browser", "Tech", "single-page app", $sprite="browser")
+Container(b, "Terminal", "Tech", "server-side app", $sprite="terminal")

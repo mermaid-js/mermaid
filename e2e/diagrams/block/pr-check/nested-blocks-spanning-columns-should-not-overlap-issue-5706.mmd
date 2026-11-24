@@ -1,0 +1,22 @@
+---
+description: >-
+  Regression test for issue #5706: a composite block (0_0) spanning all 4
+  outer columns holds its own 6-column grid mixing a 2-column-wide item, a
+  2-column spacer, and further spanning items, plus a doubly-nested composite
+  block (0_0_0) that itself overflows its declared 6 columns with 8
+  single-letter blocks — verifying deeply nested, column-spanning, and
+  overflowing blocks don't overlap.
+---
+block-beta
+  columns 4
+
+  block:0_0:4
+  columns 6
+      Example:2
+  space:2
+  ExampleOther:2
+  ExampleOther:1
+  block:0_0_0:6
+      a b c d e f g h
+  end
+  end

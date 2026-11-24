@@ -1,0 +1,22 @@
+---
+description: >-
+  Gitgraph with parallelCommits: false in frontmatter config: develop and
+  feature branches off main are never merged back, testing the default
+  (non-parallel) time-ordered commit layout for unconnected branches.
+config:
+  gitGraph:
+    parallelCommits: false
+---
+gitGraph
+  commit id:"1-abcdefg"
+  commit id:"2-abcdefg"
+  branch develop
+  commit id:"3-abcdefg"
+  commit id:"4-abcdefg"
+  checkout main
+  branch feature
+  commit id:"5-abcdefg"
+  commit id:"6-abcdefg"
+  checkout main
+  commit id:"7-abcdefg"
+  commit id:"8-abcdefg"

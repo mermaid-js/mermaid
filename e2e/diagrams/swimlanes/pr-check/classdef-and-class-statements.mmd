@@ -1,0 +1,18 @@
+---
+description: >-
+  A single lane (ClassLane) with two nodes, using a `classDef` for a
+  "highlighted" style and applying it to node A via a `class` statement,
+  leaving node B with the default style.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph ClassLane
+    A[Classed node]
+    B[Default node]
+  end
+  A --> B
+  classDef highlighted fill:#bbf,stroke:#f66,stroke-width:4px,color:#000000
+  class A highlighted

@@ -56,7 +56,6 @@ jobs:
         env:
           MERMAID_PORT: 9000
           RUN_VISUAL_TEST: 'true'
-          PLAYWRIGHT_COMMIT: ${{ github.sha }}
 
       - name: Regenerate sheet order
         run: pnpm run screenshots:order

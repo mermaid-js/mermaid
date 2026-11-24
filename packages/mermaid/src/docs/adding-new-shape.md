@@ -1,3 +1,7 @@
+---
+description: 'Reference for Mermaid’s custom SVG shapes library: shape helpers and utilities, and how to add a new shape for use in diagrams.'
+---
+
 # Custom SVG Shapes Library
 
 This library provides a collection of custom SVG shapes, utilities, and helpers for generating diagram components. The shapes are designed to be used within an SVG container and include a variety of common and complex shapes.
@@ -111,7 +115,7 @@ To add a new shape:
 
 ### 2. Register the Shape
 
-- **Register the shape**: Add your shape to the `shapes` object in the [main shapes module](../rendering-util/rendering-elements/shapes.ts). This allows your shape to be recognized and used within the system.
+- **Register the shape**: Add your shape to the `shapes` object in the [main shapes module](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/rendering-util/rendering-elements/shapes.ts). This allows your shape to be recognized and used within the system.
 
 - **Example**:
 

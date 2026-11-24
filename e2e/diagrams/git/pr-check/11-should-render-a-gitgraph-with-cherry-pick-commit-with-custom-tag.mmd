@@ -1,0 +1,20 @@
+---
+description: >-
+  Gitgraph on main and develop branches where a `cherry-pick` command carries
+  a custom tag: ("snapshot"), verifying tagged cherry-pick commits render
+  correctly alongside ordinary commits.
+---
+gitGraph
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A" tag: "snapshot"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"

@@ -884,6 +884,61 @@ deactivate Bob`);
     expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[3].from).toBe('Bob');
   });
+  it('should handle one line deactivation before an actor starting with x', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    xAlice->>+John: John, can you hear me?
+    John-->>-xAlice: Hi Alice, I can hear you!`);
+
+    const actors = diagram.db.getActors();
+    expect(actors.get('xAlice').description).toBe('xAlice');
+    expect(actors.get('John').description).toBe('John');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(4);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[2].from).toBe('John');
+    expect(messages[2].to).toBe('xAlice');
+    expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
+    expect(messages[3].from).toBe('John');
+  });
+  it('should handle one line deactivation before an actor named x', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    x->>+Bob: Hello
+    Bob-x-x: Bye`);
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(4);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.SOLID_CROSS);
+    expect(messages[2].to).toBe('x');
+    expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
+    expect(messages[3].from).toBe('Bob');
+  });
+  it('should handle a space before the one line deactivation and an uppercase X actor', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    Xavier->>+John: Hello
+    John-->> -Xavier: Bye`);
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(4);
+    expect(messages[2].to).toBe('Xavier');
+    expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
+    expect(messages[3].from).toBe('John');
+  });
+  it('should still accept trailing whitespace and a line break after an arrow', async () => {
+    const diagram = await Diagram.fromText('sequenceDiagram\nAlice->> \nBob: Hello');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[0].to).toBe('Bob');
+  });
   it('should handle stacked activations', async () => {
     const diagram = await Diagram.fromText(`
       sequenceDiagram
@@ -1566,6 +1621,54 @@ end`);
     expect(messages[2].message).toBe('I am good thanks!');
     expect(messages[3].message).toBe('');
     expect(messages[4].message).toBe('I am good thanks!');
+  });
+
+  it.each(['Link', 'link', 'LINK'])('should use %s as a declared message endpoint', async (id) => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+participant A
+participant ${id} as Channel
+A->>${id}: message
+${id}-->>A: reply
+`);
+
+    expect([...diagram.db.getActors().keys()]).toEqual(['A', id]);
+    expect(diagram.db.getActors().get(id).description).toBe('Channel');
+    expect(diagram.db.getMessages()).toMatchObject([
+      { from: 'A', to: id, message: 'message' },
+      { from: id, to: 'A', message: 'reply' },
+    ]);
+  });
+
+  it.each(['Link', 'link', 'LINK'])('should use %s as an implicit message endpoint', async (id) => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+${id}->>A: message
+A-->>${id}: reply
+`);
+
+    expect([...diagram.db.getActors().keys()]).toEqual([id, 'A']);
+    expect(diagram.db.getMessages()).toMatchObject([
+      { from: id, to: 'A', message: 'message' },
+      { from: 'A', to: id, message: 'reply' },
+    ]);
+  });
+
+  it.each(['Link', 'link', 'LINK'])('should attach actor-menu links to %s', async (id) => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+participant A
+participant ${id} as Channel
+link A: Help @ https://example.com/help
+link ${id}: Help @ https://example.com/channel
+links ${id}: { "Repo": "https://example.com/repo" }
+`);
+
+    const actors = diagram.db.getActors();
+    expect(actors.get('A').links.Help).toBe('https://example.com/help');
+    expect(actors.get(id).links.Help).toBe('https://example.com/channel');
+    expect(actors.get(id).links.Repo).toBe('https://example.com/repo');
+    expect(actors.get(id).description).toBe('Channel');
   });
 
   it('should handle links', async () => {
@@ -2459,6 +2562,22 @@ Bob->>Alice:Got it!
       expect(messages[2].message).toBe('Hi Bob');
     });
 
+    it('should parse a participant config object separated from the name by whitespace', async () => {
+      const diagram = await Diagram.fromText(`
+  sequenceDiagram
+      participant Gina@{ "type" : "database" }
+      participant Harry @{ "type" : "database" }
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('Gina').type).toBe('database');
+      expect(actors.get('Gina').description).toBe('Gina');
+
+      expect(actors.get('Harry').type).toBe('database');
+      expect(actors.get('Harry').description).toBe('Harry');
+    });
+
     it('should parse mixed participant types with extended syntax', async () => {
       const diagram = await Diagram.fromText(`
     sequenceDiagram
@@ -2505,6 +2624,30 @@ Bob->>Alice:Got it!
       expect(messages[4].from).toBe('dsa');
       expect(messages[4].to).toBe('Database');
       expect(messages[4].message).toBe('hello');
+    });
+
+    it('should parse hyphenated names with an attached config object', async () => {
+      const diagram = await Diagram.fromText(`
+    sequenceDiagram
+        actor lead-actor@{ "type" : "database" }
+        participant order-svc@{ "type" : "queue" }
+        actor kebab-case@{ "type" : "control" } as Kebab-Cased
+        participant web-ui@{ "type" : "entity" } as Web UI
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('lead-actor').type).toBe('database');
+      expect(actors.get('lead-actor').description).toBe('lead-actor');
+
+      expect(actors.get('order-svc').type).toBe('queue');
+      expect(actors.get('order-svc').description).toBe('order-svc');
+
+      expect(actors.get('kebab-case').type).toBe('control');
+      expect(actors.get('kebab-case').description).toBe('Kebab-Cased');
+
+      expect(actors.get('web-ui').type).toBe('entity');
+      expect(actors.get('web-ui').description).toBe('Web UI');
     });
 
     it('should fail for malformed JSON in participant definition', async () => {

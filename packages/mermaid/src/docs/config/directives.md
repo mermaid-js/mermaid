@@ -1,3 +1,7 @@
+---
+description: 'Mermaid directives (deprecated since v10.5.0): change configuration for a single diagram inline; use frontmatter config instead.'
+---
+
 # Directives
 
 ```warning

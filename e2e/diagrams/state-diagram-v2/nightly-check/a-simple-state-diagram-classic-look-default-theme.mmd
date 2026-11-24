@@ -1,0 +1,13 @@
+---
+description: >-
+  A minimal 2-state chain (State1 -> State2), rendered under the classic look
+  with the default theme — baseline companion to the neo-themed feature-set
+  fixtures.
+config:
+  look: classic
+  theme: default
+---
+stateDiagram-v2
+    [*] --> State1
+    State1 --> State2
+    State2 --> [*]

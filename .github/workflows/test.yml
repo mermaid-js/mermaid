@@ -1,6 +1,15 @@
 name: Unit Tests
 
-on: [push, pull_request, merge_group]
+on:
+  push:
+    branches-ignore:
+      - 'renovate/**'
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ startsWith(github.head_ref || github.ref_name, 'renovate/') }}
 
 permissions:
   contents: read

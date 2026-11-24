@@ -1,3 +1,7 @@
+---
+description: 'How to use Mermaid in a web page or app: install from npm or a CDN, initialize, render with the API, bind events, and choose a security level.'
+---
+
 # Usage
 
 Mermaid is a JavaScript tool that makes use of a Markdown based syntax to render customizable diagrams, charts and visualizations.
@@ -22,7 +26,15 @@ We have compiled some Video [Tutorials](../ecosystem/tutorials.md) on how to use
 
 Requirements:
 
-- Node >= 16
+- Node.js >= 22.12.0
+
+### Supported browsers and runtimes
+
+Mermaid v12.0.0+'s published bundles target ES2024 and are aimed to support Safari 17.4 or later.
+
+We run linting for Chromium 121 and Firefox 123 support as well, but unlike Safari 17.4, we don't commit to supporting these outdated versions.
+
+Older browsers may work too, or you may need to polyfill/transpile mermaid to support them.
 
 ```bash
 # NPM
@@ -64,10 +76,36 @@ Example:
 
 **Following these directions, mermaid starts at page load and (when the page has loaded) it will locate the graph definitions inside the `pre` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
 
+### Fonts
+
+Mermaid currently uses a few different default `fontFamily` settings, based on
+the diagram type and the given theme.
+
+The current preferred fonts are:
+
+- Recursive Variable (open-source font, since v11.15.0)
+- Open Sans (open-source font)
+- Arial ([Restrictive License](https://en.wikipedia.org/wiki/TrueType_core_fonts_for_the_Web))
+- Trebuchet MS ([Restrictive License](https://en.wikipedia.org/wiki/TrueType_core_fonts_for_the_Web))
+
+For a consistent look, we recommend you supply these as web fonts, when possible,
+e.g. like:
+
+```html
+<link rel="stylesheet" href="<CDN_URL>/@fontsource/open-sans@5/400.css" />
+<link rel="stylesheet" href="<CDN_URL>/@fontsource/open-sans@5/400-italic.css" />
+<link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/recursive@5/index.css" />
+```
+
 ## Simple full example:
 
 ```html
 <!doctype html>
+<head>
+  <link rel="stylesheet" href="<CDN_URL>/@fontsource/open-sans@5/400.css" />
+  <link rel="stylesheet" href="<CDN_URL>/@fontsource/open-sans@5/400-italic.css" />
+  <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/recursive@5/index.css" />
+</head>
 <html lang="en">
   <body>
     <pre class="mermaid">
@@ -94,13 +132,36 @@ Mermaid can load multiple diagrams, in the same page.
 
 ## Tiny Mermaid
 
-We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't support Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, or lazy loading.
+We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't include Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, lazy loading, or the ELK layout engine.
 
 If you need a more lightweight version without these features, you can use [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny).
 
+### ELK and the tiny build
+
+The tiny build has never included ELK, and still doesn't — it is a large dependency and staying small is the point of that build. Diagrams that ask for an ELK layout here fall back to Dagre and still render; nothing breaks, they are simply laid out by Dagre.
+
+What changed in v12.0.0 is the main package, not this one: ELK used to be an opt-in `@mermaid-js/layout-elk` install, and is now bundled with `mermaid` and used by default. So **if you want a Mermaid without ELK, the tiny build is the way to get one** — it is no longer simply a matter of not installing the layout package.
+
+If you want the tiny build _and_ ELK, register `@mermaid-js/layout-elk` alongside it. That package continues to be published for exactly this case:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny/dist/mermaid.tiny.js"></script>
+<script type="module">
+  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk/dist/mermaid-layout-elk.esm.min.mjs';
+
+  // The tiny build is an IIFE that assigns `globalThis.mermaid`, so it is loaded
+  // with a plain `<script>` tag and used as a global — there is no default
+  // export to import.
+  mermaid.registerLayoutLoaders(elkLayouts);
+  mermaid.initialize({ startOnLoad: true, layout: 'elk' });
+</script>
+```
+
+Registering the package also makes the named ELK algorithms available — `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box` and `elk.rectpacking`. On a normal `mermaid` build you do not need this package at all: registering it is harmless but redundant, since the same layouts are already built in.
+
 ## Enabling Click Event and Tags in Nodes
 
-A `securityLevel` configuration has to first be cleared. `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. This was introduced in version 8.2 as a security improvement, aimed at preventing malicious use.
+A `securityLevel` configuration has to first be cleared. `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. It is a security measure, aimed at preventing malicious use.
 
 **It is the site owner's responsibility to discriminate between trustworthy and untrustworthy user-bases and we encourage the use of discretion.**
 
@@ -118,8 +179,7 @@ Values:
 - **sandbox**: With this security level, all rendering takes place in a sandboxed iframe. This prevents any JavaScript from running in the context. This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, links to other tabs or targets, etc.
 
 ```note
-This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
-**sandbox** security level is still in the beta version.
+With the default `securityLevel` (`strict`), tags in flowcharts are encoded as tags and clicking is disabled.
 ```
 
 **If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing. This allows clicks and tags are allowed.**

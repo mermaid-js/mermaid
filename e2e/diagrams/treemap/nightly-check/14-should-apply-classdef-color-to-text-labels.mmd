@@ -1,0 +1,18 @@
+---
+description: >-
+  treemap-beta "Products" with two sections (Electronics, Furniture), each
+  styled with a classDef that sets a background fill plus a text color
+  (white text on a dark fill vs black text on a light fill), verifying
+  classDef color styling applies to node text labels.
+---
+treemap-beta
+  "Products"
+    "Electronics":::whiteText
+      "Phones": 40
+      "Laptops": 30
+    "Furniture":::darkText
+      "Chairs": 25
+      "Tables": 20
+
+  classDef whiteText fill:#2c3e50,color:#ffffff;
+  classDef darkText fill:#ecf0f1,color:#000000;

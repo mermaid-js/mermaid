@@ -10,6 +10,15 @@ graph TB
 
     <div id="d2"></div>
 
+    <script>
+      /**
+       * Mock global to break AMD imports. Mermaid should only use IIFE.
+       */
+      function define() {
+        return 'hello';
+      }
+    </script>
+
     <script src="/mermaid.min.js"></script>
     <script>
       mermaid.initialize({

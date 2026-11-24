@@ -1,0 +1,24 @@
+---
+description: >-
+  State diagram composite-container colouring: three levels of nested composite
+  states (Boot > Kernel > Drivers) plus a sibling composite (Running). Rendered
+  under the "redux-dark-color" theme.
+config:
+  theme: redux-dark-color
+---
+stateDiagram-v2
+    [*] --> Boot
+    state Boot {
+      [*] --> Firmware
+      state Kernel {
+        [*] --> Sched
+        state Drivers {
+          [*] --> Probe
+        }
+      }
+    }
+    Boot --> Running
+    state Running {
+      [*] --> Serving
+    }
+    Running --> [*]

@@ -1,0 +1,21 @@
+---
+description: >-
+  Width-alignment test with two levels of nested anonymous sub-blocks, both
+  explicitly set to `columns 1`: an outer sub-block holding two plain ids
+  plus an inner sub-block containing a wider rounded block ("Wider then")
+  and a circle, followed by a top-level id — verifying that the wider
+  innermost content widens the blocks above it through two levels of
+  nesting. "Alt" variant of the similarly-named single-level release fixture.
+---
+block
+  columns 1
+  block
+  id1
+  id2
+  block
+    columns 1
+    id3("Wider then")
+    id5(("id5"))
+  end
+  end
+  id4

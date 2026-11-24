@@ -1,0 +1,25 @@
+---
+description: >-
+  treemap-beta "Company Budget" with three sections (Engineering,
+  Marketing, Sales), each styled with its own classDef and each containing
+  multiple numeric leaf values. Exercises a combination of multi-level
+  sections, per-section classDef styling, and leaf values in one realistic
+  diagram.
+---
+treemap-beta
+  "Company Budget"
+    "Engineering":::engineering
+      "Frontend": 300000
+      "Backend": 400000
+      "DevOps": 200000
+    "Marketing":::marketing
+      "Digital": 250000
+      "Print": 100000
+      "Events": 150000
+    "Sales":::sales
+      "Direct": 500000
+      "Channel": 300000
+
+  classDef engineering fill:#6b9bc3,stroke:#333;
+  classDef marketing fill:#c36b9b,stroke:#333;
+  classDef sales fill:#c3a66b,stroke:#333;

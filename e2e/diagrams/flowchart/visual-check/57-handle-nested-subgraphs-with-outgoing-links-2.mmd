@@ -1,0 +1,26 @@
+---
+description:
+  In a top-down flowchart with three sibling subgraphs (one, two, three), checks
+  a mix of edges between subgraph containers themselves (one --> two, three -->
+  two, two --> c2) and a cross-subgraph node-to-node edge (c1 --> a2) declared
+  in the source before either subgraph is defined.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TB
+  c1-->a2
+  subgraph one
+  a1-->a2
+  end
+  subgraph two
+  b1-->b2
+  end
+  subgraph three
+  c1-->c2
+  end
+  one --> two
+  three --> two
+  two --> c2

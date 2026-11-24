@@ -1,0 +1,9 @@
+%% `cylinder` is one of the shapes v0.8.1 removed (§4.3.3). It is a hard error:
+%% the node still renders, coerced to the default shape, but the diagram is
+%% classified `error` rather than `warning`.
+agentflow-beta TB
+  input["q"]
+  input@{ shape: input }
+  store["Store"]
+  store@{ shape: "cylinder" }
+  input --> store

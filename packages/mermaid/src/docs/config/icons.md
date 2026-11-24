@@ -1,3 +1,7 @@
+---
+description: 'Register Iconify icon packs in Mermaid, declaratively via config or programmatically, and reference their icons by prefix in diagrams.'
+---
+
 # Icon Pack Configuration
 
 Mermaid supports icons through Iconify-compatible icon packs. You can register icon packs either **declaratively via configuration** (recommended for most use cases) or **programmatically via JavaScript API** (for advanced/offline scenarios).

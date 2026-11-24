@@ -1,0 +1,19 @@
+---
+description: >-
+  Introductory check that central-connection circles (`()`) render directly
+  on each actor's vertical lifeline, covering a dual circle solid arrow, a
+  reverse-source-only dotted arrow, and a dual circle bidirectional dotted
+  arrow.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice ()->>() Bob: Central connection
+  Bob ()-->> Charlie: Reverse central connection
+  Charlie ()<<-->>() Alice: Dual central connection

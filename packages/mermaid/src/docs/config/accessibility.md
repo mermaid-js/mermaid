@@ -1,3 +1,7 @@
+---
+description: 'Make Mermaid diagrams accessible with accTitle and accDescr, which add ARIA roles, titles, and descriptions to the rendered SVG.'
+---
+
 # Accessibility Options
 
 ## Accessibility

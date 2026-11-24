@@ -1,0 +1,15 @@
+---
+description: >-
+  Legacy v1 state diagram testing transition-label line breaks: three
+  edges from S1 use different newline notations in their labels (`<br/>`,
+  `<br>`, and a literal `\n`) to confirm each renders as a line break.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+
+  [*] --> S1
+  S1 --> S2: long line using<br/>should work
+  S1 --> S3: long line using <br>should work
+  S1 --> S4: long line using \nshould work

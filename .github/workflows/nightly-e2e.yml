@@ -1,0 +1,241 @@
+name: Nightly E2E
+
+# Upstream-only (see the repository check below). Runs the pr-check + nightly-check
+# tiers once a day, and on demand via workflow_dispatch — the "simulated nightly"
+# button for testing this workflow without waiting for the schedule.
+#
+# No PR is associated with these runs, so there's nothing to gate or block —
+# this workflow only reports its own pass/fail. Check the last result by
+# filtering the Actions tab to the "Nightly E2E" workflow. No Slack/email
+# notification on failure (deliberately out of scope for now).
+#
+# Screenshot capture + Argos upload (RUN_VISUAL_TEST below, argos-upload job)
+# use the same gate e2e.yml's argos-batch job uses, reusing that same Argos
+# project/baseline. On a fork this is always a no-op: there's no Argos
+# project/credentials there, so capturing screenshots with nothing to upload
+# them to would just be wasted work. The e2e job below stays gated to
+# mermaid-js/mermaid the same way; a fork wanting its own safe environment to
+# validate the Playwright/tier plumbing in would need to point this check at
+# its own repository instead.
+on:
+  schedule:
+    # 02:00 UTC daily — low-traffic time, adjust as needed.
+    - cron: '0 2 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  RUN_VISUAL_TEST: ${{ github.repository == 'mermaid-js/mermaid' }}
+
+jobs:
+  e2e:
+    if: github.repository == 'mermaid-js/mermaid'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Build
+        run: pnpm build
+
+      - name: Compute pr+nightly spec pattern
+        id: scope
+        run: |
+          SPEC=$(node scripts/e2e-tier-scope.mjs pr-check nightly-check)
+          delim="ghadelim_$(openssl rand -hex 16)"
+          {
+            printf 'spec_pattern<<%s\n' "$delim"
+            printf '%s\n' "$SPEC"
+            printf '%s\n' "$delim"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Playwright run
+        env:
+          MERMAID_PORT: 9000
+          MERMAID_E2E_FIXTURE_TIER: pr-check,nightly-check
+          SPEC_PATTERN: ${{ steps.scope.outputs.spec_pattern }}
+          SHARD: ${{ matrix.containers }}
+          SHARD_TOTAL: ${{ strategy.job-total }}
+        run: |
+          IFS=',' read -ra SPECS <<< "$SPEC_PATTERN"
+          pnpm exec playwright test "${SPECS[@]}" --shard="${SHARD}/${SHARD_TOTAL}"
+
+      - name: Upload Playwright failure artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nightly-e2e-results-${{ matrix.containers }}
+          path: test-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      # Hand the captured PNGs to the argos-upload job below, which uploads
+      # them once. Mirrors e2e.yml's "Upload captured screenshots" step.
+      - name: Upload captured screenshots
+        if: ${{ env.RUN_VISUAL_TEST == 'true' && !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nightly-screenshots-${{ matrix.containers }}
+          path: e2e/screenshots/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  # Uploads the nightly pr-check+nightly-check screenshots to Argos as a
+  # single (subset) build, diffed against the same develop baseline the PR
+  # runs in e2e.yml use — same Argos project, same reference branch, no
+  # separate setup needed once this runs on mermaid-js/mermaid. Writes the
+  # build's review URL to this run's Summary page, since (unlike a PR run)
+  # there's no PR here for Argos's own check to attach a link to.
+  #
+  # needs.e2e.result == 'success' requires every shard to pass (the matrix is
+  # fail-fast: false, so its result is failure if any shard failed) — a
+  # partial/failed run would otherwise upload an incomplete screenshot set.
+  argos-upload:
+    if: >-
+      ${{
+        github.repository == 'mermaid-js/mermaid' &&
+        needs.e2e.result == 'success'
+      }}
+    needs: e2e
+    runs-on: ubuntu-latest
+    outputs:
+      build_url: ${{ steps.argos.outputs.build_url }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download screenshot artifacts
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          pattern: nightly-screenshots-*
+          merge-multiple: true
+          path: e2e/screenshots
+
+      # Not a superset baseline (that's the develop-push build in e2e.yml) —
+      # --subset so this diffs cleanly against it, same as PR/manual runs
+      # there. Split into K parallel uploads sharing one nonce for the same
+      # reason e2e.yml's "Upload images to Argos" step does: nightly-check's
+      # ~1,375 fixtures are in the same volume range that already overflowed
+      # a single finalize request there (HTTP 413, "request entity too
+      # large") — Argos combines the indices into one build once all K report.
+      - name: Upload screenshots to Argos
+        id: argos
+        env:
+          ARGOS_SUBSET: true
+          ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t groups < <(
+            cd e2e/screenshots &&
+              find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
+              sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
+          )
+          K=5
+          : > argos-upload.log
+          for i in $(seq 1 "$K"); do
+            globs=()
+            for j in "${!groups[@]}"; do
+              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
+            done
+            [ ${#globs[@]} -eq 0 ] && continue
+            # 2>&1 before the pipe: the CLI's spinner (ora) writes its
+            # "Build created: <url>" result to stderr, not stdout — without
+            # this, tee only ever sees stdout and BUILD_URL below is always
+            # empty, even though the Actions log view (which interleaves
+            # both streams) makes it look like it's being captured.
+            pnpm exec argos upload e2e/screenshots \
+              --build-name "Nightly E2E" \
+              --files "${globs[@]}" \
+              --parallel --parallel-total "$K" --parallel-index "$i" \
+              2>&1 | tee -a argos-upload.log
+          done
+
+          BUILD_URL=$(grep -oE 'https://[^ ]*argos-ci\.com[^ ]*' argos-upload.log | tail -1 || true)
+          {
+            echo '## Argos visual diff'
+            echo ''
+            if [ -n "$BUILD_URL" ]; then
+              echo "Review this run's screenshots: $BUILD_URL"
+            else
+              echo '_Argos build URL not found in upload output — check the "Upload screenshots to Argos" step log._'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "build_url=$BUILD_URL" >> "$GITHUB_OUTPUT"
+
+  # Reports this run's outcome to Slack so a failure or a visual diff doesn't
+  # silently sit unnoticed in the Actions tab (see the no-Slack-yet note in
+  # the file header above — this job is what replaces it). always() so it
+  # still posts (as a failure summary) when e2e or argos-upload didn't
+  # succeed, instead of being skipped along with them.
+  notify-slack:
+    if: always() && github.repository == 'mermaid-js/mermaid'
+    needs: [e2e, argos-upload]
+    runs-on: ubuntu-latest
+    steps:
+      # Branches in bash rather than a nested GitHub Actions ternary so a
+      # failed e2e run gets an explicit "no visual diff to review" message
+      # instead of just silently omitting the Argos link.
+      - name: Build Slack message
+        id: message
+        env:
+          E2E_RESULT: ${{ needs.e2e.result }}
+          ARGOS_RESULT: ${{ needs['argos-upload'].result }}
+          BUILD_URL: ${{ needs['argos-upload'].outputs.build_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$E2E_RESULT" != "success" ]; then
+            TEXT="Nightly E2E: *failed* (one or more shards did not complete) — no visual diff to review. Run: $RUN_URL"
+          elif [ "$ARGOS_RESULT" != "success" ]; then
+            TEXT="Nightly E2E: passed, but the Argos screenshot upload failed — no visual diff link available. Run: $RUN_URL"
+          elif [ -n "$BUILD_URL" ]; then
+            TEXT="Nightly E2E: passed. Review visual diffs: $BUILD_URL"
+          else
+            TEXT="Nightly E2E: passed, but no Argos build URL was found in the upload output. Run: $RUN_URL"
+          fi
+          {
+            echo "text<<EOF"
+            echo "$TEXT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post result to Slack
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_IDS }}
+            text: ${{ toJson(steps.message.outputs.text) }}

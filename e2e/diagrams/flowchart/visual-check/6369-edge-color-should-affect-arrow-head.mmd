@@ -1,0 +1,18 @@
+---
+description: >-
+  Regression test for GitHub issue #6369: applies linkStyle stroke color to two
+  specific edges by index and verifies that each edge's arrowhead marker
+  inherits that custom stroke color instead of remaining the default/black
+  arrowhead.
+config:
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  A --> B
+  A --> C
+  C --> D
+
+  linkStyle 0 stroke:#D50000
+  linkStyle 2 stroke:#D50000

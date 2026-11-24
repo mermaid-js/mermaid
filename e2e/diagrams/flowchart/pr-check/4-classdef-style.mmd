@@ -1,0 +1,13 @@
+---
+description: >-
+  Both styling paths in one small diagram: a classDef applied via `class` (node
+  B) and a direct inline `style` statement (node C), so a regression in either
+  the class-based or direct-style path shows up here.
+---
+flowchart TD
+  A[Start] --> B[Process]
+  B --> C[End]
+
+  classDef highlight fill:#f96,stroke:#333,stroke-width:2px;
+  class B highlight;
+  style C fill:#9f9,stroke:#333,stroke-width:2px;

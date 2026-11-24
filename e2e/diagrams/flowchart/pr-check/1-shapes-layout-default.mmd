@@ -1,0 +1,36 @@
+---
+description:
+  Smoke test covering all 14 classic flowchart shapes in a single diagram,
+  rendered under the default layout. Chained one-to-the-next rather than
+  combined pairwise, so this stays a per-shape smoke test rather than a
+  combinatorial one.
+coveredShapes:
+  - rectangle
+  - rounded
+  - stadium
+  - subroutine
+  - cylinder
+  - circle
+  - asymmetric
+  - rhombus
+  - hexagon
+  - parallelogram
+  - parallelogram-alt
+  - trapezoid
+  - trapezoid-alt
+  - double-circle
+---
+flowchart TD
+    A[Rectangle] --> B(Rounded)
+    B --> C([Stadium])
+    C --> D[[Subroutine]]
+    D --> E[(Database)]
+    E --> F((Circle))
+    F --> G>Asymmetric]
+    G --> H{Decision}
+    H --> I{{Hexagon}}
+    I --> J[/Parallelogram/]
+    J --> K[\Parallelogram alt\]
+    K --> L[/Trapezoid\]
+    L --> M[\Trapezoid alt/]
+    M --> N(((Double circle)))

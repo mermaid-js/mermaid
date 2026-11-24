@@ -1,0 +1,22 @@
+---
+description: >-
+  Two-set venn combining hand-drawn look with quoted text-node children on
+  both sets and their union, plus `style fill` statements on set A, set B,
+  and the combined `A,B` target — merges the text-nodes and custom-colors
+  patterns together under `look: handDrawn`.
+config:
+  look: handDrawn
+  handDrawnSeed: 1
+  fontFamily: courier
+---
+venn-beta
+  set A
+  text "Item 1"
+  text "Item 2"
+  set B
+  text "Item 3"
+  union A, B
+  text "Shared"
+  style A fill:#ff6b6b
+  style B fill:#4ecdc4
+  style A,B fill:#ffe66d

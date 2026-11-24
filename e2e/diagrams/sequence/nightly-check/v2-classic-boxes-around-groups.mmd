@@ -1,0 +1,19 @@
+---
+description: >-
+  Two `box` groups (one plain, one with an explicit rgb colour) plus a message
+  crossing between them.
+config:
+  look: classic
+---
+sequenceDiagram
+  box Group 1
+    participant participant0@{ "type" : "participant" }
+    participant actor1@{ "type" : "actor" }
+    participant boundary2@{ "type" : "boundary" }
+  end
+  box rgb(200,220,255) Group 2
+    participant control0@{ "type" : "control" }
+    participant entity1@{ "type" : "entity" }
+    participant database2@{ "type" : "database" }
+  end
+  participant0 ->> control0: Cross-group message

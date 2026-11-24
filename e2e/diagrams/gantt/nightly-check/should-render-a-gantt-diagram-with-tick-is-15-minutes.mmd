@@ -1,0 +1,19 @@
+---
+description: >-
+  Sub-day scheduling with tickInterval set to 15minute and an %H:%M
+  axis format, tasks measured in hours, verifying fine-grained
+  minute-level tick spacing.
+---
+gantt
+  title A Gantt Diagram
+  dateFormat   YYYY-MM-DD
+  axisFormat   %H:%M
+  tickInterval 15minute
+  excludes     weekends
+
+  section Section
+  A task           : a1, 2022-10-03, 6h
+  Another task     : after a1, 6h
+  section Another
+  Task in sec      : 2022-10-03, 3h
+  another task     : 3h

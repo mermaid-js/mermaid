@@ -1,0 +1,17 @@
+---
+description: >-
+  A 20-category, 20-value bar chart with showDataLabel enabled, in the
+  default vertical orientation — a denser variant of
+  data-labels-within-bars-vertical.mmd (one category per bar instead of
+  repeating 3 categories), checking label placement holds up with many
+  narrow bars of varying heights. Horizontal counterpart:
+  data-labels-within-bars-horizontal-many-bars.mmd.
+config:
+  xyChart:
+    showDataLabel: true
+---
+xychart
+  title "Sales Revenue"
+  x-axis Months [jan,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s]
+  y-axis "Revenue (in $)" 4000 --> 12000
+  bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 8000, 10000, 5000, 7600, 4999,11000 ,5000,6000]

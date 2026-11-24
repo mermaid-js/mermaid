@@ -15,6 +15,8 @@
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
 %x ID ALIAS LINE CONFIG CONFIG_DATA
+// Entered after an arrow, so a following "-x" is not read as a cross arrow
+%x ARROW_END
 
 %x acc_title
 %x acc_descr
@@ -32,7 +34,7 @@
 <CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
 <CONFIG>\}(?=\s+as\s)                                           { this.popState(); this.begin('ALIAS'); return 'CONFIG_END'; }
 <CONFIG>\}                                                      { this.popState(); this.popState(); return 'CONFIG_END'; }
-<ID>[^\<->\->:\n,;@\s]+(?=\@\{)                                 { yytext = yytext.trim(); return 'ACTOR'; }
+<ID>[^<>:\n,;@\s]+(?=\s*\@\{)                                   { yytext = yytext.trim(); return 'ACTOR'; }
 <ID>[^<>:\n,;@\s]+(?=\s+as\s)                                   { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ID>[^<>:\n,;@]+(?=\s*[\n;#]|$)                                 { yytext = yytext.trim(); this.popState(); return 'ACTOR'; }
 <ID>[^<>:\n,;@]*\<[^\n]*                                        { this.popState(); return 'INVALID'; }
@@ -59,10 +61,10 @@
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
-"links"                                                         return 'links';
-"link"                                                          return 'link';
-"properties"                                                    return 'properties';
-"details"                                                       return 'details';
+"links"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                      return 'links';
+"link"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                       return 'link';
+"properties"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                 return 'properties';
+"details"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                    return 'details';
 "over"                                                          return 'over';
 "note"                                                          return 'note';
 "activate"                                                      { this.begin('ID'); return 'activate'; }
@@ -82,43 +84,48 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
 [^\/\\\+\()\+<\->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)|\-\|\\|\-\\|\-\/|\-\/\/|\-\|\/|\/\|\-|\\\|\-|\/\/\-|\\\\\-|\/\|\-|\-\-\|\\|\-\-|\(\)))[\-]*[^\+<\->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; } //final_4.11
-"->>"                                                           return 'SOLID_ARROW';
-"<<->>"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
-"-->>"                                                          return 'DOTTED_ARROW';
-"<<-->>"                                                          return 'BIDIRECTIONAL_DOTTED_ARROW';
-"->"                                                            return 'SOLID_OPEN_ARROW';
-"-->"                                                           return 'DOTTED_OPEN_ARROW';
-\-[x]                                                           return 'SOLID_CROSS';
-\-\-[x]                                                         return 'DOTTED_CROSS';
-\-[\)]                                                          return 'SOLID_POINT';
-\-\-[\)]                                                        return 'DOTTED_POINT';
+"->>"                                                           { this.begin('ARROW_END'); return 'SOLID_ARROW'; }
+"<<->>"                                                           { this.begin('ARROW_END'); return 'BIDIRECTIONAL_SOLID_ARROW'; }
+"-->>"                                                          { this.begin('ARROW_END'); return 'DOTTED_ARROW'; }
+"<<-->>"                                                          { this.begin('ARROW_END'); return 'BIDIRECTIONAL_DOTTED_ARROW'; }
+"->"                                                            { this.begin('ARROW_END'); return 'SOLID_OPEN_ARROW'; }
+"-->"                                                           { this.begin('ARROW_END'); return 'DOTTED_OPEN_ARROW'; }
+\-[x]                                                           { this.begin('ARROW_END'); return 'SOLID_CROSS'; }
+\-\-[x]                                                         { this.begin('ARROW_END'); return 'DOTTED_CROSS'; }
+\-[\)]                                                          { this.begin('ARROW_END'); return 'SOLID_POINT'; }
+\-\-[\)]                                                        { this.begin('ARROW_END'); return 'DOTTED_POINT'; }
 
 //normal-dotted
-\-\-\|\\                                                        return 'SOLID_ARROW_TOP_DOTTED';
-\-\-\|\/                                                        return 'SOLID_ARROW_BOTTOM_DOTTED';
-\-\-\\\\                                                        return 'STICK_ARROW_TOP_DOTTED';
-\-\-\/\/                                                        return 'STICK_ARROW_BOTTOM_DOTTED';
+\-\-\|\\                                                        { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP_DOTTED'; }
+\-\-\|\/                                                        { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM_DOTTED'; }
+\-\-\\\\                                                        { this.begin('ARROW_END'); return 'STICK_ARROW_TOP_DOTTED'; }
+\-\-\/\/                                                        { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM_DOTTED'; }
 
 //reverse-dotted
-\/\|\-\-                                                          return 'SOLID_ARROW_TOP_REVERSE_DOTTED';
-\\\|\-\-                                                          return 'SOLID_ARROW_BOTTOM_REVERSE_DOTTED';
-\/\/\-\-                                                          return 'STICK_ARROW_TOP_REVERSE_DOTTED';
-\\\\\-\-                                                          return 'STICK_ARROW_BOTTOM_REVERSE_DOTTED';
+\/\|\-\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP_REVERSE_DOTTED'; }
+\\\|\-\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM_REVERSE_DOTTED'; }
+\/\/\-\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_TOP_REVERSE_DOTTED'; }
+\\\\\-\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM_REVERSE_DOTTED'; }
 
 //normal
-\-\|\\                                                          return 'SOLID_ARROW_TOP';
-\-\|\/                                                          return 'SOLID_ARROW_BOTTOM';
-\-\\\\                                                          return 'STICK_ARROW_TOP';
-\-\/\/                                                          return 'STICK_ARROW_BOTTOM';
+\-\|\\                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP'; }
+\-\|\/                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM'; }
+\-\\\\                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_TOP'; }
+\-\/\/                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM'; }
 
 //reverse
-\/\|\-                                                          return 'SOLID_ARROW_TOP_REVERSE';
-\\\|\-                                                          return 'SOLID_ARROW_BOTTOM_REVERSE';
-\/\/\-                                                          return 'STICK_ARROW_TOP_REVERSE';
-\\\\\-                                                          return 'STICK_ARROW_BOTTOM_REVERSE';
+\/\|\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_TOP_REVERSE'; }
+\\\|\-                                                          { this.begin('ARROW_END'); return 'SOLID_ARROW_BOTTOM_REVERSE'; }
+\/\/\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_TOP_REVERSE'; }
+\\\\\-                                                          { this.begin('ARROW_END'); return 'STICK_ARROW_BOTTOM_REVERSE'; }
 
 ":"(?:(?:no)?wrap:)?[^#\n;]*                                    return 'TXT';
 ":"                             								return 'TXT';
+// Right after an arrow, "-" and "+" are the activation shortcuts, never the start of another arrow
+<ARROW_END>(?!\n)\s+                                           /* skip whitespace exactly as INITIAL does */
+<ARROW_END>"-"                                                  { this.popState(); return '-'; }
+<ARROW_END>"+"                                                  { this.popState(); return '+'; }
+<ARROW_END>(?:)                                                 { this.popState(); }
 "+"                                                             return '+';
 "-"                                                             return '-';
 "()"                                                            return '()';
@@ -377,7 +384,10 @@ config_object
 // 	| actor_actor
 // 	;
 
-actor: ACTOR {$$={ type: 'addParticipant', actor:$1}};
+actor
+    : ACTOR {$$={ type: 'addParticipant', actor:$1}}
+    | 'link' {$$={ type: 'addParticipant', actor:$1}}
+    ;
 // actor_actor: ACTOR {$$={type: 'addActor', actor:$1}};
 
 signaltype

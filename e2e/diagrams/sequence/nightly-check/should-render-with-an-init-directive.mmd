@@ -1,0 +1,11 @@
+---
+description: >-
+  Dark theme and a custom font set via an `%%{init}%%` directive (not YAML
+  frontmatter) with `wrap: true`, applied to a long Alice-to-Bob message
+  that must wrap onto multiple lines, plus a note.
+---
+%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
+sequenceDiagram
+  Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
+  Note left of Alice: Bob thinks
+  Bob->>Alice: Fine!

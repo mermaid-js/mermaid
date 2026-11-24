@@ -1,0 +1,14 @@
+---
+description: >-
+  Explicitly disables the today marker via "todayMarker off", verifying
+  no vertical "today" line is drawn even though a task falls on the
+  test-clock "today" date.
+---
+gantt
+  title Hide today marker (vertical line should not be visible)
+  dateFormat YYYY-MM-DD
+  axisFormat %d
+  todayMarker off
+  section Section1
+  Yesterday: 1010-10-09, 1d
+  Today: 1010-10-10, 1d

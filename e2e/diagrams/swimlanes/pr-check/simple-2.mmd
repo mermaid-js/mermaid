@@ -1,0 +1,24 @@
+---
+description: >-
+  Two lanes (lane1: A, B, C; lane2: D, E) with edges crossing the lane
+  boundary in both directions - A to D into lane2, and D through E back
+  into lane1 via a labeled "EB" edge to B - plus a labeled "AB" edge from A
+  to B within lane1, testing bidirectional cross-lane edges with labels.
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+
+  subgraph lane1
+  B
+  A
+  C
+  end
+  subgraph lane2
+  D --> E --EB--> B
+  end
+  A --> D
+  A --AB--> B --> C

@@ -1,0 +1,18 @@
+---
+description: >-
+  Legacy stateDiagram (v1) syntax covering five labeled transitions fanning out
+  from and converging back through State1, rendered under the "neo" look with
+  the "redux-dark" theme and the courier font family.
+config:
+  look: neo
+  theme: redux-dark
+  fontFamily: courier
+---
+stateDiagram
+    [*] --> State1
+    State1 --> State2 : Transition 1
+    State1 --> State3 : Transition 2
+    State1 --> State4 : Transition 3
+    State1 --> State5 : Transition 4
+    State2 --> State3 : Transition 5
+    State1 --> [*]

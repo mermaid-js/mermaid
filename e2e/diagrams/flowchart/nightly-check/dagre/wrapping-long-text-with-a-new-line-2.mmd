@@ -1,0 +1,16 @@
+---
+description:
+  Verifies that a long markdown-string node label, including an explicit
+  blank-line break and a very long paragraph, wraps correctly within the node,
+  with htmlLabels disabled.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+  b("`The dog in **the** hog.(1).. a a a a *very long text* about it
+  Word!
+
+  Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `") --> c

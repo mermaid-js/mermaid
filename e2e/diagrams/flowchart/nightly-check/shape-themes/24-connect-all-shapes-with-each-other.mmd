@@ -1,0 +1,27 @@
+---
+description:
+  Fully interconnects the curved-trapezoid, bow-rect, tagged-document,
+  divided-rectangle, and crossed-circle node shapes (every shape linked to every
+  other) under the 'redux' theme with the 'neo' look, verifying this batch of 5
+  shapes renders correctly and stays visually distinct under this theme/look
+  combination.
+config:
+  look: "neo"
+  theme: "redux"
+---
+flowchart TB
+  n00@{ shape: curved-trapezoid, label: 'This is a label for curved-trapezoid shape' }
+  n11@{ shape: bow-rect, label: 'This is a label for bow-rect shape' }
+  n22@{ shape: tagged-document, label: 'This is a label for tagged-document shape' }
+  n33@{ shape: divided-rectangle, label: 'This is a label for divided-rectangle shape' }
+  n44@{ shape: crossed-circle, label: 'This is a label for crossed-circle shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n00 --> n44
+  n11 --> n22
+  n11 --> n33
+  n11 --> n44
+  n22 --> n33
+  n22 --> n44
+  n33 --> n44

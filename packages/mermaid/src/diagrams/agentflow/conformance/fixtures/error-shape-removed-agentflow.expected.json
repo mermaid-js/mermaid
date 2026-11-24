@@ -1,0 +1,9 @@
+{
+  "outcome": "error",
+  "diagnostics": [
+    {
+      "id": "SHAPE_REMOVED",
+      "nodeId": "store"
+    }
+  ]
+}

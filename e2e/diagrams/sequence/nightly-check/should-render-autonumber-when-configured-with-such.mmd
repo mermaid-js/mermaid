@@ -1,0 +1,20 @@
+---
+description: >-
+  Autonumbering enabled purely through the `showSequenceNumbers: true`
+  config option (no `autonumber` keyword in the diagram source), combined
+  with a custom `actorMargin` -- contrast with the sibling variant that uses
+  the `autonumber` keyword instead.
+config:
+  sequence:
+    actorMargin: 50
+    showSequenceNumbers: true
+---
+sequenceDiagram
+  Alice->>John: Hello John, how are you?
+  loop Healthcheck
+  John->>John: Fight against hypochondria
+  end
+  Note right of John: Rational thoughts!
+  John-->>Alice: Great!
+  John->>Bob: How about you?
+  Bob-->>John: Jolly good!

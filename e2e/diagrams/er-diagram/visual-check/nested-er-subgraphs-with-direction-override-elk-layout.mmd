@@ -1,0 +1,26 @@
+---
+description: >-
+  Nested subgraphs (a "details" subgraph inside "domain") where the inner
+  subgraph's `direction TB` overrides the outer diagram's `direction LR`, plus a
+  relationship targeting the subgraph itself rather than an entity inside it
+  under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+    direction LR
+
+    subgraph domain
+      direction TB
+
+      CUSTOMER
+
+      subgraph details
+        ORDER
+      end
+    end
+
+    PRODUCT
+
+    PRODUCT ||--o{ domain : links
+    CUSTOMER ||--o{ ORDER : places

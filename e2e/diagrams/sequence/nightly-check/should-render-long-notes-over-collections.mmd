@@ -1,0 +1,13 @@
+---
+description: >-
+  No-frontmatter sequence diagram with a `collections`-typed participant
+  and a plain actor, where a very long `Note over` text is attached to the
+  collections shape, checking that long note content wraps/sizes correctly
+  against that specific participant shape.
+---
+sequenceDiagram
+  participant Alice@{ "type" : "collections" }
+  actor Bob
+  Alice->>Bob: Hola
+  Note over Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

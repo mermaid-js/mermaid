@@ -1,0 +1,20 @@
+---
+description: >-
+  Composite state "NotShooting" with nested Idle/Configuring states and a
+  long-text transition label inside it, plus three outer states (A, B, C)
+  branching from NotShooting itself.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  [*] --> NotShooting: Pacifist
+  NotShooting --> A
+  NotShooting --> B
+  NotShooting --> C
+
+  state NotShooting {
+  [*] --> Idle: Yet another long long öong öong öong label
+  Idle --> Configuring : EvConfig
+  Configuring --> Idle : EvConfig  EvConfig EvConfig  EvConfig EvConfig
+  }

@@ -1,0 +1,15 @@
+---
+description: >-
+  ER diagram covering standalone entities with and without attributes, alongside
+  a normally-related pair, rendered under the "neo" look with the "redux" theme.
+config:
+  look: neo
+  theme: redux
+---
+erDiagram
+    ACTIVE_ENTITY
+    ISOLATED_ENTITY {
+        string id PK
+        string data
+    }
+    CONNECTED_A ||--|| CONNECTED_B : relates

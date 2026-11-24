@@ -1,0 +1,22 @@
+---
+description:
+  Verifies dagre layout, in the bottom-to-top (BT) direction, of two sibling
+  subgraphs connected by both a subgraph-to-subgraph edge and a
+  subgraph-to-nested-node edge that together form a cycle between the subgraphs.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart BT
+  subgraph two
+  b1
+  end
+  subgraph three
+  c2
+  end
+
+  three --> two
+  two --> c2

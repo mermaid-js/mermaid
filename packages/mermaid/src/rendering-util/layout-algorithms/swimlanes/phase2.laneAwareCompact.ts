@@ -16,7 +16,7 @@ import { createTopLaneResolver } from './phase2.options.js';
 function topoSortByGenerationIfAcyclic(g: Graph): NodeId[] | null {
   const indeg = buildInDegreeMap(g);
   const adj = buildSortedSuccessorMap(g);
-  let frontier = sortedZeroInDegreeNodes(indeg);
+  let frontier = sortedZeroInDegreeNodes(g, indeg);
   const order: NodeId[] = [];
 
   while (frontier.length > 0) {

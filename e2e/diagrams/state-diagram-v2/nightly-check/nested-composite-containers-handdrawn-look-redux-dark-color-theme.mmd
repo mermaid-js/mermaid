@@ -1,0 +1,26 @@
+---
+description: >-
+  State diagram composite-container colouring under the handDrawn look (roughjs
+  shapes, not rects — a separate style codepath from the classic look): three
+  levels of nested composite states (Boot > Kernel > Drivers) plus a sibling
+  composite (Running). Rendered under the "redux-dark-color" theme.
+config:
+  theme: redux-dark-color
+  look: handDrawn
+---
+stateDiagram-v2
+    [*] --> Boot
+    state Boot {
+      [*] --> Firmware
+      state Kernel {
+        [*] --> Sched
+        state Drivers {
+          [*] --> Probe
+        }
+      }
+    }
+    Boot --> Running
+    state Running {
+      [*] --> Serving
+    }
+    Running --> [*]

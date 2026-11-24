@@ -1,0 +1,26 @@
+---
+description: >-
+  Verifies precedence across three simultaneous styling mechanisms: the implicit
+  `default` classDef (applies to test_entity), an explicit `:::blue` classDef
+  (applies to test_req), and a direct `style` statement (also applies to
+  test_entity, on top of default) under the elk layout.
+config:
+  layout: elk
+---
+requirementDiagram
+
+      requirement test_req:::blue {
+      id: 1
+      text: the test text.
+      risk: high
+      verifymethod: test
+      }
+
+      element test_entity {
+      type: simulation
+      }
+
+      test_entity - satisfies -> test_req
+      classDef blue stroke:lightblue, color:blue
+      classDef default fill:pink
+      style test_entity color:green

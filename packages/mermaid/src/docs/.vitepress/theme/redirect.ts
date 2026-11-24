@@ -30,37 +30,37 @@ const getBaseFile = (url: URL): Redirect => {
  * No key should be added here as it already has all the old documentation IDs.
  * If you are changing a documentation page, you should update the corresponding value here, and add an entry in the urlRedirectMap below.
  */
-const idRedirectMap: Record<string, string> = {
+export const idRedirectMap: Record<string, string> = {
   // ID of the old documentation page: Path of the new documentation page
-  '8.6.0_docs': '',
-  accessibility: 'config/theming',
-  breakingchanges: '',
+  '8.6.0_docs': 'intro/index',
+  accessibility: 'config/accessibility',
+  breakingchanges: 'intro/index',
   c4c: 'syntax/c4',
   classdiagram: 'syntax/classDiagram',
   configuration: 'config/configuration',
-  demos: 'ecosystem/integrations',
-  development: 'community/development',
+  demos: 'ecosystem/integrations-community',
+  development: 'community/contributing',
   directives: 'config/directives',
   entityrelationshipdiagram: 'syntax/entityRelationshipDiagram',
-  examples: 'syntax/examples',
-  faq: 'misc/faq',
+  examples: 'syntax/all-examples',
+  faq: 'config/faq',
   flowchart: 'syntax/flowchart',
   gantt: 'syntax/gantt',
   gitgraph: 'syntax/gitgraph',
-  integrations: 'ecosystem/integrations',
-  'language-highlight': '',
-  markdown: '',
+  integrations: 'ecosystem/integrations-community',
+  'language-highlight': 'intro/index',
+  markdown: 'intro/index',
   mermaidapi: 'config/usage',
   mermaidcli: 'config/mermaidCLI',
   mindmap: 'syntax/mindmap',
-  'more-pages': '',
-  'n00b-advanced': 'config/advanced',
+  'more-pages': 'intro/index',
+  'n00b-advanced': 'config/configuration',
   'n00b-gettingstarted': 'intro/getting-started',
   'n00b-overview': 'intro/getting-started',
   'n00b-syntaxreference': 'intro/syntax-reference',
   newdiagram: 'community/new-diagram',
   pie: 'syntax/pie',
-  plugins: '',
+  plugins: 'intro/index',
   quickstart: 'intro/getting-started',
   requirementdiagram: 'syntax/requirementDiagram',
   security: 'community/security',
@@ -70,7 +70,7 @@ const idRedirectMap: Record<string, string> = {
   themes: 'config/theming',
   theming: 'config/theming',
   tutorials: 'ecosystem/tutorials',
-  upgrading: '',
+  upgrading: 'intro/index',
   usage: 'config/usage',
   'user-journey': 'syntax/userJourney',
 };
@@ -82,12 +82,12 @@ const idRedirectMap: Record<string, string> = {
  * and update the entry in the idRedirectMap above if it was present
  * (No need to add new keys in idRedirectMap).
  */
-const urlRedirectMap: Record<string, string> = {
+export const urlRedirectMap: Record<string, string> = {
   // Old URL: New URL
-  '/misc/faq.html': 'configure/faq.html',
+  '/misc/faq.html': 'config/faq.html',
   '/syntax/c4c.html': 'syntax/c4.html',
   '/ecosystem/integrations.html': 'ecosystem/integrations-community.html',
-  '/ecosystem/showcases.html': 'ecosystem/integrations-create',
+  '/ecosystem/showcases.html': 'ecosystem/integrations-create.html',
   '/config/n00b-advanced.html': 'config/configuration.html',
   '/intro/n00b-gettingStarted.html': 'intro/getting-started.html',
   '/intro/n00b-syntaxReference.html': 'intro/syntax-reference.html',
@@ -97,17 +97,24 @@ const urlRedirectMap: Record<string, string> = {
   '/community/docker-development.html': 'community/contributing.html#initial-setup',
   '/community/code.html': 'community/contributing.html#contributing-code',
   '/community/documentation.html': 'community/contributing.html#contributing-documentation',
+  '/syntax/examples.html': 'syntax/all-examples.html',
+  '/intro/examples.html': 'syntax/all-examples.html',
 };
 
 /**
  *
  * @param link - The old documentation URL.
- * @returns The new documentation path.
+ * @param base - The site's base path, e.g. `/open-source/`.
+ * @returns The new documentation path, relative to the base.
  */
-export const getRedirect = (url: URL): string | undefined => {
+export const getRedirect = (url: URL, base = '/'): string | undefined => {
+  const pathname = url.pathname.startsWith(base)
+    ? `/${url.pathname.slice(base.length)}`
+    : url.pathname;
+
   // Redirects for deprecated vitepress URLs
-  if (url.pathname in urlRedirectMap) {
-    return `${urlRedirectMap[url.pathname]}${url.hash}`;
+  if (pathname in urlRedirectMap) {
+    return `${urlRedirectMap[pathname]}${url.hash}`;
   }
 
   // Redirects for old docs URLs

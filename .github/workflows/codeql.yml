@@ -11,6 +11,10 @@ on:
       - synchronize
       - ready_for_review
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ startsWith(github.head_ref || github.ref_name, 'renovate/') }}
+
 permissions: # added using https://github.com/step-security/secure-repo
   contents: read
 

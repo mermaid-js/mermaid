@@ -1,0 +1,13 @@
+---
+description: >-
+  BOOK is declared twice with separate single-attribute blocks (title, then
+  price) interleaved with the AUTHOR-BOOK relationship, verifying that
+  attribute declarations for the same entity given in multiple places are
+  merged rather than overwriting each other.
+config:
+  logLevel: 1
+---
+erDiagram
+    BOOK { string title }
+    AUTHOR }|..|{ BOOK : writes
+    BOOK { float price }

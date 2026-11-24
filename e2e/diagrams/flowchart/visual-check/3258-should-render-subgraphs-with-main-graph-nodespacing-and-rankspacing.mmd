@@ -1,0 +1,23 @@
+---
+description:
+  Checks that an extremely small nodeSpacing/rankSpacing config value (1) set at
+  the top-level flowchart config is honored, exercising the same
+  subgraph-with-explicit-direction layout as the large-spacing counterpart but
+  at the opposite extreme.
+title: Subgraph nodeSpacing and rankSpacing example
+config:
+  flowchart:
+    nodeSpacing: 1
+    rankSpacing: 1
+---
+flowchart LR
+  X --> Y
+  subgraph X
+    direction LR
+    A
+    C
+  end
+  subgraph Y
+    B
+    D
+  end

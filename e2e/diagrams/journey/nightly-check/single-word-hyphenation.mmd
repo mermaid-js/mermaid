@@ -1,0 +1,15 @@
+---
+description: >-
+  A single task with one very long unbroken word
+  ("Supercalifragilisticexpialidocious") as its actor label, rendered with
+  journey.maxLabelWidth set to 100 — checks that a word with no whitespace
+  to wrap on gets hyphenated instead.
+config:
+  journey:
+    maxLabelWidth: 100
+    useMaxWidth: true
+---
+journey
+  title Long Word Test
+  section Test
+    VeryLongWord: 5: Supercalifragilisticexpialidocious

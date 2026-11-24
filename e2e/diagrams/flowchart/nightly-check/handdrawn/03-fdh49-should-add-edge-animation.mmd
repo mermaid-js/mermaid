@@ -1,0 +1,14 @@
+---
+description: >-
+  Checks that edges can be animated (slow or fast) via the @{ animation: ... }
+  edge syntax alongside custom edge stroke styling, under the hand-drawn look.
+config:
+  look: "handDrawn"
+---
+
+      flowchart TD
+          A(["Start"]) L_A_B_0@--> B{"Decision"}
+          B --> C["Option A"] & D["Option B"]
+          style C stroke-width:4px,stroke-dasharray: 5
+          L_A_B_0@{ animation: slow }
+          L_B_D_0@{ animation: fast }

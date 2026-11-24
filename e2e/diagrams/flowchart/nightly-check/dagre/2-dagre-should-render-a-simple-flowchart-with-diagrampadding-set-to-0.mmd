@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a dagre flowchart renders correctly with
+  flowchart.diagramPadding set to 0, and that a %% comment line embedded in the
+  diagram source is correctly ignored during parsing.
+config:
+  layout: dagre
+  flowchart:
+    diagramPadding: 0
+---
+flowchart TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  %% this is a comment
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

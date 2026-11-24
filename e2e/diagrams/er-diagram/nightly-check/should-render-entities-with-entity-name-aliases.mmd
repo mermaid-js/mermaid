@@ -1,0 +1,18 @@
+---
+description: >-
+  Two aliased entities - p[Person] using bracket syntax and c["Customer
+  Account"] using a quoted multi-word bracket alias - connected by a
+  one-to-zero-or-one relationship, verifying entity display-name aliasing
+  works for both single-word and quoted multi-word labels.
+config:
+  logLevel: 1
+---
+erDiagram
+  p[Person] {
+  varchar(64) firstName
+  varchar(64) lastName
+  }
+  c["Customer Account"] {
+  varchar(128) email
+  }
+  p ||--o| c : has

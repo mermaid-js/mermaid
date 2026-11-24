@@ -1,0 +1,11 @@
+---
+description: >-
+  No-frontmatter sequence diagram using the per-message `:wrap:` inline
+  text modifier (rather than a global `sequence.wrap` config) on a long
+  message sent from the left actor (Alice) to the right actor (Bob),
+  checking that the inline wrap directive forces wrapping for that one
+  left-to-right message.
+---
+sequenceDiagram
+  Alice->>Bob:wrap:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

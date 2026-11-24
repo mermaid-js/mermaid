@@ -1,0 +1,19 @@
+---
+description: >-
+  classDiagram with class text labels (square-bracket string syntax) containing embedded
+  newlines, on one class with brace-declared members and another class with colon-syntax
+  method declarations, verifying multi-line label text renders correctly in both member
+  styles.
+---
+classDiagram
+  class A["This has
+  a newline!"] {
+  +String boop
+  -Int beep
+  #double bop
+  }
+
+  class B["This title also has
+  a newline"]
+  B : +with(more)
+  B : -methods()

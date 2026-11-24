@@ -2,10 +2,56 @@ import assignWithDepth from './assignWithDepth.js';
 import { log } from './logger.js';
 import theme from './themes/index.js';
 import config from './defaultConfig.js';
-import type { MermaidConfig } from './config.type.js';
+import type { BaseDiagramConfig, MermaidConfig } from './config.type.js';
+import { getDiagramConfigKey } from './diagram-api/diagramConfigKeys.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
+
+/** Settings a diagram type may default, and a user may set, for one diagram type alone. */
+const APPEARANCE_KEYS = ['theme', 'look', 'layout'] as const;
+
+type AppearanceKey = (typeof APPEARANCE_KEYS)[number];
+
+type DiagramAppearance = Pick<BaseDiagramConfig, AppearanceKey>;
+
+/** Kept in step with the schema's `look` enum by `config.appearance.spec.ts`. */
+const LOOKS = new Set(['classic', 'handDrawn', 'neo']);
+
+/**
+ * Whether an appearance value is one this build answers to. `initialize()` normalises an
+ * unknown top-level `theme`, so the diagram-scoped keys need the same guard or they would
+ * carry a name no stylesheet matches. `layout` is exempt: its registry is extensible, and
+ * `getRegisteredLayoutAlgorithm` falls back at render time.
+ */
+const isUsableAppearance = (key: AppearanceKey, value: string) => {
+  if (key === 'theme') {
+    // `'null'` is the documented sentinel for disabling the pre-defined themes.
+    // `hasOwn`, not `in`: the registry is an object literal, so `__proto__` and
+    // `constructor` satisfy `in` and then have no `getThemeVariables`.
+    return value === 'null' || Object.hasOwn(theme, value);
+  }
+  return key !== 'look' || LOOKS.has(value);
+};
+
+/**
+ * Reads one appearance setting from one config layer, diagram-scoped value first. A value
+ * this build cannot render is passed over rather than winning, so a bogus `flowchart.theme`
+ * falls back to the `theme` set beside it before the next layer is tried.
+ */
+const readAppearance = (
+  layer: MermaidConfig | undefined,
+  diagramConfigKey: string,
+  key: AppearanceKey
+): DiagramAppearance[AppearanceKey] => {
+  if (!layer) {
+    return undefined;
+  }
+  const section = (layer as Record<string, DiagramAppearance | undefined>)[diagramConfigKey];
+  return [section?.[key], layer[key]].find(
+    (value) => value !== undefined && isUsableAppearance(key, value)
+  );
+};
 
 /**
  * Converts a string/boolean into a boolean
@@ -18,8 +64,47 @@ export const evaluate = (val?: string | boolean | null): boolean =>
 
 let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 let configFromInitialize: MermaidConfig;
+/** What the user handed to {@link setSiteConfig}, unmerged with the defaults so the
+ * appearance resolution can tell a user's value from the schema's. */
+let siteConfigDelta: MermaidConfig = {};
 let directives: MermaidConfig[] = [];
 let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
+/** Config section of the diagram in scope; `undefined` leaves the global defaults in charge. */
+let diagramConfigKey: string | undefined;
+
+/**
+ * Resolves `theme`, `look` and `layout` onto the top level of `cfg`, where renderers read
+ * them. Highest first: frontmatter/directive, `initialize()`, diagram default, global default.
+ */
+const resolveAppearance = (cfg: MermaidConfig, sumOfDirectives: MermaidConfig) => {
+  if (!diagramConfigKey) {
+    return;
+  }
+  const layers: MermaidConfig[] = [
+    sumOfDirectives,
+    // `setConfig` passes only its own object as the directive list, so consult the real
+    // directives too, or a diagram default wins back over frontmatter. Later ones win.
+    ...[...directives].reverse(),
+    siteConfigDelta,
+    defaultConfig,
+  ];
+  const section = (cfg as Record<string, DiagramAppearance | undefined>)[diagramConfigKey];
+  for (const key of APPEARANCE_KEYS) {
+    for (const layer of layers) {
+      const value = readAppearance(layer, diagramConfigKey, key);
+      if (value === undefined) {
+        continue;
+      }
+      // Optional strings on both sides, but TS cannot see that through the key union.
+      (cfg as Record<AppearanceKey, string>)[key] = value;
+      // Keep the section in step, so `getConfig().flowchart.look` cannot contradict `.look`.
+      if (section?.[key] !== undefined) {
+        (section as Record<AppearanceKey, string>)[key] = value;
+      }
+      break;
+    }
+  }
+};
 
 const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[]) => {
   // start with config being the siteConfig
@@ -36,20 +121,35 @@ const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[
 
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
-  if (sumOfDirectives.theme && sumOfDirectives.theme in theme) {
+  resolveAppearance(cfg, sumOfDirectives);
+
+  // `cfg.themeVariables` were built from `siteCfg.theme`, and stylesheets gate their rules
+  // on the theme *name*, so a resolved theme of another name needs them rebuilt.
+  const themeWasOverridden = Boolean(sumOfDirectives.theme) || cfg.theme !== siteCfg.theme;
+  if (themeWasOverridden && cfg.theme && Object.hasOwn(theme, cfg.theme)) {
+    // Only `configFromInitialize` holds the variables as the user wrote them; the site
+    // config's are already derived, and feeding those back would override the new theme.
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
       sumOfDirectives.themeVariables
     );
-    if (cfg.theme && cfg.theme in theme) {
-      cfg.themeVariables = theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables);
-    }
+    cfg.themeVariables = theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables);
   }
 
   currentConfig = cfg;
   checkConfig(currentConfig);
   return currentConfig;
+};
+
+/**
+ * Names the diagram type being parsed or rendered, so its own appearance defaults apply.
+ *
+ * @param diagramType - The type `detectType` returned, e.g. `flowchart-v2`; `undefined` to leave scope.
+ */
+export const setDiagramConfigScope = (diagramType?: string) => {
+  diagramConfigKey = diagramType === undefined ? undefined : getDiagramConfigKey(diagramType);
+  updateCurrentConfig(siteConfig, directives);
 };
 
 /**
@@ -64,11 +164,14 @@ const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[
 export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
+  siteConfigDelta = assignWithDepth({}, conf);
 
-  // @ts-ignore: TODO Fix ts errors
-  if (conf.theme && theme[conf.theme]) {
-    // @ts-ignore: TODO Fix ts errors
-    siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
+  // `hasOwn` rather than a truthiness check on `theme[conf.theme]`: `Object.prototype`
+  // members are truthy and carry no `getThemeVariables`.
+  if (conf.theme && Object.hasOwn(theme, conf.theme)) {
+    siteConfig.themeVariables = theme[conf.theme as keyof typeof theme].getThemeVariables(
+      conf.themeVariables
+    );
   }
 
   updateCurrentConfig(siteConfig, directives);
@@ -81,6 +184,7 @@ export const saveConfigFromInitialize = (conf: MermaidConfig): void => {
 
 export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth(siteConfig, conf);
+  siteConfigDelta = assignWithDepth(siteConfigDelta, conf);
   updateCurrentConfig(siteConfig, directives);
 
   return siteConfig;
@@ -194,6 +298,8 @@ export const addDirective = (directive: MermaidConfig) => {
 export const reset = (config = siteConfig): void => {
   // Replace current config with siteConfig
   directives = [];
+  // Leave diagram scope too, or a stale type keeps applying its appearance defaults.
+  diagramConfigKey = undefined;
   updateCurrentConfig(config, directives);
 };
 

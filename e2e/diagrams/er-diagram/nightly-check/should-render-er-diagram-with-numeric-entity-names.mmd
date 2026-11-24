@@ -1,0 +1,13 @@
+---
+description: >-
+  A chain of relationships among bare numeric entity names (1, ORDER, 2,
+  3.5) with no attribute blocks, the baseline numeric-entity-name test
+  distinct from the sibling fixture that adds an attribute block to
+  entity "1".
+config:
+  logLevel: 1
+---
+erDiagram
+  1 ||--|| ORDER : places
+  ORDER ||--|{ 2 : contains
+  2 ||--o{ 3.5 : references

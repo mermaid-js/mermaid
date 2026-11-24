@@ -1,0 +1,21 @@
+---
+description: >-
+  Requirement diagram covering a requirement, element, and relationship all
+  referencing quoted names containing spaces, rendered under the "neo" look with
+  the "redux-dark" theme.
+config:
+  look: neo
+  theme: redux-dark
+---
+requirementDiagram
+    requirement "system performance requirement" {
+        id: 1
+        text: the system shall meet performance targets.
+        risk: medium
+        verifymethod: test
+    }
+    element "test harness component" {
+        type: "test suite"
+        docRef: docs/test_harness.md
+    }
+    "test harness component" - verifies -> "system performance requirement"

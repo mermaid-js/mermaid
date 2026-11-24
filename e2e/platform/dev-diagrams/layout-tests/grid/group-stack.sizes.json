@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-21T01:20:20.835Z",
+    "capturedFrom": "browser-capture layout-tests/grid/group-stack.mmd theme=default look=classic",
+    "sourceSha256": "60870dd07eb2e245e3aaf942d4000b94087c1c521c7c4ed629006f4243688a21"
+  },
+  "nodes": [
+    {
+      "id": "A",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "G1",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 152,
+      "height": 87
+    }
+  ]
+}

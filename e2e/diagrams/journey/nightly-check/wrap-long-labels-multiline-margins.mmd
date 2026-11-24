@@ -1,0 +1,21 @@
+---
+description: >-
+  A two-section user journey (Onboarding, Engagement) where every
+  Onboarding task carries a long descriptive label, rendered with
+  journey.maxLabelWidth set to 320 — checks that long labels wrap into
+  multiple legend lines while staying under the max width and preserving
+  the diagram's left margin.
+config:
+  journey:
+    maxLabelWidth: 320
+    useMaxWidth: true
+---
+journey
+  title User Journey Example
+  section Onboarding
+      Sign Up: 5: This is a long label that will be split into multiple lines to test the wrapping functionality
+      Browse Features: 3: This is another long label that will be split into multiple lines to test the wrapping functionality
+      Use Core Functionality: 4: This is yet another long label that will be split into multiple lines to test the wrapping functionality
+  section Engagement
+      Browse Features: 3
+      Use Core Functionality: 4

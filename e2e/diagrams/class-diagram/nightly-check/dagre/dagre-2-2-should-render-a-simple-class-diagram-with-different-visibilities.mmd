@@ -1,0 +1,21 @@
+---
+description: >-
+  Interface class showing all three member visibility markers
+  (`-` private, `+` public, `#` protected) on both methods and attributes,
+  under the dagre layout, rendered with `htmlLabels: true`.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  Class01 <|-- AveryLongClass : Cool
+  class Class01 {
+    &lt;&lt;interface&gt;&gt;
+  }
+  Class01 : -privateMethod()
+  Class01 : +publicMethod()
+  Class01 : #protectedMethod()
+  Class01 : -int privateChimp
+  Class01 : +int publicGorilla
+  Class01 : #int protectedMarmoset

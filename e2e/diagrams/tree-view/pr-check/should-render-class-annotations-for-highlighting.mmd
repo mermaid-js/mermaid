@@ -1,0 +1,14 @@
+---
+description: >-
+  Tests the `:::className` class-annotation syntax for highlighting specific
+  tree nodes (Button.tsx and App.tsx marked with `:::highlight`) while
+  sibling nodes remain unstyled.
+---
+treeView-beta
+  src/
+  components/
+      Button.tsx :::highlight
+      Header.tsx
+  App.tsx :::highlight
+  index.js
+  package.json

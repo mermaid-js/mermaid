@@ -1,0 +1,131 @@
+diff --git a/extensions/fastdom-promised.d.ts b/extensions/fastdom-promised.d.ts
+index 236cf0fa6e9d04b0344ca87f7b5059ab9c43fa75..fdb6a33dcdfc4d9adc8a7dc6f5ba56a5bbfa762d 100644
+--- a/extensions/fastdom-promised.d.ts
++++ b/extensions/fastdom-promised.d.ts
+@@ -5,4 +5,8 @@ declare namespace FastdomPromised {
+   export function mutate<T extends () => void>(task: T, context?: any): Promise<ReturnType<T>>;
+ }
+ 
+-export = FastdomPromised;
++export default FastdomPromised;
++export const clear: typeof FastdomPromised.clear;
++export const initialize: typeof FastdomPromised.initialize;
++export const measure: typeof FastdomPromised.measure;
++export const mutate: typeof FastdomPromised.mutate;
+diff --git a/extensions/fastdom-promised.js b/extensions/fastdom-promised.js
+index cc6acca5d99d330b3afd7bc2b247a82a44ffb959..5cbc1e33a5d139bfc09eeccad2232216735be50b 100644
+--- a/extensions/fastdom-promised.js
++++ b/extensions/fastdom-promised.js
+@@ -1,5 +1,3 @@
+-!(function() {
+-
+ /**
+  * Wraps fastdom in a Promise API
+  * for improved control-flow.
+@@ -69,9 +67,5 @@ function create(promised, type, fn, ctx) {
+   return promise;
+ }
+ 
+-// Expose to CJS, AMD or global
+-if ((typeof define)[0] == 'f') define(function() { return exports; });
+-else if ((typeof module)[0] == 'o') module.exports = exports;
+-else window.fastdomPromised = exports;
+-
+-})();
+\ No newline at end of file
++export const { initialize, mutate, measure, clear } = exports;
++export default exports;
+diff --git a/extensions/fastdom-sandbox.js b/extensions/fastdom-sandbox.js
+index b6c778267800aedef2d3639fec1d51df6b3e754a..5add168abf967e08bc9479627ec1c264a9e1c7a0 100644
+--- a/extensions/fastdom-sandbox.js
++++ b/extensions/fastdom-sandbox.js
+@@ -1,5 +1,3 @@
+-(function(exports) {
+-
+ /**
+  * Mini logger
+  *
+@@ -41,7 +39,7 @@ var debug = 0 ? console.log.bind(console, '[fastdom-sandbox]') : function() {};
+  * @return {Sandbox}
+  * @public
+  */
+-exports.sandbox = function() {
++export const sandbox = function() {
+   return new Sandbox(this.fastdom);
+ };
+ 
+@@ -135,13 +133,3 @@ function remove(array, item) {
+   var index = array.indexOf(item);
+   return !!~index && !!array.splice(index, 1);
+ }
+-
+-/**
+- * Expose
+- */
+-
+-if ((typeof define)[0] == 'f') define(function() { return exports; });
+-else if ((typeof module)[0] == 'o') module.exports = exports;
+-else window.fastdomSandbox = exports;
+-
+-})({});
+diff --git a/fastdom.js b/fastdom.js
+index 5ef81a1ced998d3dc690552b7212288b477557e3..e487f46d794035406d81134eb326bf591a7ac700 100644
+--- a/fastdom.js
++++ b/fastdom.js
+@@ -1,4 +1,4 @@
+-!(function(win) {
++export default (function(win) {
+ 
+ /**
+  * FastDom
+@@ -237,8 +237,5 @@ function mixin(target, source) {
+ // one instance of `FastDom` in an app
+ var exports = win.fastdom = (win.fastdom || new FastDom()); // jshint ignore:line
+ 
+-// Expose to CJS & AMD
+-if ((typeof define) == 'function') define(function() { return exports; });
+-else if ((typeof module) == 'object') module.exports = exports;
+-
++return exports;
+ })( typeof window !== 'undefined' ? window : typeof this != 'undefined' ? this : globalThis);
+diff --git a/package.json b/package.json
+index 33a57921b45a0ad1fbf21faacb660f8cd40275b4..3887737b37aa63327b18e1348bf37e65f93a062d 100644
+--- a/package.json
++++ b/package.json
+@@ -15,6 +15,7 @@
+     "watch": "webpack -w"
+   },
+   "homepage": "https://github.com/wilsonpage/fastdom",
++  "type": "module",
+   "author": {
+     "name": "Wilson Page",
+     "email": "wilsonpage@me.com"
+diff --git a/src/fastdom-strict.js b/src/fastdom-strict.js
+index d26b86f74afbffca939b85a86696b0ddf4f64498..b97a0e53f36b973a106d2bc762d4641b7514a08b 100644
+--- a/src/fastdom-strict.js
++++ b/src/fastdom-strict.js
+@@ -1,7 +1,5 @@
+-'use strict';
+-
+-var strictdom = require('strictdom');
+-var fastdom = require('../fastdom');
++import strictdom from 'strictdom';
++import originalFastdom from '../fastdom.js';
+ 
+ /**
+  * Mini logger
+@@ -17,7 +15,7 @@ var debug = 0 ? console.log.bind(console, '[fastdom-strict]') : function() {};
+  */
+ var enabled = false;
+ 
+-window.fastdom = module.exports = fastdom.extend({
++export const fastdom = globalThis.fastdom = originalFastdom.extend({
+   measure: function(fn, ctx) {
+     debug('measure');
+     var task = !ctx ? fn : fn.bind(ctx);
+@@ -48,4 +46,4 @@ window.fastdom = module.exports = fastdom.extend({
+ });
+ 
+ // turn on strict-mode
+-window.fastdom.strict(true);
++fastdom.strict(true);

@@ -52,6 +52,10 @@ class IconManager {
     this.loaderStore.clear();
   }
 
+  isIconPackRegistered(name: string): boolean {
+    return this.iconsStore.has(name) || this.loaderStore.has(name);
+  }
+
   private async getRegisteredIconData(
     iconName: string,
     fallbackPrefix?: string
@@ -126,6 +130,9 @@ export const clearIconPacks = () => {
   globalIconManager.clear();
   ephemeralIconManager.clear();
 };
+
+export const isIconPackRegistered = (name: string) =>
+  ephemeralIconManager.isIconPackRegistered(name) || globalIconManager.isIconPackRegistered(name);
 
 export const isIconAvailable = async (iconName: string) => {
   if (await ephemeralIconManager.isIconAvailable(iconName)) {

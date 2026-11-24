@@ -1,0 +1,11 @@
+---
+description: >-
+  Regression fixture tied to issue #1433, which added frontmatter title
+  support for ER diagrams. Renders the same minimal CUSTOMER-ORDER-LINE_ITEM
+  diagram (one-to-many order placement, identifying one-to-many line items)
+  as the baseline "simple ER diagram" test, used here to cover the
+  titled-diagram code path.
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE-ITEM : contains

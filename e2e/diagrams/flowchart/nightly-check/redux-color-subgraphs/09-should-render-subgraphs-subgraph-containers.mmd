@@ -1,0 +1,30 @@
+---
+description:
+  Renders five sibling subgraphs (Ingest, Transform, Store, Serve, Observe)
+  chained in a top-to-bottom pipeline under the redux-dark-color theme, checking
+  that each top-level container - including one holding a database-shaped node -
+  gets its own distinct themed background and border color on a dark background.
+config:
+  theme: "redux-dark-color"
+---
+
+  flowchart TB
+    subgraph Ingest
+      A[Fetch] --> B[Validate]
+    end
+    subgraph Transform
+      C[Normalise] --> D[Enrich]
+    end
+    subgraph Store
+      E[(Warehouse)]
+    end
+    subgraph Serve
+      F[API] --> G[Cache]
+    end
+    subgraph Observe
+      H[Metrics]
+    end
+    B --> C
+    D --> E
+    E --> F
+    F --> H

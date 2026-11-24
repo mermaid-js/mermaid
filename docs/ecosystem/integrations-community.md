@@ -56,6 +56,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [GitHub Writer](https://github.com/ckeditor/github-writer)
   - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
+- [Glim](https://github.com/NeoPanic/Glim) - macOS Markdown reader with built-in Mermaid diagram rendering. ✅
 - [GNU Octave](https://octave.org/) ✅
   - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
 - [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
@@ -282,6 +283,7 @@ Communication tools and platforms
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 - [SchemaCrawler - Generate Mermaid diagrams from your database](https://dev.to/sualeh/how-to-generate-mermaid-diagrams-for-your-database-33bn)
+- [Schema3D](https://schema3d.com) - Browser-only 3D visualizer for Mermaid ER diagrams (also SQL / DrawDB); shareable URL, no live DB
 - [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
 - [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)

@@ -1,0 +1,7 @@
+%% A `flow` block with no `end`. The JISON parser raises, so no semantic model
+%% is produced and the outcome is `parse-error` rather than any diagnostic.
+agentflow-beta TB
+  flow orphan["Orphan"]
+    a["Alpha"]
+    b["Beta"]
+    a --> b

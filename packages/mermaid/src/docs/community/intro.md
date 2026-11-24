@@ -1,3 +1,7 @@
+---
+description: 'How to get started contributing to Mermaid: ways to help, where to find issues, and how the project is organized.'
+---
+
 # Getting Started
 
 So you want to help? That's great!

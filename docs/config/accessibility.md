@@ -93,7 +93,7 @@ See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-exam
 
 - Flowchart with the accessible title "Big Decisions" and the single-line accessible description "Bob's Burgers process for making big decisions"
 
-```mermaid-example
+```mermaid
   graph LR
       accTitle: Big Decisions
       accDescr: Bob's Burgers process for making big decisions
@@ -101,7 +101,7 @@ See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-exam
       B --> D[Be done]
 ```
 
-```mermaid
+```mermaid-example
   graph LR
       accTitle: Big Decisions
       accDescr: Bob's Burgers process for making big decisions
@@ -129,7 +129,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
   for making very, very big decisions.
   This is actually a very simple flow: identify the big decision and then make the big decision."
 
-```mermaid-example
+```mermaid
   graph LR
       accTitle: Bob's Burger's Making Big Decisions
       accDescr {
@@ -141,7 +141,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
       B --> D[Be done]
 ```
 
-```mermaid
+```mermaid-example
   graph LR
       accTitle: Bob's Burger's Making Big Decisions
       accDescr {
@@ -177,7 +177,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### Class Diagram
 
-```mermaid-example
+```mermaid
    classDiagram
       accTitle: My Class Diagram
       accDescr: My Class Diagram Description
@@ -185,7 +185,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
       Vehicle <|-- Car
 ```
 
-```mermaid
+```mermaid-example
    classDiagram
       accTitle: My Class Diagram
       accDescr: My Class Diagram Description
@@ -195,7 +195,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### Entity Relationship Diagram
 
-```mermaid-example
+```mermaid
    erDiagram
       accTitle: My Entity Relationship Diagram
       accDescr: My Entity Relationship Diagram Description
@@ -206,7 +206,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
+```mermaid-example
    erDiagram
       accTitle: My Entity Relationship Diagram
       accDescr: My Entity Relationship Diagram Description
@@ -219,7 +219,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### Gantt Chart
 
-```mermaid-example
+```mermaid
    gantt
       accTitle: My Gantt Chart Accessibility Title
       accDescr: My Gantt Chart Accessibility Description
@@ -235,7 +235,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
+```mermaid-example
    gantt
       accTitle: My Gantt Chart Accessibility Title
       accDescr: My Gantt Chart Accessibility Description
@@ -253,7 +253,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### GitGraph
 
-```mermaid-example
+```mermaid
   gitGraph
       accTitle: My GitGraph Accessibility Title
       accDescr: My GitGraph Accessibility Description
@@ -271,7 +271,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
+```mermaid-example
   gitGraph
       accTitle: My GitGraph Accessibility Title
       accDescr: My GitGraph Accessibility Description
@@ -291,7 +291,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### Pie Chart
 
-```mermaid-example
+```mermaid
    pie
       accTitle: My Pie Chart Accessibility Title
       accDescr: My Pie Chart Accessibility Description
@@ -304,7 +304,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
+```mermaid-example
    pie
       accTitle: My Pie Chart Accessibility Title
       accDescr: My Pie Chart Accessibility Description
@@ -319,7 +319,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### Requirement Diagram
 
-```mermaid-example
+```mermaid
   requirementDiagram
       accTitle: My Requirement Diagram
       accDescr: My Requirement Diagram Description
@@ -339,7 +339,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
+```mermaid-example
   requirementDiagram
       accTitle: My Requirement Diagram
       accDescr: My Requirement Diagram Description
@@ -361,7 +361,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### Sequence Diagram
 
-```mermaid-example
+```mermaid
    sequenceDiagram
       accTitle: My Sequence Diagram
       accDescr: My Sequence Diagram Description
@@ -371,7 +371,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
       Alice-)John: See you later!
 ```
 
-```mermaid
+```mermaid-example
    sequenceDiagram
       accTitle: My Sequence Diagram
       accDescr: My Sequence Diagram Description
@@ -383,7 +383,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### State Diagram
 
-```mermaid-example
+```mermaid
    stateDiagram
       accTitle: My State Diagram
       accDescr: My State Diagram Description
@@ -392,7 +392,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
+```mermaid-example
    stateDiagram
       accTitle: My State Diagram
       accDescr: My State Diagram Description
@@ -403,7 +403,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ##### User Journey Diagram
 
-```mermaid-example
+```mermaid
   journey
       accTitle: My User Journey Diagram
       accDescr: My User Journey Diagram Description
@@ -419,7 +419,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
+```mermaid-example
   journey
       accTitle: My User Journey Diagram
       accDescr: My User Journey Diagram Description

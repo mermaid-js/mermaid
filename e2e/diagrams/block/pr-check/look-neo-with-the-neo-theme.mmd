@@ -1,0 +1,22 @@
+---
+description: >-
+  A block diagram forming a decision flowchart using directional block-arrows
+  (`<[...]>(down)`, `(right)`, `(up)`, `(x)`) between a circular Start node, a
+  diamond decision, two process blocks, and a circular End node, styled with
+  the "neo" look and the "neo" (light) theme plus explicit fill overrides on
+  Start and End. Identical diagram body to the "neo-dark" theme sibling,
+  differing only in the theme config value.
+config:
+  look: neo
+  theme: neo
+---
+block-beta
+  columns 3
+  Start(("Start")) space:2
+  down<[" "]>(down) space:2
+  Decision{{"Make Decision"}} right<["Yes"]>(right) Process1["Process A"]
+  downAgain<["No"]>(down) space r3<["Done"]>(down)
+  Process2["Process B"] r2<["Done"]>(right) End(("End"))
+
+  style Start fill:#969;
+  style End fill:#696;

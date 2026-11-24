@@ -1,0 +1,16 @@
+---
+description:
+  Regression test ensuring that node identifiers which merely contain the
+  substring \"default\" (e.g. default-index.js) are not mistaken for the
+  reserved default keyword during parsing, and render as ordinary nodes under
+  dagre layout.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  default-index.js --> dot.template.js
+  index.js --> module-utl.js

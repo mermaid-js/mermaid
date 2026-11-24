@@ -1,0 +1,16 @@
+---
+description:
+  Regression test verifying that multiple overlapping edges converging on a
+  shared node are drawn in full, without their paths being clipped or cut short
+  by the node's bounding box under dagre layout.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  A --> B
+  A --> C
+  B --> C

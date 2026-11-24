@@ -1,0 +1,20 @@
+---
+description:
+  Regression test for nested subgraphs where a node is given the same identifier
+  as a subgraph declared later in the source, verifying dagre resolves the
+  reference to the correct subgraph regardless of declaration order.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  a -->b
+  subgraph A
+  B
+  end
+  subgraph B
+  b
+  end

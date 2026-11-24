@@ -1,0 +1,17 @@
+---
+description:
+  Regression test (issue 7827) verifying that when a recursive/cyclic flow
+  (brief -> ... -> decision -> brief) is nested inside a subgraph, with
+  keepEntryNodeOnTop enabled dagre keeps the subgraph's true entry node
+  positioned at the top rather than letting the back edge pull it out of place.
+config:
+  layout: dagre
+---
+flowchart TD
+  start([Start]) --> research
+  research --> done([Done])
+  subgraph research["Research"]
+  brief --> web_sources --> academic_sources --> expert_voices --> synthesize --> decision
+  decision -->|Needs completion| brief
+  decision -->|If complete| format_output
+  end

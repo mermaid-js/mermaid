@@ -1,0 +1,12 @@
+---
+description: >-
+  ER diagram covering basic ER relationships (CUSTOMER/ORDER/LINE-ITEM/ADDRESS),
+  rendered under the "neo" look with the "redux-dark" theme.
+config:
+  look: neo
+  theme: redux-dark
+---
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains
+    CUSTOMER ||--|{ ADDRESS : "has"

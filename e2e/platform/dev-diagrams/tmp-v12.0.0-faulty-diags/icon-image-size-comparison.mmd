@@ -1,0 +1,82 @@
+---
+config:
+  look: neo
+  htmlLabels: true
+  fontFamily: courier
+  flowchart:
+    wrappingWidth: 120
+    minNodeWidth: 120
+---
+%% Compare requested artwork sizes with the same caption and wrappingWidth.
+%% Change wrappingWidth above or h/w below to try other sizes.
+flowchart TB
+  subgraph size_48["Requested asset size: 48 px — wrappingWidth: 120"]
+    direction LR
+    subgraph case_plain_48["Plain icon"]
+      plain_48@{icon: "fa:cloud", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_square_48["Square icon"]
+      square_48@{icon: "fa:cloud", form: "square", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_circle_48["Circle icon"]
+      circle_48@{icon: "fa:cloud", form: "circle", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_rounded_48["Rounded icon"]
+      rounded_48@{icon: "fa:cloud", form: "rounded", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_image_off_48["Image — constraint off"]
+      image_off_48@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 48, h: 48, constraint: "off", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_image_on_48["Image — constraint on"]
+      image_on_48@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 48, h: 48, constraint: "on", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    case_plain_48 ~~~ case_square_48 ~~~ case_circle_48 ~~~ case_rounded_48 ~~~ case_image_off_48 ~~~ case_image_on_48
+  end
+
+  subgraph size_120["Requested asset size: 120 px — wrappingWidth: 120"]
+    direction LR
+    subgraph case_plain_120["Plain icon"]
+      plain_120@{icon: "fa:cloud", h: 120, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_square_120["Square icon"]
+      square_120@{icon: "fa:cloud", form: "square", h: 120, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_circle_120["Circle icon"]
+      circle_120@{icon: "fa:cloud", form: "circle", h: 120, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_rounded_120["Rounded icon"]
+      rounded_120@{icon: "fa:cloud", form: "rounded", h: 120, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_image_off_120["Image — constraint off"]
+      image_off_120@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 120, h: 120, constraint: "off", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_image_on_120["Image — constraint on"]
+      image_on_120@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 120, h: 120, constraint: "on", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    case_plain_120 ~~~ case_square_120 ~~~ case_circle_120 ~~~ case_rounded_120 ~~~ case_image_off_120 ~~~ case_image_on_120
+  end
+
+  subgraph size_240["Requested asset size: 240 px — wrappingWidth: 120"]
+    direction LR
+    subgraph case_plain_240["Plain icon"]
+      plain_240@{icon: "fa:cloud", h: 240, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_square_240["Square icon"]
+      square_240@{icon: "fa:cloud", form: "square", h: 240, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_circle_240["Circle icon"]
+      circle_240@{icon: "fa:cloud", form: "circle", h: 240, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_rounded_240["Rounded icon"]
+      rounded_240@{icon: "fa:cloud", form: "rounded", h: 240, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_image_off_240["Image — constraint off"]
+      image_off_240@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 240, h: 240, constraint: "off", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_image_on_240["Image — constraint on"]
+      image_on_240@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 240, h: 240, constraint: "on", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    case_plain_240 ~~~ case_square_240 ~~~ case_circle_240 ~~~ case_rounded_240 ~~~ case_image_off_240 ~~~ case_image_on_240
+  end
+
+  size_48 ~~~ size_120 ~~~ size_240

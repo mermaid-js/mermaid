@@ -1,0 +1,19 @@
+---
+description:
+  Checks that an edge from a node inside a doubly-nested subgraph
+  (subcontainer-child, inside subcontainer, inside main) to a sibling node that
+  is never explicitly declared (subcontainer-sibling) is still placed correctly
+  within the parent subgraph rather than escaping to the top level.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  subgraph  main
+  subgraph subcontainer
+    subcontainer-child
+  end
+   subcontainer-child--> subcontainer-sibling
+  end

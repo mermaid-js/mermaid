@@ -1,0 +1,8 @@
+---
+description: Minimal two-entity ER diagram (CUSTOMER/ORDER/LINE-ITEM) under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains

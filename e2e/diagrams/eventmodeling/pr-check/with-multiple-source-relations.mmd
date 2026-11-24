@@ -1,0 +1,12 @@
+---
+description: >-
+  An event (ItemChanged) that references two separate prior commands
+  (`->> 02 ->> 03`) rather than just one, verifying a frame can carry
+  multiple source relations at once.
+---
+eventmodeling
+
+tf 01 ui CartScreen
+tf 02 cmd AddItem
+tf 03 cmd RemoveItem
+tf 04 evt ItemChanged ->> 02 ->> 03

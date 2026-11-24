@@ -8,6 +8,7 @@ import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { handleUndefinedAttr } from '../../../utils.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 
 /** Height reserved for the ellipsis indicator row below the title */
 const INDICATOR_ROW_HEIGHT = 20;
@@ -17,6 +18,48 @@ const SEPARATOR_GAP = 8;
 const MIN_WIDTH = 80;
 /** Corner radius matching the expanded subgraph (cluster rect) */
 const RADIUS = 8;
+
+interface CollapsedStyle {
+  rx: number;
+  fill: string;
+  stroke: string;
+  /** Omitted for the default look, which inherits the stylesheet's stroke width. */
+  strokeWidth?: number;
+  cssClass: string;
+}
+
+/**
+ * Visual styling for a collapsed container.
+ *
+ * The default branch reproduces the plain flowchart `@{ view: collapsed }` look.
+ * Agentflow tags its containers with `metadata.containerType` so that a collapsed
+ * node keeps the visual identity of its expanded cluster (see clusters.js).
+ */
+function getCollapsedStyle(containerType: string | undefined): CollapsedStyle {
+  const { themeVariables } = getConfig();
+  const clusterBkg = themeVariables.clusterBkg;
+  const clusterBorder = themeVariables.clusterBorder;
+
+  switch (containerType) {
+    // Agentflow's grammar has a single container kind (`flow`); a collapsed
+    // flow keeps the visual identity of its expanded cluster (see clusters.js).
+    case 'flow':
+      return {
+        rx: 10,
+        fill: 'none',
+        stroke: themeVariables.flowContainerStroke || themeVariables.secondaryBorderColor,
+        strokeWidth: 0.75,
+        cssClass: 'flow-collapsed',
+      };
+    default:
+      return {
+        rx: RADIUS,
+        fill: clusterBkg,
+        stroke: clusterBorder,
+        cssClass: 'collapsed-group',
+      };
+  }
+}
 
 /**
  * Collapsed subgraph shape (flowchart `@{ view: collapsed }`).
@@ -34,13 +77,18 @@ export async function collapsedGroup<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
 ) {
-  const { themeVariables } = getConfig();
-  const fill = themeVariables.clusterBkg;
-  const stroke = themeVariables.clusterBorder;
+  const style = getCollapsedStyle(node.metadata?.containerType as string | undefined);
+  const { fill, stroke } = style;
 
   const { nodeStyles } = styles2String(node);
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  // A collapsed subgraph is still a container, so it takes the same palette slot its
+  // expanded form would. Without this it renders uncoloured beside tinted siblings, and
+  // the seam shows up exactly when someone uses the collapse feature.
+  const { theme, themeVariables } = getConfig();
+  stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);
 
   const padding = node.padding ?? 8;
   const titleHeight = bbox.height;
@@ -72,29 +120,34 @@ export async function collapsedGroup<T extends SVGGraphicsElement>(
     const roughOpts = userNodeOverrides(node, {
       fill,
       stroke,
-      fillStyle: 'solid',
+      ...(style.strokeWidth === undefined ? {} : { strokeWidth: style.strokeWidth }),
+      ...(fill === 'none' ? { fillWeight: 0 } : { fillStyle: 'solid' }),
     });
     const roughNode = rc.path(
-      createRoundedRectPathD(x, y, totalWidth, totalHeight, RADIUS),
+      createRoundedRectPathD(x, y, totalWidth, totalHeight, style.rx),
       roughOpts
     );
     rect = shapeSvg.insert(() => roughNode, ':first-child');
     rect
-      .attr('class', 'basic label-container collapsed-group')
+      .attr('class', 'basic label-container ' + style.cssClass)
       .attr('style', handleUndefinedAttr(node.cssStyles));
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
     rect
-      .attr('class', 'basic label-container collapsed-group')
+      .attr('class', 'basic label-container ' + style.cssClass)
       .attr('style', nodeStyles)
-      .attr('rx', RADIUS)
-      .attr('ry', RADIUS)
+      .attr('rx', style.rx)
+      .attr('ry', style.rx)
       .attr('x', x)
       .attr('y', y)
       .attr('width', totalWidth)
       .attr('height', totalHeight)
       .attr('fill', fill)
       .attr('stroke', stroke);
+
+    if (style.strokeWidth !== undefined) {
+      rect.attr('stroke-width', style.strokeWidth + 'px');
+    }
   }
 
   // -- Separator line between the title and the indicator row --

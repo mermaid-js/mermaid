@@ -1,0 +1,14 @@
+---
+description: >-
+  IR syntax with 7 interdependent rules (a full JSON grammar:
+  json/element/object/array/member/number/digit) rendered together in one
+  diagram.
+---
+railroad-beta
+json = nonterminal("element") ;
+element = choice(nonterminal("object"), nonterminal("array"), nonterminal("string"), nonterminal("number"), terminal("true"), terminal("false"), terminal("null")) ;
+object = sequence(terminal("{"), optional(sequence(nonterminal("member"), zeroOrMore(sequence(terminal(","), nonterminal("member"))))), terminal("}")) ;
+array = sequence(terminal("["), optional(sequence(nonterminal("element"), zeroOrMore(sequence(terminal(","), nonterminal("element"))))), terminal("]")) ;
+member = sequence(nonterminal("string"), terminal(":"), nonterminal("element")) ;
+number = oneOrMore(nonterminal("digit")) ;
+digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3"), terminal("4"), terminal("5"), terminal("6"), terminal("7"), terminal("8"), terminal("9")) ;

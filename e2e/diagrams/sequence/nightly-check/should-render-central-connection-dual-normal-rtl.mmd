@@ -1,0 +1,21 @@
+---
+description: >-
+  Same dual central-connection circles on the "normal" arrow family (solid,
+  dotted, open, cross, close) as the "-ltr" sibling, but with Bob/Charlie as
+  the senders so messages flow right-to-left.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Bob()->>()Alice: Circles at both ends with solid arrow (RTL)
+  Charlie()-->>()Bob: Circles at both ends with dotted arrow (RTL)
+  Bob()->()Alice: Circles at both ends with open arrow (RTL)
+  Charlie()--x()Alice: Circles at both ends with cross arrow (RTL)
+  Bob()--)()Alice: Circles at both ends with close arrow (RTL)

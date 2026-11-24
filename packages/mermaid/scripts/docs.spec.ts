@@ -1,4 +1,5 @@
 import {
+  buildDiagramExamplesDoc,
   buildShapeDoc,
   MERMAID_RELEASE_VERSION,
   replaceVersionPlaceholder,
@@ -6,6 +7,7 @@ import {
   transformToBlockQuote,
 } from './docs.mjs';
 
+import { diagramData } from '../../examples/src/index.js';
 import { remark } from 'remark'; // import it this way so we can mock it
 import remarkFrontmatter from 'remark-frontmatter';
 import { vi, afterEach, describe, it, expect } from 'vitest';
@@ -55,7 +57,7 @@ describe('docs.mts', () => {
             const contents =
               beforeCodeLine + '```' + lang_keyword + '\n' + diagram_text + '\n```\n';
 
-            it('changes the language to "mermaid-example" and adds a copy of the code block with language = "mermaid"', async () => {
+            it('adds a copy of the code block with language = "mermaid" before it, and changes its language to "mermaid-example"', async () => {
               const result = (
                 await remarkBuilder()
                   .use(transformMarkdownAst, { originalFilename })
@@ -64,14 +66,38 @@ describe('docs.mts', () => {
               expect(result).toEqual(
                 beforeCodeLine +
                   '\n' +
-                  '```mermaid-example\n' +
+                  '```mermaid\n' +
                   diagram_text +
                   '\n```\n' +
-                  '\n```mermaid\n' +
+                  '\n```mermaid-example\n' +
                   diagram_text +
                   '\n```\n'
               );
             });
+          });
+        });
+
+        describe('language = "mermaid-collapsed"', () => {
+          const contents = beforeCodeLine + '```mermaid-collapsed\n' + diagram_text + '\n```\n';
+
+          it('adds the diagram, then the code inside <details>', async () => {
+            const result = (
+              await remarkBuilder()
+                .use(transformMarkdownAst, { originalFilename })
+                .process(contents)
+            ).toString();
+            expect(result).toEqual(
+              beforeCodeLine +
+                '\n' +
+                '```mermaid\n' +
+                diagram_text +
+                '\n```\n' +
+                '\n<details>\n<summary>Code</summary>\n' +
+                '\n```mermaid-example\n' +
+                diagram_text +
+                '\n```\n' +
+                '\n</details>\n'
+            );
           });
         });
 
@@ -169,6 +195,19 @@ This Markdown should be kept.
           expect(result).toMatch(/> \*\*Blorf Type\*\* /);
         });
       });
+    });
+  });
+
+  describe('buildDiagramExamplesDoc', () => {
+    it('should include every example from the examples package', () => {
+      const doc = buildDiagramExamplesDoc();
+      for (const { name, examples } of diagramData) {
+        expect(doc).toContain(`## ${name}`);
+        for (const { title, code } of examples) {
+          expect(doc).toContain(`### ${title}`);
+          expect(doc).toContain(`\`\`\`mermaid-collapsed\n${code}\n\`\`\``);
+        }
+      }
     });
   });
 

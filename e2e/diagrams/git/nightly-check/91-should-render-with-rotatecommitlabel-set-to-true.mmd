@@ -1,0 +1,20 @@
+---
+description: >-
+  Default-orientation gitGraph with a develop branch and `rotateCommitLabel: true`, using named
+  (non-numeric) commit ids to verify rotated commit labels render legibly.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    rotateCommitLabel: true
+    parallelCommits: false
+---
+gitGraph
+  commit id: "Alpha"
+  commit id: "Beta"
+  branch develop
+  checkout develop
+  commit id: "Gamma"
+  commit id: "Delta"
+  checkout main
+  commit id: "Epsilon"

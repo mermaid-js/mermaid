@@ -1,0 +1,14 @@
+---
+description: >-
+  A very long entity name (PRIVATE_FINANCIAL_INSTITUTION) related to a short one
+  (EMPLOYEE) under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+    PRIVATE_FINANCIAL_INSTITUTION {
+      string name
+      int    turnover
+    }
+    PRIVATE_FINANCIAL_INSTITUTION ||..|{ EMPLOYEE : employs
+    EMPLOYEE { bool officer_of_firm }

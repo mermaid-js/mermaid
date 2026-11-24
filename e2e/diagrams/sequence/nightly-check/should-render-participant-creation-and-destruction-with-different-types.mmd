@@ -1,0 +1,20 @@
+---
+description: >-
+  No-frontmatter sequence diagram exercising `create participant`/
+  `create actor` and `destroy` lifecycle statements together with typed
+  participant metadata (`boundary`, `control`) and an `as`-aliased created
+  actor, checking that dynamic creation/destruction renders correctly
+  alongside participant-type stereotypes.
+---
+sequenceDiagram
+  participant Alice@{ "type" : "boundary" }
+  Alice->>Bob: Hello Bob, how are you ?
+  Bob->>Alice: Fine, thank you. And you?
+  create participant Carl@{ "type" : "control" }
+  Alice->>Carl: Hi Carl!
+  create actor D as Donald
+  Carl->>D: Hi!
+  destroy Carl
+  Alice-xCarl: We are too many
+  destroy Bob
+  Bob->>Alice: I agree

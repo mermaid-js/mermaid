@@ -1,0 +1,19 @@
+---
+description:
+  Verifies that an edge terminating directly at a subgraph (rather than at one
+  of its internal nodes) is drawn with a correctly positioned arrowhead at the
+  subgraph's boundary.
+config:
+  layout: dagre
+---
+flowchart TD
+  P1
+  P1 -->P1.5
+  subgraph P1.5
+  P2
+  P2.5(( A ))
+  P3
+  end
+  P2 --> P4
+  P3 --> P6
+  P1.5 --> P5

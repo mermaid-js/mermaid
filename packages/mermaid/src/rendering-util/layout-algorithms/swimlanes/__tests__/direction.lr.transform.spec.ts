@@ -222,3 +222,22 @@ describe('applySwimlaneDirectionTransform', () => {
     expect(child.x + child.width / 2).toBeLessThanOrEqual(nestedRight + 1e-6);
   });
 });
+
+describe('a malformed group chain', () => {
+  it('lays out a lane whose groups reference each other as parents', () => {
+    // Two groups naming each other as parent. Every parent-chain walk in the engine
+    // has to stop on its own; one that does not hangs the render rather than failing.
+    const layout = {
+      nodes: [
+        { id: 'Lane', isGroup: true, x: 0, y: 0, width: 200, height: 100 },
+        { id: 'a', isGroup: true, parentId: 'b', x: 0, y: 0, width: 80, height: 40 },
+        { id: 'b', isGroup: true, parentId: 'a', x: 0, y: 0, width: 80, height: 40 },
+        { id: 'n', isGroup: false, parentId: 'Lane', x: 0, y: 0, width: 60, height: 30 },
+      ],
+      edges: [],
+      config: { flowchart: { nodeSpacing: 40, rankSpacing: 80 } },
+    } as unknown as LayoutData;
+
+    expect(() => applySwimlaneDirectionTransform(layout, 'LR')).not.toThrow();
+  });
+});

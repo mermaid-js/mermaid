@@ -1,0 +1,27 @@
+---
+description:
+  Verifies that nested subgraphs can each declare their own `direction` (RL and
+  BT) independently of their parent subgraph's direction (TB) and the top-level
+  diagram's direction (LR), and that edges connecting into, out of, and between
+  the subgraphs still render correctly.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+
+  subgraph TOP
+  direction TB
+  subgraph B1
+      direction RL
+      i1 -->f1
+  end
+  subgraph B2
+      direction BT
+      i2 -->f2
+  end
+  end
+  A --> TOP --> B
+  B1 --> B2

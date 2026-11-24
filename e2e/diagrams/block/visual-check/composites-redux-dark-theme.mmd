@@ -1,0 +1,22 @@
+---
+description: >-
+  Three sibling composite blocks (ingest/transform/store) under the "redux-dark"
+  redux colour theme — one palette slot per container, unambiguous ordering so a
+  reversed colour cycle would show.
+config:
+  theme: redux-dark
+  look: neo
+---
+block-beta
+  columns 1
+  block:ingest
+    columns 2
+    a["Fetch"] b["Validate"]
+  end
+  block:transform
+    columns 2
+    c["Normalise"] d["Enrich"]
+  end
+  block:store
+    e["Warehouse"]
+  end

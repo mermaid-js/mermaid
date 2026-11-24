@@ -1,0 +1,25 @@
+---
+description: >-
+  Composite state "Active" split into three concurrent regions via the `--`
+  divider syntax (NumLock, CapsLock, ScrollLock toggles), exercising
+  concurrency/orthogonal region rendering.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  [*] --> Active
+
+  state Active {
+  [*] --> NumLockOff
+  NumLockOff --> NumLockOn : EvNumLockPressed
+  NumLockOn --> NumLockOff : EvNumLockPressed
+  --
+  [*] --> CapsLockOff
+  CapsLockOff --> CapsLockOn : EvCapsLockPressed
+  CapsLockOn --> CapsLockOff : EvCapsLockPressed
+  --
+  [*] --> ScrollLockOff
+  ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+  ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+  }

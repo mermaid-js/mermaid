@@ -1,0 +1,9 @@
+---
+description: >-
+  No-frontmatter sequence diagram where the leftmost actor (Alice) sends a
+  very long message to the actor on the right (Bob), followed by a short
+  reply, checking that a long left-to-right message wraps/sizes correctly.
+---
+sequenceDiagram
+  Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

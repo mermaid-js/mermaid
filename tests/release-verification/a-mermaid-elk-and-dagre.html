@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>a) mermaid: elk + dagre</title>
+  </head>
+  <body>
+    <h1>a) Full mermaid runs ELK and dagre cleanly</h1>
+    <div id="out"></div>
+    <script type="module">
+      import mermaid from './node_modules/mermaid/dist/mermaid.esm.min.mjs';
+
+      // logLevel 'warn' so mermaid actually emits warnings; at the default level
+      // (fatal) a missing-layout fallback would pass silently.
+      const LOG_LEVEL = 'warn';
+      const captured = [];
+      for (const level of ['warn', 'error']) {
+        const original = console[level].bind(console);
+        console[level] = (...args) => {
+          captured.push(level + ': ' + args.map(String).join(' '));
+          original(...args);
+        };
+      }
+
+      const FLOW =
+        'flowchart TD\n A[Start] --> B{Choose}\n B -->|one| C[One]\n B -->|two| D[Two]\n A --> D';
+      const STATE = 'stateDiagram-v2\n [*] --> Idle\n Idle --> Busy: work\n Busy --> Idle: done';
+
+      const render = async (id, code, config) => {
+        const before = captured.length;
+        mermaid.initialize({ startOnLoad: false, logLevel: LOG_LEVEL, ...config });
+        const { svg } = await mermaid.render(id, code);
+        const during = captured
+          .slice(before)
+          .map((m) => m.replace(/^\S+: %c[\d.]+ : \w+ :\s+color: \w+\s*/, ''));
+        const host = document.createElement('div');
+        host.innerHTML = svg;
+        const root = host.querySelector('svg');
+        return {
+          role: root?.getAttribute('aria-roledescription') ?? null,
+          nodes: host.querySelectorAll('.node').length,
+          edges: host.querySelectorAll('.edgePaths path, .edges path').length,
+          // Node transforms are the layout's actual output: identical strings mean
+          // the same engine ran.
+          geometry: [...host.querySelectorAll('.node')]
+            .map((n) => n.getAttribute('transform'))
+            .join('|'),
+          warnings: during,
+          svg,
+        };
+      };
+
+      const result = { checks: [], warnings: [] };
+      const check = (name, pass, detail) => result.checks.push({ name, pass: !!pass, detail });
+
+      try {
+        const flowElk = await render('a-flow-elk', FLOW, { layout: 'elk' });
+        const flowDagre = await render('a-flow-dagre', FLOW, { layout: 'dagre' });
+        const flowDefault = await render('a-flow-default', FLOW, {});
+        const stateElk = await render('a-state-elk', STATE, { layout: 'elk' });
+        const stateDagre = await render('a-state-dagre', STATE, { layout: 'dagre' });
+        const variant = await render('a-flow-mrtree', FLOW, { layout: 'elk.mrtree' });
+
+        document.getElementById('out').innerHTML = flowElk.svg;
+
+        check(
+          'flowchart renders with layout: elk',
+          flowElk.role === 'flowchart-v2' && flowElk.nodes === 4,
+          flowElk.role + ', ' + flowElk.nodes + ' nodes'
+        );
+        check(
+          'flowchart renders with layout: dagre',
+          flowDagre.role === 'flowchart-v2' && flowDagre.nodes === 4,
+          flowDagre.role + ', ' + flowDagre.nodes + ' nodes'
+        );
+        check(
+          'elk and dagre produce different geometry (both engines really ran)',
+          flowElk.geometry !== flowDagre.geometry && flowElk.geometry.length > 0
+        );
+        check(
+          'default layout is elk (matches explicit elk geometry)',
+          flowDefault.geometry === flowElk.geometry
+        );
+        check(
+          'state diagram renders with elk',
+          stateElk.role === 'stateDiagram' && stateElk.nodes >= 2,
+          stateElk.role + ', ' + stateElk.nodes + ' nodes'
+        );
+        check('state diagram elk differs from dagre', stateElk.geometry !== stateDagre.geometry);
+        check(
+          'elk.mrtree variant renders and differs from elk.layered',
+          variant.nodes === 4 && variant.geometry !== flowElk.geometry
+        );
+        check(
+          'all renders produced edges',
+          flowElk.edges > 0 && flowDagre.edges > 0 && stateElk.edges > 0
+        );
+
+        result.warnings = {
+          flowElk: flowElk.warnings,
+          flowDagre: flowDagre.warnings,
+          stateElk: stateElk.warnings,
+          stateDagre: stateDagre.warnings,
+        };
+        check(
+          'flowchart with elk logs nothing',
+          flowElk.warnings.length === 0,
+          flowElk.warnings.join(' ~ ') || 'none'
+        );
+        check(
+          'flowchart with dagre logs nothing',
+          flowDagre.warnings.length === 0,
+          flowDagre.warnings.join(' ~ ') || 'none'
+        );
+        // Attributed per render: a warning both engines emit is pre-existing and
+        // says nothing about ELK, so it must not be charged to ELK.
+        check(
+          'elk introduces no warning that dagre does not also emit',
+          flowElk.warnings.join('|') === flowDagre.warnings.join('|') &&
+            stateElk.warnings.join('|') === stateDagre.warnings.join('|'),
+          'elk-state=[' +
+            stateElk.warnings.join(' ~ ') +
+            '] dagre-state=[' +
+            stateDagre.warnings.join(' ~ ') +
+            ']'
+        );
+        result.ok = result.checks.every((c) => c.pass);
+      } catch (e) {
+        result.ok = false;
+        result.error = String(e?.stack ?? e).slice(0, 900);
+      }
+      window.__result = result;
+    </script>
+  </body>
+</html>

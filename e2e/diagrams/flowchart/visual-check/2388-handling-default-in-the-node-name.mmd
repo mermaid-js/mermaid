@@ -1,0 +1,14 @@
+---
+description: >-
+  Regression test for issue #2388 verifying that node identifiers containing the
+  substring "default" (e.g. `default-index.js`) are parsed as ordinary node ids
+  rather than being mistaken for the reserved `default` class/style keyword.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  default-index.js --> dot.template.js
+  index.js --> module-utl.js

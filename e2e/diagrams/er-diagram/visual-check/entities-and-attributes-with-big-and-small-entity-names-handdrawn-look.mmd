@@ -1,0 +1,14 @@
+---
+description: >-
+  A very long entity name (PRIVATE_FINANCIAL_INSTITUTION) related to a short one
+  (EMPLOYEE) under the handDrawn look.
+config:
+  look: handDrawn
+---
+erDiagram
+    PRIVATE_FINANCIAL_INSTITUTION {
+      string name
+      int    turnover
+    }
+    PRIVATE_FINANCIAL_INSTITUTION ||..|{ EMPLOYEE : employs
+    EMPLOYEE { bool officer_of_firm }

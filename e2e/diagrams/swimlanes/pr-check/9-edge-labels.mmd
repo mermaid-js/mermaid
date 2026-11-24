@@ -1,0 +1,18 @@
+---
+description: >-
+  A two-node loop entirely within a single lane (Dep1): Start goes to
+  Process1 with a "Yes" edge label and Process1 loops back to Start,
+  testing labeled edges and a cycle contained inside one lane.
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph Dep1
+  Start
+  Process1
+  end
+
+  Start --Yes --> Process1 --> Start

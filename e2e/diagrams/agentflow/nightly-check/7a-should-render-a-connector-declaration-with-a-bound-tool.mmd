@@ -1,0 +1,15 @@
+---
+description: >-
+  A single `connector` declaration (GitHub API, with protocol/endpoint/
+  token_required metadata) bound to a `tool` node via `connectorRef`, fed
+  by an `input` node.
+---
+agentflow-beta LR
+  connector github["GitHub API"]
+  github@{ protocol: "http", endpoint: "https://api.github.com", token_required: true }
+
+  query["query"]
+  query@{ shape: input }
+  fetch_issues["fetch_issues"]
+  fetch_issues@{ shape: tool, connectorRef: "github.list_issues" }
+  query --> fetch_issues

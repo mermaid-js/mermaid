@@ -1,0 +1,12 @@
+---
+description: >-
+  Minimal C4Context diagram exercising UpdateRelStyle with textColor,
+  lineColor and offsetX/offsetY overrides applied to a single Rel between
+  two Systems.
+---
+C4Context
+title UpdateRelStyle
+System(a, "A")
+System(b, "B")
+Rel(a, b, "Uses")
+UpdateRelStyle(a, b, $textColor="blue", $lineColor="blue", $offsetX="5", $offsetY="-10")

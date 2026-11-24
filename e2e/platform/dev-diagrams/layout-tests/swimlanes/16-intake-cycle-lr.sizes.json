@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "width": 225.751220703125,
+      "height": 42.24697494506836
+    },
+    {
+      "id": "task",
+      "width": 263.1114807128906,
+      "height": 57.518043518066406
+    },
+    {
+      "id": "fix",
+      "width": 263.1988220214844,
+      "height": 57.42341232299805
+    },
+    {
+      "id": "decision",
+      "width": 255.46585083007812,
+      "height": 256.0322265625
+    },
+    {
+      "id": "edge-label-decision-fix-L_decision_fix_0",
+      "width": 18.796875,
+      "height": 24
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "8143880a2aeb20d5d1a9d29223074a12f310e0043b0468d5822cc4cb06a31207",
+    "capturedAt": "2026-09-07T12:00:28.798Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/16-intake-cycle-lr.mmd theme=default look=handDrawn layout=swimlane"
+  }
+}

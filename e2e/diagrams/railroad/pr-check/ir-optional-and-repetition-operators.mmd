@@ -1,0 +1,10 @@
+---
+description: >-
+  IR syntax covering optional(), oneOrMore(), and zeroOrMore() together in a
+  signed-number-list grammar.
+---
+railroad-beta
+sign = choice(terminal("+"), terminal("-")) ;
+number = sequence(optional(nonterminal("sign")), oneOrMore(nonterminal("digit"))) ;
+list = sequence(terminal("["), optional(sequence(nonterminal("number"), zeroOrMore(sequence(terminal(","), nonterminal("number"))))), terminal("]")) ;
+digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3")) ;

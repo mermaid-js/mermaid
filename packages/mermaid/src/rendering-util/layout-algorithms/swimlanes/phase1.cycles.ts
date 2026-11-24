@@ -1,6 +1,6 @@
 import type { Graph, Edge, EdgeRef, NodeId } from './helpers.js';
-import { normalizeGraph } from './phase0.helpers.js';
-// cspell:ignore Graphviz acyc Eades
+import { buildInDegreeMap, normalizeGraph } from './phase0.helpers.js';
+// cspell:ignore Graphviz acyc Eades Gansner
 
 export interface CycleRemovalResult {
   acyclic: Graph;
@@ -44,9 +44,20 @@ export function removeCycles_DFS(g: Graph): CycleRemovalResult {
     color[u] = 2;
   };
 
-  // Visit in deterministic order
-  const nodesSorted = [...gn.nodes].sort((a, b) => a.localeCompare(b));
-  for (const v of nodesSorted) {
+  // Seed the DFS from true sources (in-degree 0) first, in declaration order,
+  // then sweep any remaining unvisited nodes in declaration order. This follows
+  // dot (Gansner et al. 1993, §2.1): "edges are searched in the graph's natural
+  // input order, starting from source or sink nodes when available". Seeding
+  // from an arbitrary (e.g. alphabetical) root can reverse an edge that is not
+  // the natural back edge, turning a mid-cycle node into an artificial source
+  // and disturbing the layering (see 16-intake-cycle-lr.ddlt.spec.ts).
+  // `gn.nodes` preserves nodeById insertion order, which is parser order.
+  const inDegree = buildInDegreeMap(gn);
+  const seeds = [
+    ...gn.nodes.filter((v) => (inDegree.get(v) ?? 0) === 0),
+    ...gn.nodes.filter((v) => (inDegree.get(v) ?? 0) !== 0),
+  ];
+  for (const v of seeds) {
     if (color[v] === 0) {
       dfs(v);
     }

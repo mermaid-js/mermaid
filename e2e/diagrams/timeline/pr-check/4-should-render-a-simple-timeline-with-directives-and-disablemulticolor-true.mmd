@@ -1,0 +1,13 @@
+---
+description: >-
+  Tests the `timeline.disableMulticolor` config option, set via an init
+  directive on the `base` theme, which forces all time-period columns to
+  use a single color instead of the default per-column multicolor palette.
+---
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
+timeline
+  title History of Social Media Platform
+  2002 : LinkedIn
+  2004 : Facebook : Google
+  2005 : YouTube
+  2006 : Twitter

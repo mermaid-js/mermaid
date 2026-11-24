@@ -1,0 +1,16 @@
+---
+description: >-
+  States AState and BState both get the classDef `exampleStyleClass`
+  applied, but AState also receives a direct `style` statement with a
+  different fill/border/color - verifies the inline style takes precedence
+  over the class-based style.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  AState: Should NOT be white
+  BState
+  classDef exampleStyleClass fill:#fff,color: blue;
+  class AState,BState exampleStyleClass
+  style AState fill:#636,border:1px solid red,color:white;

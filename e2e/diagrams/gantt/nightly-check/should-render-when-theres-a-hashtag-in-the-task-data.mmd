@@ -1,0 +1,15 @@
+---
+description: >-
+  Task name begins with a literal "#" character ("#A task with a
+  hashtag"), verifying the hashtag in task text is rendered literally
+  rather than treated as a comment.
+---
+gantt
+  title Gantt Digram
+  dateFormat  YYYY-MM-DD
+  section Section
+  #A task with a hashtag           :a1, 2014-01-01, 30d
+  Another task     :after a1  , 20d
+  section Another
+  Task in sec      :2014-01-12  , 12d
+  another task      : 24d

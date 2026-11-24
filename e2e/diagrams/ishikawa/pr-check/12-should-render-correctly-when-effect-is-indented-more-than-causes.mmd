@@ -1,0 +1,16 @@
+---
+description: >-
+  Edge case where the effect (Problem) and every cause/sub-cause line share
+  the same two-space indentation, so none of the "Subcause" items are
+  indented deeper than their intended parent. Verifies the parser still
+  identifies the first line as the effect and renders the rest as flat
+  top-level causes when indentation alone doesn't encode a hierarchy.
+---
+ishikawa-beta
+  Problem
+  Cause A
+  Subcause A1
+  Subcause A2
+  Cause B
+  Subcause B1
+  Cause C

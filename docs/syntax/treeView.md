@@ -6,6 +6,9 @@
 
 # TreeView Diagram (v11.14.0+)
 
+> **Warning**
+> TreeView diagrams are in beta. Diagrams start with the `treeView-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
 ## Introduction
 
 A TreeView diagram is used to represent hierarchical data in the form of a directory-like structure, with file/folder icons, connector lines, and optional annotations.
@@ -42,7 +45,7 @@ As an alternative to indentation, you can use box-drawing characters to define t
 
 Both standard (`├──`, `└──`, `│`) and heavy (`┣━━`, `┗━━`, `┃`) Unicode variants are supported.
 
-```mermaid-example
+```mermaid
 treeView-beta
 ├── src/
 │   ├── index.ts
@@ -51,7 +54,7 @@ treeView-beta
 └── README.md
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
 ├── src/
 │   ├── index.ts
@@ -62,7 +65,7 @@ treeView-beta
 
 All annotations work the same way — just append them after the label:
 
-```mermaid-example
+```mermaid
 treeView-beta
 ├── src/
 │   ├── App.tsx :::highlight icon(logos:react) ## main component
@@ -72,7 +75,7 @@ treeView-beta
 └── package.json
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
 ├── src/
 │   ├── App.tsx :::highlight icon(logos:react) ## main component
@@ -84,7 +87,7 @@ treeView-beta
 
 Depth is inferred from the column position of the branch character, so deeper nesting works naturally:
 
-```mermaid-example
+```mermaid
 treeView-beta
 ├── packages/
 │   ├── mermaid/
@@ -97,7 +100,7 @@ treeView-beta
 └── README.md
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
 ├── packages/
 │   ├── mermaid/
@@ -118,7 +121,7 @@ treeView-beta
 
 Annotate a node with `:::className` to apply a CSS class. A built-in `highlight` class is provided:
 
-```mermaid-example
+```mermaid
 treeView-beta
     src/
         App.tsx :::highlight
@@ -126,7 +129,7 @@ treeView-beta
     package.json
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
     src/
         App.tsx :::highlight
@@ -138,7 +141,7 @@ treeView-beta
 
 Add a visible description after `##` — rendered next to the label in italic:
 
-```mermaid-example
+```mermaid
 treeView-beta
     src/
         index.js ## app entry point
@@ -146,7 +149,7 @@ treeView-beta
     package.json ## project manifest
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
     src/
         index.js ## app entry point
@@ -158,7 +161,7 @@ treeView-beta
 
 Icons are hidden by default. Set the `showIcons` config option to `true` to show the built-in icons — `file` for files and `folder` for directories:
 
-```mermaid-example
+```mermaid
 ---
 config:
   treeView:
@@ -170,7 +173,7 @@ treeView-beta
     package.json
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   treeView:
@@ -186,7 +189,7 @@ treeView-beta
 
 Mermaid ships no filename/extension mapping — file-type icons are fully user-configured through the `filenameIcons` and `extensionIcons` config options, using icons from a registered [icon pack](../config/icons.md) such as [material-icon-theme](https://icon-sets.iconify.design/material-icon-theme/). Values are resolved like `icon()` references — `pack:name` is used as-is, unprefixed names resolve via `defaultIconPack`, and `none` hides the icon for matching files. Directories and unmapped files keep the built-in `folder`/`file` icons:
 
-```mermaid-example
+```mermaid
 ---
 config:
   treeView:
@@ -208,7 +211,7 @@ treeView-beta
     README.md
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   treeView:
@@ -234,7 +237,7 @@ treeView-beta
 
 Set a node's icon explicitly with `icon(name)`, where `name` is any icon from a registered [icon pack](../config/icons.md), referenced as `pack:name`. Explicit icons always render, even when `showIcons` is off:
 
-```mermaid-example
+```mermaid
 treeView-beta
     src/
         App.tsx icon(logos:react)
@@ -242,7 +245,7 @@ treeView-beta
     package.json
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
     src/
         App.tsx icon(logos:react)
@@ -259,7 +262,7 @@ When `defaultIconPack` is set, unprefixed names resolve in that pack — `icon(r
 
 When `showIcons` is enabled, use `icon()` or `icon(none)` to hide the icon of a single node:
 
-```mermaid-example
+```mermaid
 ---
 config:
   treeView:
@@ -271,7 +274,7 @@ treeView-beta
     package.json
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   treeView:
@@ -287,7 +290,7 @@ treeView-beta
 
 Annotations can be combined in any order:
 
-```mermaid-example
+```mermaid
 treeView-beta
     my-project/
         src/
@@ -298,7 +301,7 @@ treeView-beta
         package.json
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
     my-project/
         src/
@@ -325,7 +328,7 @@ treeView-beta
 
 Basic with quoted labels:
 
-```mermaid-example
+```mermaid
 treeView-beta
     "packages"
         "mermaid"
@@ -333,7 +336,7 @@ treeView-beta
         "parser"
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
     "packages"
         "mermaid"
@@ -345,7 +348,7 @@ Unicode and emoji in labels:
 
 Labels are rendered exactly as written — unicode characters and consecutive spaces are preserved. Since the built-in icons are hidden by default, emoji make handy inline icons:
 
-```mermaid-example
+```mermaid
 treeView-beta
     🚀 rocket-app/
         📦 packages/
@@ -356,7 +359,7 @@ treeView-beta
         ⚙️ config.yaml
 ```
 
-```mermaid
+```mermaid-example
 treeView-beta
     🚀 rocket-app/
         📦 packages/
@@ -369,7 +372,7 @@ treeView-beta
 
 With custom config:
 
-```mermaid-example
+```mermaid
 ---
 config:
     treeView:
@@ -388,7 +391,7 @@ treeView-beta
         "parser"
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
     treeView:

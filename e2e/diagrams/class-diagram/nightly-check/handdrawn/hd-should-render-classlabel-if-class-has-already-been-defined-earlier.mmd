@@ -1,0 +1,13 @@
+---
+description: >-
+  Hand-drawn look classDiagram where a class (Duck) is first referenced via a relationship,
+  then given a text label through a later `class` declaration, verifying the label applies
+  retroactively.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  Animal <|-- Duck
+  class Duck["Duck with text label"]

@@ -6,15 +6,8 @@ import type {
 
 const id = 'stateDiagram';
 
-const detector: DiagramDetector = (txt, config) => {
-  if (/^\s*stateDiagram-v2/.test(txt)) {
-    return true;
-  }
-  if (/^\s*stateDiagram/.test(txt) && config?.state?.defaultRenderer === 'dagre-wrapper') {
-    return true;
-  }
-  return false;
-};
+// Both `stateDiagram` and `stateDiagram-v2` render with the unified state diagram.
+const detector: DiagramDetector = (txt) => /^\s*stateDiagram/.test(txt);
 
 const loader: DiagramLoader = async () => {
   const { diagram } = await import('./stateDiagram-v2.js');

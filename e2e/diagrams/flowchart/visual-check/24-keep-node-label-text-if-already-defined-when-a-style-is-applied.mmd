@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that when a circle-shaped node (`(( ))`) is redeclared with the same
+  shape/label across multiple edge statements, and a later `linkStyle`/`style`
+  directive targets one of the edges or nodes, the originally-defined label text
+  is preserved rather than being cleared or overwritten.
+config:
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  A(( )) -->|step 1| B(( ))
+  B(( )) -->|step 2| C(( ))
+  C(( )) -->|step 3| D(( ))
+  linkStyle 1 stroke:greenyellow,stroke-width:2px
+  style C fill:greenyellow,stroke:green,stroke-width:4px

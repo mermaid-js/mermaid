@@ -1,0 +1,23 @@
+---
+description:
+  Documents a known-broken variant of the container_Alpha/container_Beta
+  cross-subgraph edge case (see file 56) where simply reordering the two
+  outgoing edges inside container_Alpha changes the rendering outcome; the
+  source comment explicitly notes this ordering 'does not produce the desired
+  result', capturing an edge-order-dependent layout regression.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+%% this does not produce the desired result
+  flowchart TB
+  subgraph container_Beta
+  process_C-->Process_D
+  end
+  subgraph container_Alpha
+  process_A-->process_B
+  process_B-->|via_AWSBatch|container_Beta
+  process_A-->|messages|process_C
+  end

@@ -1,0 +1,18 @@
+---
+description: >-
+  ER diagram covering an 8-entity order/delivery/product model exercising many
+  relationships at once, rendered under the "neo" look with the
+  "redux-dark-color" theme.
+config:
+  look: neo
+  theme: redux-dark-color
+---
+erDiagram
+    CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER ||--o{ INVOICE : "liable for"
+    DELIVERY-ADDRESS ||--o{ ORDER : receives
+    INVOICE ||--|{ ORDER : covers
+    ORDER ||--|{ ORDER-ITEM : includes
+    PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+    PRODUCT ||--o{ ORDER-ITEM : "ordered in"

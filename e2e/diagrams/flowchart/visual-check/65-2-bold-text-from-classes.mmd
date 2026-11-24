@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that a classDef's font-weight:bold property, assigned to a node via
+  the `:::className` shorthand, makes the node's label text render in bold.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart
+  classDef cat fill:#f9d5e5, stroke:#233d4d,stroke-width:2px, font-weight:bold;
+  CS(A long bold text to be viewed):::cat

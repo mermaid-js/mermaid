@@ -220,7 +220,10 @@ describe('use-case actor shapes', () => {
     const stereotypeLabels = document.querySelectorAll('.usecase-stereotype');
     expect(actorLabel?.textContent).toBe('Customer');
     expect(stereotypeLabels).toHaveLength(1);
-    expect(stereotypeLabels[0]?.textContent).toContain('«External Customer»');
+    // The default wrappingWidth (120) wraps the stereotype onto two lines; tspan
+    // joining drops the inter-line whitespace, so match the words rather than the
+    // exact single-line string.
+    expect(stereotypeLabels[0]?.textContent).toMatch(/«External\s?Customer»/);
     expect(actorLabel?.querySelector('.c4-name')).toBeNull();
     expect(actorLabel?.querySelector('.c4-type')).toBeNull();
     expect(glyph?.getAttribute('style')).toContain('stroke:#12506b !important');

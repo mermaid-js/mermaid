@@ -1,0 +1,19 @@
+---
+description: >-
+  No-frontmatter sequence diagram nesting `rect` background blocks both
+  around and inside an `alt`/`else` block: an outer rect wraps the whole
+  alt, and a second rect is nested inside the `else` branch, checking that
+  rect coloring composes correctly with alt fragment nesting.
+---
+sequenceDiagram
+  A ->> B: 1
+  rect rgb(204, 0, 102)
+  alt yes
+    C ->> C: 1
+  else no
+    rect rgb(0, 204, 204)
+      C ->> C: 0
+    end
+  end
+  end
+  B ->> A: Return

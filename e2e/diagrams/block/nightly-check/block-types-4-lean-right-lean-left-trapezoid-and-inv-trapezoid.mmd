@@ -1,0 +1,13 @@
+---
+description: >-
+  Smoke test for slash-bracket block shapes: a lean-right block using the
+  matched `[/"..."/]` syntax, plus three blocks using only a single slash on
+  one side of the brackets (`["lean left"]`, `[/"trapezoid"]`, and
+  `["trapezoid alt"/]`) — exercising the shape parser's handling of the
+  slash-delimiter family used for lean/trapezoid shapes.
+---
+block
+  A[/"lean right"/]
+  B["lean left"]
+  C[/"trapezoid"]
+  D["trapezoid alt"/]

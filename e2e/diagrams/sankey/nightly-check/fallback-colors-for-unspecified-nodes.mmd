@@ -1,0 +1,13 @@
+---
+description: >-
+  A two-link sankey chain (a->b->c) with sankey.nodeColors set only for node a —
+  node b (and c) are expected to fall back to the default palette rather than
+  reuse a's colour.
+config:
+  sankey:
+    nodeColors:
+      a: '#ff0000'
+---
+sankey
+  a,b,10
+  b,c,20
