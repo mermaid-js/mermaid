@@ -9,6 +9,7 @@
       "keywords": ["C4Context", "C4Container", "C4Component", "C4Dynamic", "C4Deployment"]
     },
     "class": { "label": "Graph: Class", "keywords": ["classDiagram"] },
+    "component": { "label": "Graph: Component", "keywords": ["component"] },
     "cynefin": { "label": "Graph: Cynefin", "keywords": ["cynefin"] },
     "er": { "label": "Graph: Entity Relationship", "keywords": ["erDiagram"] },
     "eventmodeling": { "label": "Graph: EventModeling", "keywords": ["eventmodeling"] },
