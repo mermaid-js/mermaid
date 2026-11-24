@@ -1,0 +1,7 @@
+erDiagram
+  CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+  CUSTOMER ||--o{ ORDER : places
+  CUSTOMER ||--o{ INVOICE : "liable for"
+  CUSTOMER ||--o{ INVOICE : "liable for"
+  INVOICE }o--|| CUSTOMER : "liable for"
+  CUSTOMER ||--o{ INVOICE : "liable for also"
