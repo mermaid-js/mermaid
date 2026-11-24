@@ -7,7 +7,14 @@ import { prepareTextForParsing } from './sankeyUtils.js';
 import sankeyStyles from './styles.js';
 
 const originalParse = parser.parse.bind(parser);
-parser.parse = (text: string) => originalParse(prepareTextForParsing(text));
+parser.parse = (text: string) => {
+  try {
+    return originalParse(prepareTextForParsing(text));
+  } catch (error) {
+    db.clear();
+    throw error;
+  }
+};
 
 export const diagram: DiagramDefinition = {
   styles: sankeyStyles,
