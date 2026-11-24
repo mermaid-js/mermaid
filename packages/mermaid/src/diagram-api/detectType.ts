@@ -6,7 +6,8 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from './types.js';
-import { directiveRegex, matchFrontMatter, stripAnyComments } from './regexes.js';
+import { directiveRegex, matchFrontMatter } from './regexes.js';
+import { cleanupComments } from './comments.js';
 import { UnknownDiagramError } from '../errors.js';
 
 export const detectors: Record<string, DetectorRecord> = {};
@@ -35,7 +36,7 @@ export const detectors: Record<string, DetectorRecord> = {};
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
   const frontMatter = matchFrontMatter(text);
-  text = stripAnyComments(
+  text = cleanupComments(
     (frontMatter ? text.slice(frontMatter.length) : text).replace(directiveRegex, '')
   );
   for (const [key, { detector }] of Object.entries(detectors)) {
