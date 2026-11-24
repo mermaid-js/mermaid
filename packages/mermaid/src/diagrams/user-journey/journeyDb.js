@@ -14,12 +14,14 @@ let currentSection = '';
 const sections = [];
 const tasks = [];
 const rawTasks = [];
+let processedTaskCount = 0;
 
 export const clear = function () {
   sections.length = 0;
   tasks.length = 0;
   currentSection = '';
   rawTasks.length = 0;
+  processedTaskCount = 0;
   commonClear();
 };
 
@@ -41,7 +43,8 @@ export const getTasks = function () {
     iterationCount++;
   }
 
-  tasks.push(...rawTasks);
+  tasks.push(...rawTasks.slice(processedTaskCount));
+  processedTaskCount = rawTasks.length;
 
   return tasks;
 };
