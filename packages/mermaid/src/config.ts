@@ -256,11 +256,14 @@ export const getConfig = (): MermaidConfig => {
 };
 
 /**
- * Returns a mutable deep copy of the `currentConfig`, for callers outside the render path.
+ * Returns a mutable deep copy of `config` (the `currentConfig` by default), for callers outside
+ * the render path or that need to modify a `getConfig()` result.
  *
- * @returns The currentConfig
+ * @param config - The config to copy
+ * @returns A mutable deep copy of the config
  */
-export const getConfigCopy = (): MermaidConfig => copyConfig(currentConfig, false);
+export const getConfigCopy = (config: MermaidConfig = currentConfig): MermaidConfig =>
+  copyConfig(config, false);
 
 /**
  * Ensures options parameter does not attempt to override `siteConfig` secure keys.

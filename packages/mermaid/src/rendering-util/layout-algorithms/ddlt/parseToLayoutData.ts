@@ -94,23 +94,6 @@ function stampRendererFields(layoutData: LayoutData, diagramType: string): void 
   }
 }
 
-/** Deep-copies plain objects and arrays, keeping functions and other values by reference. */
-function copyPlain<T>(value: T): T {
-  if (Array.isArray(value)) {
-    return value.map(copyPlain) as T;
-  }
-  if (
-    value === null ||
-    typeof value !== 'object' ||
-    Object.getPrototypeOf(value) !== Object.prototype
-  ) {
-    return value;
-  }
-  return Object.fromEntries(
-    Object.entries(value).map(([key, item]) => [key, copyPlain(item)])
-  ) as T;
-}
-
 /**
  * Parse Mermaid source through the real diagram pipeline (preprocess → Diagram.fromText →
  * getData), as the unified renderers do. Callers set `layoutAlgorithm` as needed.
@@ -135,7 +118,7 @@ export async function parseMmdTextToLayoutData(
   if (options.config) {
     // `layoutData.config` is the frozen `getConfig()` snapshot, so merge into a copy.
     layoutData.config = assignWithDepth(
-      copyPlain(layoutData.config ?? {}),
+      configApi.getConfigCopy(layoutData.config ?? {}),
       structuredClone(options.config)
     ) as MermaidConfig;
   }

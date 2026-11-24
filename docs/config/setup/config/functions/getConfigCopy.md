@@ -10,14 +10,23 @@
 
 # Function: getConfigCopy()
 
-> **getConfigCopy**(): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
+> **getConfigCopy**(`config`): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:263](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L263)
+Defined in: [packages/mermaid/src/config.ts:265](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L265)
 
-Returns a mutable deep copy of the `currentConfig`, for callers outside the render path.
+Returns a mutable deep copy of `config` (the `currentConfig` by default), for callers outside
+the render path or that need to modify a `getConfig()` result.
+
+## Parameters
+
+### config
+
+[`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md) = `currentConfig`
+
+The config to copy
 
 ## Returns
 
 [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-The currentConfig
+A mutable deep copy of the config
