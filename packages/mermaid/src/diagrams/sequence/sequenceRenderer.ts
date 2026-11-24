@@ -285,6 +285,24 @@ const drawNote = async function (elem: any, noteModel: NoteModel, id: string) {
   bounds.models.addNote(noteModel);
 };
 
+const SEQUENCE_NUMBER_RADIUS = 6;
+// The number is a marker, so the width of its line scales it up to twice its radius
+const SEQUENCE_NUMBER_DRAWN_RADIUS = SEQUENCE_NUMBER_RADIUS * 2;
+const CENTRAL_CONNECTION_CIRCLE_OFFSET = 16.5;
+const CENTRAL_CONNECTION_CIRCLE_RADIUS = 5;
+
+/**
+ * Draws the circles of a central connection. When a number sits at the same end of the line as a
+ * circle, the circle moves next to the number.
+ *
+ * @param elem - The parent of the circles
+ * @param msg - The message
+ * @param msgModel - The model containing fields describing a message
+ * @param diagObj - The diagram object.
+ * @param startx - The X coordinate at which the message line starts
+ * @param stopx - The X coordinate at which the message line stops
+ * @param lineStartY - The Y coordinate of the message line
+ */
 const drawCentralConnection = function (
   elem: any,
   msg: any,
@@ -304,10 +322,15 @@ const drawCentralConnection = function (
   // Determine arrow direction: left-to-right or right-to-left
   const isLeftToRight = fromCenter <= toCenter;
   const isReverse = isReverseArrowType(msg, diagObj);
+  // With `autonumber both` there is a number at each end, so a circle always has to make room
+  const numberBothEnds = msgModel.receiverSequenceIndex !== undefined;
+  const numberAtTo = isReverse || numberBothEnds;
+  const numberAtFrom = !isReverse || numberBothEnds;
+  if (numberBothEnds) {
+    ({ fromNumberX: fromCenter, toNumberX: toCenter } = getBothEndsLayout(msgModel, msg, diagObj));
+  }
 
   const g = elem.append('g');
-
-  const CENTRAL_CONNECTION_CIRCLE_OFFSET = 16.5;
 
   const getCircleOffset = (isLeftToRight: boolean, isReverse: boolean) => {
     const baseOffset = isLeftToRight
@@ -320,7 +343,7 @@ const drawCentralConnection = function (
     g.append('circle')
       .attr('cx', cx)
       .attr('cy', lineStartY)
-      .attr('r', 5)
+      .attr('r', CENTRAL_CONNECTION_CIRCLE_RADIUS)
       .attr('width', 10)
       .attr('height', 10);
   };
@@ -333,7 +356,7 @@ const drawCentralConnection = function (
     switch (msg.centralConnection) {
       case CENTRAL_CONNECTION:
         // Pattern: actor ->>() actor - circle at destination
-        if (isReverse) {
+        if (numberAtTo) {
           toCenter += getCircleOffset(isLeftToRight, true);
         }
         // No adjustment for normal arrows
@@ -341,7 +364,7 @@ const drawCentralConnection = function (
 
       case CENTRAL_CONNECTION_REVERSE:
         // Pattern: actor ()->> actor - circle at source
-        if (!isReverse) {
+        if (numberAtFrom) {
           fromCenter += getCircleOffset(isLeftToRight, false);
         }
         // No adjustment for reverse arrows
@@ -349,9 +372,10 @@ const drawCentralConnection = function (
 
       case CENTRAL_CONNECTION_DUAL:
         // Pattern: actor ()->>() actor - circles at both ends
-        if (isReverse) {
+        if (numberAtTo) {
           toCenter += getCircleOffset(isLeftToRight, true);
-        } else {
+        }
+        if (numberAtFrom) {
           fromCenter += getCircleOffset(isLeftToRight, false);
         }
         break;
@@ -451,6 +475,67 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
 }
 
 /**
+ * Works out where the numbers go when both ends of a message are numbered, and where the line has
+ * to start and stop so that its arrowheads don't end up underneath them. An end without an
+ * arrowhead can stay where it is, since the number is drawn on top of the line.
+ *
+ * @param msgModel - The model containing fields describing a message
+ * @param msg - The message
+ * @param diagObj - The diagram object.
+ * @returns The X coordinates of the numbers at both ends of the message and of both line ends
+ */
+const getBothEndsLayout = function (msgModel, msg, diagObj: Diagram) {
+  const { startx, stopx, fromBounds, toBounds, fromNumberInset = 0, toNumberInset = 0 } = msgModel;
+  const {
+    SOLID_OPEN,
+    DOTTED_OPEN,
+    SOLID_CROSS,
+    DOTTED_CROSS,
+    SOLID_POINT,
+    DOTTED_POINT,
+    CENTRAL_CONNECTION,
+    CENTRAL_CONNECTION_REVERSE,
+    CENTRAL_CONNECTION_DUAL,
+  } = diagObj.db.LINETYPE;
+  const isReverse = isReverseArrowType(msg, diagObj);
+  const isLeftToRight = startx <= stopx;
+  const direction = isLeftToRight ? 1 : -1;
+
+  const fromNumberX = (isLeftToRight ? fromBounds + 1 : toBounds - 1) + direction * fromNumberInset;
+  const toNumberX = (isLeftToRight ? toBounds - 1 : fromBounds + 1) - direction * toNumberInset;
+
+  /** How far a line end has to stay from the number at that end, not counting the arrowhead */
+  const numberClearance = (hasCentralCircle: boolean) =>
+    hasCentralCircle
+      ? CENTRAL_CONNECTION_CIRCLE_OFFSET + CENTRAL_CONNECTION_CIRCLE_RADIUS
+      : SEQUENCE_NUMBER_DRAWN_RADIUS;
+
+  let lineStartX = startx;
+  if (isReverse || isBidirectionalArrowType(msg, diagObj)) {
+    const hasCircle = [CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL].includes(
+      msg.centralConnection
+    );
+    const gap = numberClearance(hasCircle) + 2;
+    lineStartX = isLeftToRight
+      ? Math.max(startx, fromNumberX + gap)
+      : Math.min(startx, fromNumberX - gap);
+  }
+
+  let lineStopX = stopx;
+  if (!isReverse && ![SOLID_OPEN, DOTTED_OPEN].includes(msg.type)) {
+    const hasCircle = [CENTRAL_CONNECTION, CENTRAL_CONNECTION_DUAL].includes(msg.centralConnection);
+    // The cross and async markers scale with the line width, so they reach further than the others
+    const hasLongArrowhead = [SOLID_CROSS, DOTTED_CROSS, SOLID_POINT, DOTTED_POINT].includes(
+      msg.type
+    );
+    const gap = numberClearance(hasCircle) + (hasLongArrowhead ? 5 : 2);
+    lineStopX = isLeftToRight ? Math.min(stopx, toNumberX - gap) : Math.max(stopx, toNumberX + gap);
+  }
+
+  return { fromNumberX, toNumberX, lineStartX, lineStopX };
+};
+
+/**
  * Draws a message. Note that the bounds have previously been updated by boundMessage.
  *
  * @param diagram - The parent of the message element
@@ -466,7 +551,16 @@ export const drawMessage = async function (
   msg,
   diagramId: string
 ) {
-  const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
+  const {
+    startx,
+    stopx,
+    starty,
+    message,
+    type,
+    sequenceIndex,
+    receiverSequenceIndex,
+    sequenceVisible,
+  } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = Math.min(startx, stopx);
@@ -659,7 +753,6 @@ export const drawMessage = async function (
       type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE ||
       type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED;
 
-    const SEQUENCE_NUMBER_RADIUS = 6;
     const hasCentralConn = hasCentralConnection(msg, diagObj);
     let lineStartX = startx;
     let lineStopX = stopx;
@@ -710,33 +803,50 @@ export const drawMessage = async function (
       autonumberX = isLeftToRight ? msgModel.fromBounds + 1 : msgModel.toBounds - 1;
     }
 
-    let fontSize = '12px';
-    const sequenceIndexLength = sequenceIndex.toString().length;
+    /** Draws a number at the given position, with a smaller font the longer the number gets */
+    const drawSequenceNumber = (numberX: number, index: number) => {
+      let fontSize = '12px';
+      const indexLength = index.toString().length;
 
-    if (sequenceIndexLength > 5) {
-      fontSize = '7px';
-    } else if (sequenceIndexLength > 3) {
-      fontSize = '9px';
+      if (indexLength > 5) {
+        fontSize = '7px';
+      } else if (indexLength > 3) {
+        fontSize = '9px';
+      }
+
+      diagram
+        .append('line')
+        .attr('x1', numberX)
+        .attr('y1', lineStartY)
+        .attr('x2', numberX)
+        .attr('y2', lineStartY)
+        .attr('stroke-width', 0)
+        .attr('marker-start', 'url(' + url + '#' + diagramId + '-sequencenumber)');
+
+      diagram
+        .append('text')
+        .attr('x', numberX)
+        .attr('y', lineStartY + 4)
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', fontSize)
+        .attr('text-anchor', 'middle')
+        .attr('class', 'sequenceNumber')
+        .text(index);
+    };
+
+    if (receiverSequenceIndex === undefined) {
+      drawSequenceNumber(autonumberX, sequenceIndex);
+    } else {
+      const layout = getBothEndsLayout(msgModel, msg, diagObj);
+      line.attr('x1', layout.lineStartX);
+      line.attr('x2', layout.lineStopX);
+      // A reverse arrow points back at `from`, so that's the end that receives the message
+      const [senderX, receiverX] = isReverseArrowType
+        ? [layout.toNumberX, layout.fromNumberX]
+        : [layout.fromNumberX, layout.toNumberX];
+      drawSequenceNumber(senderX, sequenceIndex);
+      drawSequenceNumber(receiverX, receiverSequenceIndex);
     }
-
-    diagram
-      .append('line')
-      .attr('x1', autonumberX)
-      .attr('y1', lineStartY)
-      .attr('x2', autonumberX)
-      .attr('y2', lineStartY)
-      .attr('stroke-width', 0)
-      .attr('marker-start', 'url(' + url + '#' + diagramId + '-sequencenumber)');
-
-    diagram
-      .append('text')
-      .attr('x', autonumberX)
-      .attr('y', lineStartY + 4)
-      .attr('font-family', 'sans-serif')
-      .attr('font-size', fontSize)
-      .attr('text-anchor', 'middle')
-      .attr('class', 'sequenceNumber')
-      .text(sequenceIndex);
   }
 };
 
@@ -952,6 +1062,12 @@ function adjustCreatedDestroyedData(
   createdActors,
   destroyedActors
 ) {
+  /**
+   * Stops the message at the edge of the receiver's box and makes room for the box in the bounds.
+   *
+   * @param actor - The receiver
+   * @param adjustment - The distance from the lifeline to where the message has to stop
+   */
   function receiverAdjustment(actor, adjustment) {
     if (actor.x < actors.get(msg.from).x) {
       bounds.insert(
@@ -970,8 +1086,15 @@ function adjustCreatedDestroyedData(
       );
       msgModel.stopx = msgModel.stopx - adjustment;
     }
+    msgModel.toNumberInset = adjustment + SEQUENCE_NUMBER_DRAWN_RADIUS;
   }
 
+  /**
+   * Starts the message at the edge of the sender's box and makes room for the box in the bounds.
+   *
+   * @param actor - The sender
+   * @param adjustment - The distance from the lifeline to where the message has to start
+   */
   function senderAdjustment(actor, adjustment) {
     if (actor.x < actors.get(msg.to).x) {
       bounds.insert(
@@ -990,6 +1113,8 @@ function adjustCreatedDestroyedData(
       );
       msgModel.startx = msgModel.startx - adjustment;
     }
+    // Unlike the receiver's adjustment, this one doesn't leave a gap of 3 next to the box
+    msgModel.fromNumberInset = adjustment + 3 + SEQUENCE_NUMBER_DRAWN_RADIUS;
   }
   const actorArray = [
     PARTICIPANT_TYPE.ACTOR,
@@ -1140,6 +1265,9 @@ export const draw = async function (_text: string, id: string, _version: string,
   // Draw the messages/signals
   let sequenceIndex = 1;
   let sequenceIndexStep = 1;
+  let numberBothEnds = false;
+  // hitting a floating point number error, so round to 2 decimal places
+  const nextSequenceIndex = (index: number) => Math.round((index + sequenceIndexStep) * 100) / 100;
   const messagesToDraw = [];
   const backgrounds = [];
   let index = 0;
@@ -1269,6 +1397,7 @@ export const draw = async function (_text: string, id: string, _version: string,
       case diagObj.db.LINETYPE.AUTONUMBER:
         sequenceIndex = msg.message.start || sequenceIndex;
         sequenceIndexStep = msg.message.step || sequenceIndexStep;
+        numberBothEnds = msg.message.both ?? false;
         if (msg.message.visible) {
           diagObj.db.enableSequenceNumbers();
         } else {
@@ -1319,6 +1448,10 @@ export const draw = async function (_text: string, id: string, _version: string,
           msgModel = msg.msgModel;
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
+          // A message to self only has one end, so it only gets one number
+          if (numberBothEnds && msg.from !== msg.to) {
+            msgModel.receiverSequenceIndex = nextSequenceIndex(sequenceIndex);
+          }
           msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
           msgModel.id = msg.id;
           msgModel.from = msg.from;
@@ -1376,8 +1509,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
       ].includes(msg.type)
     ) {
-      // hitting a floating point number error, so round to 2 decimal places
-      sequenceIndex = Math.round((sequenceIndex + sequenceIndexStep) * 100) / 100;
+      sequenceIndex = nextSequenceIndex(msg.msgModel.receiverSequenceIndex ?? sequenceIndex);
     }
     index++;
   }

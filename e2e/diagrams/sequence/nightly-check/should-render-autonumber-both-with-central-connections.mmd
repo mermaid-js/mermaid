@@ -1,0 +1,24 @@
+---
+description: >-
+  Central connections with `autonumber both`. Every circle sits between the
+  number and the line, for each variant and in both directions.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber both
+  participant Alice
+  participant Bob
+  Alice->>()Bob: Circle at receiver
+  Bob->>()Alice: Circle at receiver, right to left
+  Alice()->>Bob: Circle at sender
+  Bob()->>Alice: Circle at sender, right to left
+  Alice()->>()Bob: Circle at both ends
+  Bob()->>()Alice: Circle at both ends, right to left
+  Bob/|-()Alice: Reverse, circle on the tail
+  Alice()/|-Bob: Reverse, circle on the head
+  Alice()<<->>()Bob: Bidirectional, circle at both ends
+  Alice->>()Alice: To self

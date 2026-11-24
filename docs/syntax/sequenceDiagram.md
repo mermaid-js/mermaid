@@ -1086,6 +1086,38 @@ Use the following syntax in your diagram definition:
 autonumber <start> <increment>
 ```
 
+### Numbering both ends of a message (v\<MERMAID_RELEASE_VERSION>+)
+
+Use `autonumber both` to number both ends of each message instead of only the start of the arrow. This gives you a reference point for the moment a message is sent and for the moment it arrives.
+
+```mermaid
+sequenceDiagram
+    autonumber both
+    Alice->>John: Hello John, how are you?
+    John->>John: Fight against hypochondria
+    John-->>Alice: Great!
+    Alice->>John: See you later!
+```
+
+```mermaid-example
+sequenceDiagram
+    autonumber both
+    Alice->>John: Hello John, how are you?
+    John->>John: Fight against hypochondria
+    John-->>Alice: Great!
+    Alice->>John: See you later!
+```
+
+The sender gets the first number and the receiver gets the next one, also when the arrow goes from right to left. A message to self only has one end, so it gets one number.
+
+`autonumber both` takes the same starting value and increment value as `autonumber`:
+
+```
+autonumber both <start> <increment>
+```
+
+To stop numbering, use `autonumber off`. A plain `autonumber` goes back to one number per message. Switching between them keeps counting from where the diagram was, unless you give a new starting value.
+
 ## Actor Menus
 
 Actors can have popup-menus containing individualized links to external pages. For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.

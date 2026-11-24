@@ -29,6 +29,7 @@ export interface Message {
         start: number;
         step: number;
         visible: boolean;
+        both?: boolean;
       };
   wrap: boolean;
   answer?: unknown;
