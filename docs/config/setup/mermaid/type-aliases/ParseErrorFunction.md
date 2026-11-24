@@ -12,7 +12,7 @@
 
 > **ParseErrorFunction** = (`err`, `hash?`) => `void`
 
-Defined in: [packages/mermaid/src/Diagram.ts:13](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/Diagram.ts#L13)
+Defined in: [packages/mermaid/src/Diagram.ts:14](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/Diagram.ts#L14)
 
 ## Parameters
 

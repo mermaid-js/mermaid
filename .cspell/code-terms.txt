@@ -149,6 +149,7 @@ subcomponents
 subconfig
 SUBROUTINEEND
 SUBROUTINESTART
+SUBSCHEMA
 Subschemas
 substr
 SVGG

@@ -1,13 +1,14 @@
 import * as configApi from './config.js';
-import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
+import { log } from './logger.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
+import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
+import type { DiagramCode, DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 import { UnknownDiagramError } from './errors.js';
 import defaultConfig from './defaultConfig.js';
-import { log } from './logger.js';
+import { registerDiagramIconPacks } from './rendering-util/icons.js';
+import type { DetailedError } from './utils.js';
 import { encodeEntities } from './utils.js';
 import { validateGridPlacementCoordinates } from './utils/gridPlacement.js';
-import type { DetailedError } from './utils.js';
-import type { DiagramCode, DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
@@ -52,6 +53,11 @@ export class Diagram {
     // This block was added for legacy compatibility. Use frontmatter instead of adding more special cases.
     if (metadata.title) {
       db.setDiagramTitle?.(metadata.title);
+    }
+    try {
+      registerDiagramIconPacks(config.icons);
+    } catch (error) {
+      log.error('Failed to register icon packs, continuing with diagram render:', error);
     }
     // Diagrams that report source positions set `preserveCommentsWhenParsing`
     // so that parser positions stay meaningful in original-source space. Every

@@ -378,6 +378,14 @@ over any diagram-specific settings.
 
 ---
 
+### icons?
+
+> `optional` **icons**: `IconsConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:405](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L405)
+
+---
+
 ### ishikawa?
 
 > `optional` **ishikawa**: `IshikawaDiagramConfig`
