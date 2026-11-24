@@ -311,6 +311,113 @@ tf 03 evt Cart.ItemAdded
     });
   });
 
+  describe('issue #8653', () => {
+    it('should read a data block with an inner `}` at the start of a line', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  outer: {
+  id: 1
+}
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('outer');
+    });
+
+    it('should parse two frames with inline data on one line', () => {
+      const result = parse(
+        `eventmodeling\ntf 01 cmd AddItem { id: 1 } tf 02 evt ItemAdded { id: 1 }\n`
+      );
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.frames.length).toBe(2);
+      expect(result.value.frames[0].dataInlineValue).toBe('{ id: 1 }');
+      expect(result.value.frames[1].entityIdentifier).toBe('ItemAdded');
+    });
+
+    it('should reject inline data with an unclosed outer brace', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem { item: { id: 1 }\n`);
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should parse a GWT scenario label', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 "Add an item" given evt ItemAdded then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities.length).toBe(1);
+      expect(result.value.gwtEntities[0].label).toBe('"Add an item"');
+    });
+
+    it('should parse a qualified entity name in a GWT statement', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 given evt Cart.ItemAdded then evt Cart.ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.givenStatements[0].entityIdentifier.$refText).toBe('Cart.ItemAdded');
+      expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('Cart.ItemAdded');
+    });
+
+    it('should parse an inline payload in a GWT statement', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 given evt ItemAdded { id: 1 } then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.givenStatements[0].dataInlineValue).toBe('{ id: 1 }');
+    });
+
+    it('should parse a block payload in a GWT statement', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 given evt ItemAdded {
+  id: 1
+} then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.givenStatements[0].dataBlockValue).toContain('id: 1');
+      expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('ItemAdded');
+    });
+
+    it('should parse an indented closing brace in a data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  name: string
+  }
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+    });
+  });
+
   it('should parse multiple source frames model', () => {
     const result = parse(`eventmodeling
 tf 01 evt Start
