@@ -36,6 +36,7 @@ let displayMode = '';
 const tags = ['active', 'done', 'crit', 'milestone', 'vert'];
 let funs = [];
 let diagramId = '';
+let boundFunctions = bindFunctionsFor([], '');
 let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
@@ -72,6 +73,9 @@ export const clear = function () {
 
 export const setDiagramId = function (id) {
   diagramId = id;
+  // Snapshot the click handlers and the id of this diagram, because both are module-level and are
+  // replaced when the next diagram is parsed, before the caller binds the functions of this one.
+  boundFunctions = bindFunctionsFor(funs, id);
 };
 
 export const setAxisFormat = function (txt) {
@@ -786,8 +790,8 @@ const setClickFun = function (id, functionName, functionArgs) {
  */
 const pushFun = function (id, callbackFunction) {
   funs.push(
-    function () {
-      const prefixedId = diagramId ? `${diagramId}-${id}` : id;
+    function (_element, renderedDiagramId) {
+      const prefixedId = renderedDiagramId ? `${renderedDiagramId}-${id}` : id;
       const elem = document.querySelector(`[id="${prefixedId}"]`);
       if (elem !== null) {
         elem.addEventListener('click', function () {
@@ -795,8 +799,8 @@ const pushFun = function (id, callbackFunction) {
         });
       }
     },
-    function () {
-      const prefixedId = diagramId ? `${diagramId}-${id}` : id;
+    function (_element, renderedDiagramId) {
+      const prefixedId = renderedDiagramId ? `${renderedDiagramId}-${id}` : id;
       const elem = document.querySelector(`[id="${prefixedId}-text"]`);
       if (elem !== null) {
         elem.addEventListener('click', function () {
@@ -822,14 +826,28 @@ export const setClickEvent = function (ids, functionName, functionArgs) {
 };
 
 /**
+ * Creates a function that binds the given click functions to the element of the diagram with the
+ * given id.
+ *
+ * @param clickFuns The functions added through click
+ * @param renderedDiagramId The id the diagram was rendered with
+ */
+function bindFunctionsFor(clickFuns, renderedDiagramId) {
+  const snapshot = [...clickFuns];
+  return function (element) {
+    snapshot.forEach(function (fun) {
+      fun(element, renderedDiagramId);
+    });
+  };
+}
+
+/**
  * Binds all functions previously added to fun (specified through click) to the element
  *
  * @param element
  */
 export const bindFunctions = function (element) {
-  funs.forEach(function (fun) {
-    fun(element);
-  });
+  bindFunctionsFor(funs, diagramId)(element);
 };
 
 export default {
@@ -869,7 +887,11 @@ export default {
   setClickEvent,
   setLink,
   getLinks,
-  bindFunctions,
+  // The functions of the diagram last passed to setDiagramId, so that a render keeps its own
+  // click bindings after another gantt diagram has been parsed.
+  get bindFunctions() {
+    return boundFunctions;
+  },
   parseDuration,
   isInvalidDate,
   setWeekday,
