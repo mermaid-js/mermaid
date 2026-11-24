@@ -447,6 +447,40 @@ data D {
       expect(result.value.frames[0].dataInlineValue).toBe('" { "a": { "c": true } } "');
     });
 
+    it('should reject an unclosed outer brace hidden inside a quoted section', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem \`json\`{"a":{"b":1}\n`);
+      // `":{"` must not be reinterpreted as a string hiding the inner `{`.
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should reject an unclosed outer brace in a data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  a: {
+    b: 1
+`);
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should end a gwt scenario label at its closing quote', () => {
+      const result = parse(`eventmodeling
+gwt 01 "Scenario" given cmd AddItem {"id":"123"} then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.label).toBe('"Scenario"');
+      expect(gwt.givenStatements[0].dataInlineValue).toBe('{"id":"123"}');
+      expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('ItemAdded');
+    });
+
     it('should parse an indented closing brace in a data block', () => {
       const result = parse(`eventmodeling
 tf 01 cmd AddItem [[D]]

@@ -58,12 +58,15 @@ terminal EM_FID: /\d{1,3}/;
 // which also keeps a `}` inside one level from ending the value early and makes
 // an unclosed outer `{` fail to match. Quoted strings are matched as
 // indivisible units first, so a brace inside a string never counts toward the
-// nesting. The standalone quoted alternatives stay greedy so payloads like
-// `json`" { "a": { "c": true } } " keep matching as one value.
+// nesting, and quote delimiters are excluded from the generic alternatives so a
+// quoted section cannot hide an opening brace. The standalone quoted
+// alternatives stay bounded at their closing quote but accept balanced
+// `{...}` groups, so payloads like `json`" { "a": { "c": true } } " keep
+// matching as one value while a `gwt` label cannot absorb `given`.
 // EM_DATA_BLOCK is declared first so that a `{` followed by a newline lexes as
 // a block rather than inline data.
-terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\{(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\{(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^{}])*\}|[^{}])*\}|[^{}])*?\}(?:\r?\n|(?!\S))/;
-terminal EM_DATA_INLINE: /\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|[^{}\r\n])*\}|[^{}\r\n])*\}|[^{}\r\n])*?\}|"(.*)"|'(.*)'/;
+terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\{(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\{(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^{}"'])*\}|[^{}"'])*\}|[^{}"'])*?\}(?:\r?\n|(?!\S))/;
+terminal EM_DATA_INLINE: /\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|[^{}\r\n"'])*\}|[^{}\r\n"'])*\}|[^{}\r\n"'])*?\}|"(?:\\.|[^"\\\r\n{]|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|[^{}\r\n"'])*\}|[^{}\r\n"'])*\})*"|'(?:\\.|[^'\\\r\n{]|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|\{(?:"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|[^{}\r\n"'])*\}|[^{}\r\n"'])*\})*'/;
 
 terminal EM_ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
 terminal EM_ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
