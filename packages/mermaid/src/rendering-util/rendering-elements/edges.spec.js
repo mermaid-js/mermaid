@@ -20,8 +20,10 @@ import {
 import { resolveEdgeCornerRadius } from '../edgeCornerRadius.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
+import intersectCircle from './intersect/intersect-circle.js';
 import intersectPolygon from './intersect/intersect-polygon.js';
 import intersectRect from './intersect/intersect-rect.js';
+import { cropEdgeEndsToShapes } from '../layout-algorithms/swimlanes/direction/endpointClip.js';
 
 // Tests that pin a layout with mockReturnValue must not leak it into later tests, which
 // rely on the swimlane default above. mockReset restores that factory implementation.
@@ -505,6 +507,53 @@ describe('insertEdge swimlane endpoint clipping', () => {
     expect(renderedPoints[0]).toEqual(clippedStart);
   });
 
+  describe('when the first segment leaves its shape along a row', () => {
+    // The layout starts the edge on the right face of the shape's box, below the centre.
+    const start = { x: 100, y: 10 };
+    const firstBend = { x: 140, y: 10 };
+
+    const startOf = (intersect) => {
+      document.body.innerHTML = '';
+      const svg = select(document.body).append('svg');
+      const edge = {
+        id: 'L_A8_E_0',
+        cssCompiledStyles: {},
+        style: [],
+        thickness: 'normal',
+        pattern: 'solid',
+        classes: 'flowchart-link',
+        curve: 'rounded',
+        look: 'neo',
+        arrowTypeEnd: 'arrow_point',
+        points: [start, firstBend, { x: 140, y: 80 }],
+      };
+      const tail = { intersect };
+      const head = { intersect: (point) => point };
+
+      insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+      return JSON.parse(atob(svg.select('path').attr('data-points')))[0];
+    };
+
+    it('keeps the start on the row instead of slanting to the intersection', () => {
+      // The ray from the centre to the first bend meets the right face at y = 5.
+      const box = { x: 60, y: 0, width: 80, height: 60 };
+      expect(startOf((point) => intersectRect(box, point))).toEqual(start);
+    });
+
+    it('takes an intersection that stays on the row', () => {
+      const box = { x: 56, y: 10, width: 80, height: 60 };
+      expect(startOf((point) => intersectRect(box, point))).toEqual({ x: 96, y: 10 });
+    });
+
+    it('takes the intersection when the start is off the drawn shape', () => {
+      // A circle drawn in a 100 x 100 box: (100, 10) is on the box but outside the circle.
+      const circle = { x: 50, y: 0 };
+      const intersect = (point) => intersectCircle(circle, 50, point);
+      expect(startOf(intersect)).toEqual(intersect(firstBend));
+    });
+  });
+
   it('leaves exact endpoints alone when the edge skips intersection', () => {
     document.body.innerHTML = '';
     const svg = select(document.body).append('svg');
@@ -533,6 +582,143 @@ describe('insertEdge swimlane endpoint clipping', () => {
     expect(head.intersect).not.toHaveBeenCalled();
     expect(renderedPoints[0]).toEqual(first);
     expect(renderedPoints.at(-1)).toEqual(last);
+  });
+});
+
+describe('a swimlane edge cropped to its end shapes, then drawn', () => {
+  // C sits in a 100 x 100 box around the origin. The route comes down the column `x` past the
+  // top right corner of that box and ends on the middle of its right side.
+  const route = (x) => [
+    { x: 80, y: 120 },
+    { x, y: 120 },
+    { x, y: 40 },
+    { x: 100, y: 40 },
+    { x: 100, y: 0 },
+    { x: 50, y: 0 },
+  ];
+  const tailBox = { x: 80, y: 140, width: 40, height: 40 };
+  const drawnEnd = (shape, intersect, x = 40) => {
+    const routed = [{ id: 'L_A_C_0', start: 'A', end: 'C', points: route(x) }];
+    cropEdgeEndsToShapes(
+      routed,
+      new Map([
+        ['A', { id: 'A', ...tailBox }],
+        ['C', { id: 'C', x: 0, y: 0, width: 100, height: 100, shape }],
+      ])
+    );
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'L_A_C_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: routed[0].points,
+    };
+    const tail = { intersect: (point) => intersectRect(tailBox, point) };
+    insertEdge(svg, edge, null, 'swimlane', tail, { intersect }, 'diagram');
+    return JSON.parse(atob(svg.select('path').attr('data-points'))).at(-1);
+  };
+
+  it('ends on a circle it passes outside of, within its box', () => {
+    const end = drawnEnd('circle', (point) => intersectCircle({ x: 0, y: 0 }, 50, point));
+
+    expect(Math.hypot(end.x, end.y)).toBeCloseTo(50);
+  });
+
+  it('ends where it is cut on a box', () => {
+    const box = { x: 0, y: 0, width: 100, height: 100 };
+
+    expect(drawnEnd('squareRect', (point) => intersectRect(box, point))).toEqual({ x: 40, y: 50 });
+  });
+
+  it('ends on the outline of a rounded box it passes the corner of', () => {
+    // The default theme's corner radius. A rounded box docks as a rectangle; the column 49 runs
+    // through its top right corner, where the drawn outline curves away from the box.
+    const radius = 5;
+    const box = { x: 0, y: 0, width: 100, height: 100 };
+    const end = drawnEnd('roundedRect', (point) => intersectRect(box, point), 49);
+    const straight = box.width / 2 - radius;
+    const offOutline =
+      Math.hypot(Math.max(Math.abs(end.x) - straight, 0), Math.max(Math.abs(end.y) - straight, 0)) -
+      radius;
+
+    expect(offOutline).toBeCloseTo(0);
+  });
+});
+
+describe('a swimlane edge cropped to a leg shorter than its arrowhead pull-back', () => {
+  // D is 100 x 40 around the origin; A sits below it, its top face at y 40. The route runs 2 px
+  // below D's bottom face, turns up into D at x -20 and runs on inside it, so the crop leaves a
+  // 2 px leg, shorter than the 4 px an `arrow_point` end is pulled back. Leaving such a route
+  // uncropped is worse: its tip is drawn inside D. Drawing the short leg towards the box is the
+  // job of `finalDockPoint` in edges.js.
+  const route = () => [
+    { x: 80, y: 40 },
+    { x: 80, y: 22 },
+    { x: -20, y: 22 },
+    { x: -20, y: 0 },
+    { x: 50, y: 0 },
+  ];
+  const tailBox = { x: 80, y: 60, width: 40, height: 40 };
+  const headBox = { x: 0, y: 0, width: 100, height: 40 };
+  /** The last two points of the drawn path, read from its `d`. */
+  const drawnTip = (points) => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'L_A_D_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points,
+    };
+    const tail = { intersect: (point) => intersectRect(tailBox, point) };
+    const head = { intersect: (point) => intersectRect(headBox, point) };
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+    const numbers = svg
+      .select('path')
+      .attr('d')
+      .match(/-?\d+(\.\d+)?/g)
+      .map(Number);
+    const [fromX, fromY, toX, toY] = numbers.slice(-4);
+    return { from: { x: fromX, y: fromY }, to: { x: toX, y: toY } };
+  };
+  const bottomFace = headBox.y + headBox.height / 2;
+
+  it('is drawn running away from the box (known limit: a cropped terminal leg shorter than the arrowhead pull-back is drawn backwards)', () => {
+    const routed = [{ id: 'L_A_D_0', start: 'A', end: 'D', points: route() }];
+    cropEdgeEndsToShapes(
+      routed,
+      new Map([
+        ['A', { id: 'A', ...tailBox }],
+        ['D', { id: 'D', ...headBox, shape: 'squareRect' }],
+      ])
+    );
+    expect(routed[0].points.at(-1)).toEqual({ x: -20, y: bottomFace });
+
+    const { from, to } = drawnTip(routed[0].points);
+
+    // The last segment heads down, away from D, and ends below its bottom face.
+    expect(to.y).toBeGreaterThan(from.y);
+    expect(to.y).toBeGreaterThan(bottomFace);
+  });
+
+  it('ends inside the box when the same route is left uncropped', () => {
+    const { to } = drawnTip(route());
+
+    expect(to.y).toBeLessThan(bottomFace);
+    expect(Math.abs(to.x)).toBeLessThan(headBox.width / 2);
   });
 });
 

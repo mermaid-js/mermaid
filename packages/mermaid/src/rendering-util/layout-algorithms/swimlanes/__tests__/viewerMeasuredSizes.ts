@@ -67,3 +67,12 @@ export const VIEWER_SIZES_8_QUERY_PROCESS_2 = {
   B: [171, 171],
   C: [150, 51],
 } as const satisfies NodeSizes;
+
+export const VIEWER_SIZES_EDGE_END_ON_BOX = {
+  A1: [152, 45],
+  A2: [152, 45],
+  A3: [152, 45],
+  B1: [152, 45],
+  B2: [152, 45],
+  B3: [152, 45],
+} as const satisfies NodeSizes;
