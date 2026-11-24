@@ -683,7 +683,17 @@ export const prepareLayoutForDagre = (data4Layout) => {
 
   log.debug('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
-    if (edge.start === edge.end) {
+    const node = graph.node(edge.start);
+    // Dagre places native leaf self-loops on the node's rank, reserving space
+    // for their measured labels. Splitting them into a cycle adds two ranks
+    // whose whitespace remains even after the SVG segments are merged.
+    // Compound nodes still need the workaround: Dagre cannot route their loops.
+    const nativeSelfLoop =
+      edge.start === edge.end &&
+      (data4Layout.type === 'flowchart' || data4Layout.type === 'flowchart-v2') &&
+      !node?.isGroup &&
+      graph.children(edge.start)?.length === 0;
+    if (edge.start === edge.end && !nativeSelfLoop) {
       // Keep the dagre dummy-node workaround for layout, then merge these segments before rendering.
       const nodeId = edge.start;
       const specialId1 = nodeId + '---' + nodeId + '---1';
