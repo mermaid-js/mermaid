@@ -14,6 +14,7 @@
 %x dir
 %x vertex
 %x text
+%x ptext
 %x ellipseText
 %x trapText
 %x edgeText
@@ -170,7 +171,11 @@ that id.
 
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
 <ellipseText>[^\(\)\[\]\{\}]|-\!\)+       return "TEXT"
-<*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
+/* Ellipse and double-circle openers only start a shape right after a node id
+   (INITIAL state). Inside a label (`text`/`ptext` states) `(-` and `(((` are
+   plain parenthesised text, e.g. `A[Temperature (-5 C)]` — matching them as
+   shape openers there made the label fail to parse (#8724). */
+<INITIAL>"(-"                       { this.pushState("ellipseText"); return '(-'; }
 
 <text>"])"                { this.popState(); return 'STADIUMEND'; }
 <*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
@@ -186,7 +191,7 @@ that id.
 <*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }
 
 <text>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
-<*>"((("                  { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
+<INITIAL>"((("                { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
 
 <trapText>[\\(?=\])][\]]  { this.popState(); return 'TRAPEND'; }
 <trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }
@@ -272,17 +277,22 @@ that id.
                       return 'UNICODE_TEXT';
 
 <text>"|"             { this.popState(); return 'PIPE'; }
+<ptext>"|"            { this.popState(); return 'PIPE'; }
 <*>"|"                { this.pushState("text"); return 'PIPE'; }
 
 <text>")"             { this.popState(); return 'PE'; }
-<*>"("                { this.pushState("text"); return 'PS'; }
+<ptext>")"            { this.popState(); return 'PE'; }
+<*>"("                { this.pushState("ptext"); return 'PS'; }
 
 <text>"]"            { this.popState(); return 'SQE'; }
+<ptext>"]"           { this.popState(); return 'SQE'; }
 <*>"["                { this.pushState("text"); return 'SQS'; }
 
 <text>(\})            { this.popState(); return 'DIAMOND_STOP' }
+<ptext>(\})           { this.popState(); return 'DIAMOND_STOP' }
 <*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
 <text>[^\[\]\(\)\{\}\|\"]+    return "TEXT";
+<ptext>[^\[\]\(\)\{\}\|\"]+   return "TEXT";
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
@@ -294,6 +304,12 @@ that id.
 /* operator associations and precedence */
 
 %left '^'
+/* `A((x))` is a circle, not a round node whose text is `(x)`: when a
+   parenthesised group in text is followed by `)`, prefer shifting (close the
+   circle) over reducing the group to text. This resolves the shift/reduce
+   conflict between `vertex: idString PS PS text PE PE` and
+   `textToken: PS text PE` in favour of the circle. */
+%right PE
 
 %start start
 
@@ -617,7 +633,12 @@ styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
 /* Token lists */
 idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
 
-textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT;
+textToken      :   TEXT | TAGSTART | TAGEND | UNICODE_TEXT
+    | PS text PE
+    { $$ = '(' + $text.text + ')'; }
+    | PS PE
+    { $$ = '()'; }
+    ;
 
 textNoTagsToken: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK ;
 
