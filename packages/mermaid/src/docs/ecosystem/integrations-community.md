@@ -88,6 +88,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 
 LLM integrations to create mermaid diagrams using AI from text descriptions.
 
+- [GitDiagram](https://gitdiagram.com) - Generate an interactive Mermaid architecture diagram of any GitHub repository with AI, with each component linked to its source file; export as Mermaid or PNG.
 - [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
 - [MCP Server Mermaid](https://github.com/hustcc/mcp-mermaid) - Generate mermaid diagram and chart with AI MCP dynamically.
 - [Mermaid Studio](https://mermaidstudio.dev) - Leverage Mermaid Studio's code intelligence and diagram generation capabilities via MCP to create high-quality diagrams (requires a [JetBrains IDE](https://jetbrains.com/ides)) using your favorite coding agent.
