@@ -1,6 +1,7 @@
 %lex
 %options case-insensitive
 
+%s bol body
 %x string
 %x string
 %x md_string
@@ -15,34 +16,37 @@
 %%
 \%\%(?!\{)[^\n]*                         /* skip comments */
 [^\}]\%\%[^\n]*                          /* skip comments */
-[\n\r]+                                  return 'NEWLINE';
+[\n\r]+                                  { this.begin('bol'); return 'NEWLINE'; }
 \%\%[^\n]*                               /* do nothing */
 
-title                                    { this.begin("title");return 'title'; }
+<bol>[ \t]+                              /* skip indentation */
+<bol>"title"(?=[ \t]*\:)              { this.begin('body'); return 'ALPHA'; }
+<bol>"title"(?=[ \t\n\r";]|$)[ \t]* { this.begin("title");return 'title'; }
 <title>(?!\n|;|#)*[^\n]*                 { this.popState(); return "title_value"; }
 
-accTitle\s*":"\s*                        { this.begin("acc_title");return 'acc_title'; }
+<bol>accTitle\s*":"\s*                  { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*             { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                        { this.begin("acc_descr");return 'acc_descr'; }
+<bol>accDescr\s*":"\s*                  { this.begin("acc_descr");return 'acc_descr'; }
 <acc_descr>(?!\n|;|#)*[^\n]*             { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
+<bol>accDescr\s*"{"\s*                  { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                { this.popState(); }
 <acc_descr_multiline>[^\}]*              return "acc_descr_multiline_value";
 
-" "*"x-axis"" "*                           return 'X-AXIS';
-" "*"y-axis"" "*                           return 'Y-AXIS';
+<bol>(?:"x-axis"|"y-axis"|"quadrant-1"|"quadrant-2"|"quadrant-3"|"quadrant-4")(?=[ \t]*\:) { this.begin('body'); return 'ALPHA'; }
+<bol>"x-axis"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'X-AXIS'; }
+<bol>"y-axis"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'Y-AXIS'; }
 " "*\-\-+\>" "*                  return 'AXIS-TEXT-DELIMITER'
-" "*"quadrant-1"" "*                       return 'QUADRANT_1';
-" "*"quadrant-2"" "*                       return 'QUADRANT_2';
-" "*"quadrant-3"" "*                       return 'QUADRANT_3';
-" "*"quadrant-4"" "*                       return 'QUADRANT_4';
-"classDef"                                 return 'CLASSDEF';
+<bol>"quadrant-1"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_1'; }
+<bol>"quadrant-2"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_2'; }
+<bol>"quadrant-3"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_3'; }
+<bol>"quadrant-4"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_4'; }
+<bol>"classDef"(?=[ \t])              { this.begin('body'); return 'CLASSDEF'; }
 
 ["][`]                                   { this.begin("md_string");}
 <md_string>[^`"]+                        { return "MD_STR";}
 <md_string>[`]["]                        { this.popState();}
 ["]                                      this.begin("string");
-<string>["]                              this.popState();
+<string>["]                              { this.popState(); this.begin('body'); }
 <string>[^"]*                            return "STR";
 
 \:\:\:                                   {this.begin('class_name')}
@@ -54,7 +58,8 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 <point_x>\s*\,\s*                        {this.popState(); this.begin('point_y');}
 <point_y>(1)|(0(.\d+)?)                  {this.popState(); return 'point_y';}
 
-" "*"quadrantChart"" "*		                   return 'QUADRANT';
+<INITIAL,bol>"quadrantChart"(?=[ \t\n\r";]|$)[ \t]* { this.begin('bol'); return 'QUADRANT'; }
+<bol>[^ \t\n\r]                        { this.begin('body'); this.unput(yytext); }
 
 [A-Za-z]+                                return 'ALPHA';
 // BMP non-ASCII: CJK, emoji, accented Latin, Cyrillic, etc.
@@ -72,7 +77,7 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 \-                                       return 'MINUS';
 [0-9]+                                   return 'NUM';
 \s                                       return 'SPACE';
-";"                                      return 'SEMI';
+";"                                      { this.begin('bol'); return 'SEMI'; }
 [!"#$%&'*+,-.`?\\_/]                     return 'PUNCTUATION';
 <<EOF>>                                  return 'EOF';
 
