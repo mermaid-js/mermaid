@@ -272,6 +272,8 @@ Communication tools and platforms
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
+- [Line9: Mermaid editor and viewer with automatic flowchart layout](https://line9.ai/mermaid)
+  - [CLI](https://line9.ai/cli) - `line9 render` for local and agent-driven workflows
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
