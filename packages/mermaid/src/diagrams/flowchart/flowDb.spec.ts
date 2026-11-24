@@ -91,6 +91,7 @@ describe('flow db class', () => {
       'setTooltip',
       'setLink',
       'updateLink',
+      'updateLinkByText',
       'updateLinkInterpolate',
     ] as const satisfies (keyof FlowDB)[];
 
@@ -164,6 +165,22 @@ describe('flow db getData', () => {
     expect(edges[1].curve).toBe('monotoneX');
     expect(edges[2].curve).toBe('catmullRom');
     expect(edges[3].curve).toBe('stepBefore');
+  });
+
+  it('should style every edge whose text matches updateLinkByText unless styled by index', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('C', { text: 'C', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], { text: { text: 'yes', type: 'text' } });
+    flowDb.addLink(['A'], ['C'], { text: { text: 'no', type: 'text' } });
+    flowDb.addLink(['B'], ['C'], { text: { text: 'yes', type: 'text' } });
+    flowDb.updateLinkByText('yes', ['stroke:red']);
+    flowDb.updateLink([0], ['stroke:blue']);
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].style).toEqual(['stroke:blue', 'fill:none']);
+    expect(edges[1].style).toEqual([]);
+    expect(edges[2].style).toEqual(['stroke:red', 'fill:none']);
   });
 });
 
