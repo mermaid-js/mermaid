@@ -756,6 +756,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyclic-special-2');
     } else {
+      // Replace \n with <br/> for multiline edge labels
+      if (typeof edge.label === 'string') {
+        edge.label = edge.label.replace(/\\n/g, '<br/>');
+      }
+
       graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
     }
   });
