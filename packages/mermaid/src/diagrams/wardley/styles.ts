@@ -42,13 +42,9 @@ export const styles: DiagramStylesProvider = ({
   .wardley-grid line {
     stroke: ${w.gridColor};
   }
-  .wardley-node circle {
-    fill: ${w.componentFill};
-    stroke: ${w.componentStroke};
-  }
-  .wardley-node-label {
-    fill: ${w.componentLabelColor};
-  }
+  /* Component circles and labels always get explicit fill/stroke attributes
+     from the renderer (overlays and evolved components differ per node), so a
+     rule here would clobber them. Both stay overrideable through themeCSS. */
   .wardley-link {
     stroke: ${w.linkStroke};
   }
