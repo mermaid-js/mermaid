@@ -30,6 +30,8 @@ The definitions that can be generated the Live-Editor are also backwards-compati
 
 [Elle Neal: Mind Mapping with AI: An Accessible Approach for Neurodiverse Learners Tutorial:](https://medium.com/@elle.neal_71064/mind-mapping-with-ai-an-accessible-approach-for-neurodiverse-learners-1a74767359ff)
 
+[Stepthrough: Turn a Purchase Approval Policy into a Flowchart with ChatGPT and the Live Editor](https://learn.ynteractive.com/content/mermaid-chatgpt-purchase-approval-flowchart-tutorial)
+
 ## Mermaid with HTML
 
 Examples are provided in [Getting Started](../intro/getting-started.md)
@@ -86,4 +88,4 @@ graph LR;
 
 ![Example graph of the Python integration](img/python-mermaid-integration.png)
 
-<!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes imshow savefig --->
+<!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes imshow savefig Stepthrough --->
