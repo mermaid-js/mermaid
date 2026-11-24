@@ -59,6 +59,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Glim](https://github.com/NeoPanic/Glim) - macOS Markdown reader with built-in Mermaid diagram rendering. ✅
 - [GNU Octave](https://octave.org/) ✅
   - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
+- [Grist](https://grist-diagram.enliberte.fr/about)
 - [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
 - [JetBrains IDEs](https://www.jetbrains.com)
   - [Mermaid Plugin](https://plugins.jetbrains.com/plugin/20146-mermaid)
