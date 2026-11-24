@@ -44,6 +44,7 @@ katex
 khroma
 langium
 libavoid
+Liubai
 mathml
 matplotlib
 mdbook
