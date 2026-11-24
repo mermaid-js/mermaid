@@ -83,7 +83,12 @@ class ComponentVisitor extends BaseVisitor {
       if (!parsed) {
         throw new Error(`Malformed classDef statement: ${image}`);
       }
-      db.addClassDef(parsed.id, parsed.styles);
+      // As in flowcharts, `classDef hot,cold ...` defines each listed class.
+      for (const id of parsed.id.split(',')) {
+        if (id.trim()) {
+          db.addClassDef(id.trim(), parsed.styles);
+        }
+      }
     } else if (ctx.CLASS_LINE) {
       const image = token(ctx, 'CLASS_LINE')!.image;
       const parsed = parseStylesLine(image, 'class');

@@ -161,4 +161,19 @@ note for note0_1 "second"
     const noteEdge = data.edges.find((e) => e.relationKind === 'note' && e.end === 'note0');
     expect(noteEdge).toMatchObject({ start: 'note0_2', id: 'note0_2-edge' });
   });
+
+  it('defines every class listed in one classDef', async () => {
+    await parser.parse(`component-beta
+component A
+component B
+classDef hot,cold fill:#f96
+class A hot
+class B cold
+`);
+    const data = db.getData();
+    for (const id of ['A', 'B']) {
+      expect(data.nodes.find((n) => n.id === id)?.cssCompiledStyles).toContain('fill:#f96');
+    }
+    expect([...db.getClassDefs().keys()]).toEqual(['hot', 'cold']);
+  });
 });
