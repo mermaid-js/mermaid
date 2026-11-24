@@ -616,5 +616,26 @@ describe('when using the ganttDb', function () {
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('m1'));
       warnSpy.mockRestore();
     });
+
+    it('should not resolve ids from a diagram that was cleared', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task1', 'id1,2013-01-01,2d');
+      ganttDb.addTask('task2', 'id2,after id1,1d');
+      ganttDb.clear();
+
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task3', 'id3,2013-02-01,2d');
+      ganttDb.addTask('task4', 'id4,2013-03-01,2d');
+      ganttDb.addTask('task5', 'id5,after id2,1d');
+      ganttDb.setLink('id2', 'https://example.com');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(ganttDb.findTaskById('id2')).toBeUndefined();
+      expect(tasks[1].classes).toEqual([]);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('id2'));
+      warnSpy.mockRestore();
+    });
   });
 });
