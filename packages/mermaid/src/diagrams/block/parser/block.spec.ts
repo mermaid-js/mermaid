@@ -416,6 +416,90 @@ columns 1
       const B = blocks[0];
       expect(B.styles).toContain('fill:#f9F');
     });
+    it('style statements applied to a block declared after the statement', () => {
+      const str = `block
+columns 1
+  style B fill:#f9F,stroke:#333,stroke-width:4px
+  A
+  B["A wide one in the middle"]
+        `;
+
+      block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.map((b) => b.id)).toEqual(['A', 'B']);
+      expect(blocks[1].styles).toContain('fill:#f9F');
+    });
+    it('style statements applied to a block nested in a composite declared after the statement', () => {
+      const str = `block
+  style B fill:#f9F
+  block:ID
+    A
+    B
+  end
+        `;
+
+      block.parse(str);
+      const B = db.getBlocksFlat().find((b) => b.id === 'B')!;
+      expect(B.styles).toContain('fill:#f9F');
+    });
+    it('class statements applied to a block declared after the statement', () => {
+      const str = `block
+  classDef black color:#ffffff, fill:#000000;
+  class B black
+  A
+  B
+        `;
+
+      block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.map((b) => b.id)).toEqual(['A', 'B']);
+      expect(blocks[1].classes).toContain('black');
+    });
+    it('style statements applied to a list of blocks', () => {
+      const str = `block
+  style A,B fill:#f9F
+  A
+  B
+  style C, D fill:#0f0
+  C
+  D
+        `;
+
+      block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.map((b) => b.id)).toEqual(['A', 'B', 'C', 'D']);
+      expect(blocks[0].styles).toContain('fill:#f9F');
+      expect(blocks[1].styles).toContain('fill:#f9F');
+      expect(blocks[2].styles).toContain('fill:#0f0');
+      expect(blocks[3].styles).toContain('fill:#0f0');
+    });
+    it('class statements applied to a list of blocks separated by a comma and a space', () => {
+      const str = `block
+  A
+  B
+  class A, B black
+  classDef black color:#ffffff, fill:#000000;
+  class C, D black
+  C
+  D
+        `;
+
+      block.parse(str);
+      const blocks = db.getBlocks();
+      expect(blocks.map((b) => b.id)).toEqual(['A', 'B', 'C', 'D']);
+      for (const b of blocks) {
+        expect(b.classes).toContain('black');
+      }
+    });
+    it('style statements applied to a block that is never declared are ignored', () => {
+      const str = `block
+  A
+  style Z fill:#f9F
+        `;
+
+      expect(() => block.parse(str)).not.toThrow();
+      expect(db.getBlocks().map((b) => b.id)).toEqual(['A']);
+    });
     it('should log a warning when block width exceeds column width', () => {
       const str = `block-beta
   columns 1
