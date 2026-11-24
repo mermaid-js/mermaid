@@ -123,6 +123,20 @@ describe('when parsing a timeline ', function () {
       });
     });
 
+    it('should allow colons in a time period when not followed by a space', function () {
+      let str = `timeline
+      2021-10-12 14:00 : event1
+      2021-10-12 14:20 : event2: event3
+   `;
+      timeline.parse(str);
+      const tasks = timelineDB.getTasks();
+      expect(tasks.map((t) => t.task.trim())).to.deep.equal([
+        '2021-10-12 14:00',
+        '2021-10-12 14:20',
+      ]);
+      expect(tasks.map((t) => t.events)).to.deep.equal([['event1'], ['event2', 'event3']]);
+    });
+
     it('should handle a section, and task and its multi line events', function () {
       let str = `timeline
     section abc-123
