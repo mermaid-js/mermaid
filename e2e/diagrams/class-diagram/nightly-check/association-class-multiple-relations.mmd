@@ -1,0 +1,9 @@
+---
+description: >-
+  Two relations between the same classes. Only the second has an association
+  class, picked by its edge id.
+---
+classDiagram
+  A first@-- B : one
+  A second@-- B : two
+  C .. second

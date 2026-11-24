@@ -1,0 +1,12 @@
+---
+description: >-
+  An association class attached to a relation with an edge id. The dashed line
+  from the association class ends on the relation between the two classes.
+---
+classDiagram
+  Student "*" enrollment@-- "*" Course : takes
+  Enrollment .. enrollment
+  class Enrollment {
+    +Date enrolledOn
+    +int grade
+  }
