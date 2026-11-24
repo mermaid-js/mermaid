@@ -386,4 +386,46 @@ describe('[Style] when parsing', () => {
     expect(vert.get('D').classes[0]).toBe('C1');
     expect(vert.get('E').classes[0]).toBe('C2');
   });
+
+  it('should accept whitespace before the ::: class shorthand (issue #8753)', function () {
+    const res = flow.parser.parse(`
+    graph TD
+      classDef C1 stroke-dasharray:4
+      A[Start]  :::C1 --> B
+    `);
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').classes[0]).toBe('C1');
+    expect(vert.get('B').classes.length).toBe(0);
+  });
+
+  it('should accept whitespace after the ::: class shorthand (issue #8753)', function () {
+    const res = flow.parser.parse(`
+    graph TD
+      classDef C1 stroke-dasharray:4
+      A[Start]::: C1 --> B
+    `);
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').classes[0]).toBe('C1');
+  });
+
+  it('should accept whitespace on both sides of the ::: class shorthand (issue #8753)', function () {
+    const res = flow.parser.parse(`
+    graph TD
+      classDef C1 stroke-dasharray:4
+      A([Start]) ::: C1 --> B
+      C --> D :::C1
+      E & F :::C1 --> G
+    `);
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').classes[0]).toBe('C1');
+    expect(vert.get('D').classes[0]).toBe('C1');
+    expect(vert.get('F').classes[0]).toBe('C1');
+    expect(vert.get('E').classes.length).toBe(0);
+  });
 });
