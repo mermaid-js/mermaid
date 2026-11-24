@@ -223,6 +223,17 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
   });
+
+  it('keeps the character before an inline comment in the y-axis title', () => {
+    expect(parserFnConstructor('xychart\ny-axis ab c%% comment')).not.toThrow();
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'abc', type: 'text' });
+  });
+  it('does not swallow the next line after a comment with CR line endings', () => {
+    const str = 'xychart\rline [1] %% note\rbar [2]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setLineData).toHaveBeenCalledOnce();
+    expect(mockDB.setBarData).toHaveBeenCalledOnce();
+  });
   it('parse y-axis with axis name with spaces', () => {
     const str = 'xychart \ny-axis        yAxisName     \n';
     expect(parserFnConstructor(str)).not.toThrow();
