@@ -18,17 +18,17 @@
 \#[^\n]*                /* skip comments */
 
 "journey"               return 'journey';
-"title"\s[^#\n;]+       return 'title';
+"title"\s[^\n;]+        return 'title';
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+<acc_title>(?!\n|;)*[^\n]*                                     { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+<acc_descr>(?!\n|;)*[^\n]*                                     { this.popState(); return "acc_descr_value"; }
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 "section"\s[^#:\n;]+    return 'section';
 [^#:\n;]+               return 'taskName';
-":"[^#\n;]+             return 'taskData';
+":"[^\n;]+             return 'taskData';
 ":"                     return ':';
 <<EOF>>                 return 'EOF';
 .                       return 'INVALID';
