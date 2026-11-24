@@ -471,11 +471,11 @@ export class SequenceDB implements DiagramDB {
     try {
       const links: Record<string, string> = {};
       let sanitizedText = sanitizeText(text.text, getConfig());
-      const sep = sanitizedText.indexOf('@');
       sanitizedText = sanitizedText.replace(/&equals;/g, '=');
       sanitizedText = sanitizedText.replace(/&amp;/g, '&');
-      const label = sanitizedText.slice(0, sep - 1).trim();
-      const link = sanitizedText.slice(sep + 1).trim();
+      const sep = sanitizedText.indexOf('@');
+      const label = (sep === -1 ? sanitizedText : sanitizedText.slice(0, sep)).trim();
+      const link = sep === -1 ? '' : sanitizedText.slice(sep + 1).trim();
 
       links[label] = link;
       // add the deserialized text to the actor's links field.
