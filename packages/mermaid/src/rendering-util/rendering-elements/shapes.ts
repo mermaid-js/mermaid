@@ -48,6 +48,10 @@ import { usecaseActorHollow } from './shapes/usecaseActorHollow.js';
 import { usecaseActorIcon } from './shapes/usecaseActorIcon.js';
 import { usecaseBusiness } from './shapes/usecaseBusiness.js';
 import { usecaseJsonTable } from './shapes/usecaseJsonTable.js';
+import { umlComponent } from './shapes/umlComponent.js';
+import { umlInterface } from './shapes/umlInterface.js';
+import { umlPort } from './shapes/umlPort.js';
+import { umlActor } from './shapes/umlActor.js';
 import { multiRect } from './shapes/multiRect.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { note } from './shapes/note.js';
@@ -590,6 +594,12 @@ const generateShapeMap = () => {
     usecaseBusiness,
     usecaseEllipse,
     usecaseJsonTable,
+
+    // Component diagram
+    umlComponent,
+    umlInterface,
+    umlPort,
+    umlActor,
 
     'bpmn-start': bpmnStart,
     'bpmn-intermediate': bpmnIntermediate,

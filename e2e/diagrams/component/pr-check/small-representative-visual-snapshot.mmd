@@ -1,0 +1,36 @@
+---
+description: >-
+  Components with labels and a stereotype, interfaces with provided, required,
+  and ball-and-socket assembly relationships, ports, nested packages, a note,
+  and classDef/class/style overrides — the representative feature snapshot.
+---
+component-beta
+direction LR
+title Shop architecture
+accTitle: Shop architecture
+accDescr: Components of the shop, their interfaces, ports, and how they connect.
+
+component Web["Web shop"]
+component Orders["Order service"] &lt;&lt;service&gt;&gt;
+interface IOrders["Orders API"]
+interface IPay
+
+package Backend {
+  component Payments {
+    port api
+  }
+  component Ledger
+}
+
+Orders --() IOrders
+Web --( IOrders
+Payments.api --() IPay
+Orders --( IPay
+Payments ..> Ledger : writes to
+Web --> Orders : calls
+Ledger -- Web
+note for Orders "handles checkout"
+
+classDef hot fill:#f96,stroke:#333
+class Orders hot
+style Web stroke:#333,stroke-width:2px

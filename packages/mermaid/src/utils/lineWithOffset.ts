@@ -9,6 +9,8 @@ export const markerOffsets = {
   composition: 17.25,
   dependency: 6,
   lollipop: 13.5,
+  // Socket radius (10) minus the `umlInterface` ball radius (6) it wraps.
+  socket: 4,
   arrow_point: 4,
   arrow_barb: 0,
   arrow_barb_neo: 5.5,

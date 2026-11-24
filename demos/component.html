@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Component diagram demos</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 2rem auto;
+        max-width: 1200px;
+        padding: 0 1rem;
+      }
+      section {
+        border-top: 1px solid #ddd;
+        margin-top: 2rem;
+        padding-top: 1rem;
+      }
+      section.dark {
+        background: #333;
+        color: #eee;
+        padding: 1rem;
+      }
+      p {
+        color: #555;
+        max-width: 70ch;
+      }
+      section.dark p {
+        color: #ccc;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Component diagram demos</h1>
+
+    <section>
+      <h2>1. Online shop overview</h2>
+      <p>
+        An actor, components with stereotypes, provided and required interfaces drawn as a
+        ball-and-socket assembly, a port, a package, a dependency and a note.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction LR
+title Online shop
+actor Customer
+component Web["Web shop"]
+component Orders["Order service"] &lt;&lt;service&gt;&gt;
+interface IShop["Shop UI"]
+interface IOrders["Orders API"]
+interface IPay
+
+package Backend {
+  component Payments {
+    port api
+  }
+  component Ledger
+}
+
+Web --() IShop
+Customer --( IShop
+Orders --() IOrders
+Web --( IOrders
+Payments.api --() IPay
+Orders --( IPay
+Payments ..> Ledger : writes to
+note for Orders "handles checkout"
+      </pre>
+    </section>
+
+    <section>
+      <h2>2. Ball-and-socket assembly</h2>
+      <p>
+        The smallest assembly: one component provides an interface (<code>--()</code>), another
+        requires it (<code>--(</code>). Top-to-bottom layout puts the interface name on the side.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction TB
+component Client
+component Server
+interface HTTP
+Server --() HTTP
+Client --( HTTP
+      </pre>
+    </section>
+
+    <section>
+      <h2>3. One provider, several consumers</h2>
+      <p>
+        Several components require the same interface. Each one gets its own socket around the
+        shared ball.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction LR
+component Auth["Auth service"] &lt;&lt;service&gt;&gt;
+interface IAuth["Auth API"]
+component Web["Web app"]
+component Mobile["Mobile app"]
+component Admin["Admin console"]
+Auth --() IAuth
+Web --( IAuth
+Mobile --( IAuth
+Admin --( IAuth
+      </pre>
+    </section>
+
+    <section>
+      <h2>4. Ports and nested components</h2>
+      <p>
+        A component with ports and inner parts. Ports sit on the component border, and an edge can
+        start or end at a port with <code>Component.port</code>.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction LR
+component Gateway["API gateway"] {
+  port http
+  port grpc
+  component Router
+  component RateLimiter["Rate limiter"]
+}
+component Catalog["Catalog service"]
+component Search["Search service"]
+interface REST["REST API"]
+interface RPC["gRPC API"]
+Gateway.http --() REST
+Gateway.grpc --() RPC
+Catalog --( RPC
+Search --( RPC
+Router --> RateLimiter : checks
+      </pre>
+    </section>
+
+    <section>
+      <h2>5. Layered architecture with packages</h2>
+      <p>
+        Packages group components into layers. Dependencies (<code>..&gt;</code>) point down the
+        stack, and nested packages show sub-systems.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction TB
+package Presentation {
+  component UI["Web UI"]
+  component CLI
+}
+package Application {
+  component OrderService["Order service"]
+  component BillingService["Billing service"]
+}
+package Infrastructure {
+  package Persistence {
+    component Repo["Order repository"]
+    component DB["Database"] &lt;&lt;database&gt;&gt;
+  }
+  component Queue["Message queue"]
+}
+UI ..> OrderService : uses
+CLI ..> OrderService : uses
+OrderService ..> BillingService : uses
+OrderService ..> Repo : stores via
+Repo ..> DB
+BillingService ..> Queue : publishes
+      </pre>
+    </section>
+
+    <section>
+      <h2>6. Actors and external systems</h2>
+      <p>
+        Actors are people or systems outside the diagram's scope. They can use an interface like any
+        component does, or link to a component directly.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction LR
+actor Customer
+actor Support["Support agent"] &lt;&lt;staff&gt;&gt;
+actor Bank["Bank"] &lt;&lt;external&gt;&gt;
+component Portal["Customer portal"]
+component Tickets["Ticket system"]
+component Payments["Payment service"]
+interface IPortal["Portal UI"]
+interface IBank["Bank API"]
+Portal --() IPortal
+Customer --( IPortal
+Support --> Tickets : works on
+Portal --> Tickets : opens
+Bank --() IBank
+Payments --( IBank
+Portal --> Payments : pays with
+      </pre>
+    </section>
+
+    <section>
+      <h2>7. Relationship kinds</h2>
+      <p>
+        Every connector: provided interface <code>--()</code>, required interface <code>--(</code>,
+        dependency <code>..&gt;</code>, association <code>--&gt;</code> and a plain link
+        <code>--</code>, each with an optional <code>: label</code>.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction LR
+component A
+component B
+component C
+component D
+component E
+interface I
+A --() I : provides
+B --( I : requires
+B ..> C : depends on
+C --> D : calls
+D -- E : linked to
+      </pre>
+    </section>
+
+    <section>
+      <h2>8. Styling and notes</h2>
+      <p>
+        <code>classDef</code> and <code>class</code> style several elements at once,
+        <code>style</code> styles one element, and <code>note for</code> attaches a note.
+      </p>
+      <pre class="mermaid">
+component-beta
+direction LR
+component Legacy["Legacy billing"] &lt;&lt;deprecated&gt;&gt;
+component Billing["Billing v2"]
+component Reports
+interface IInvoices["Invoices API"]
+Billing --() IInvoices
+Reports --( IInvoices
+Legacy ..> Billing : migrating to
+classDef old fill:#fde2e2,stroke:#c0392b,stroke-dasharray: 4 3
+classDef fresh fill:#e2f7e2,stroke:#27ae60
+class Legacy old
+class Billing fresh
+style Reports stroke:#2980b9,stroke-width:3px
+note for Legacy "switched off after Q3"
+      </pre>
+    </section>
+
+    <section>
+      <h2>9. Hand-drawn look</h2>
+      <p>Set per diagram with frontmatter config.</p>
+      <pre class="mermaid">
+---
+config:
+  look: handDrawn
+---
+component-beta
+direction LR
+actor User
+component App
+component Store
+interface IStore["Storage API"]
+User --> App : uses
+Store --() IStore
+App --( IStore
+      </pre>
+    </section>
+
+    <section class="dark">
+      <h2>10. Dark theme</h2>
+      <p>The same diagram as example 1, with the dark theme.</p>
+      <pre class="mermaid">
+---
+config:
+  theme: dark
+---
+component-beta
+direction LR
+actor Customer
+component Web["Web shop"]
+component Orders["Order service"] &lt;&lt;service&gt;&gt;
+interface IShop["Shop UI"]
+interface IOrders["Orders API"]
+package Backend {
+  component Payments {
+    port api
+  }
+  component Ledger
+}
+Web --() IShop
+Customer --( IShop
+Orders --() IOrders
+Web --( IOrders
+Payments ..> Ledger : writes to
+note for Orders "handles checkout"
+      </pre>
+    </section>
+
+    <section>
+      <h2>11. ELK layout</h2>
+      <p>
+        Any diagram can use the ELK layout engine with <code>layout: elk</code>. Here it is example
+        6.
+      </p>
+      <pre class="mermaid">
+---
+config:
+  layout: elk
+---
+component-beta
+direction LR
+actor Customer
+actor Support["Support agent"] &lt;&lt;staff&gt;&gt;
+actor Bank["Bank"] &lt;&lt;external&gt;&gt;
+component Portal["Customer portal"]
+component Tickets["Ticket system"]
+component Payments["Payment service"]
+interface IPortal["Portal UI"]
+interface IBank["Bank API"]
+Portal --() IPortal
+Customer --( IPortal
+Support --> Tickets : works on
+Portal --> Tickets : opens
+Bank --() IBank
+Payments --( IBank
+Portal --> Payments : pays with
+      </pre>
+    </section>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>

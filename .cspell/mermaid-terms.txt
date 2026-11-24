@@ -23,6 +23,8 @@ gzipped
 handDrawn
 jsobj
 kanban
+lollipop
+lollipops
 marginx
 marginy
 Markdownish

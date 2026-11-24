@@ -2714,6 +2714,93 @@ Manager --> Developer
 
 </details>
 
+## Component Diagram
+
+Show components, interfaces, ports, packages, and how they connect
+
+### Basic Components
+
+```mermaid
+component-beta
+direction LR
+component Web["Web shop"]
+component Orders["Order service"] <<service>>
+interface IOrders["Orders API"]
+Web --( IOrders
+Orders --() IOrders
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+component-beta
+direction LR
+component Web["Web shop"]
+component Orders["Order service"] <<service>>
+interface IOrders["Orders API"]
+Web --( IOrders
+Orders --() IOrders
+```
+
+</details>
+
+### Ports and Packages
+
+```mermaid
+component-beta
+package Backend {
+  component Payments {
+    port api
+  }
+  component Ledger
+}
+interface IPay
+Payments.api --() IPay
+Payments ..> Ledger : writes to
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+component-beta
+package Backend {
+  component Payments {
+    port api
+  }
+  component Ledger
+}
+interface IPay
+Payments.api --() IPay
+Payments ..> Ledger : writes to
+```
+
+</details>
+
+### Notes and Styling
+
+```mermaid
+component-beta
+component Orders
+note for Orders "handles checkout"
+classDef hot fill:#f96,stroke:#333
+class Orders hot
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+component-beta
+component Orders
+note for Orders "handles checkout"
+classDef hot fill:#f96,stroke:#333
+class Orders hot
+```
+
+</details>
+
 ## Event Modeling Diagram
 
 Describe systems using an example of how information has changed within them over time
