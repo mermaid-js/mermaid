@@ -110,8 +110,9 @@ export async function parseMmdTextToLayoutData(
   }
   const layoutData = db.getData();
   if (options.config) {
+    // `layoutData.config` is the frozen `getConfig()` snapshot, so merge into a copy.
     layoutData.config = assignWithDepth(
-      layoutData.config ?? {},
+      configApi.getConfigCopy(layoutData.config ?? {}),
       structuredClone(options.config)
     ) as MermaidConfig;
   }
