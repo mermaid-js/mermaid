@@ -25,6 +25,13 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
+  it('should handle a topAxis definition (issue #8799)', function () {
+    spyOn(ganttDb, 'enableTopAxis');
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntopAxis';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.enableTopAxis).toHaveBeenCalled();
+  });
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
     const semi = 'gantt\ndateFormat yyyy-mm-dd\ntitle ;Gantt diagram titles support semicolons';

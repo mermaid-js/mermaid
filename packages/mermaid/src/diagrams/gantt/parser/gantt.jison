@@ -138,7 +138,7 @@ weekend
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
   | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
-  | topAxis {yy.TopAxis();$$=$1.substr(8);}
+  | topAxis {yy.enableTopAxis();$$=$1.substr(8);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
   | tickInterval {yy.setTickInterval($1.substr(13));$$=$1.substr(13);}
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
