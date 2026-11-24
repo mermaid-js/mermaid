@@ -244,4 +244,78 @@ ${prop} --> [*]`);
       expect(noteState?.note?.text).toContain('end note as part of the note text');
     });
   });
+
+  describe('quoted state names with spaces', () => {
+    it('accepts a quoted string as a transition target', () => {
+      const diagramText = `stateDiagram-v2
+      Foo --> "Bar Baz"`;
+      stateDiagram.parser.parse(diagramText);
+
+      const states = stateDiagram.parser.yy.getStates();
+      const quoted = states.get('Bar_Baz');
+      expect(quoted).not.toBeUndefined();
+      expect(quoted?.descriptions).toContain('Bar Baz');
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(1);
+      expect(relations[0].id1).toEqual('Foo');
+      expect(relations[0].id2).toEqual('Bar_Baz');
+    });
+
+    it('maps repeated occurrences of the same quoted name to a single state', () => {
+      const diagramText = `stateDiagram-v2
+      [*] --> Foo
+      Foo --> "Bar Baz"
+      "Bar Baz" --> [*]`;
+      stateDiagram.parser.parse(diagramText);
+
+      const states = stateDiagram.parser.yy.getStates();
+      const matching = [...states.keys()].filter((key) => key.includes('Bar'));
+      expect(matching).toEqual(['Bar_Baz']);
+      expect(states.get('Bar_Baz')?.descriptions).toEqual(['Bar Baz']);
+
+      const relations = stateDiagram.parser.yy.getRelations();
+      expect(relations).toHaveLength(3);
+    });
+
+    it('keeps repeated explicit descriptions untouched (regression: dedupe is implicit-only)', () => {
+      const diagramText = `stateDiagram-v2
+      S : first line
+      S : first line
+      S --> T`;
+      stateDiagram.parser.parse(diagramText);
+
+      const node = stateDiagram.parser.yy.getData().nodes.find((n) => n.id === 'S');
+      expect(node?.label).toEqual('first line');
+      expect(node?.description).toEqual(['first line']);
+    });
+
+    it('rejects an empty quoted state name', () => {
+      const diagramText = `stateDiagram-v2
+      Foo --> ""`;
+      expect(() => stateDiagram.parser.parse(diagramText)).toThrow(/must not be empty/);
+    });
+
+    it('treats a quoted name with an explicit description as explicit (both occurrences kept)', () => {
+      const diagramText = `stateDiagram-v2
+      "Bar Baz" : first line
+      "Bar Baz" : first line`;
+      stateDiagram.parser.parse(diagramText);
+
+      const node = stateDiagram.parser.yy.getData().nodes.find((n) => n.id === 'Bar_Baz');
+      expect(node?.label).toEqual('first line');
+      expect(node?.description).toEqual(['first line']);
+    });
+
+    it('renders a single label when the same quoted name appears in several transitions', () => {
+      const diagramText = `stateDiagram-v2
+      Foo --> "Bar Baz"
+      "Bar Baz" --> [*]`;
+      stateDiagram.parser.parse(diagramText);
+
+      const node = stateDiagram.parser.yy.getData().nodes.find((n) => n.id === 'Bar_Baz');
+      expect(node?.label).toEqual('Bar Baz');
+      expect(node?.description ?? []).toEqual([]);
+    });
+  });
 });

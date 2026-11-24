@@ -90,6 +90,9 @@ export interface StateStmt extends BaseStmt {
   classes?: string[];
   styles?: string[];
   textStyles?: string[];
+  /** Set for states implicitly declared by a quoted name in a transition, so
+   * the description is only attached the first time the state is seen. */
+  implicit?: boolean;
 }
 
 interface StyleStmt extends BaseStmt {
@@ -251,7 +254,13 @@ export class StateDB {
     for (const item of Array.isArray(statements) ? statements : statements.doc) {
       switch (item.stmt) {
         case STMT_STATE:
-          this.addState(item.id.trim(), item.type, item.doc, item.description, item.note);
+          this.addState(
+            item.id.trim(),
+            item.type,
+            item.doc,
+            this.descriptionIfNew(item.id.trim(), item),
+            item.note
+          );
           break;
         case STMT_RELATION:
           this.addRelation(item.state1, item.state2, item.description);
@@ -556,6 +565,19 @@ export class StateDB {
     return id === CONSTANTS.END_NODE ? CONSTANTS.END_TYPE : type;
   }
 
+  /**
+   * Descriptions of implicitly declared states (quoted names in transitions)
+   * are only applied the first time the state is seen, so repeated references
+   * do not duplicate the rendered label. Explicit descriptions are kept as is.
+   */
+  private descriptionIfNew(id: string, item: StateStmt) {
+    if (!item.implicit) {
+      return item.description;
+    }
+    const existing = this.currentDocument.states.get(id);
+    return existing?.descriptions?.length ? undefined : item.description;
+  }
+
   addRelationObjs(item1: StateStmt, item2: StateStmt, relationTitle = '') {
     const id1 = this.startIdIfNeeded(item1.id.trim());
     const type1 = this.startTypeIfNeeded(item1.id.trim(), item1.type);
@@ -565,7 +587,7 @@ export class StateDB {
       id1,
       type1,
       item1.doc,
-      item1.description,
+      this.descriptionIfNew(id1, item1),
       item1.note,
       item1.classes,
       item1.styles,
@@ -575,7 +597,7 @@ export class StateDB {
       id2,
       type2,
       item2.doc,
-      item2.description,
+      this.descriptionIfNew(id2, item2),
       item2.note,
       item2.classes,
       item2.styles,
