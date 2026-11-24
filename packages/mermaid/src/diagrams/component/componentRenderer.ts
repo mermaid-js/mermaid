@@ -56,13 +56,22 @@ export const getComponentBoundaryAccessibleName = (node: ComponentLayoutCluster)
 
 const escapeMarkdownMarkers = (label: string): string => label.replace(/([*[\\\]_`])/g, '\\$1');
 
-const prepareComponentLayoutData = (
+export const prepareComponentLayoutData = (
   data: ComponentLayoutData,
   diagramId: string
 ): ComponentLayoutData => {
   data.diagramId = diagramId;
+  // Sanitising can map distinct ids to one DOM id (`Payments.api` and `Payments_api`);
+  // number the later ones so every node keeps its own element id.
+  const usedDomIds = new Set<string>();
   for (const node of data.nodes) {
-    node.domId = componentNodeDomId(node.id);
+    const baseDomId = componentNodeDomId(node.id);
+    let domId = baseDomId;
+    for (let suffix = 2; usedDomIds.has(domId); suffix++) {
+      domId = `${baseDomId}-${suffix}`;
+    }
+    usedDomIds.add(domId);
+    node.domId = domId;
     // A shape label with `stereotype` set takes the generic stacked-label path, which
     // drops the « » marks; fold it into the label instead, as UML writes it.
     // The actor shape draws its own stereotype line.

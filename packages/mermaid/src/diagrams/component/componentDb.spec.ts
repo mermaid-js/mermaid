@@ -131,4 +131,34 @@ style A stroke:#333
     expect(db.getComponents().has('A')).toBe(false);
     expect(db.getComponents().has('B')).toBe(true);
   });
+
+  it('keeps an interface declared in a package inside that package', async () => {
+    await parser.parse(`component-beta
+package P {
+  interface I
+  component C
+}
+interface Top
+C --() I
+`);
+    const data = db.getData();
+    expect(data.nodes.find((n) => n.id === 'I')?.parentId).toBe('P');
+    expect(data.nodes.find((n) => n.id === 'Top')?.parentId).toBeUndefined();
+    expect(db.getPackage('P')?.children).toEqual(['I', 'C']);
+  });
+
+  it('gives a note an id no declared element uses', async () => {
+    await parser.parse(`component-beta
+component note0
+note for note0 "description"
+component note0_1
+note for note0_1 "second"
+`);
+    const data = db.getData();
+    const notes = data.nodes.filter((n) => n.shape === 'note');
+    expect(notes.map((n) => n.id)).toEqual(['note0_2', 'note1']);
+    expect(new Set(data.nodes.map((n) => n.id)).size).toBe(data.nodes.length);
+    const noteEdge = data.edges.find((e) => e.relationKind === 'note' && e.end === 'note0');
+    expect(noteEdge).toMatchObject({ start: 'note0_2', id: 'note0_2-edge' });
+  });
 });

@@ -76,6 +76,11 @@ const setDirection = (direction: Direction): void => {
 };
 
 const assertUnused = (id: string): void => {
+  // `A.b` is how a port is referenced, so a declared id must not contain a dot itself:
+  // a dotted declaration could not be told apart from, or referenced like, a port.
+  if (id.includes('.')) {
+    throw new Error(`Cannot declare "${id}": an id must not contain a dot`);
+  }
   if (state.symbols.has(id)) {
     throw new Error(`Cannot declare "${id}": the id is already in use`);
   }
@@ -103,10 +108,16 @@ const addComponent = (id: string, label?: string, stereotype?: string, parentId?
   }
 };
 
-const addInterface = (id: string, label?: string): void => {
+const addInterface = (id: string, label?: string, parentId?: string): void => {
+  if (parentId && !state.packages.has(parentId)) {
+    throw new Error(`Cannot nest interface "${id}" inside unknown package "${parentId}"`);
+  }
   assertUnused(id);
   state.symbols.set(id, 'interface');
-  state.interfaces.set(id, { id, label: label ?? id, classes: [], styles: [] });
+  state.interfaces.set(id, { id, label: label ?? id, parentId, classes: [], styles: [] });
+  if (parentId) {
+    state.packages.get(parentId)?.children.push(id);
+  }
 };
 
 const addActor = (id: string, label?: string, stereotype?: string): void => {
@@ -120,8 +131,11 @@ const addPort = (parentId: string, id: string): void => {
   if (!component) {
     throw new Error(`Cannot declare port "${id}": unknown component "${parentId}"`);
   }
+  assertUnused(id);
   const qualifiedId = `${parentId}.${id}`;
-  assertUnused(qualifiedId);
+  if (state.symbols.has(qualifiedId)) {
+    throw new Error(`Cannot declare "${qualifiedId}": the id is already in use`);
+  }
   state.symbols.set(qualifiedId, 'port');
   state.ports.set(qualifiedId, {
     id: qualifiedId,
@@ -266,6 +280,18 @@ const getData = (): ComponentLayoutData => {
         id
     );
 
+  // Notes are numbered as they are added, possibly before a later declaration takes the
+  // same name (`component note0`); once every id is known, give each note an unused one.
+  const noteLayoutIds = new Map<string, string>();
+  for (const note of state.notes.values()) {
+    let layoutId = note.id;
+    for (let suffix = 1; state.symbols.has(layoutId); suffix++) {
+      layoutId = `${note.id}_${suffix}`;
+    }
+    noteLayoutIds.set(note.id, layoutId);
+  }
+  const noteLayoutId = (id: string): string => noteLayoutIds.get(id) ?? id;
+
   const nodes: ComponentLayoutData['nodes'] = [];
   const edges: ComponentLayoutEdge[] = [];
 
@@ -354,6 +380,7 @@ const getData = (): ComponentLayoutData => {
       cssClasses: classNames('default', 'component-interface', ...iface.classes),
       cssStyles: [...iface.styles],
       cssCompiledStyles: getCompiledStyles(iface.classes),
+      ...(iface.parentId ? { parentId: iface.parentId } : {}),
     });
   }
 
@@ -374,7 +401,7 @@ const getData = (): ComponentLayoutData => {
 
   for (const note of state.notes.values()) {
     nodes.push({
-      id: note.id,
+      id: noteLayoutId(note.id),
       label: sanitize(note.label),
       labelType: 'text',
       shape: 'note',
@@ -427,12 +454,12 @@ const getData = (): ComponentLayoutData => {
 
   for (const note of state.notes.values()) {
     edges.push({
-      id: `${note.id}-edge`,
-      start: note.id,
+      id: `${noteLayoutId(note.id)}-edge`,
+      start: noteLayoutId(note.id),
       end: note.target,
-      source: note.id,
+      source: noteLayoutId(note.id),
       target: note.target,
-      sourceLabel: endpointLabel(note.id),
+      sourceLabel: endpointLabel(noteLayoutId(note.id)),
       targetLabel: endpointLabel(note.target),
       type: 'edge',
       relationKind: 'note',

@@ -23,6 +23,7 @@ export interface ComponentEntity {
 export interface InterfaceEntity {
   id: string;
   label: string;
+  parentId?: string;
   classes: string[];
   styles: string[];
 }
@@ -163,7 +164,7 @@ export interface ComponentDB extends DiagramDB {
   getDirection: () => Direction;
 
   addComponent: (id: string, label?: string, stereotype?: string, parentId?: string) => void;
-  addInterface: (id: string, label?: string) => void;
+  addInterface: (id: string, label?: string, parentId?: string) => void;
   addActor: (id: string, label?: string, stereotype?: string) => void;
   addPort: (parentId: string, id: string) => void;
   addPackage: (id: string, parentId?: string) => void;

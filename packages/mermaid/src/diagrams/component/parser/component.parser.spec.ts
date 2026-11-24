@@ -77,4 +77,13 @@ User --> Shop
     await parser.parse('component-beta\ncomponent actorRegistry\n');
     expect(db.getComponents().has('actorRegistry')).toBe(true);
   });
+
+  it('rejects declared ids that contain a dot', async () => {
+    await expect(parser.parse('component-beta\ncomponent A {\n  port p.q\n}\n')).rejects.toThrow(
+      /must not contain a dot/
+    );
+    await expect(parser.parse('component-beta\ncomponent A.b\n')).rejects.toThrow(
+      /must not contain a dot/
+    );
+  });
 });

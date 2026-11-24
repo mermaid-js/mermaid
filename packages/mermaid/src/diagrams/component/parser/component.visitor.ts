@@ -134,10 +134,10 @@ class ComponentVisitor extends BaseVisitor {
     db.addPort(parentId, id);
   }
 
-  interfaceStatement(ctx: Ctx): void {
+  interfaceStatement(ctx: Ctx, parentId?: string): void {
     const id = token(ctx, 'IDENTIFIER')!.image;
     const label = ctx.nodeLabel ? (this.visit(ctx.nodeLabel as CstNode[]) as string) : undefined;
-    db.addInterface(id, label);
+    db.addInterface(id, label, parentId);
   }
 
   actorStatement(ctx: Ctx): void {
@@ -159,7 +159,7 @@ class ComponentVisitor extends BaseVisitor {
     if (ctx.componentStatement) {
       this.visit(ctx.componentStatement as CstNode[], parentId);
     } else if (ctx.interfaceStatement) {
-      this.visit(ctx.interfaceStatement as CstNode[]);
+      this.visit(ctx.interfaceStatement as CstNode[], parentId);
     } else if (ctx.packageStatement) {
       this.visit(ctx.packageStatement as CstNode[], parentId);
     }

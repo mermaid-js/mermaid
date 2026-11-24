@@ -3,9 +3,11 @@ import {
   getComponentBoundaryAccessibleName,
   getComponentEdgeAccessibleName,
   getComponentNodeAccessibleName,
+  prepareComponentLayoutData,
 } from './componentRenderer.js';
 import type {
   ComponentLayoutCluster,
+  ComponentLayoutData,
   ComponentLayoutEdge,
   ComponentLayoutNode,
 } from './componentTypes.js';
@@ -84,5 +86,24 @@ describe('component accessible names', () => {
   it('hides the note connector edge from assistive technology', () => {
     const edge = { relationKind: 'note' } as unknown as ComponentLayoutEdge;
     expect(getComponentEdgeAccessibleName(edge)).toBe('');
+  });
+});
+
+describe('component layout preparation', () => {
+  it('gives nodes whose ids sanitise alike distinct DOM ids', () => {
+    const data = {
+      nodes: [
+        node({ id: 'Payments_api' }),
+        node({ id: 'Payments.api', shape: 'umlPort' }),
+        node({ id: 'Payments-api' }),
+      ],
+      edges: [],
+    } as unknown as ComponentLayoutData;
+    const domIds = prepareComponentLayoutData(data, 'diagram').nodes.map((n) => n.domId);
+    expect(domIds).toEqual([
+      'component-Payments_api',
+      'component-Payments_api-2',
+      'component-Payments-api',
+    ]);
   });
 });
