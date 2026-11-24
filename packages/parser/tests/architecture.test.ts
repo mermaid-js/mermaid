@@ -165,6 +165,102 @@ describe('architecture', () => {
     });
   });
 
+  describe('should handle ids that start with a direction letter', () => {
+    it.each([
+      `architecture-beta
+            service TH(disk)
+            `,
+      `architecture-beta
+            service LH(disk)
+            `,
+      `architecture-beta
+            service RH(disk)
+            `,
+      `architecture-beta
+            service BH(disk)
+            `,
+      `architecture-beta
+            junction T
+            `,
+      `architecture-beta
+            group T(server)[T]
+            `,
+    ])(
+      'should handle regular architecture + an id starting with L, R, T or B',
+      (context: string) => {
+        const result = parse(context);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Architecture.$type);
+      }
+    );
+
+    it('should still read direction letters on edge ports', () => {
+      const context = `architecture-beta
+            service a(disk)
+            service b(disk)
+            a:B --> T:b
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture.$type);
+
+      const edge = result.value.edges?.[0];
+      expect(edge?.lhsDir).toBe('B');
+      expect(edge?.rhsDir).toBe('T');
+    });
+
+    it.each([
+      `architecture-beta
+            service T(disk)
+            service a(disk)
+            T:R -- L:a
+            `,
+      `architecture-beta
+            service a(disk)
+            service Backend(disk)
+            a:R -- L:Backend
+            `,
+      `architecture-beta
+            service a(disk)
+            service b(disk)
+            a:R--L:b
+            `,
+      `architecture-beta
+            service a(disk)
+            service b(disk)
+            a:R-[title]-L:b
+            `,
+      `architecture-beta
+            service a(disk)
+            service B-api(disk)
+            a:R -- L:B-api
+            `,
+    ])(
+      'should read an edge endpoint whose id starts with a direction letter',
+      (context: string) => {
+        const result = parse(context);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.$type).toBe(Architecture.$type);
+        expect(result.value.edges).toHaveLength(1);
+      }
+    );
+
+    it('should read direction letters separated from their colon by whitespace', () => {
+      const context = `architecture-beta
+            service a(disk)
+            service b(disk)
+            a: B -- T :b
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture.$type);
+
+      const edge = result.value.edges?.[0];
+      expect(edge?.lhsDir).toBe('B');
+      expect(edge?.rhsDir).toBe('T');
+    });
+  });
+
   describe('should handle non-ASCII and punctuation in unquoted titles', () => {
     it.each([
       '采集器',

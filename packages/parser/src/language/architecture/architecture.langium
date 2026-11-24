@@ -45,13 +45,21 @@ Junction:
 ;
 
 Edge:
-    lhsId=ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ID rhsGroup?=ARROW_GROUP? EOL
+    lhsId=EdgeId lhsGroup?=ARROW_GROUP? Arrow rhsId=EdgeId rhsGroup?=ARROW_GROUP? EOL
 ;
+
+// An edge endpoint can be a single direction letter (e.g. `T:R -- L:a`), so it
+// also accepts an ARROW_DIRECTION token as its id.
+EdgeId returns string: ID | ARROW_DIRECTION;
 
 Alignment:
     'align' direction=('row' | 'column') members+=ID (members+=ID)+ EOL
 ;
 
-terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
+// A direction letter is only meaningful next to the ':' of a port, so the
+// terminal only matches there; otherwise 'L', 'R', 'T' and 'B' must stay part
+// of the surrounding identifier (e.g. `service TH(disk)` or `L:Backend`).
+// Whitespace may separate the letter from its colon (e.g. `a: B -- T :b`).
+terminal ARROW_DIRECTION: /[LRTB](?=[ \t]*:)|(?<=:[ \t]*)[LRTB](?!\w|-(?![-\[]))/;
 terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /<|>/;
