@@ -178,6 +178,9 @@ export function relativeRadius(
   maxValue: number,
   radius: number
 ): number {
+  if (maxValue === minValue) {
+    return 0;
+  }
   const clippedValue = Math.min(Math.max(value, minValue), maxValue);
   return (radius * (clippedValue - minValue)) / (maxValue - minValue);
 }
