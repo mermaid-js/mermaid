@@ -1,0 +1,19 @@
+---
+config:
+  layout: elk.rectpacking
+  flowchart:
+    nodeSpacing: 25
+    rankSpacing: 100
+---
+%% Under elk.rectpacking, nodeSpacing and rankSpacing leave the packing alone, also inside a subgraph that declares a direction and so runs the top-level rectpacking.
+flowchart LR
+  subgraph shelf [Shelf]
+    direction TB
+    A[Atlas]
+    B[Binder]
+    C[Catalogue]
+    D[Diary]
+    E[Encyclopedia]
+  end
+  F[Folder]
+  G[Guide]

@@ -265,6 +265,170 @@ describe('buildSubgraphLayoutOptions', () => {
   });
 });
 
+describe('ELK spacing from nodeSpacing and rankSpacing', () => {
+  const build = (
+    extra: Record<string, unknown>,
+    group: Record<string, unknown> = {},
+    algorithm = 'layered'
+  ) => {
+    const data = {
+      direction: 'LR',
+      config: { elk: {} },
+      nodes: [
+        {
+          id: 'group',
+          isGroup: true,
+          label: 'Group',
+          padding: 12,
+          labelBBox: { width: 44, height: 16 },
+          ...group,
+        },
+        { id: 'A', isGroup: false, parentId: 'group', width: 50, height: 20, label: 'A' },
+        { id: 'B', isGroup: false, width: 60, height: 24, label: 'B' },
+      ],
+      edges: [{ id: 'edge-A-B', start: 'A', end: 'B', width: 0, height: 0, type: 'arrow_point' }],
+      ...extra,
+    } as any;
+    const { elkGraph } = buildElkGraphFromLayoutData(data, {
+      algorithm,
+      common: { lineBreakRegex: /<br\s*\/?>/gi },
+      getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
+      interpolateToCurve: (curve: unknown) => curve,
+      log,
+    } as any);
+    return {
+      root: elkGraph.layoutOptions,
+      group: elkGraph.children.find((child: any) => child.id === 'group').layoutOptions,
+    };
+  };
+
+  it('leaves every option as it was when the diagram asks for the default', () => {
+    const asked = build({ nodeSpacing: 50, rankSpacing: 50 });
+    const silent = build({});
+    expect(asked.root).toEqual(silent.root);
+    expect(asked.group).toEqual(silent.group);
+    expect(asked.root['spacing.baseValue']).toBe(40);
+    expect(asked.root).not.toHaveProperty('spacing.nodeNode');
+    expect(asked.group['spacing.nodeNode']).toBe(50);
+    expect(asked.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(30);
+  });
+
+  it.each([
+    { asked: 25, root: 20, group: 25, approach: 15, groupBase: 12 },
+    { asked: 100, root: 80, group: 100, approach: 60, groupBase: 48 },
+  ])(
+    'scales the gaps with the value asked for, $asked',
+    ({ asked, root, group, approach, groupBase }) => {
+      const options = build({ nodeSpacing: asked, rankSpacing: asked });
+      expect(options.root['spacing.baseValue']).toBe(root);
+      expect(options.root['spacing.nodeNode']).toBe(root);
+      expect(options.group['spacing.nodeNode']).toBe(group);
+      expect(options.group['spacing.baseValue']).toBe(groupBase);
+      expect(options.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(approach);
+    }
+  );
+
+  it('never lets the straight run before a node fall below the arrowhead floor', () => {
+    const tight = build({ nodeSpacing: 10, rankSpacing: 10 });
+    expect(tight.root['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(12);
+    expect(tight.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(12);
+    const loose = build({ nodeSpacing: 100, rankSpacing: 100 });
+    expect(loose.root).not.toHaveProperty('elk.layered.spacing.edgeNodeBetweenLayers');
+    expect(loose.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(60);
+    const silent = build({});
+    expect(silent.root).not.toHaveProperty('elk.layered.spacing.edgeNodeBetweenLayers');
+    expect(silent.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(30);
+  });
+
+  describe('the straight run before a node at the top level', () => {
+    // ELK derives the gap between a layer and an edge entering it as half of `spacing.baseValue`
+    // (measured on elkjs 0.12.0: 10 at a base value of 20, 20 at 40, 25 at 50).
+    const ELK_EDGE_NODE_SHARE = 0.5;
+    const FLOOR = 12;
+    const runBefore = (rankSpacing: number) => {
+      const { root } = build({ nodeSpacing: 50, rankSpacing });
+      return (
+        (root['elk.layered.spacing.edgeNodeBetweenLayers'] as number | undefined) ??
+        ELK_EDGE_NODE_SHARE * (root['spacing.baseValue'] as number)
+      );
+    };
+
+    it.each([
+      { asked: 49, run: 19.6 },
+      { asked: 50, run: 20 },
+      { asked: 100, run: 40 },
+      { asked: 35, run: 14 },
+      { asked: 30, run: 12 },
+      { asked: 25, run: 12 },
+      { asked: 10, run: 12 },
+    ])('is $run px at a rank spacing of $asked', ({ asked, run }) => {
+      expect(runBefore(asked)).toBeCloseTo(run, 10);
+    });
+
+    it('does not jump between a rank spacing of 49 and 50', () => {
+      expect(runBefore(50) - runBefore(49)).toBeLessThan(1);
+    });
+
+    it('states the option only where ELK would derive less than the floor', () => {
+      expect(build({ nodeSpacing: 50, rankSpacing: 49 }).root).not.toHaveProperty(
+        'elk.layered.spacing.edgeNodeBetweenLayers'
+      );
+      expect(build({ nodeSpacing: 50, rankSpacing: 25 }).root).toHaveProperty(
+        'elk.layered.spacing.edgeNodeBetweenLayers',
+        FLOOR
+      );
+    });
+  });
+
+  it('keeps the gap within a layer and the gap between layers apart', () => {
+    const options = build({ nodeSpacing: 100, rankSpacing: 25 });
+    expect(options.root['spacing.nodeNode']).toBe(80);
+    expect(options.root['spacing.baseValue']).toBe(20);
+  });
+
+  it('does not read the flowchart config, which the ER renderer fills with its own defaults', () => {
+    const options = build({
+      config: { elk: {}, flowchart: { nodeSpacing: 140, rankSpacing: 80 } },
+    });
+    expect(options.root['spacing.baseValue']).toBe(40);
+    expect(options.root).not.toHaveProperty('spacing.nodeNode');
+  });
+
+  it('leaves a subgraph that runs its own algorithm with that algorithm spacing', () => {
+    const rectpacked = build(
+      { nodeSpacing: 25, rankSpacing: 25, edges: [] },
+      { metadata: { algorithm: 'elk.rectpacking' } }
+    );
+    expect(rectpacked.group['spacing.nodeNode']).toBe(15);
+  });
+
+  it('leaves a directional subgraph that inherits the top-level rectpacking with its packing gaps', () => {
+    const silent = build({ edges: [] }, { dir: 'TB' }, 'elk.rectpacking');
+    const asked = build(
+      { nodeSpacing: 25, rankSpacing: 100, edges: [] },
+      { dir: 'TB' },
+      'elk.rectpacking'
+    );
+    expect(asked.group['elk.algorithm']).toBe('elk.rectpacking');
+    expect(asked.group).toEqual(silent.group);
+  });
+
+  it('scales a directional subgraph that inherits the top-level layered layout', () => {
+    const asked = build({ nodeSpacing: 25, rankSpacing: 25, edges: [] }, { dir: 'TB' });
+    expect(asked.group['elk.algorithm']).toBe('layered');
+    expect(asked.group['spacing.nodeNode']).toBe(25);
+  });
+
+  it('scales the spacing of a subgraph that falls back to the plain layout because an edge crosses it', () => {
+    const fallen = build(
+      { nodeSpacing: 25, rankSpacing: 25 },
+      { metadata: { algorithm: 'elk.rectpacking' } }
+    );
+    expect(fallen.group['spacing.nodeNode']).toBe(25);
+    expect(fallen.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(15);
+  });
+});
+
 describe('findCyclicEntryNodes', () => {
   it('returns nothing for an acyclic flow (natural source exists)', () => {
     const nodes = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
