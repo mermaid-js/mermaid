@@ -13,6 +13,33 @@ export type Node = MermaidNode;
 export type NodeId = Node['id'];
 export type EdgeId = MermaidEdge['id'];
 
+/**
+ * Space between a node and its self-loop label: the loop plus a few px.
+ * Keep in step with ANCHOR_OFFSET (20) in the router and the 4px label gap in
+ * labelAnchoring.ts.
+ */
+export const SELF_LOOP_LABEL_GAP = 24;
+
+/** Nested loops: how far the next loop sits past the previous loop's label. */
+export const SELF_LOOP_NEST_GAP = 12;
+
+export const isSelfLoopLabel = (n?: Node): boolean => !!n?.isEdgeLabel && n.edgeStart === n.edgeEnd;
+
+/** Self-loop side: right (1), or left (-1) when another edge already leaves to the right. */
+export function selfLoopSide(
+  node: Node,
+  edges: readonly MermaidEdge[],
+  nodeById: ReadonlyMap<string, Node>
+): 1 | -1 {
+  const right = (node.x ?? 0) + (node.width ?? 0) / 2;
+  const busy = edges.some((e) => {
+    const otherId = e.start === node.id ? e.end : e.end === node.id ? e.start : undefined;
+    const other = otherId !== node.id && otherId !== undefined && nodeById.get(otherId);
+    return !e.isLayoutOnly && !!other && (other.x ?? 0) - (other.width ?? 0) / 2 > right;
+  });
+  return busy ? -1 : 1;
+}
+
 export interface EdgeRef {
   id: EdgeId;
   src: NodeId;
@@ -313,6 +340,20 @@ export function writeBackToLayoutData(
       label.y = coords.y[label.id];
     }
   }
+
+  // Several loops on one node nest outward (see selfLoopPoints in the router)
+  const loopLabelStack = new Map<NodeId, number>();
+  for (const label of allNodes.filter(isSelfLoopLabel)) {
+    const owner = nodeMap.get(label.edgeStart!);
+    if (owner?.x !== undefined && owner.y !== undefined) {
+      const taken = loopLabelStack.get(owner.id) ?? 0;
+      const offset = (owner.width ?? 0) / 2 + SELF_LOOP_LABEL_GAP + taken + (label.width ?? 0) / 2;
+      label.x = owner.x + selfLoopSide(owner, layout.edges ?? [], nodeMap) * offset;
+      label.y = owner.y;
+      loopLabelStack.set(owner.id, taken + (label.width ?? 0) + SELF_LOOP_NEST_GAP);
+    }
+  }
+
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
   const laneModel = buildLaneModel(allNodes);
   const topLevelGroups: Node[] = [];
