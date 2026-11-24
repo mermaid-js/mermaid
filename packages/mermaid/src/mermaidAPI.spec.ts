@@ -85,6 +85,17 @@ describe('mermaidAPI', () => {
       expect(encodeEntities(text)).toEqual('A["linkStyle:refﬂ°°35¶ß total;"]');
     });
 
+    it('keeps a final hex color before a same-line statement (issue #5498)', () => {
+      const text = 'graph TD;A-->B;linkStyle 0 stroke-width:4px,stroke:#FF69B4;B-->C';
+      // `:#FF69B4` is a declaration color, not an entity; its `;` stays.
+      expect(encodeEntities(text)).toEqual(text);
+    });
+
+    it('does not start a declaration match inside a multi-line quoted label (issue #5498)', () => {
+      const text = 'A["linkStyle:ref#35; total;\ncontinued"]';
+      expect(encodeEntities(text)).toEqual('A["linkStyle:refﬂ°°35¶ß total;\ncontinued"]');
+    });
+
     describe('replaces words starting with # and ending with ;', () => {
       const testStr = 'Hello #there;';
 

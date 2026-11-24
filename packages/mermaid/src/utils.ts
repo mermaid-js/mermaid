@@ -895,16 +895,21 @@ export default {
 export const encodeEntities = function (text: string): string {
   let txt = text;
 
-  // Only strip a `;` that ends the declaration line: `;` separating statements
-  // on the same line (e.g. `A-->B;linkStyle ...;C-->D`) must stay.
+  // Only strip a `;` that ends a style/classDef/linkStyle declaration line:
+  // the declaration must start a statement (line start or after `;`) so the
+  // match cannot begin inside a quoted label, and the `;` must be the last
+  // non-whitespace char on the line so `;` separating same-line statements
+  // (e.g. `A-->B;linkStyle ...;C-->D`) is kept.
   txt = txt.replace(
-    /(style|classDef|linkStyle).*:\S*#.*;(?=[^\S\n\r]*(?:\r?\n|$))/g,
+    /(^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r]*:\S*#[^\n\r]*;(?=[^\S\n\r]*(?:\r?\n|$))/gm,
     function (s): string {
       return s.substring(0, s.length - 1);
     }
   );
 
-  txt = txt.replace(/#\w+;/g, function (s) {
+  // `#...;` after a `:` is a declaration color (e.g. `stroke:#FF69B4;`), not an
+  // entity; the `;` there is a statement separator and must not be consumed.
+  txt = txt.replace(/(?<!:)#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);
 
     const isInt = /^\+?\d+$/.test(innerTxt);
