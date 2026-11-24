@@ -472,6 +472,12 @@ export const drawMessage = async function (
   textObj.x = Math.min(startx, stopx);
   textObj.y = starty + 10;
   textObj.width = Math.abs(stopx - startx);
+  if (startx === stopx) {
+    // A self-message has no span to align against. Its text is laid out centred on the
+    // lifeline (see boundMessage), so align it within a box of its own width there.
+    textObj.width = textDims.width + 2 * conf.wrapPadding;
+    textObj.x = startx - textObj.width / 2;
+  }
   textObj.class = 'messageText';
   textObj.dy = '1em';
   textObj.text = message;
