@@ -322,85 +322,89 @@ export const extractor = (graph, depth) => {
     hasChildren = hasChildren || children.length > 0;
   }
 
+  // A clusterNode with no children in this graph can still hold nested clusters
+  // inside its extracted subgraph (e.g. when a numeric-id cluster sorts before
+  // its parent in graph.nodes() and is extracted first), so the recursion into
+  // cluster subgraphs below must always run.
   if (!hasChildren) {
     log.debug('Done, no node has children', graph.nodes());
-    return;
-  }
-  log.debug('Nodes = ', nodes, depth);
-  for (const node of nodes) {
-    log.debug(
-      'Extracting node',
-      node,
-      clusterDb,
-      clusterDb.has(node) && !clusterDb.get(node).externalConnections,
-      !graph.parent(node),
-      graph.node(node),
-      graph.children('D'),
-      ' Depth ',
-      depth
-    );
-    if (!clusterDb.has(node)) {
-      log.debug('Not a cluster', node, depth);
-    } else if (
-      !clusterDb.get(node).externalConnections &&
-      graph.children(node) &&
-      graph.children(node).length > 0
-    ) {
-      // Original behaviour: cluster without external connections gets its own sub-graph.
+  } else {
+    log.debug('Nodes = ', nodes, depth);
+    for (const node of nodes) {
       log.debug(
-        'Cluster without external connections, without a parent and with children',
+        'Extracting node',
         node,
-        depth
-      );
-
-      const graphSettings = graph.graph();
-      let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
-      if (clusterDb.get(node)?.clusterData?.dir) {
-        dir = clusterDb.get(node).clusterData.dir;
-        log.debug('Fixing dir', clusterDb.get(node).clusterData.dir, dir);
-      }
-
-      const clusterGraph = new graphlib.Graph({
-        multigraph: true,
-        compound: true,
-      })
-        .setGraph({
-          rankdir: dir,
-          nodesep: 50,
-          ranksep: 50,
-          marginx: 8,
-          marginy: 8,
-        })
-        .setDefaultEdgeLabel(function () {
-          return {};
-        });
-
-      // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
-      // log.debug('Old graph before copy', graphlibJson.write(graph));
-      copy(node, graph, clusterGraph, node);
-      graph.setNode(node, {
-        clusterNode: true,
-        id: node,
-        clusterData: clusterDb.get(node).clusterData,
-        label: clusterDb.get(node).label,
-        graph: clusterGraph,
-      });
-      // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
-      // log.debug('Old graph after copy', graphlibJson.write(graph));
-    } else {
-      log.debug(
-        'Cluster ** ',
-        node,
-        ' **not meeting the criteria !externalConnections:',
-        !clusterDb.get(node).externalConnections,
-        ' no parent: ',
+        clusterDb,
+        clusterDb.has(node) && !clusterDb.get(node).externalConnections,
         !graph.parent(node),
-        ' children ',
-        graph.children(node) && graph.children(node).length > 0,
+        graph.node(node),
         graph.children('D'),
+        ' Depth ',
         depth
       );
-      log.debug(clusterDb);
+      if (!clusterDb.has(node)) {
+        log.debug('Not a cluster', node, depth);
+      } else if (
+        !clusterDb.get(node).externalConnections &&
+        graph.children(node) &&
+        graph.children(node).length > 0
+      ) {
+        // Original behaviour: cluster without external connections gets its own sub-graph.
+        log.debug(
+          'Cluster without external connections, without a parent and with children',
+          node,
+          depth
+        );
+
+        const graphSettings = graph.graph();
+        let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
+        if (clusterDb.get(node)?.clusterData?.dir) {
+          dir = clusterDb.get(node).clusterData.dir;
+          log.debug('Fixing dir', clusterDb.get(node).clusterData.dir, dir);
+        }
+
+        const clusterGraph = new graphlib.Graph({
+          multigraph: true,
+          compound: true,
+        })
+          .setGraph({
+            rankdir: dir,
+            nodesep: 50,
+            ranksep: 50,
+            marginx: 8,
+            marginy: 8,
+          })
+          .setDefaultEdgeLabel(function () {
+            return {};
+          });
+
+        // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+        // log.debug('Old graph before copy', graphlibJson.write(graph));
+        copy(node, graph, clusterGraph, node);
+        graph.setNode(node, {
+          clusterNode: true,
+          id: node,
+          clusterData: clusterDb.get(node).clusterData,
+          label: clusterDb.get(node).label,
+          graph: clusterGraph,
+        });
+        // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
+        // log.debug('Old graph after copy', graphlibJson.write(graph));
+      } else {
+        log.debug(
+          'Cluster ** ',
+          node,
+          ' **not meeting the criteria !externalConnections:',
+          !clusterDb.get(node).externalConnections,
+          ' no parent: ',
+          !graph.parent(node),
+          ' children ',
+          graph.children(node) && graph.children(node).length > 0,
+          graph.children('D'),
+          depth
+        );
+        log.debug(clusterDb);
+      }
     }
   }
 
