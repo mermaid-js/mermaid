@@ -276,8 +276,13 @@ export const dataFetcher = (
     } else if (parsedItem.start === false) {
       shape = SHAPE_END;
     }
-    if (parsedItem.type !== DEFAULT_STATE_TYPE) {
-      shape = parsedItem.type;
+    // A state first seen inside a relation (e.g. as a transition target) keeps
+    // `type: 'default'` on the relation's own stmt object; its declared type
+    // (choice/fork/join) lives in the states map. Fall back to it. (#2959)
+    const declaredType =
+      parsedItem.type === DEFAULT_STATE_TYPE ? (dbState?.type ?? parsedItem.type) : parsedItem.type;
+    if (declaredType !== DEFAULT_STATE_TYPE) {
+      shape = declaredType;
     }
 
     // Add the node to our list (nodeDb)

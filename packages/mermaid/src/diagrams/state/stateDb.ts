@@ -427,7 +427,9 @@ export class StateDB {
       if (!state.doc) {
         state.doc = doc;
       }
-      if (!state.type) {
+      if (state.type === DEFAULT_STATE_TYPE && type !== DEFAULT_STATE_TYPE) {
+        // Upgrade the placeholder 'default' type set when the state was first
+        // seen (e.g. as a transition target) to its declared type (#2959)
         state.type = type;
       }
     }

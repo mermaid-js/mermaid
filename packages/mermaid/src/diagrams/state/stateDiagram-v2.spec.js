@@ -287,6 +287,44 @@ describe('state diagram V2, ', function () {
 
       parser.parse(str);
     });
+    it('should render a <<choice>> state first seen as a transition target as a choice (#2959)', function () {
+      const str = `stateDiagram-v2\n
+      state [*] <<choice>>
+      [*] --> Choice
+
+      state Choice <<choice>>
+      Choice --> [*]
+      `;
+
+      parser.parse(str);
+
+      const { nodes, edges } = stateDb.getData();
+      const choice = nodes.find((node) => node.id === 'Choice');
+      expect(choice.shape).toBe('choice');
+      expect(
+        edges.some((edge) => edge.start === 'root_start' && edge.end === 'Choice')
+      ).toBeTruthy();
+      expect(edges.some((edge) => edge.start === 'Choice' && edge.end === 'root_end')).toBeTruthy();
+    });
+    it('should render a <<choice>> state declared before its transitions as a choice (#2959)', function () {
+      const str = `stateDiagram-v2\n
+      state [*] <<choice>>
+      state Choice <<choice>>
+
+      [*] --> Choice
+      Choice --> [*]
+      `;
+
+      parser.parse(str);
+
+      const { nodes, edges } = stateDb.getData();
+      const choice = nodes.find((node) => node.id === 'Choice');
+      expect(choice.shape).toBe('choice');
+      expect(
+        edges.some((edge) => edge.start === 'root_start' && edge.end === 'Choice')
+      ).toBeTruthy();
+      expect(edges.some((edge) => edge.start === 'Choice' && edge.end === 'root_end')).toBeTruthy();
+    });
     it('should handle concurrent state', function () {
       const str = `stateDiagram-v2\n
       [*] --> Active
