@@ -87,6 +87,22 @@ describe('when working with site config', () => {
     expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
   });
 
+  it('should retain wardley-beta directives after sanitization', () => {
+    configApi.saveConfigFromInitialize({});
+    configApi.addDirective({
+      'wardley-beta': {
+        showGrid: true,
+        nodeRadius: 9,
+      },
+    });
+
+    const currentConfig = configApi.getConfig();
+    expect(currentConfig['wardley-beta']?.showGrid).toBe(true);
+    expect(currentConfig['wardley-beta']?.nodeRadius).toBe(9);
+    // Unset options keep their schema defaults
+    expect(currentConfig['wardley-beta']?.width).toBe(900);
+  });
+
   it('removes grid placement ids beginning with double underscores from directives', () => {
     configApi.addDirective({
       grid: {

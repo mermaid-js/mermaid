@@ -343,6 +343,9 @@ const config: RequiredDeep<MermaidConfig> = {
   venn: {
     ...defaultConfigJson.venn,
   },
+  'wardley-beta': {
+    ...defaultConfigJson['wardley-beta'],
+  },
   cynefin: {
     ...defaultConfigJson.cynefin,
   },
