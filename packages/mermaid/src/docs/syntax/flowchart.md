@@ -801,7 +801,7 @@ flowchart TB
 
 ### Attaching an ID to Edges
 
-Mermaid now supports assigning IDs to edges, similar to how IDs and metadata can be attached to nodes. This feature lays the groundwork for more advanced styling, classes, and animation capabilities on edges.
+Mermaid now supports assigning IDs to edges (v11.5.0+), similar to how IDs and metadata can be attached to nodes. This feature lays the groundwork for more advanced styling, classes, and animation capabilities on edges.
 
 **Syntax:**
 
@@ -816,7 +816,7 @@ In this example, `e1` is the ID of the edge connecting `A` to `B`. You can then 
 
 ### Turning an Animation On
 
-Once you have assigned an ID to an edge, you can turn on animations for that edge by defining the edge’s properties:
+Once you have assigned an ID to an edge, you can turn on animations for that edge (v11.5.0+) by defining the edge’s properties:
 
 ```mermaid
 flowchart LR
@@ -839,6 +839,15 @@ flowchart LR
 ```
 
 This is equivalent to `{ animate: true, animation: fast }`.
+
+**Edge animation properties:**
+
+| Property    | Values          | Default | Description                                                                                                                              |
+| ----------- | --------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `animate`   | `true`, `false` | unset   | `true` animates the edge at the `fast` speed.                                                                                            |
+| `animation` | `fast`, `slow`  | unset   | Animates the edge at the given speed, so `animate: true` is not needed. If both are set, `animation` decides the speed of the animation. |
+
+These properties can only be set on edges that have an ID.
 
 ### Using classDef Statements for Animations
 
