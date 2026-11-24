@@ -823,6 +823,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   rect.width = actor.width;
   rect.height = actor.height;
   rect.class = 'actor';
+  actor.rectData = rect;
 
   const cx = actor.x + actor.width / 2;
   const cy = bands ? bands.glyphBottomY - 22 : actorY + 32;
@@ -883,6 +884,9 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     actElem.attr('data-et', 'participant');
     actElem.attr('data-type', 'control');
     actElem.attr('data-id', actor.name);
+    if (Object.keys(actor.links ?? {}).length && !conf.forceMenus) {
+      actElem.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
   }
 
   return actor.height;
@@ -915,6 +919,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
   rect.width = actor.width;
   rect.height = actor.height;
   rect.class = 'actor';
+  actor.rectData = rect;
 
   const cx = actor.x + actor.width / 2;
   const cy = bands ? bands.glyphBottomY - 22 : actorY + (!isFooter ? 25 : 10);
@@ -991,6 +996,9 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     actElem.attr('data-et', 'participant');
     actElem.attr('data-type', 'entity');
     actElem.attr('data-id', actor.name);
+    if (Object.keys(actor.links ?? {}).length && !conf.forceMenus) {
+      actElem.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
   }
 
   return actor.height;
@@ -1173,6 +1181,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
   rect.width = actor.width;
   rect.height = actor.height;
   rect.class = 'actor';
+  actor.rectData = rect;
 
   actElem
     .append('line')
@@ -1232,6 +1241,9 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
     actElem.attr('data-et', 'participant');
     actElem.attr('data-type', 'boundary');
     actElem.attr('data-id', actor.name);
+    if (Object.keys(actor.links ?? {}).length && !conf.forceMenus) {
+      actElem.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
   }
 
   return actor.height;
@@ -1277,6 +1289,9 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
 
   if (!isFooter) {
     actElem.attr('data-et', 'participant').attr('data-type', 'actor').attr('data-id', actor.name);
+    if (Object.keys(actor.links ?? {}).length && !conf.forceMenus) {
+      actElem.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
   }
 
   // Under the band model the figure is scaled to fill the shared glyph band, feet on its bottom
@@ -1335,6 +1350,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
+  actor.rectData = rect;
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
