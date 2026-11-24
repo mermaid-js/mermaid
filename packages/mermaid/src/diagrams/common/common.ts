@@ -27,22 +27,22 @@ const setupDompurifyHooksIfNotSetup = (() => {
 
   return () => {
     if (!setup) {
-      setupDompurifyHooks();
+      setupDompurifyHooks(DOMPurify);
       setup = true;
     }
   };
 })();
 
-function setupDompurifyHooks() {
+function setupDompurifyHooks(purify: typeof DOMPurify) {
   const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
 
-  DOMPurify.addHook('beforeSanitizeAttributes', (node) => {
+  purify.addHook('beforeSanitizeAttributes', (node) => {
     if (node.tagName === 'A' && node.hasAttribute('target')) {
       node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') ?? '');
     }
   });
 
-  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  purify.addHook('afterSanitizeAttributes', (node) => {
     if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
       node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) ?? '');
       node.removeAttribute(TEMPORARY_ATTRIBUTE);
@@ -53,6 +53,20 @@ function setupDompurifyHooks() {
   });
 }
 
+let scriptPurifier: typeof DOMPurify | undefined;
+let labelPurifier: typeof DOMPurify | undefined;
+
+/**
+ * A DOMPurify instance with `config` set once, so `sanitize` stops re-parsing the
+ * config on every call.
+ */
+const createPurifier = (config: Parameters<typeof DOMPurify.setConfig>[0]) => {
+  const purify = DOMPurify();
+  setupDompurifyHooks(purify);
+  purify.setConfig(config);
+  return purify;
+};
+
 /**
  * Removes script tags from a text
  *
@@ -62,9 +76,8 @@ function setupDompurifyHooks() {
 export const removeScript = (txt: string): string => {
   setupDompurifyHooksIfNotSetup();
 
-  const sanitizedText = DOMPurify.sanitize(txt);
-
-  return sanitizedText;
+  scriptPurifier ??= createPurifier({});
+  return scriptPurifier.sanitize(txt);
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
@@ -89,9 +102,8 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), {
-      FORBID_TAGS: ['style'],
-    }).toString();
+    labelPurifier ??= createPurifier({ FORBID_TAGS: ['style'] });
+    text = labelPurifier.sanitize(sanitizeMore(text, config)).toString();
   }
   return text;
 };
