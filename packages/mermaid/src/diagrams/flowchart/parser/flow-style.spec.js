@@ -288,16 +288,22 @@ describe('[Style] when parsing', () => {
 
   it('should handle style definitions within number of edges', function () {
     expect(() =>
-      flow.parser
-        .parse(
-          `graph TD
+      flow.parser.parse(
+        `graph TD
     A-->B
     linkStyle 1 stroke-width:1px;`
-        )
-        .toThrow(
-          'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing edges.)'
-        )
+      )
+    ).toThrow(
+      'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing edges.)'
     );
+  });
+
+  it('should report an out-of-bounds index that follows a comma', function () {
+    expect(() =>
+      flow.parser.parse(`graph TD
+    A-->B
+    linkStyle 0,3 stroke-width:1px;`)
+    ).toThrow('The index 3 for linkStyle is out of bounds.');
   });
 
   it('should handle style definitions within number of edges', function () {
