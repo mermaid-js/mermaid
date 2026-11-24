@@ -76,6 +76,7 @@ stylis
 Swimm
 Tachi
 termaid
+termd
 trybox
 tsbuildinfo
 tseslint
