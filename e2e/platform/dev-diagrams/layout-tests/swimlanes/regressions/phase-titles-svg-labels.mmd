@@ -1,0 +1,20 @@
+---
+config:
+  layout: swimlane
+  htmlLabels: false
+---
+swimlane-beta TB
+  %% With the root htmlLabels set to false the phase titles are SVG text, like the lane titles
+  %% and the node labels, with no foreignObject.
+  phase p1["Intake"]
+  phase p2["Review"]
+
+  subgraph front [Front office]
+    receive["Receive"]@{ phase: p1 }
+  end
+
+  subgraph back [Back office]
+    check["Check"]@{ phase: p2 }
+  end
+
+  receive --> check

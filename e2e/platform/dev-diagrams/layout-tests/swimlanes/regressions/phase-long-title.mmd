@@ -1,0 +1,18 @@
+---
+config:
+  layout: swimlane
+  flowchart:
+    nodeSpacing: 40
+    rankSpacing: 60
+---
+swimlane-beta LR
+  %% A phase title longer than its band: the band grows to hold it, the neighbours stay clear.
+  phase p1["Customer onboarding review"]
+  phase p2["Done"]
+
+  subgraph sales [Sales]
+    start["Start"]@{ phase: p1 }
+    finish["Finish"]@{ phase: p2 }
+  end
+
+  start --> finish

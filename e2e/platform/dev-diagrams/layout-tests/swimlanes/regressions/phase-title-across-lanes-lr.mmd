@@ -1,0 +1,29 @@
+---
+config:
+  layout: swimlane
+---
+swimlane-beta LR
+  %% The second phase is one rank long and three lanes wide: its band grows along the flow to
+  %% hold its title, and the other bands keep their size.
+  phase p1["Intake"]
+  phase p2["Review by finance, legal and operations before the contract is signed"]
+  phase p3["Closeout"]
+
+  subgraph finance [Finance]
+    receive["Receive"]@{ phase: p1 }
+    budget["Budget"]@{ phase: p2 }
+  end
+
+  subgraph legal [Legal]
+    terms["Terms"]@{ phase: p2 }
+  end
+
+  subgraph operations [Operations]
+    capacity["Capacity"]@{ phase: p2 }
+    close["Close"]@{ phase: p3 }
+  end
+
+  receive --> budget
+  receive --> terms
+  receive --> capacity
+  capacity --> close

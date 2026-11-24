@@ -28,6 +28,8 @@ export interface NodeMetaData {
    * to it; `expanded` (the default) renders the subgraph normally.
    */
   view?: 'expanded' | 'collapsed';
+  /** The id of the phase a swimlane node belongs to, declared with a `phase` statement. */
+  phase?: string;
   /** Inline grid placement metadata forwarded to layout after diagram-specific fields are handled. */
   row?: number;
   column?: number;
