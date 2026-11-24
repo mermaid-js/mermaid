@@ -204,7 +204,7 @@ that id.
 "*"                   return 'MULT';
 "#"                   return 'BRKT';
 "&"                   return 'AMP';
-([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  {
+(\\[,]|[A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  {
     return 'NODE_STRING';
 }
 "-"                   return 'MINUS'
@@ -607,9 +607,13 @@ stylesOpt: style
         {$stylesOpt.push($style);$$ = $stylesOpt;}
     ;
 
-style: styleComponent
-    |style styleComponent
-    {$$ = $style + $styleComponent;}
+style: styleText
+    {$$ = $styleText.replaceAll(/\\,/g, ',');}
+    ;
+
+styleText: styleComponent
+    | styleText styleComponent
+    {$$ = $styleText + $styleComponent;}
     ;
 
 styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;

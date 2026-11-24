@@ -16,6 +16,37 @@ describe('[Style] when parsing', () => {
   });
 
   // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
+  it.each(['\n', '\r\n'])('preserves escaped commas with %j newlines', (newline) => {
+    flow.parser.parse(
+      [
+        'graph TD',
+        'A-->B',
+        String.raw`style Q stroke-dasharray:5\,5\,2, stroke:#f00 ;`,
+        String.raw`classDef exClass stroke-dasharray:5\,5\,2, stroke:#f00 ;`,
+        String.raw`linkStyle 0 stroke-dasharray:5\,5\,2, stroke:#f00 ;`,
+        String.raw`linkStyle default stroke-dasharray:5\,5\,2, stroke:#f00 ;`,
+        'style Q stroke:#333',
+      ].join(newline)
+    );
+
+    const db = flow.parser.yy;
+    const styles = ['stroke-dasharray:5,5,2', ' stroke:#f00 '];
+    expect(db.getVertices().get('Q').styles).toEqual([...styles, 'stroke:#333']);
+    expect(db.getClasses().get('exClass').styles).toEqual(styles);
+    expect(db.getEdges()[0].style).toEqual([...styles, 'fill:none']);
+    expect(db.getEdges().defaultStyle).toEqual(styles);
+  });
+
+  it('keeps styles independent for multiple target edges', () => {
+    flow.parser.parse('graph TD\nA-->B-->C\nlinkStyle 0,1 stroke:#333,stroke-width:4px');
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].style).toEqual(['stroke:#333', 'stroke-width:4px', 'fill:none']);
+    expect(edges[1].style).toEqual(edges[0].style);
+    edges[0].style.push('opacity:0.5');
+    expect(edges[1].style).toEqual(['stroke:#333', 'stroke-width:4px', 'fill:none']);
+  });
+
   it('should handle styles for vertices', function () {
     const res = flow.parser.parse('graph TD;style Q background:#fff;');
 
