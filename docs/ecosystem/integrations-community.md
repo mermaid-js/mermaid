@@ -82,6 +82,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [Mermaid Macro](https://redmine.org/plugins/redmine_mermaid_macro)
   - [Markdown for mermaid plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
+- [Sarala](https://sarala.solancer.com) - Open-source WYSIWYG Markdown editor with built-in Mermaid diagram rendering, for desktop and the browser. ✅
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
 - [Microsoft Loop](https://loop.cloud.microsoft) ✅
 
