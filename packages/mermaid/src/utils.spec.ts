@@ -1,5 +1,10 @@
 import { expect, vi } from 'vitest';
-import utils, { calculatePoint, cleanAndMerge, detectDirective } from './utils.js';
+import utils, {
+  calculatePoint,
+  cleanAndMerge,
+  detectDirective,
+  splitOnCommasOutsideQuotes,
+} from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
@@ -613,5 +618,70 @@ describe('calcTerminalLabelPosition', () => {
     const endRight = utils.calcTerminalLabelPosition(0, 'end_right', path);
     expect(endRight.x).toBeCloseTo(200 - startLeft.x);
     expect(endRight.y).toBeCloseTo(-startLeft.y);
+  });
+});
+
+describe('splitOnCommasOutsideQuotes', () => {
+  // The expression the callers used before #5958. It is the oracle: the scanner has to return the
+  // same parts, it only may not rescan the rest of the string for every comma.
+  const legacySplit = (text: string) => text.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+
+  it.each([
+    ['', ['']],
+    ['a', ['a']],
+    ['a,b', ['a', 'b']],
+    ['a,,b,', ['a', '', 'b', '']],
+    ['"a,b",c', ['"a,b"', 'c']],
+    [' "test0", test1 , "te,st2" ', [' "test0"', ' test1 ', ' "te,st2" ']],
+  ])('splits %j into %j', (text, expected) => {
+    expect(splitOnCommasOutsideQuotes(text)).toEqual(expected);
+  });
+
+  it('splits a string with an unbalanced quote like the expression it replaces', () => {
+    // A comma separates when an even number of quotes follows it, not when an even number
+    // precedes it. The two only differ when the quotes are unbalanced.
+    expect(splitOnCommasOutsideQuotes('a,"b,c')).toEqual(['a,"b', 'c']);
+    expect(splitOnCommasOutsideQuotes('a,"b,c')).toEqual(legacySplit('a,"b,c'));
+  });
+
+  it('agrees with the expression it replaces on every short string', () => {
+    // Every string of up to 7 characters over these four, 21845 in total, which covers all the
+    // ways commas, quotes and line breaks can be interleaved at that length.
+    const alphabet = ['a', ',', '"', '\n'];
+    let texts = [''];
+    for (let length = 0; length <= 7; length++) {
+      for (const text of texts) {
+        expect(splitOnCommasOutsideQuotes(text)).toEqual(legacySplit(text));
+      }
+      texts = texts.flatMap((text) => alphabet.map((char) => text + char));
+    }
+  });
+
+  it('scales linearly with the number of commas', () => {
+    // Same measurement as in regexes.spec.ts: the minimum over a few trials, because noise on a
+    // shared runner only ever adds time.
+    const fastestRun = (run: () => unknown, trials = 5, iterations = 5): number => {
+      let fastest = Infinity;
+      for (let trial = 0; trial < trials; trial++) {
+        const t0 = performance.now();
+        for (let i = 0; i < iterations; i++) {
+          run();
+        }
+        fastest = Math.min(fastest, (performance.now() - t0) / iterations);
+      }
+      return fastest;
+    };
+    const measure = (n: number) => {
+      // Quoted arguments with an odd quote at the end, the slowest shape for the old expression.
+      const text = '"a",'.repeat(n) + '"';
+      splitOnCommasOutsideQuotes(text);
+      return fastestRun(() => splitOnCommasOutsideQuotes(text));
+    };
+
+    const small = measure(2000);
+    const large = measure(8000);
+
+    // 4x the input. Linear predicts ~4x, quadratic ~16x.
+    expect(large / Math.max(small, 0.01)).toBeLessThan(8);
   });
 });

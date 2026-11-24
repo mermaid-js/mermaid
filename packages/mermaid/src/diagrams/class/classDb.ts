@@ -2,7 +2,7 @@ import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
-import utils, { getEdgeId } from '../../utils.js';
+import utils, { getEdgeId, splitOnCommasOutsideQuotes } from '../../utils.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -458,7 +458,7 @@ export class ClassDB implements DiagramDB {
       let argList: string[] = [];
       if (typeof functionArgs === 'string') {
         /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
-        argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        argList = splitOnCommasOutsideQuotes(functionArgs);
         for (let i = 0; i < argList.length; i++) {
           let item = argList[i].trim();
           /* Removes all double quotes at the start and end of an argument */
