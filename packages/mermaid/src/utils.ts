@@ -907,9 +907,19 @@ export const encodeEntities = function (text: string): string {
     }
   );
 
-  // `#...;` after a `:` is a declaration color (e.g. `stroke:#FF69B4;`), not an
-  // entity; the `;` there is a statement separator and must not be consumed.
-  txt = txt.replace(/(?<!:)#\w+;/g, function (s) {
+  // Inside a style/classDef/linkStyle declaration statement, `:#...;` is a
+  // color value, not an entity — its `;` may separate same-line statements
+  // (e.g. `linkStyle 0 stroke:#FF69B4;B-->C`). Mask that `;` so the entity
+  // pass below leaves it alone. Outside declarations a `#...;` is an entity
+  // even after `:` (e.g. `A["A double quote:#quot;"]`).
+  txt = txt.replace(
+    /(^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r;]*:#\w+;/gm,
+    function (s): string {
+      return s.substring(0, s.length - 1) + 'ﬂ§';
+    }
+  );
+
+  txt = txt.replace(/#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);
 
     const isInt = /^\+?\d+$/.test(innerTxt);
@@ -920,7 +930,7 @@ export const encodeEntities = function (text: string): string {
     }
   });
 
-  return txt;
+  return txt.replace(/ﬂ§/g, ';');
 };
 
 /**

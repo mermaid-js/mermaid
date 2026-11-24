@@ -96,6 +96,16 @@ describe('mermaidAPI', () => {
       expect(encodeEntities(text)).toEqual('A["linkStyle:refﬂ°°35¶ß total;\ncontinued"]');
     });
 
+    it('still encodes entities after a colon inside quoted labels (issue #5498)', () => {
+      // Documented example: only `:#...;` inside declarations is a color.
+      const text = 'A["A double quote:#quot;"] --> B["A dec char:#9829;"]';
+      const encoded = encodeEntities(text);
+      expect(encoded).toEqual('A["A double quote:ﬂ°quot¶ß"] --> B["A dec char:ﬂ°°9829¶ß"]');
+      expect(decodeEntities(encoded)).toEqual(
+        'A["A double quote:&quot;"] --> B["A dec char:&#9829;"]'
+      );
+    });
+
     describe('replaces words starting with # and ending with ;', () => {
       const testStr = 'Hello #there;';
 
