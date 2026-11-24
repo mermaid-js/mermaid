@@ -73,6 +73,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
 - [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
+- [NerdGram1337](https://github.com/NetworkNerd1337/NerdGram1337) - Local, self-hosted Mermaid editor with live preview, revision compare, plain `.mmd` files on disk, and SVG/PNG/JPG/PDF export
 - [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
@@ -288,4 +289,4 @@ Communication tools and platforms
 - [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
-<!--- cspell:ignore Blazorade HueHive --->
+<!--- cspell:ignore Blazorade HueHive NerdGram --->
