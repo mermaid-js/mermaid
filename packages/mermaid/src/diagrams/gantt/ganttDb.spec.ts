@@ -288,6 +288,20 @@ describe('when using the ganttDb', function () {
     expect(tasks[1].manualEndTime).toBeFalsy();
   });
 
+  it('should not treat an `until` statement as a manual end date when the dateFormat also matches it (issue #6794)', function () {
+    ganttDb.setDateFormat('[until ]YYYY-MM-DD');
+    ganttDb.setExcludes('weekends');
+    ganttDb.addSection('until precedence test');
+    ganttDb.addTask('test1', 'id1,2025-07-01,2025-07-25');
+    ganttDb.addTask('test2', 'id2,2025-07-01,until 2025-07-25');
+
+    const tasks = ganttDb.getTasks();
+
+    // `until 2025-07-25` parses as a date under `[until ]YYYY-MM-DD`, but
+    // getEndDate resolves `until` statements first, so it must stay non-manual
+    expect(tasks[1].manualEndTime).toBeFalsy();
+  });
+
   it('should ignore weekends starting on friday', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.setExcludes('weekends');

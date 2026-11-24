@@ -296,7 +296,14 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
  * @param {string} dateFormat - Dayjs date format string.
  * @returns {boolean} True when `str` parses as a date literal.
  */
+const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
+
 const isDateLiteral = function (str, dateFormat) {
+  // `until` statements take precedence over date parsing in getEndDate, and a
+  // dateFormat like `[until ]YYYY-MM-DD` would otherwise match them here too.
+  if (untilRePattern.test(str.trim())) {
+    return false;
+  }
   return dayjs(str, dateFormat.trim(), true).isValid() || dayjs(str, 'YYYY-MM-DD', true).isValid();
 };
 
@@ -423,7 +430,6 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
   // test for until
-  const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
   const untilStatement = untilRePattern.exec(str);
 
   if (untilStatement !== null) {
