@@ -59,7 +59,13 @@ export const addStyleClass = function (id: string, styleAttributes = '') {
  * @param styles - the string with 1 or more style attributes (each separated by a comma)
  */
 export const addStyle2Node = function (id: string, styles = '') {
-  const foundBlock = blockDatabase.get(id)!;
+  const foundBlock = blockDatabase.get(id);
+  if (!foundBlock) {
+    // A `class` statement below tolerates an id that was never declared, so a typo in a
+    // `style` statement should not take the whole diagram down either.
+    log.warn(`Cannot style block ${id}: no block with that id was declared`);
+    return;
+  }
   if (styles !== undefined && styles !== null) {
     foundBlock.styles = styles.split(STYLECLASS_SEP);
   }
