@@ -14,6 +14,12 @@ component Tea [0.5, 0.5]`;
     expect(svg).toContain('.wardley-background');
   });
 
+  jsdomIt('applies the configured fontFamily to wardley text', async () => {
+    mermaidAPI.initialize({ fontFamily: 'Courier New' });
+    const { svg } = await mermaidAPI.render('wardley-font', diagram);
+    expect(svg).toMatch(/\.wardley-map\s*{[^}]*font-family:\s*Courier New/);
+  });
+
   jsdomIt('lets themeCSS rules reach the svg', async () => {
     mermaidAPI.initialize({ themeCSS: '.wardley-map { opacity: 0.5; }' });
     const { svg } = await mermaidAPI.render('wardley-theme-css', diagram);

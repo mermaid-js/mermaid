@@ -27,6 +27,10 @@ export const styles: DiagramStylesProvider = ({
   const w: WardleyStyleOptions = cleanAndMerge(themeVariables.wardley, wardley);
 
   return `
+  /* font-family applies to every <text> in the map; themeCSS can still override it */
+  .wardley-map {
+    font-family: ${currentConfig.fontFamily};
+  }
   .wardley-background {
     fill: ${w.backgroundColor};
   }
@@ -75,7 +79,7 @@ export const styles: DiagramStylesProvider = ({
     fill: ${w.annotationTextColor};
   }
   .wardley-pipeline-box {
-    stroke: ${w.componentStroke};
+    stroke: ${w.axisColor};
   }
   .wardley-notes text {
     fill: ${w.axisTextColor};
