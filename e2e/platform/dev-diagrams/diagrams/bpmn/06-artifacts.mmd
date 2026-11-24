@@ -1,0 +1,11 @@
+bpmn-beta LR
+  lane "Fulfilment"
+    start s1 "Begin"
+    group "Warehouse work"
+      task t1 "Pick items"
+      task t2 "Pack"
+    data d1 "Pick list"
+    data-store ds1 "Inventory"
+    note n1 "Stock checked nightly"
+    end e1 "Done"
+  s1 --> t1 --> t2 --> e1

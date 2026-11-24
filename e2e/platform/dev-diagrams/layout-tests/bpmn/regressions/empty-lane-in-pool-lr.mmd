@@ -1,0 +1,15 @@
+---
+description: >-
+  Pool A has a populated lane and an empty one, pool B one populated lane. The
+  empty lane is drawn inside pool A, under A1, so pool A does not reach round
+  pool B.
+---
+bpmn-beta LR
+  pool "Pool A"
+    lane "A1"
+      task a "Work A"
+    lane "A2 (empty)"
+  pool "Pool B"
+    lane "B1"
+      task b "Work B"
+  a --> b

@@ -7,6 +7,7 @@ import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/c
  * All of the keys in the mermaid config that have a mermaid diagram config.
  */
 const MERMAID_CONFIG_DIAGRAM_KEYS = [
+  'bpmn',
   'flowchart',
   'swimlane',
   'agentflow',

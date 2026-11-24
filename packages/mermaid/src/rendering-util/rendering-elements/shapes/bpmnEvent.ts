@@ -1,3 +1,5 @@
+import { getUserDefinedConfig } from '../../../config.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
 import { labelHelper, getNodeClasses } from './util.js';
@@ -15,6 +17,66 @@ import {
   type EventPosition,
 } from './bpmnShapeCore.js';
 
+/** The bpmn theme variable that sets the ring weight of each event position. */
+const RING_WIDTH_VARIABLE = {
+  start: 'eventStrokeWidth',
+  intermediate: 'eventStrokeWidth',
+  boundary: 'eventStrokeWidth',
+  end: 'endEventStrokeWidth',
+} as const satisfies Record<EventPosition, string>;
+
+/**
+ * The value each ring-width variable has in every built-in theme: the weight of a start ring
+ * and of an end ring. A double ring is drawn lighter than either, so only a value other than
+ * this default stands for the author's choice.
+ */
+export const THEME_DEFAULT_RING_WIDTH = {
+  eventStrokeWidth: EVENT_RINGS.start.strokeWidth,
+  endEventStrokeWidth: EVENT_RINGS.end.strokeWidth,
+} as const;
+
+/** A ring width as CSS: a finite number in pixels or a non-empty CSS length, else `undefined`. */
+const ringWidthCss = (value: unknown): string | undefined => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return `${value}px`;
+  }
+  return typeof value === 'string' && value !== '' ? value : undefined;
+};
+
+const bpmnVariable = (themeVariables: unknown, variable: string): unknown => {
+  const themeBpmn: unknown =
+    typeof themeVariables === 'object' && themeVariables !== null
+      ? Reflect.get(themeVariables, 'bpmn')
+      : undefined;
+  return typeof themeBpmn === 'object' && themeBpmn !== null
+    ? Reflect.get(themeBpmn, variable)
+    : undefined;
+};
+
+/**
+ * The ring weight of an event, from `bpmn.eventStrokeWidth` (`bpmn.endEventStrokeWidth` for an
+ * end event), a finite number in pixels or a non-empty CSS length:
+ *
+ * 1. the value the author set through `initialize` or a diagram directive, the theme default
+ *    included;
+ * 2. otherwise the theme's value, when it differs from the theme default;
+ * 3. otherwise the notation weight of that kind of ring in {@link EVENT_RINGS}.
+ *
+ * It is set inline because a flowchart that uses these shapes does not load the bpmn
+ * stylesheet, and its own `.node circle` rules would otherwise win.
+ */
+const ringWidth = (position: EventPosition): string => {
+  const variable = RING_WIDTH_VARIABLE[position];
+  const authored = ringWidthCss(bpmnVariable(getUserDefinedConfig().themeVariables, variable));
+  if (authored !== undefined) {
+    return authored;
+  }
+  const themed = bpmnVariable(getConfig().themeVariables, variable);
+  const themedCss =
+    themed === THEME_DEFAULT_RING_WIDTH[variable] ? undefined : ringWidthCss(themed);
+  return themedCss ?? `${EVENT_RINGS[position].strokeWidth}px`;
+};
+
 export async function renderBpmnEvent<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
@@ -23,7 +85,8 @@ export async function renderBpmnEvent<T extends SVGGraphicsElement>(
   const eventNode = node as BpmnNode;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { rings, strokeWidth } = EVENT_RINGS[position];
+  const { rings } = EVENT_RINGS[position];
+  const strokeWidth = ringWidth(position);
   const radius = EVENT_DIAMETER / 2;
 
   const { shapeSvg, bbox, label } = await labelHelper(
@@ -39,7 +102,7 @@ export async function renderBpmnEvent<T extends SVGGraphicsElement>(
       .append('circle')
       .attr('class', ring === 0 ? 'bpmn-event-ring' : 'bpmn-event-ring bpmn-event-ring-inner')
       .attr('r', radius - ring * 3)
-      .style('stroke-width', `${strokeWidth}px`);
+      .style('stroke-width', strokeWidth);
   }
   await appendGlyph(glyphGroup, eventNode.icon, ICON_SIZE);
 
