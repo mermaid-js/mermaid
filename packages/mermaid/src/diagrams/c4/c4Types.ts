@@ -59,6 +59,9 @@ export interface C4Shape {
   intersect?: (point: C4Point) => C4Point;
 }
 
+/** The directions a boundary's elements can be asked to run. */
+export type C4BoundaryDirection = 'TB' | 'BT' | 'LR' | 'RL';
+
 export interface C4Boundary {
   /** The parser may set additional keys via `{ key: value }` shaped arguments. */
   [key: string]: unknown;
@@ -73,6 +76,8 @@ export interface C4Boundary {
   techn?: C4Text;
   nodeType?: string;
   sprite?: string;
+  /** Set by a `direction` statement inside the boundary. */
+  direction?: C4BoundaryDirection;
   /* Style fields, set via UpdateElementStyle. */
   bgColor?: string;
   fontColor?: string;
@@ -118,6 +123,33 @@ export interface C4Rel {
 }
 
 /**
+ * A named element style defined via `AddElementTag`. An element references it
+ * through its `$tags` attribute; matching tags contribute fill/border/text
+ * colors (and an optional shape keyword) when the node is built.
+ */
+export interface C4ElementTag {
+  /** The parser may set fields via `{ key: value }` shaped arguments. */
+  [key: string]: string | undefined;
+  tagName: string;
+  bgColor?: string;
+  fontColor?: string;
+  borderColor?: string;
+  shape?: string;
+}
+
+/**
+ * A named relationship style defined via `AddRelTag`. A relationship references
+ * it through its `$tags` attribute; matching tags contribute line/text colors.
+ */
+export interface C4RelTag {
+  /** The parser may set fields via `{ key: value }` shaped arguments. */
+  [key: string]: string | undefined;
+  tagName: string;
+  textColor?: string;
+  lineColor?: string;
+}
+
+/**
  * Font configuration as produced by the `*Font()` helpers of the C4
  * configuration. The helpers always populate family/size/weight from the
  * (defaulted) config, so those fields are typed as present.
@@ -144,3 +176,12 @@ export type C4DrawConfig = Omit<
   messageFont: () => C4Font;
   textPlacement?: string;
 } & Record<string, unknown>;
+
+/**
+ * What `UpdateRelStyle($offsetX, $offsetY)` adds to a relationship's edge: the nudge is applied
+ * to the label after the shared pipeline has placed it, so it stays out of the shared Edge type.
+ */
+export interface C4LabelNudge {
+  labelOffsetX?: number;
+  labelOffsetY?: number;
+}
