@@ -116,30 +116,30 @@ export const Identifier = createToken({
   pattern: /[A-Z_a-z][\w-]*(?:\.[A-Z_a-z][\w-]*)?/,
 });
 
-const keyword = (name: string, pattern: RegExp) =>
+const keyword = (name: string, pattern: string) =>
   createToken({ name, pattern, longer_alt: Identifier });
 
-export const ComponentBeta = keyword('COMPONENT_BETA', /component-beta/);
-export const Direction = keyword('DIRECTION', /direction/);
-export const Td = keyword('TD', /TD/);
-export const Tb = keyword('TB', /TB/);
-export const Bt = keyword('BT', /BT/);
-export const Lr = keyword('LR', /LR/);
-export const Rl = keyword('RL', /RL/);
-export const ComponentKw = keyword('COMPONENT', /component/);
-export const InterfaceKw = keyword('INTERFACE', /interface/);
-export const PortKw = keyword('PORT', /port/);
-export const PackageKw = keyword('PACKAGE', /package/);
-export const ActorKw = keyword('ACTOR', /actor/);
+export const ComponentBeta = keyword('COMPONENT_BETA', 'component-beta');
+export const Direction = keyword('DIRECTION', 'direction');
+export const Td = keyword('TD', 'TD');
+export const Tb = keyword('TB', 'TB');
+export const Bt = keyword('BT', 'BT');
+export const Lr = keyword('LR', 'LR');
+export const Rl = keyword('RL', 'RL');
+export const ComponentKw = keyword('COMPONENT', 'component');
+export const InterfaceKw = keyword('INTERFACE', 'interface');
+export const PortKw = keyword('PORT', 'port');
+export const PackageKw = keyword('PACKAGE', 'package');
+export const ActorKw = keyword('ACTOR', 'actor');
 
 export const StereotypeStart = createToken({
   name: 'STEREOTYPE_START',
-  pattern: /<</,
+  pattern: '<<',
   push_mode: 'stereotype',
 });
 export const StereotypeEnd = createToken({
   name: 'STEREOTYPE_END',
-  pattern: />>/,
+  pattern: '>>',
   pop_mode: true,
 });
 export const StereotypeText = createToken({
@@ -150,21 +150,21 @@ export const StereotypeText = createToken({
 
 // Order matters: each of these shares a `--` or `.` prefix with the next, so the
 // longer operator has to be tried first or it is swallowed as a prefix match.
-export const ProvidesArrow = createToken({ name: 'PROVIDES_ARROW', pattern: /--\(\)/ });
-export const RequiresArrow = createToken({ name: 'REQUIRES_ARROW', pattern: /--\(/ });
-export const DependencyArrow = createToken({ name: 'DEPENDENCY_ARROW', pattern: /\.\.>/ });
-export const AssociationArrow = createToken({ name: 'ASSOCIATION_ARROW', pattern: /-->/ });
-export const PlainLink = createToken({ name: 'PLAIN_LINK', pattern: /--/ });
+export const ProvidesArrow = createToken({ name: 'PROVIDES_ARROW', pattern: '--()' });
+export const RequiresArrow = createToken({ name: 'REQUIRES_ARROW', pattern: '--(' });
+export const DependencyArrow = createToken({ name: 'DEPENDENCY_ARROW', pattern: '..>' });
+export const AssociationArrow = createToken({ name: 'ASSOCIATION_ARROW', pattern: '-->' });
+export const PlainLink = createToken({ name: 'PLAIN_LINK', pattern: '--' });
 
 export const ColonLabel = createToken({
   name: 'COLON_LABEL',
   pattern: /:[\t ]*[^\n\r]*/,
 });
 
-export const LeftBrace = createToken({ name: 'LBRACE', pattern: /{/ });
-export const RightBrace = createToken({ name: 'RBRACE', pattern: /}/ });
-export const LeftBracket = createToken({ name: 'LBRACKET', pattern: /\[/ });
-export const RightBracket = createToken({ name: 'RBRACKET', pattern: /]/ });
+export const LeftBrace = createToken({ name: 'LBRACE', pattern: '{' });
+export const RightBrace = createToken({ name: 'RBRACE', pattern: '}' });
+export const LeftBracket = createToken({ name: 'LBRACKET', pattern: '[' });
+export const RightBracket = createToken({ name: 'RBRACKET', pattern: ']' });
 
 export const QuotedString = createToken({
   name: 'QUOTED_STRING',
