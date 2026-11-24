@@ -1,0 +1,13 @@
+---
+description: >-
+  Two components on one row joined by a relationship whose label is wider
+  than the default gap. The gap widens so the label sits between the boxes
+  instead of running through the right-hand one (#8419).
+---
+C4Component
+title Same-row relationship label
+Container_Boundary(worker, "Worker") {
+  Component(group, "Grouping", "events/group", "Turns reports into facts and attaches them to a story")
+  Component(digest, "Digest", "events/digest", "Rewrites the story summary after grouping")
+}
+Rel(group, digest, "enqueue events.digest after a 60s debounce")

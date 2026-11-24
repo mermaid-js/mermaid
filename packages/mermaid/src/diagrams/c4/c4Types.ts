@@ -115,6 +115,12 @@ export interface C4Rel {
   /* Layout fields, populated by the renderer before drawing. */
   startPoint: C4Point;
   endPoint: C4Point;
+  /**
+   * Whether the label is centred on the midpoint of the line, set when the grid placed the
+   * two endpoints next to each other on one row and left room for the label between them.
+   * Otherwise the label starts at the midpoint.
+   */
+  centerLabel?: boolean;
 }
 
 /**

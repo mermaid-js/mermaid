@@ -87,13 +87,17 @@ export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId
 
     // The label was measured by the renderer before drawing.
     const labelWidth = rel.label.width!;
+    const technWidth = Math.max(labelWidth, rel.techn?.width ?? 0);
+    // The text helpers centre the text on `x + width / 2`, so passing the midpoint as `x`
+    // starts the label at the midpoint. When the grid left room for the label between two
+    // neighbours on a row, shift it back by half its width so it is centred in that gap.
+    const midX =
+      Math.min(rel.startPoint.x, rel.endPoint.x) + Math.abs(rel.endPoint.x - rel.startPoint.x) / 2;
     let messageConf = conf.messageFont();
     _drawTextCandidateFunc(conf)(
       rel.label.text,
       relsElem,
-      Math.min(rel.startPoint.x, rel.endPoint.x) +
-        Math.abs(rel.endPoint.x - rel.startPoint.x) / 2 +
-        offsetX,
+      midX - (rel.centerLabel ? labelWidth / 2 : 0) + offsetX,
       Math.min(rel.startPoint.y, rel.endPoint.y) +
         Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
         offsetY,
@@ -108,15 +112,13 @@ export const drawRels = (elem: SVG, rels: C4Rel[], conf: C4DrawConfig, diagramId
       _drawTextCandidateFunc(conf)(
         '[' + rel.techn.text + ']',
         relsElem,
-        Math.min(rel.startPoint.x, rel.endPoint.x) +
-          Math.abs(rel.endPoint.x - rel.startPoint.x) / 2 +
-          offsetX,
+        midX - (rel.centerLabel ? technWidth / 2 : 0) + offsetX,
         Math.min(rel.startPoint.y, rel.endPoint.y) +
           Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
           (conf.messageFontSize as number) +
           5 +
           offsetY,
-        Math.max(labelWidth, rel.techn.width!),
+        technWidth,
         rel.techn.height!,
         { fill: textColor, 'font-style': 'italic' },
         messageConf
