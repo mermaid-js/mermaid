@@ -70,6 +70,21 @@ describe('createText', () => {
     (mock as unknown as SVGTSpanElement).getComputedTextLength = vi.fn(() => 123.456);
   });
 
+  it.each([
+    ['v_F<0', 'vF<0'],
+    ['x<y', 'x<y'],
+    [String.raw`a\&b<0`, 'a&b<0'],
+    [String.raw`\text{\&lt;\&amp;}`, '&lt;&amp;'],
+  ])('renders sanitized math %s', async (formula, expected) => {
+    const output = await createText(
+      select(document.createElementNS('http://www.w3.org/2000/svg', 'g')),
+      sanitizeText(`<b>$$ ${formula} $$</b>`),
+      { markdown: false },
+      { securityLevel: 'strict', forceLegacyMathML: true }
+    );
+    expect(output.querySelector('math')?.textContent).toBe(expected);
+  });
+
   it.for([
     {
       useHtmlLabels: false,
