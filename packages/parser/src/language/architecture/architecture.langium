@@ -52,6 +52,9 @@ Alignment:
     'align' direction=('row' | 'column') members+=ID (members+=ID)+ EOL
 ;
 
-terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
+// A direction letter is only meaningful next to the ':' of a port, so the
+// terminal only matches there; otherwise 'L', 'R', 'T' and 'B' must stay part
+// of the surrounding identifier (e.g. `service TH(disk)`).
+terminal ARROW_DIRECTION: /[LRTB](?=:)|(?<=:)[LRTB]/;
 terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /<|>/;
