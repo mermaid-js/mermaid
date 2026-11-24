@@ -1,0 +1,18 @@
+---
+description:
+  Keeps source intersections when subgraph target clipping follows shape clipping.
+  The external link prevents extracting the subgraph into a standalone node.
+config:
+  layout: dagre
+---
+flowchart LR
+  subgraph c
+    i --> h
+  end
+  f{9} --> x{d}
+  f --> c
+  circle((9)) --> circleTarget((d))
+  circle --> c
+  rectangle[9] --> rectangleTarget[d]
+  rectangle --> c
+  h --> outside
