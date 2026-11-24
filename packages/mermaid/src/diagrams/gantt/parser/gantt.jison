@@ -71,7 +71,7 @@ that id.
 "gantt"                         return 'gantt';
 "dateFormat"\s[^#\n;]+          return 'dateFormat';
 "inclusiveEndDates"             return 'inclusiveEndDates';
-"topAxis"                       return 'topAxis';
+"topAxis"(?=[^\S\n]*(\n|\%\%|$))  return 'topAxis';
 "axisFormat"\s[^#\n;]+          return 'axisFormat';
 "tickInterval"\s[^#\n;]+        return 'tickInterval';
 "includes"\s[^#\n;]+            return 'includes';

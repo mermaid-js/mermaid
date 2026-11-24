@@ -32,6 +32,35 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(ganttDb.enableTopAxis).toHaveBeenCalled();
   });
+  it('should handle a topAxis definition at the end of input', function () {
+    spyOn(ganttDb, 'enableTopAxis');
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntopAxis  ';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.enableTopAxis).toHaveBeenCalled();
+  });
+  it('should treat a task name beginning with topAxis as a task, not the directive', function () {
+    spyOn(ganttDb, 'enableTopAxis');
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntopAxis migration :t1, 2024-01-01, 5d';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.enableTopAxis).not.toHaveBeenCalled();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks.length).toEqual(1);
+    expect(tasks[0].task.trim()).toEqual('topAxis migration');
+  });
+  it('should treat a task name starting with topAxis and no space as a task', function () {
+    spyOn(ganttDb, 'enableTopAxis');
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntopAxisExtra task :t1, 2024-01-01, 5d';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.enableTopAxis).not.toHaveBeenCalled();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks.length).toEqual(1);
+    expect(tasks[0].task.trim()).toEqual('topAxisExtra task');
+  });
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
     const semi = 'gantt\ndateFormat yyyy-mm-dd\ntitle ;Gantt diagram titles support semicolons';
