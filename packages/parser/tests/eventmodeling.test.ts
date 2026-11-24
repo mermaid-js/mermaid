@@ -530,6 +530,24 @@ gwt 01 "Scenario" given cmd AddItem {"id":"123"} then evt ItemAdded
       expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('ItemAdded');
     });
 
+    it('should parse an empty data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+      expect(result.value.dataEntities[0].dataBlockValue).toBe('{\n}\n');
+    });
+
     it('should parse an indented closing brace in a data block', () => {
       const result = parse(`eventmodeling
 tf 01 cmd AddItem [[D]]
