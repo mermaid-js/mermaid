@@ -746,7 +746,10 @@ export const prepareLayoutForDagre = (data4Layout) => {
       edge2.startLabelRight = '';
       edge2.startLabelLeft = ''; // defensive
       edge2.arrowTypeStart = 'none';
-      if (node.isGroup) {
+      // fromCluster/toCluster are resolved against clusterDb, which only holds
+      // clusters with children. An empty subgraph renders as a plain node, so
+      // tagging it would leave clusterDb.get(nodeId) undefined at paint time.
+      if (node.isGroup && graph.children(nodeId).length > 0) {
         edge1.fromCluster = nodeId;
         edge2.toCluster = nodeId;
       }
