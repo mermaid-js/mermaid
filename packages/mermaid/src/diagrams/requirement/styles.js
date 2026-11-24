@@ -1,5 +1,11 @@
 import * as configApi from '../../config.js';
-import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
+import {
+  hasPalette,
+  isColorTheme,
+  paletteSlotCount,
+  safeColor,
+  safeLook,
+} from '../common/colorThemeGate.js';
 
 const genColor = () => {
   const config = configApi.getConfig();
@@ -29,8 +35,8 @@ const genColor = () => {
     // The background palette is a separate array that may be shorter than the border one,
     // so it still wraps; `borderColorArray[i]` does not need to, now the bound is its own
     // length.
-    const borderColor = borderColorArray[i];
-    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const borderColor = safeColor(borderColorArray[i]);
+    const fill = hasBkgColors ? `fill: ${safeColor(bkgColorArray[i % bkgColorArray.length])};` : '';
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {

@@ -1,6 +1,10 @@
 import { darken, lighten, isDark } from 'khroma';
 import { getConfig } from './../../config.js';
-import { colorSlotCount, isColorTheme as isPaletteTheme } from '../common/colorThemeGate.js';
+import {
+  colorSlotCount,
+  isColorTheme as isPaletteTheme,
+  safeColor,
+} from '../common/colorThemeGate.js';
 
 const genReduxSections = (options) => {
   const { theme } = getConfig();
@@ -29,7 +33,7 @@ const genReduxSections = (options) => {
     // however many sections exist -- indexing raw would leave the overflow sections
     // undefined.
     const slot = isColorTheme
-      ? options.borderColorArray[i % options.borderColorArray.length]
+      ? safeColor(options.borderColorArray[i % options.borderColorArray.length])
       : undefined;
     const color = slot ?? options.mainBkg;
     const stroke = slot ?? options.nodeBorder;
