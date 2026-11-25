@@ -68,7 +68,7 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'click';
 
-"gantt"                         return 'gantt';
+"gantt"(?![^\n]*":"[^#\n;]+)  return 'gantt';
 "dateFormat"\s[^#\n;]+          return 'dateFormat';
 "inclusiveEndDates"             return 'inclusiveEndDates';
 "topAxis"                       return 'topAxis';
