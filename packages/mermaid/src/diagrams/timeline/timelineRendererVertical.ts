@@ -57,7 +57,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('task', tasks);
 
   //5. Initialize the diagram
-  svgDraw.initGraphics(svg);
+  svgDraw.initGraphics(svg, id);
 
   // fetch Sections
   // @ts-expect-error - db not typed yet
@@ -151,7 +151,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       };
       log.debug('sectionNode', sectionNode);
       const sectionNodeWrapper = svg.append('g');
-      const node = svgDraw.drawNode(sectionNodeWrapper, sectionNode, sectionNumber, conf);
+      const node = svgDraw.drawNode(sectionNodeWrapper, sectionNode, sectionNumber, conf, id);
       log.debug('sectionNode output', node);
 
       const sectionX = timelineX - leftWidth;
@@ -169,7 +169,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
           maxTaskHeight,
           conf,
           taskSpacing,
-          false
+          false,
+          id
         );
       }
 
@@ -193,7 +194,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
       maxTaskHeight,
       conf,
       taskSpacing,
-      true
+      true,
+      id
     );
   }
 
@@ -233,7 +235,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('y2', box.y + box.height + arrowBottomPadding)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
-    .attr('marker-end', 'url(#arrowhead)');
+    .attr('marker-end', `url(#${id}-arrowhead)`);
   lineWrapper.lower();
 
   // Setup the view box and size of the svg element
@@ -254,7 +256,8 @@ export const drawTasks = function (
   maxTaskHeight: number,
   conf: MermaidConfig,
   taskSpacing: number,
-  isWithoutSections: boolean
+  isWithoutSections: boolean,
+  diagramId: string
 ) {
   // Draw the tasks
   for (const task of tasks) {
@@ -271,7 +274,7 @@ export const drawTasks = function (
     log.debug('taskNode', taskNode);
     // create task wrapper
     const taskWrapper = diagram.append('g').attr('class', 'taskWrapper');
-    const node = svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf);
+    const node = svgDraw.drawNode(taskWrapper, taskNode, sectionColor, conf, diagramId);
     const taskHeight = node.height;
     //log task height
     log.debug('taskHeight after draw', taskHeight);
@@ -285,7 +288,16 @@ export const drawTasks = function (
     if (task.events && task.events.length > 0) {
       const eventsStartY = masterY;
       const eventsX = timelineX + EVENT_AXIS_GAP;
-      drawEvents(diagram, task.events, sectionColor, timelineX, eventsX, eventsStartY, conf);
+      drawEvents(
+        diagram,
+        task.events,
+        sectionColor,
+        timelineX,
+        eventsX,
+        eventsStartY,
+        conf,
+        diagramId
+      );
     }
 
     masterY = masterY + taskSpacing;
@@ -302,7 +314,8 @@ export const drawEvents = function (
   axisX: number,
   eventsX: number,
   startY: number,
-  conf: MermaidConfig
+  conf: MermaidConfig,
+  diagramId: string
 ) {
   let currentY = startY;
   // Draw the events
@@ -321,7 +334,7 @@ export const drawEvents = function (
     log.debug('eventNode', eventNode);
     // create event wrapper
     const eventWrapper = diagram.append('g').attr('class', 'eventWrapper');
-    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf);
+    const node = svgDraw.drawNode(eventWrapper, eventNode, sectionColor, conf, diagramId);
     const eventHeight = node.height;
     eventWrapper.attr('transform', `translate(${eventsX}, ${currentY})`);
 
@@ -335,7 +348,7 @@ export const drawEvents = function (
       .attr('y2', lineY)
       .attr('stroke-width', 2)
       .attr('stroke', 'black')
-      .attr('marker-end', 'url(#arrowhead)')
+      .attr('marker-end', `url(#${diagramId}-arrowhead)`)
       .attr('stroke-dasharray', '5,5');
 
     currentY = currentY + eventHeight + EVENT_SPACING;
