@@ -1,0 +1,292 @@
+{
+ "nodes": [
+  {
+   "id": "adapters",
+   "isGroup": true,
+   "shape": "hexagon",
+   "padding": 8,
+   "labelBBox": {
+    "width": 187.578125,
+    "height": 24
+   }
+  },
+  {
+   "id": "driven",
+   "isGroup": true,
+   "shape": "rect",
+   "parentId": "adapters",
+   "padding": 8,
+   "labelBBox": {
+    "width": 79.40625,
+    "height": 24
+   }
+  },
+  {
+   "id": "core",
+   "isGroup": true,
+   "shape": "hexagon",
+   "parentId": "adapters",
+   "padding": 8,
+   "labelBBox": {
+    "width": 135.078125,
+    "height": 24
+   }
+  },
+  {
+   "id": "app",
+   "isGroup": true,
+   "shape": "hexagon",
+   "parentId": "core",
+   "padding": 8,
+   "labelBBox": {
+    "width": 121.890625,
+    "height": 24
+   }
+  },
+  {
+   "id": "domain",
+   "isGroup": true,
+   "shape": "hexagon",
+   "parentId": "app",
+   "padding": 8,
+   "labelBBox": {
+    "width": 94.171875,
+    "height": 24
+   }
+  },
+  {
+   "id": "driving",
+   "isGroup": true,
+   "shape": "rect",
+   "parentId": "adapters",
+   "padding": 8,
+   "labelBBox": {
+    "width": 83.265625,
+    "height": 24
+   }
+  },
+  {
+   "id": "intake_q",
+   "isGroup": false,
+   "shape": "subroutine",
+   "width": 164,
+   "height": 84
+  },
+  {
+   "id": "handler",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "driving",
+   "width": 152,
+   "height": 96
+  },
+  {
+   "id": "ticket_port",
+   "isGroup": false,
+   "shape": "lean_right",
+   "parentId": "core",
+   "width": 237,
+   "height": 87
+  },
+  {
+   "id": "open_ticket",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "app",
+   "width": 152,
+   "height": 48
+  },
+  {
+   "id": "assign_ticket",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "app",
+   "width": 152,
+   "height": 48
+  },
+  {
+   "id": "close_ticket",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "app",
+   "width": 152,
+   "height": 48
+  },
+  {
+   "id": "audit",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "app",
+   "width": 152,
+   "height": 48
+  },
+  {
+   "id": "ticket",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "domain",
+   "width": 152,
+   "height": 72
+  },
+  {
+   "id": "store_port",
+   "isGroup": false,
+   "shape": "lean_left",
+   "parentId": "core",
+   "width": 213,
+   "height": 63
+  },
+  {
+   "id": "mail_port",
+   "isGroup": false,
+   "shape": "lean_left",
+   "parentId": "core",
+   "width": 213,
+   "height": 63
+  },
+  {
+   "id": "sql_store",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "driven",
+   "width": 152,
+   "height": 48
+  },
+  {
+   "id": "mailer",
+   "isGroup": false,
+   "shape": "squareRect",
+   "parentId": "driven",
+   "width": 152,
+   "height": 48
+  },
+  {
+   "id": "database",
+   "isGroup": false,
+   "shape": "hexagon",
+   "width": 205.71,
+   "height": 94
+  },
+  {
+   "id": "relay",
+   "isGroup": false,
+   "shape": "hexagon",
+   "width": 205.71,
+   "height": 94
+  }
+ ],
+ "edges": [
+  {
+   "id": "L_intake_q_handler_0",
+   "start": "intake_q",
+   "end": "handler",
+   "label": "ticket message",
+   "width": 106.92,
+   "height": 24
+  },
+  {
+   "id": "L_handler_ticket_port_0",
+   "start": "handler",
+   "end": "ticket_port",
+   "label": "command",
+   "width": 69.14,
+   "height": 24
+  },
+  {
+   "id": "L_ticket_port_open_ticket_0",
+   "start": "ticket_port",
+   "end": "open_ticket",
+   "label": "implemented by",
+   "width": 116.56,
+   "height": 24
+  },
+  {
+   "id": "L_open_ticket_assign_ticket_0",
+   "start": "open_ticket",
+   "end": "assign_ticket",
+   "label": "assign",
+   "width": 42.7,
+   "height": 24
+  },
+  {
+   "id": "L_assign_ticket_ticket_0",
+   "start": "assign_ticket",
+   "end": "ticket",
+   "label": "update",
+   "width": 50.05,
+   "height": 24
+  },
+  {
+   "id": "L_close_ticket_ticket_0",
+   "start": "close_ticket",
+   "end": "ticket",
+   "label": "close",
+   "width": 36.44,
+   "height": 24
+  },
+  {
+   "id": "L_close_ticket_audit_0",
+   "start": "close_ticket",
+   "end": "audit",
+   "label": "record",
+   "width": 46.59,
+   "height": 24
+  },
+  {
+   "id": "L_open_ticket_ticket_0",
+   "start": "open_ticket",
+   "end": "ticket",
+   "label": "new ticket",
+   "width": 76.17,
+   "height": 24
+  },
+  {
+   "id": "L_close_ticket_store_port_0",
+   "start": "close_ticket",
+   "end": "store_port",
+   "label": "save",
+   "width": 31.45,
+   "height": 24
+  },
+  {
+   "id": "L_assign_ticket_mail_port_0",
+   "start": "assign_ticket",
+   "end": "mail_port",
+   "label": "notify",
+   "width": 42.05,
+   "height": 24
+  },
+  {
+   "id": "L_store_port_sql_store_0",
+   "start": "store_port",
+   "end": "sql_store",
+   "label": "implemented by",
+   "width": 116.56,
+   "height": 24
+  },
+  {
+   "id": "L_mail_port_mailer_0",
+   "start": "mail_port",
+   "end": "mailer",
+   "label": "implemented by",
+   "width": 116.56,
+   "height": 24
+  },
+  {
+   "id": "L_sql_store_database_0",
+   "start": "sql_store",
+   "end": "database",
+   "label": "queries",
+   "width": 52.38,
+   "height": 24
+  },
+  {
+   "id": "L_mailer_relay_0",
+   "start": "mailer",
+   "end": "relay",
+   "label": "send mail",
+   "width": 68.66,
+   "height": 24
+  }
+ ]
+}
