@@ -901,7 +901,7 @@ export const encodeEntities = function (text: string): string {
   // non-whitespace char on the line so `;` separating same-line statements
   // (e.g. `A-->B;linkStyle ...;C-->D`) is kept.
   txt = txt.replace(
-    /(^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r]*:\S*#[^\n\r]*;(?=[^\S\n\r]*(?:\r?\n|$))/gm,
+    /(?<=^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r]*:\S*#[^\n\r]*;(?=[^\S\n\r]*(?:\r?\n|$))/gm,
     function (s): string {
       return s.substring(0, s.length - 1);
     }
@@ -913,7 +913,7 @@ export const encodeEntities = function (text: string): string {
   // pass below leaves it alone. Outside declarations a `#...;` is an entity
   // even after `:` (e.g. `A["A double quote:#quot;"]`).
   txt = txt.replace(
-    /(^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r;]*:#\w+;/gm,
+    /(?<=^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r;]*:#\w+;/gm,
     function (s): string {
       return s.substring(0, s.length - 1) + 'ﬂ§';
     }

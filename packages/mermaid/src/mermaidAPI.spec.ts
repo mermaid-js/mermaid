@@ -96,6 +96,12 @@ describe('mermaidAPI', () => {
       expect(encodeEntities(text)).toEqual('A["linkStyle:refﬂ°°35¶ß total;\ncontinued"]');
     });
 
+    it('keeps colors in adjacent same-line declarations (issue #5498)', () => {
+      const text = 'graph TD;A-->B;B-->C;linkStyle 0 stroke:#f00;linkStyle 1 stroke:#0f0;A-->C';
+      // Both declarations share a `;` boundary; neither color may be encoded.
+      expect(encodeEntities(text)).toEqual(text);
+    });
+
     it('still encodes entities after a colon inside quoted labels (issue #5498)', () => {
       // Documented example: only `:#...;` inside declarations is a color.
       const text = 'A["A double quote:#quot;"] --> B["A dec char:#9829;"]';
