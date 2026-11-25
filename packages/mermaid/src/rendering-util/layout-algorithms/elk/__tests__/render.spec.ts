@@ -69,6 +69,26 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(hex['elk.padding']).toBe('[top=64,left=24,bottom=64,right=24]');
   });
 
+  it.each(['elk.box', 'elk.rectpacking'])(
+    'adds the hexagon point depth to the %s container padding and minimum height',
+    (algorithm) => {
+      const options = (shape: string) =>
+        buildSubgraphLayoutOptions({ shape, metadata: { algorithm } }, undefined, 'layered');
+      const pad = (o: Record<string, unknown>) =>
+        Object.fromEntries(
+          [...String(o['elk.padding']).matchAll(/(\w+)=(\d+)/g)].map(([, k, v]) => [k, +v])
+        );
+      const minHeight = (o: Record<string, unknown>) =>
+        Number(/, ([\d.]+)\)/.exec(String(o['nodeSize.minimum']))?.[1]);
+      const rect = options('rect');
+      const hex = options('hexagon');
+      expect(pad(hex).top - pad(rect).top).toBe(40);
+      expect(pad(hex).bottom - pad(rect).bottom).toBe(40);
+      expect(pad(hex).left).toBe(pad(rect).left);
+      expect(minHeight(hex) - minHeight(rect)).toBe(80);
+    }
+  );
+
   it('derives a label-based minimum size for containers with their own algorithm', () => {
     const opts = buildSubgraphLayoutOptions(
       { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },

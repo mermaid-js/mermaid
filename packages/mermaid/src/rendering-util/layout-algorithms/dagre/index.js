@@ -341,6 +341,8 @@ const measureDagreGraph = async ({
         });
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
+        // The frame was painted inside the recursive layout; edges reach it through this node.
+        node.hexagonPointDepth = node.graph.node(v)?.hexagonPointDepth;
         // node.height = o.diff;
         node.diff = o.diff || 0;
         log.info(
@@ -381,11 +383,17 @@ const measureDagreGraph = async ({
 
   // A hexagon frame fits its roof around its title (see fitDagreHexagon), so the title
   // is measured before layout. Other frames are measured when painted, as before.
+  // Measured as it is painted: a plain title unwrapped (`createLabel`), a markdown title
+  // wrapped at the frame width, as `createGraph` does for layouts that size frames.
   await Promise.all(
     graph.nodes().map(async (v) => {
       const node = graph.node(v);
       if (node?.shape === 'hexagon' && graph.children(v).length > 0) {
-        await measureGroupLabel(nodes, node);
+        await measureGroupLabel(
+          nodes,
+          node,
+          node.labelType === 'markdown' ? undefined : Number.POSITIVE_INFINITY
+        );
       }
     })
   );

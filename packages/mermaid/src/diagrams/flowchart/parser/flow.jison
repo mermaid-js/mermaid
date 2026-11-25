@@ -379,6 +379,8 @@ statement
     {$$=[];}
     | subgraph SPACE textNoTags SQS text SQE shapeData separator document end
     {$$=yy.addSubGraph($textNoTags,$document,$text,$shapeData);}
+    | subgraph SPACE textNoTags SQS text SQE SPACE shapeData separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text,$shapeData);}
     | subgraph SPACE textNoTags shapeData separator document end
     {$$=yy.addSubGraph($textNoTags,$document,$textNoTags,$shapeData);}
     | subgraph SPACE textNoTags SQS text SQE separator document end

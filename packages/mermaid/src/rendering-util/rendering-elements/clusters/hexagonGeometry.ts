@@ -17,6 +17,17 @@ export interface HexagonPoint {
 export const HEXAGON_POINT_DEPTH = 40;
 
 /**
+ * Point depth a frame of `height` is actually drawn with: the requested depth, capped at
+ * half the height so a short frame degrades to a diamond instead of folding over itself.
+ */
+export function hexagonFrameDepth(
+  height: number,
+  pointDepth: number = HEXAGON_POINT_DEPTH
+): number {
+  return Math.max(0, Math.min(pointDepth, height / 2));
+}
+
+/**
  * Corners of the hexagon relative to its centre, clockwise from the top apex.
  * `width` and `height` are the bounding box; `pointDepth` is capped at half the height
  * so a short frame degrades to a diamond instead of folding over itself.
@@ -26,7 +37,7 @@ export function hexagonClusterPoints(
   height: number,
   pointDepth: number = HEXAGON_POINT_DEPTH
 ): HexagonPoint[] {
-  const depth = Math.min(pointDepth, height / 2);
+  const depth = hexagonFrameDepth(height, pointDepth);
   const halfWidth = width / 2;
   const halfHeight = height / 2;
   return [
@@ -124,4 +135,54 @@ export function fitHexagonPointDepth(
  */
 export function clusterVerticalInset(shape: string | undefined): number {
   return shape === 'hexagon' ? HEXAGON_POINT_DEPTH : 0;
+}
+
+/**
+ * Where an edge arriving from `from` towards `to` meets the outline of a hexagon `frame`.
+ *
+ * Layouts end an edge to a subgraph on its bounding box. Along the flat sides that is the
+ * outline, but above the roof and below the floor it is empty space, so the edge is carried
+ * on along its last segment to the outline. Returns `to` unchanged when `from` is inside the
+ * hexagon (the edge starts within the frame) or the segment's line misses it.
+ */
+export function hexagonEdgeEnd(
+  from: HexagonPoint,
+  to: HexagonPoint,
+  frame: CentredBox,
+  pointDepth: number = HEXAGON_POINT_DEPTH
+): HexagonPoint {
+  const corners = hexagonClusterPoints(frame.width, frame.height, pointDepth).map((p) => ({
+    x: frame.x + p.x,
+    y: frame.y + p.y,
+  }));
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  if (dx === 0 && dy === 0) {
+    return to;
+  }
+  // Clockwise corners (y down): a point is inside when it is on the inner side of every edge.
+  const inside = corners.every((a, i) => {
+    const b = corners[(i + 1) % corners.length];
+    return (b.x - a.x) * (from.y - a.y) - (b.y - a.y) * (from.x - a.x) >= 0;
+  });
+  if (inside) {
+    return to;
+  }
+  let nearest = Infinity;
+  corners.forEach((a, i) => {
+    const b = corners[(i + 1) % corners.length];
+    const ex = b.x - a.x;
+    const ey = b.y - a.y;
+    const denom = dx * ey - dy * ex;
+    if (denom === 0) {
+      return;
+    }
+    // from + t * (to - from) = a + u * (b - a)
+    const t = ((a.x - from.x) * ey - (a.y - from.y) * ex) / denom;
+    const u = ((a.x - from.x) * dy - (a.y - from.y) * dx) / denom;
+    if (t > 0 && u >= 0 && u <= 1) {
+      nearest = Math.min(nearest, t);
+    }
+  });
+  return nearest === Infinity ? to : { x: from.x + nearest * dx, y: from.y + nearest * dy };
 }

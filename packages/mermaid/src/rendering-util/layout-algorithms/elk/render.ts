@@ -468,13 +468,16 @@ export function buildSubgraphLayoutOptions(
   // runs instead of being swallowed by the root INCLUDE_CHILDREN policy.
   const algo = resolveContainerAlgorithm(node.metadata?.algorithm, log);
   if (algo) {
+    // A hexagon's slanted top and bottom need the same room here as in the default branch.
+    const inset = clusterVerticalInset(node.shape);
     // These algorithms also need a minimum height for their title strip.
-    const padTop = labelH + CONTAINER_PADDING;
+    const padTop = labelH + CONTAINER_PADDING + inset;
+    const padBottom = CONTAINER_PADDING + inset;
     layoutOptions['nodeSize.constraints'] = '[MINIMUM_SIZE, NODE_LABELS]';
     // The minimum has to clear the whole reserved strip — the label plus the
     // padding above and below it — not just the label height, or a container
     // whose children are shorter than its own chrome comes out too short.
-    layoutOptions['nodeSize.minimum'] = `(${minWidth}, ${padTop + CONTAINER_PADDING})`;
+    layoutOptions['nodeSize.minimum'] = `(${minWidth}, ${padTop + padBottom})`;
     layoutOptions['elk.algorithm'] = algo;
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
     layoutOptions['elk.aspectRatio'] = '2.0';
@@ -482,14 +485,15 @@ export function buildSubgraphLayoutOptions(
     layoutOptions['elk.expandNodes'] = 'true';
     // Reserve top padding for the label so children don't overlap it
     layoutOptions['elk.padding'] =
-      `[top=${padTop},left=${CONTAINER_PADDING},bottom=${CONTAINER_PADDING},right=${CONTAINER_PADDING}]`;
+      `[top=${padTop},left=${CONTAINER_PADDING},bottom=${padBottom},right=${CONTAINER_PADDING}]`;
 
     // Tighter spacing for rectpacking — uses smaller padding for nested containers.
     if (algo === 'elk.rectpacking') {
-      const rectPadTop = labelH + RECTPACKING_CONTAINER_PADDING;
+      const rectPadTop = labelH + RECTPACKING_CONTAINER_PADDING + inset;
+      const rectPadBottom = RECTPACKING_CONTAINER_PADDING + inset;
       Object.assign(layoutOptions, RECTPACKING_OPTIONS, {
-        'elk.padding': `[top=${rectPadTop},left=${RECTPACKING_CONTAINER_PADDING},bottom=${RECTPACKING_CONTAINER_PADDING},right=${RECTPACKING_CONTAINER_PADDING}]`,
-        'nodeSize.minimum': `(${minWidth}, ${rectPadTop + RECTPACKING_CONTAINER_PADDING})`,
+        'elk.padding': `[top=${rectPadTop},left=${RECTPACKING_CONTAINER_PADDING},bottom=${rectPadBottom},right=${RECTPACKING_CONTAINER_PADDING}]`,
+        'nodeSize.minimum': `(${minWidth}, ${rectPadTop + rectPadBottom})`,
       });
     }
   } else if (node.dir) {

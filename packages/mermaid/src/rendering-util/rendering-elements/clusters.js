@@ -13,6 +13,7 @@ import { swimlane } from './clusters/swimlane.js';
 import {
   HEXAGON_POINT_DEPTH,
   hexagonClusterPoints,
+  hexagonFrameDepth,
   hexagonTitleTop,
 } from './clusters/hexagonGeometry.js';
 import intersectPolygon from './intersect/intersect-polygon.js';
@@ -149,7 +150,8 @@ const hexagon = async (parent, node) => {
   const { cluster, labelBBox, frame } = await rect(parent, node);
   const width = node.width;
   const height = node.height;
-  const pointDepth = node.hexagonPointDepth ?? HEXAGON_POINT_DEPTH;
+  // Capped once for a short frame, so the title sits in the roof that is actually drawn.
+  const pointDepth = hexagonFrameDepth(height, node.hexagonPointDepth ?? HEXAGON_POINT_DEPTH);
   const points = hexagonClusterPoints(width, height, pointDepth);
   const corners = points.map((p) => [node.x + p.x, node.y + p.y]);
 

@@ -374,6 +374,24 @@ describe('when parsing subgraphs', function () {
       expect(shapeOf('core')).toBe('hexagon');
     });
 
+    it('should accept a space between a bracketed title and the @{ shape } block', function () {
+      flow.parser.parse('graph TB\nsubgraph core["Application core"] @{ shape: hex }\n  a1\nend');
+      const [subgraph] = flow.parser.yy.getSubGraphs();
+      expect(subgraph.id).toBe('core');
+      expect(subgraph.title).toBe('Application core');
+      expect(shapeOf('core')).toBe('hexagon');
+    });
+
+    it('should keep the id of a bare header followed by a space and an @{ shape } block', function () {
+      flow.parser.parse('graph TB\nsubgraph core @{ shape: hex }\n  a1\nend\nx --> core');
+      const [subgraph] = flow.parser.yy.getSubGraphs();
+      expect(subgraph.id).toBe('core');
+      expect(shapeOf('core')).toBe('hexagon');
+      // The edge targets the subgraph, not a new node named `core`.
+      const cores = flow.parser.yy.getData().nodes.filter((n) => n.id === 'core');
+      expect(cores).toHaveLength(1);
+    });
+
     it('should accept the same aliases a node does for the hexagon', function () {
       for (const alias of ['hex', 'hexagon', 'prepare']) {
         flow.parser.yy.clear();

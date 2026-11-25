@@ -787,7 +787,9 @@ You have to call mermaid.initialize.`
     assertSubGraphShape(metadata?.shape);
     let id: string | undefined = _id.text.trim();
     let title = _title.text;
-    if (_id === _title && /\s/.exec(_title.text)) {
+    // A bare header names the subgraph unless its text has a space inside it. Trailing
+    // space before `@{ ... }` belongs to the separator, not the name.
+    if (_id === _title && /\s/.exec(_title.text.trim())) {
       id = undefined;
     }
 

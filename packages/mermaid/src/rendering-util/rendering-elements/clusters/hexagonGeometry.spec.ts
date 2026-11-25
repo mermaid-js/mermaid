@@ -3,6 +3,8 @@ import {
   HEXAGON_POINT_DEPTH,
   clusterVerticalInset,
   fitHexagonPointDepth,
+  hexagonEdgeEnd,
+  hexagonFrameDepth,
   hexagonClusterPoints,
   hexagonTitleTop,
 } from './hexagonGeometry.js';
@@ -113,5 +115,50 @@ describe('fitHexagonPointDepth', () => {
   it('returns a flat frame, never a negative depth, when there is no room', () => {
     const child = { x: 0, y: -148, width: 400, height: 4 };
     expect(fitHexagonPointDepth(frame, [child])).toBe(0);
+  });
+});
+
+describe('hexagonFrameDepth', () => {
+  it('caps the depth at half the height, as the outline is drawn', () => {
+    expect(hexagonFrameDepth(300)).toBe(HEXAGON_POINT_DEPTH);
+    expect(hexagonFrameDepth(40)).toBe(20);
+    expect(hexagonFrameDepth(300, 12)).toBe(12);
+  });
+
+  it('keeps a short frame title inside the capped roof', () => {
+    // 100 x 40 frame: drawn with depth 20, so the title must not sit at the uncapped 40.
+    const depth = hexagonFrameDepth(40);
+    expect(hexagonTitleTop(100, 60, 8, depth)).toBeLessThanOrEqual(20);
+  });
+});
+
+describe('hexagonEdgeEnd', () => {
+  // 400 x 300 frame centred on the origin: apex at y -150, roof corners at (+-200, -110).
+  const frame = { x: 0, y: 0, width: 400, height: 300 };
+
+  it('carries an edge that stops on the bounding box above the roof down to the roof', () => {
+    const end = hexagonEdgeEnd({ x: 100, y: -200 }, { x: 100, y: -150 }, frame);
+    expect(end.x).toBeCloseTo(100);
+    expect(end.y).toBeCloseTo(-150 + (40 * 100) / 200);
+  });
+
+  it('does the same below the floor, for an edge leaving the frame read backwards', () => {
+    const end = hexagonEdgeEnd({ x: -100, y: 200 }, { x: -100, y: 150 }, frame);
+    expect(end.y).toBeCloseTo(150 - 20);
+  });
+
+  it('leaves an end on a flat side where it is', () => {
+    const end = hexagonEdgeEnd({ x: -300, y: 0 }, { x: -200, y: 0 }, frame);
+    expect(end).toEqual({ x: -200, y: 0 });
+  });
+
+  it('pulls an end that overshoots into the frame back to the outline', () => {
+    const end = hexagonEdgeEnd({ x: 0, y: -250 }, { x: 0, y: 0 }, frame);
+    expect(end.y).toBeCloseTo(-150);
+  });
+
+  it('leaves an edge that starts inside the frame alone', () => {
+    const to = { x: 0, y: -150 };
+    expect(hexagonEdgeEnd({ x: 0, y: 0 }, to, frame)).toBe(to);
   });
 });
