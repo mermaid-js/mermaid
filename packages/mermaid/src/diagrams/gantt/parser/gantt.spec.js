@@ -341,4 +341,38 @@ row2`;
     expect(tasks[0].task).toEqual('#Design jison grammar');
     expect(tasks[0].id).toEqual('des1');
   });
+
+  it('should parse a task line starting with `# ` as a task, not a comment (issue #5934)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    # Design :a1, 2014-01-01, 30d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    // The `# ` is part of the task name here: the line has the shape of a
+    // task line (name, colon, task data), so it is not a comment.
+    expect(tasks[0].task.trim()).toEqual('# Design');
+    expect(tasks[0].id).toEqual('a1');
+    expect(tasks[0].startTime).toEqual(new Date(2014, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2014, 0, 31));
+  });
+
+  it('should still ignore # comments containing a colon (issue #5934)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    # note: check the dates\n' +
+      '    A task :a1, 2014-01-01, 30d # see: docs\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toEqual('a1');
+  });
 });
