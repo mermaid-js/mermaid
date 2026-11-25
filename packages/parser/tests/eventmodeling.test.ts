@@ -311,6 +311,268 @@ tf 03 evt Cart.ItemAdded
     });
   });
 
+  describe('issue #8653', () => {
+    it('should read a data block with an inner `}` at the start of a line', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  outer: {
+  id: 1
+}
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('outer');
+    });
+
+    it('should parse two frames with inline data on one line', () => {
+      const result = parse(
+        `eventmodeling\ntf 01 cmd AddItem { id: 1 } tf 02 evt ItemAdded { id: 1 }\n`
+      );
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.frames.length).toBe(2);
+      expect(result.value.frames[0].dataInlineValue).toBe('{ id: 1 }');
+      expect(result.value.frames[1].entityIdentifier).toBe('ItemAdded');
+    });
+
+    it('should reject inline data with an unclosed outer brace', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem { item: { id: 1 }\n`);
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should reject an unclosed payload with many quoted strings in linear time', () => {
+      // Each quote char must have exactly one matching path; ambiguous quote
+      // matching made this input cost grow exponentially with its length.
+      const quotes = Array.from({ length: 16 }, (_, i) => `"s${i}" x`).join(' ');
+      const start = performance.now();
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem { ${quotes}\n`);
+      expect(performance.now() - start).toBeLessThan(1000);
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should parse a GWT scenario label', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 "Add an item" given evt ItemAdded then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities.length).toBe(1);
+      expect(result.value.gwtEntities[0].label).toBe('"Add an item"');
+    });
+
+    it('should parse a qualified entity name in a GWT statement', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 given evt Cart.ItemAdded then evt Cart.ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.givenStatements[0].entityIdentifier.$refText).toBe('Cart.ItemAdded');
+      expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('Cart.ItemAdded');
+    });
+
+    it('should parse an inline payload in a GWT statement', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 given evt ItemAdded { id: 1 } then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.givenStatements[0].dataInlineValue).toBe('{ id: 1 }');
+    });
+
+    it('should parse a block payload in a GWT statement', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 given evt ItemAdded {
+  id: 1
+} then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.givenStatements[0].dataBlockValue).toContain('id: 1');
+      expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('ItemAdded');
+    });
+
+    it('should keep a `}` inside a quoted string from closing an inline payload', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem \`json\`{"text":"}"}\n`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('{"text":"}"}');
+    });
+
+    it('should keep a `}` inside a quoted string from closing a data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  text: "}"
+  id: 1
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+      expect(result.value.dataEntities[0].dataBlockValue).toContain('id: 1');
+    });
+
+    it('should capture a quoted payload that contains quotes and braces', () => {
+      const result = parse(
+        `eventmodeling\ntf 01 evt X ->> 01 \`json\`" { "a": { "c": true } } "\n`
+      );
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('" { "a": { "c": true } } "');
+    });
+
+    it('should reject an unclosed outer brace hidden inside a quoted section', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem \`json\`{"a":{"b":1}\n`);
+      // `":{"` must not be reinterpreted as a string hiding the inner `{`.
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should reject an unclosed outer brace in a data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  a: {
+    b: 1
+`);
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should require the closing brace of a data block on its own line', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+abc}
+`);
+      // `}` must start a line: `calculateTextProps` strips the char before it.
+      expect(result.lexerErrors.length + result.parserErrors.length).toBeGreaterThan(0);
+    });
+
+    it('should keep prose apostrophes inside data payloads', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem \`jsobj\`{note: Don't stop}
+data D {
+  text: Don't stop
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe("{note: Don't stop}");
+      expect(result.value.dataEntities[0].dataBlockValue).toContain("Don't stop");
+    });
+
+    it('should keep a literal `{` inside a standalone quoted value', () => {
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem \`jsobj\`"Type {"\n`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('"Type {"');
+    });
+
+    it('should allow a literal `{` inside a gwt scenario label', () => {
+      const result = parse(`eventmodeling
+gwt 01 "Type {" given cmd AddItem then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities[0].label).toBe('"Type {"');
+    });
+
+    it('should end a gwt scenario label at its closing quote', () => {
+      const result = parse(`eventmodeling
+gwt 01 "Scenario" given cmd AddItem {"id":"123"} then evt ItemAdded
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      const gwt = result.value.gwtEntities[0];
+      expect(gwt.label).toBe('"Scenario"');
+      expect(gwt.givenStatements[0].dataInlineValue).toBe('{"id":"123"}');
+      expect(gwt.thenStatements[0].entityIdentifier.$refText).toBe('ItemAdded');
+    });
+
+    it('should parse an empty data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+}
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+      expect(result.value.dataEntities[0].dataBlockValue).toBe('{\n}\n');
+    });
+
+    it('should parse an indented closing brace in a data block', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem [[D]]
+data D {
+  name: string
+  }
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      expect(result.value.dataEntities.length).toBe(1);
+    });
+  });
+
   it('should parse multiple source frames model', () => {
     const result = parse(`eventmodeling
 tf 01 evt Start
