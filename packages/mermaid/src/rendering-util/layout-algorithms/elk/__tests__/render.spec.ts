@@ -62,6 +62,13 @@ describe('resolveContainerAlgorithm', () => {
 });
 
 describe('buildSubgraphLayoutOptions', () => {
+  it('adds the hexagon point depth above and below the children, and nothing at the sides', () => {
+    const rect = buildSubgraphLayoutOptions({ shape: 'rect' }, { mergeEdges: true }, 'layered');
+    const hex = buildSubgraphLayoutOptions({ shape: 'hexagon' }, { mergeEdges: true }, 'layered');
+    expect(rect['elk.padding']).toBe('[top=24,left=24,bottom=24,right=24]');
+    expect(hex['elk.padding']).toBe('[top=64,left=24,bottom=64,right=24]');
+  });
+
   it('derives a label-based minimum size for containers with their own algorithm', () => {
     const opts = buildSubgraphLayoutOptions(
       { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },

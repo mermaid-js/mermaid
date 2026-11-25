@@ -1,0 +1,12 @@
+---
+description:
+  Hexagon subgraph (issue 2752) under dagre with no edges crossing its border, so
+  dagre lays it out recursively.
+config:
+  layout: dagre
+---
+flowchart TD
+  subgraph iso["Isolated hexagon"]@{ shape: hex }
+    p[Wide node number one] --> q[Wide node number two]
+    p --> r[Third node]
+  end

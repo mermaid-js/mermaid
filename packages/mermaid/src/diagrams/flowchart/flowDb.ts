@@ -5,6 +5,7 @@ import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import { getStepDuration, isStepEdge } from '../../rendering-util/edgeStep.js';
+import type { ClusterShapeID } from '../../rendering-util/rendering-elements/clusters.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
@@ -78,6 +79,47 @@ function pickFlowchartLayoutMetadata(
     layoutMetadata.algorithm = source.algorithm;
   }
   return Object.keys(layoutMetadata).length > 0 ? layoutMetadata : undefined;
+}
+
+/** Parses the text between `@{` and `}` into authored metadata. */
+function parseShapeData(shapeData: string): NodeMetaData {
+  // A one-line body is the inside of a flow mapping; a multi-line body is a YAML document.
+  const yamlData = shapeData.includes('\n') ? shapeData + '\n' : '{\n' + shapeData + '\n}';
+  return withoutInternalKeys(
+    stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData)
+  );
+}
+
+/**
+ * Cluster painters a subgraph can use, keyed by the names the node `shape` metadata
+ * accepts for the same figure. Anything else is an error, as an unknown node shape is.
+ */
+const SUBGRAPH_SHAPES: Readonly<Record<string, ClusterShapeID>> = {
+  rect: 'rect',
+  rectangle: 'rect',
+  proc: 'rect',
+  process: 'rect',
+  hex: 'hexagon',
+  hexagon: 'hexagon',
+  prepare: 'hexagon',
+};
+
+function assertSubGraphShape(shape: unknown): void {
+  if (shape === undefined) {
+    return;
+  }
+  if (typeof shape !== 'string' || !Object.hasOwn(SUBGRAPH_SHAPES, shape)) {
+    throw new Error(
+      `No such subgraph shape: ${typeof shape === 'string' ? shape : JSON.stringify(shape)}. Supported: ${Object.keys(SUBGRAPH_SHAPES).join(', ')}.`
+    );
+  }
+}
+
+function subGraphClusterShape(metadata: NodeMetaData | undefined): ClusterShapeID {
+  const shape = metadata?.shape;
+  return typeof shape === 'string' && Object.hasOwn(SUBGRAPH_SHAPES, shape)
+    ? SUBGRAPH_SHAPES[shape]
+    : 'rect';
 }
 
 // Set by a diagram that models pools and lanes itself, never by the author of a `@{ }` block.
@@ -200,19 +242,7 @@ export class FlowDB implements DiagramDB {
     }
     // Extract the metadata from the shapeData, the syntax for adding metadata for nodes and edges is the same
     // so at this point we don't know if it's a node or an edge, but we can still extract the metadata
-    let doc;
-    if (metadata !== undefined) {
-      let yamlData;
-      // detect if shapeData contains a newline character
-      if (!metadata.includes('\n')) {
-        yamlData = '{\n' + metadata + '\n}';
-      } else {
-        yamlData = metadata + '\n';
-      }
-      doc = withoutInternalKeys(
-        stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData)
-      );
-    }
+    const doc = metadata === undefined ? undefined : parseShapeData(metadata);
 
     // Check if this is metadata for an already-declared subgraph
     // (e.g. `sub1@{ view: collapsed }`). The id refers to a subgraph, so
@@ -220,6 +250,7 @@ export class FlowDB implements DiagramDB {
     const subGraph = this.subGraphLookup.get(id);
     if (subGraph && doc) {
       if (Object.keys(doc).length > 0) {
+        assertSubGraphShape(doc.shape);
         subGraph.metadata = { ...subGraph.metadata, ...doc };
       }
       return;
@@ -749,8 +780,11 @@ You have to call mermaid.initialize.`
   public addSubGraph(
     _id: { text: string },
     list: string[],
-    _title: { text: string; type: string }
+    _title: { text: string; type: string },
+    shapeData?: string
   ) {
+    const metadata = shapeData === undefined ? undefined : parseShapeData(shapeData);
+    assertSubGraphShape(metadata?.shape);
     let id: string | undefined = _id.text.trim();
     let title = _title.text;
     if (_id === _title && /\s/.exec(_title.text)) {
@@ -809,6 +843,7 @@ You have to call mermaid.initialize.`
       classes: [],
       dir,
       labelType: this.sanitizeNodeLabelType(_title?.type),
+      metadata,
     };
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
@@ -824,6 +859,9 @@ You have to call mermaid.initialize.`
     const existing = this.subGraphs.find((sg) => sg.id === id);
     if (existing) {
       existing.nodes.push(...subGraph.nodes);
+      if (metadata !== undefined) {
+        existing.metadata = { ...existing.metadata, ...metadata };
+      }
     } else {
       this.subGraphs.push(subGraph);
     }
@@ -1372,7 +1410,7 @@ You have to call mermaid.initialize.`
           padding: 8,
           cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
           cssClasses: subGraph.classes.join(' '),
-          shape: 'rect',
+          shape: subGraphClusterShape(subGraph.metadata),
           dir: subGraph.dir,
           isGroup: true,
           look: config.look,

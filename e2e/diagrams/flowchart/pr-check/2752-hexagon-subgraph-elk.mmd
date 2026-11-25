@@ -1,0 +1,19 @@
+---
+description:
+  Hexagon subgraphs (issue 2752) under elk, nested one inside another, with edges
+  crossing both frames. ELK reserves the point depth inside each frame, so the
+  children and titles clear the slanted top and bottom.
+config:
+  layout: elk
+---
+flowchart TD
+  client[Client] --> api
+  subgraph core["Application core"]@{ shape: hex }
+    api[Order API] --> place[Place order]
+    place --> quote[Price order]
+    subgraph domain["Domain"]@{ shape: hex }
+      order[Order] --> events[Order events]
+    end
+    place --> order
+  end
+  place --> db[(Database)]

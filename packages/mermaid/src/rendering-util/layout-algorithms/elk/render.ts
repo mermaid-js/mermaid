@@ -14,6 +14,7 @@ import { orderNestedEdgeEnds } from './nestedEdgeOrder.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { type EdgeEnds, type ElkDirection, nodesToSpreadPorts } from './spreadArrowheads.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
+import { clusterVerticalInset } from '../../rendering-elements/clusters/hexagonGeometry.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
   EDGE_ROUTING_OPTIONS,
@@ -428,7 +429,10 @@ export function buildSubgraphLayoutOptions(
     // than left to ELK's default of 12. The top gets the same value as the
     // rest: ELK reserves the subgraph's own title strip on top of whatever is
     // given here, so adding the label height again double-counts it.
-    'elk.padding': `[top=${SUBGRAPH_PADDING},left=${SUBGRAPH_PADDING},bottom=${SUBGRAPH_PADDING},right=${SUBGRAPH_PADDING}]`,
+    //
+    // A shape with slanted top and bottom edges (the hexagon) adds its inset there, so
+    // children sit below the roof and above the floor rather than crossing them.
+    'elk.padding': `[top=${SUBGRAPH_PADDING + clusterVerticalInset(node.shape)},left=${SUBGRAPH_PADDING},bottom=${SUBGRAPH_PADDING + clusterVerticalInset(node.shape)},right=${SUBGRAPH_PADDING}]`,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
 
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
@@ -1532,7 +1536,10 @@ export function evenGroupFrames(
     const origin = group.offset;
     const left = Math.max(origin.posX, Math.min(...xs) - SUBGRAPH_PADDING);
     const right = Math.min(origin.posX + group.width!, Math.max(...xs) + SUBGRAPH_PADDING);
-    const bottom = Math.min(origin.posY + group.height!, Math.max(...ys) + SUBGRAPH_PADDING);
+    const bottom = Math.min(
+      origin.posY + group.height!,
+      Math.max(...ys) + SUBGRAPH_PADDING + clusterVerticalInset(elkNode.shape)
+    );
     const top = origin.posY;
 
     // Keep the same title-plus-padding floor reserved before ELK routing and
