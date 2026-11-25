@@ -58,17 +58,20 @@ terminal EM_FID: /\d{1,3}/;
 // which also keeps a `}` inside one level from ending the value early and makes
 // an unclosed outer `{` fail to match. Inside braces, quoted strings are
 // matched as indivisible units that may not contain a `{`, so an opening brace
-// can never hide inside a string; a quote char that cannot open a full quoted
-// string falls back to a literal, so prose apostrophes (`Don't stop`) still
-// lex. In a data block the closing `}` must sit on its own line, matching the
-// extraction in `calculateTextProps`. Standalone quoted values stay bounded at
-// their closing quote but accept balanced `{...}` groups and literal braces,
-// so payloads like `json`" { "a": { "c": true } } " and labels like
-// `"Type {"` both work while a `gwt` label cannot absorb `given`.
+// can never hide inside a string. Each quote char has exactly one matching
+// path: it opens a quoted string only when a valid closing quote is ahead, and
+// otherwise lexes as a literal (so prose apostrophes like `Don't stop` work) —
+// this disambiguation keeps an unclosed payload's cost linear in its length
+// instead of exponential in the number of quoted strings. In a data block the
+// closing `}` must sit on its own line, matching the extraction in
+// `calculateTextProps`. Standalone quoted values stay bounded at their closing
+// quote but accept balanced `{...}` groups and literal braces, so payloads
+// like `json`" { "a": { "c": true } } " and labels like `"Type {"` both work
+// while a `gwt` label cannot absorb `given`.
 // EM_DATA_BLOCK is declared first so that a `{` followed by a newline lexes as
 // a block rather than inline data.
-terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:(?:"(?:\\.|[^"\\{])*"|'(?:\\.|[^'\\{])*'|\{(?:"(?:\\.|[^"\\{])*"|'(?:\\.|[^'\\{])*'|\{(?:"(?:\\.|[^"\\{])*"|'(?:\\.|[^'\\{])*'|[^{}"']|"|')*\}|[^{}"']|"|')*\}|[^{}"']|"|')*?\r?\n)?[\t ]*\}(?:\r?\n|(?!\S))/;
-terminal EM_DATA_INLINE: /\{(?:"(?:\\.|[^"\\\r\n{])*"|'(?:\\.|[^'\\\r\n{])*'|\{(?:"(?:\\.|[^"\\\r\n{])*"|'(?:\\.|[^'\\\r\n{])*'|\{(?:"(?:\\.|[^"\\\r\n{])*"|'(?:\\.|[^'\\\r\n{])*'|[^{}\r\n"']|"|')*\}|[^{}\r\n"']|"|')*\}|[^{}\r\n"']|"|')*?\}|"(?:\\.|[^"\\\r\n{}]|\{(?:"(?:\\.|[^"\\\r\n{])*"|'(?:\\.|[^'\\\r\n{])*'|\{(?:"(?:\\.|[^"\\\r\n{])*"|'(?:\\.|[^'\\\r\n{])*'|[^{}\r\n"']|"|')*\}|[^{}\r\n"']|"|')*?\}|[{}])*"|'(?:\\.|[^'\\\r\n{}]|\{(?:"(?:\\.|[^"\\\r\n{])*"|'(?:\\.|[^'\\\r\n{])*'|\{(?:"(?:\\.|[^"\\\r\n{])*"|'(?:\\.|[^'\\\r\n{])*'|[^{}\r\n"']|"|')*\}|[^{}\r\n"']|"|')*?\}|[{}])*'/;
+terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:(?:"(?:\\.|[^"\\{])*"|'(?:\\.|[^'\\{])*'|\{(?:"(?:\\.|[^"\\{])*"|'(?:\\.|[^'\\{])*'|\{(?:"(?:\\.|[^"\\{])*"|'(?:\\.|[^'\\{])*'|[^{}"']|"(?!(?:\\.|[^"\\{])*")|'(?!(?:\\.|[^'\\{])*'))*\}|[^{}"']|"(?!(?:\\.|[^"\\{])*")|'(?!(?:\\.|[^'\\{])*'))*\}|[^{}"']|"(?!(?:\\.|[^"\\{])*")|'(?!(?:\\.|[^'\\{])*'))*?\r?\n)?[\t ]*\}(?:\r?\n|(?!\S))/;
+terminal EM_DATA_INLINE: /\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*?\}|"(?:\\.|[^"\\{}\r\n]|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|\{(?!\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\})|\})*"|'(?:\\.|[^'\\{}\r\n]|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|\{(?!\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|\{(?:"(?:\\.|[^"\\{\r\n])*"|'(?:\\.|[^'\\{\r\n])*'|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\}|[^{}\r\n"']|"(?!(?:\\.|[^"\\{\r\n])*")|'(?!(?:\\.|[^'\\{\r\n])*'))*\})|\})*'/;
 
 terminal EM_ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
 terminal EM_ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;

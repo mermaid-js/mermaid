@@ -347,6 +347,16 @@ data D {
       expect(result.lexerErrors.length).toBeGreaterThan(0);
     });
 
+    it('should reject an unclosed payload with many quoted strings in linear time', () => {
+      // Each quote char must have exactly one matching path; ambiguous quote
+      // matching made this input cost grow exponentially with its length.
+      const quotes = Array.from({ length: 16 }, (_, i) => `"s${i}" x`).join(' ');
+      const start = performance.now();
+      const result = parse(`eventmodeling\ntf 01 cmd AddItem { ${quotes}\n`);
+      expect(performance.now() - start).toBeLessThan(1000);
+      expect(result.lexerErrors.length).toBeGreaterThan(0);
+    });
+
     it('should parse a GWT scenario label', () => {
       const result = parse(`eventmodeling
 tf 01 cmd AddItem
