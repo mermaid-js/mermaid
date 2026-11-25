@@ -1,10 +1,15 @@
-# Grid edge routing
+# Grid edge routing implementation notes
 
-Grid layout calculates edge paths automatically after it measures and positions the diagram. Users control item placement and spacing; they do not provide absolute edge coordinates or waypoints.
+This is an internal reference for routing invariants, algorithm migration, search budgets, and
+validation.
 
-For grid syntax and configuration, see the [grid layout documentation](../../../docs/syntax/grid-layout.md).
+When public grid registration and syntax documentation land, move the user-facing routing behavior,
+configuration, and troubleshooting guidance into the grid syntax page under
+`packages/mermaid/src/docs/syntax/`. Keep algorithm migration, instrumentation, and test notes here.
 
 ## Routing behavior
+
+Grid layout calculates edge paths automatically after it measures and positions the diagram. Users control item placement and spacing; they do not provide absolute edge coordinates or waypoints.
 
 The calculated route is an orthogonal polyline made from horizontal and vertical segments. The router:
 
@@ -12,6 +17,8 @@ The calculated route is an orthogonal polyline made from horizontal and vertical
 - may use unused space within a grid cell
 - crosses group boundaries when connecting nodes in different groups
 - chooses attachment sides and coordinates automatically
+- keeps an edge aligned with a shared endpoint on its straight port; other incident edges share
+  that side only when their port can sit at least 24px away, and otherwise prefer an unreserved side
 - produces the same route for the same diagram and configuration
 
 Grid cells are placement regions, not obstacles. An edge can cross an unused part of a cell as long as it does not cross protected node or group geometry.
@@ -91,15 +98,44 @@ If the router cannot find a valid path around node or group geometry, Mermaid re
 
 Parallel and reverse edges use separate endpoint ports and lanes when the available geometry permits it. Self-loops use separate ports on the same node.
 
-Unrelated edges in the same container are also kept off each other's corridors. A route that would run parallel to an earlier edge closer than 24px is re-routed through other ports or corridors, so edges that must cross do so at a single perpendicular point; crossing itself is allowed. When a diagram has more than 64 eligible same-container edges across all containers, the router keeps the faster corridor routes, so overlaps can remain. Self-loops and edges that cross container boundaries do not count toward this threshold.
+Unrelated edges in the same container are also kept off each other's corridors. A route that would run parallel to an earlier edge closer than 24px is re-routed through other ports or corridors, so edges that must cross do so at a single perpendicular point; crossing itself is allowed.
+
+Known caveat: overlap-driven switching from corridor routes to sparse routing is limited to diagrams
+with at most 64 edge-routing plans. The same cutoff applies to the extra occupied-corridor avoidance
+pass for a sparse hierarchy route's segment in its least common ancestor container. Both use the
+total plan count across the whole diagram, including self-loops, parallel and reverse edges, and
+edges that cross group boundaries. Above 64 plans, the router skips these steps and can retain
+overlapping routes even after bounded separation attempts. Adding unrelated edges in another group
+can therefore cause previously separated edges to overlap. This temporary performance guard does
+not disable normal sparse routing, geometry validation, parallel and reverse edge separation, or
+resource limits; local overlap repair remains deferred.
 
 Dense nested diagrams can require a hierarchy edge to share part of an internal corridor with a parallel or reverse edge. Endpoint ports remain distinct, but part of the rendered paths can overlap.
 
 ## Edge labels
 
-Edge labels are placed after the initial routes are calculated. Mermaid attempts to move affected routes around the complete set of label reservations. If that is not possible, it retries individual labels.
+Measured labels between direct sibling nodes on adjacent rows or columns can raise only the shared
+track gap they need. The configured `rowGap` and `columnGap` remain defaults, but Mermaid treats
+them as minimums when a direct adjacent label needs more room. Other boundaries keep their
+configured gap.
+
+This preallocation applies only when the endpoints share a container and a row or column, occupy
+consecutive populated tracks, and the label fits the cross-axis track geometry. Non-adjacent,
+diagonal, hierarchy, and obstructed cases keep the normal routing and label fallback.
+
+Labelled self-loops are sized as a whole route. Mermaid first expands the U-shaped outer leg and,
+when the node side cannot hold the required port span, tries one bounded symmetric shoulder route.
+This keeps the common case to three segments instead of splicing a generic detour into a terminal
+leg.
+
+Labels are still finalized after the initial routes are calculated. Mermaid attempts to move
+affected routes around the complete set of label reservations. If that is not possible, it retries
+individual labels.
 
 As a final fallback, an edge can pass through another edge's label rather than failing the whole diagram. Node, group, title, marker-clearance, and own-label-anchor checks still apply.
+
+Very wide labels crossed by many edges can still cause routes to bend close to their source or
+target nodes, even when label avoidance succeeds.
 
 ## Edge curves
 

@@ -196,8 +196,8 @@ importers:
         specifier: ^26.1.0
         version: 26.1.0(canvas@3.2.3)
       langium-cli:
-        specifier: ~4.4.0
-        version: 4.4.0
+        specifier: ~4.4.1
+        version: 4.4.1
       lint-staged:
         specifier: ^16.1.6
         version: 16.1.6
@@ -631,8 +631,8 @@ importers:
         specifier: ~13.2.0
         version: 13.2.0
       langium:
-        specifier: ~4.4.0
-        version: 4.4.0
+        specifier: ~4.4.2
+        version: 4.4.2
 
   packages/tiny: {}
 
@@ -7733,17 +7733,17 @@ packages:
     resolution: {integrity: sha512-9zy9lkjac+TR1c2tG+mkNSVlyOpInnWdSMiue4F+kq8TwJSgv6o8jhLRg8Ho6SnZ9wOYUq/yozts9qQCfk7bIw==}
     engines: {node: '>=18'}
 
-  langium-cli@4.4.0:
-    resolution: {integrity: sha512-CSqwKebp8qWa9Y5s1xgEl4qxGPH71Wf4yMXKPuwICoL2yRfVtUl2zpTwF4O5WhYOxnuSpf0rJrxzjQRK5whL7Q==}
-    engines: {node: '>=20.10.0', npm: '>=10.2.3'}
+  langium-cli@4.4.1:
+    resolution: {integrity: sha512-egbDRXcIe4rFQWcrutFJUpAKP1T4b96q3aA4HK+alRdFKHcV+/xqjgOZ195dJ7kLx1Nj8UfZgH0wWW+86+dFLg==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26, npm: '>=10.2.3'}
     hasBin: true
 
   langium-railroad@4.4.0:
     resolution: {integrity: sha512-5dZINWslRqUkQaVtn+45SdZyOZ2+LwBGrzWKbRkVf76IZPCRTBzbmNYaCFW09Nwl5dMmv+iQvwkUwViljN0hvg==}
 
-  langium@4.4.0:
-    resolution: {integrity: sha512-VFIFtohpsmJeQ+LkaeuUNtyvkklecklI0FSLxFS8JfiGABE9XCpUJwYUNnLk6C2aOyk0w99tNlvd0pmbJ2AW/w==}
-    engines: {node: '>=20.10.0', npm: '>=10.2.3'}
+  langium@4.4.2:
+    resolution: {integrity: sha512-vnpUUwxUHK7rUUs3jLlP38rfCJE0WHP+CKnpdaAJoYZi6Cu3MEfI3q15Iz0FOyIYrXZHWSuvZMPbgDoJfaqKXw==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26, npm: '>=10.2.3'}
 
   latest-version@9.0.0:
     resolution: {integrity: sha512-7W0vV3rqv5tokqkBAFV1LbR7HPOWzXQDpDgEuib/aJ1jsZZx6x3c2mBI+TJhJzOhkGeaLbCKEHXEXLfirtG2JA==}
@@ -10370,14 +10370,8 @@ packages:
   vscode-languageserver-protocol@3.18.4:
     resolution: {integrity: sha512-CCXbyr99dafRJzJH/0Ryk7ly5T8XPmSR0//OuF2w4m+9JiOin7zcAT5iET8GRE7Z9taFBejb3GbM0a0mbjdbrg==}
 
-  vscode-languageserver-textdocument@1.0.12:
-    resolution: {integrity: sha512-cxWNPesCnQCcMPeenjKKsOCKQZ/L6Tv19DTRIGuLWe32lyzWhihGVJ/rcckZXJxfdKCFvRLS3fpBIsV/ZGX4zA==}
-
   vscode-languageserver-textdocument@1.0.15:
     resolution: {integrity: sha512-Gsfr9S8LU3S6885cS+NaleasJ0n3V5y/SOTqHCifQiXWFw3G9w9/YItDfwHrlCz+dSZWWZ8ilYVMcJe7Sz7Sxw==}
-
-  vscode-languageserver-types@3.17.5:
-    resolution: {integrity: sha512-Ld1VelNuX9pdF39h2Hgaeb5hEZM2Z3jUrrMgWQAu82jMtZp7p3vJT3BzToKtZI7NgQssZje5o0zryOrhQvzQAg==}
 
   vscode-languageserver-types@3.18.3:
     resolution: {integrity: sha512-XIlzJ7Qp/jzSI1ds7/FwPAWrPeTZA7pAtlW4hdJ1J6xXWJL6dR9QYnDhJOdLzdKhUQ5Mm6mvUMw+3DcOQQasPw==}
@@ -16304,7 +16298,7 @@ snapshots:
       gensequence: 8.0.8
       import-fresh: 3.3.1
       resolve-from: 5.0.0
-      vscode-languageserver-textdocument: 1.0.12
+      vscode-languageserver-textdocument: 1.0.15
       vscode-uri: 3.1.0
       xdg-basedir: 5.1.0
 
@@ -18796,22 +18790,22 @@ snapshots:
 
   ky@1.14.3: {}
 
-  langium-cli@4.4.0:
+  langium-cli@4.4.1:
     dependencies:
       chalk: 5.6.2
       commander: 15.0.0
       fs-extra: 11.4.1
       jsonschema: 1.5.0
-      langium: 4.4.0
+      langium: 4.4.2
       langium-railroad: 4.4.0
       lodash: 4.18.1
 
   langium-railroad@4.4.0:
     dependencies:
-      langium: 4.4.0
+      langium: 4.4.2
       railroad-diagrams: 1.0.0
 
-  langium@4.4.0:
+  langium@4.4.2:
     dependencies:
       '@chevrotain/regexp-to-ast': 13.2.0
       chevrotain: 13.2.0
@@ -21951,8 +21945,8 @@ snapshots:
   vscode-json-languageservice@4.2.1:
     dependencies:
       jsonc-parser: 3.3.1
-      vscode-languageserver-textdocument: 1.0.12
-      vscode-languageserver-types: 3.17.5
+      vscode-languageserver-textdocument: 1.0.15
+      vscode-languageserver-types: 3.18.4
       vscode-nls: 5.2.0
       vscode-uri: 3.1.0
 
@@ -21970,11 +21964,7 @@ snapshots:
       vscode-jsonrpc: 9.0.3
       vscode-languageserver-types: 3.18.4
 
-  vscode-languageserver-textdocument@1.0.12: {}
-
   vscode-languageserver-textdocument@1.0.15: {}
-
-  vscode-languageserver-types@3.17.5: {}
 
   vscode-languageserver-types@3.18.3: {}
 

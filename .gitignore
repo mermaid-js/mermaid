@@ -82,3 +82,6 @@ mermaid-parser.tar.gz
 .fallow/
 test-results/
 .playwright-mcp/
+
+# Copied from packages/mermaid by the build (.esbuild/build.ts); packed into the tiny tarball.
+packages/tiny/THIRD_PARTY_NOTICES

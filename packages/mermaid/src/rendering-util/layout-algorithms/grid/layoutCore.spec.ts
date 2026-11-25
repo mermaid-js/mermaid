@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { LayoutData, Node } from '../../types.js';
+import type { Edge, LayoutData, Node } from '../../types.js';
+import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
 
 function leaf(
@@ -77,6 +78,54 @@ describe('grid layout core', () => {
 
     expect(data.nodes[0]).toMatchObject({ x: 20, y: 10, width: 40, height: 20 });
     expect(result.itemMeta.get('only')).toMatchObject({ row: 1, column: 1 });
+  });
+
+  it('marks routed edges with their rendering capabilities', () => {
+    const data = layout(
+      [
+        leaf('source', 40, 20, { row: 1, column: 1 }),
+        leaf('target', 40, 20, { row: 1, column: 2 }),
+      ],
+      { curve: 'linear' }
+    );
+    data.edges.push({ id: 'source-target', start: 'source', end: 'target' } as Edge);
+
+    runGridLayoutCore(data);
+
+    expect(data.edges[0]).toMatchObject({
+      portClipping: 'outline-orthogonal',
+      skipCornerFix: true,
+    });
+  });
+
+  it('expands only the labelled vertical boundary', () => {
+    const data = layout(
+      [
+        leaf('source', 80, 40, { row: 1, column: 1 }),
+        leaf('target', 80, 40, { row: 2, column: 1 }),
+        leaf('peer', 80, 40, { row: 3, column: 1 }),
+      ],
+      { rowGap: 10 }
+    );
+    data.edges.push({
+      id: 'source-target',
+      start: 'source',
+      end: 'target',
+      label: 'tall',
+    } as Edge);
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((node) => node.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 20;
+    labelNode.height = 60;
+
+    runGridLayoutCore(data);
+
+    const byId = new Map(data.nodes.map((node) => [node.id, node]));
+    const source = byId.get('source')!;
+    const target = byId.get('target')!;
+    const peer = byId.get('peer')!;
+    expect((target.y ?? 0) - 20 - ((source.y ?? 0) + 20)).toBe(86);
+    expect((peer.y ?? 0) - 20 - ((target.y ?? 0) + 20)).toBe(10);
   });
 
   it('sizes stacked cells and applies horizontal/vertical alignment', () => {
@@ -234,6 +283,35 @@ describe('grid layout core', () => {
   });
 
   it.each([
+    { rowOffset: -100, columnOffset: -50 },
+    { rowOffset: -1, columnOffset: -1 },
+    { rowOffset: 123, columnOffset: 11 },
+  ])(
+    'preserves geometry and routes after translating tracks by ($rowOffset, $columnOffset)',
+    ({ rowOffset, columnOffset }) => {
+      const build = (rowOffset: number, columnOffset: number) => {
+        const data = layout([
+          group('g', 'Group', undefined, { row: 1 + rowOffset, column: 1 + columnOffset }),
+          leaf('a', 40, 20, { row: 1 + rowOffset, column: 1 + columnOffset }, 'g'),
+          leaf('stack', 60, 30, { row: 1 + rowOffset, column: 1 + columnOffset }, 'g'),
+          leaf('b', 60, 30, { row: 100 + rowOffset, column: 50 + columnOffset }, 'g'),
+          leaf('peer', 40, 20, { row: 100 + rowOffset, column: 50 + columnOffset }),
+        ]);
+        data.edges.push({ id: 'a-b', start: 'a', end: 'b' } as Edge);
+        return data;
+      };
+      const original = build(0, 0);
+      const translated = build(rowOffset, columnOffset);
+
+      runGridLayoutCore(original);
+      runGridLayoutCore(translated);
+
+      expect(geometrySnapshot(translated.nodes)).toEqual(geometrySnapshot(original.nodes));
+      expect(translated.edges[0].points).toEqual(original.edges[0].points);
+    }
+  );
+
+  it.each([
     {
       name: 'invalid coordinates',
       code: 'GRID_INVALID_COORDINATE',
@@ -241,7 +319,7 @@ describe('grid layout core', () => {
         layout([
           group('g', 'Group'),
           leaf('member', 60, 30, { row: 1, column: 1 }, 'g'),
-          leaf('bad', 40, 20, { row: 0, column: 1 }),
+          leaf('bad', 40, 20, { row: 0.5, column: 1 }),
         ]),
     },
     {

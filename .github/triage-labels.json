@@ -1,0 +1,46 @@
+{
+  "ignore": ["common", "error", "info"],
+  "diagrams": {
+    "agentflow": { "label": "Graph: Agentflow", "keywords": ["agentflow"] },
+    "architecture": { "label": "Graph: Architecture", "keywords": ["architecture"] },
+    "block": { "label": "Graph: Block", "keywords": ["block"] },
+    "c4": {
+      "label": "Graph: C4",
+      "keywords": ["C4Context", "C4Container", "C4Component", "C4Dynamic", "C4Deployment"]
+    },
+    "class": { "label": "Graph: Class", "keywords": ["classDiagram"] },
+    "cynefin": { "label": "Graph: Cynefin", "keywords": ["cynefin"] },
+    "er": { "label": "Graph: Entity Relationship", "keywords": ["erDiagram"] },
+    "eventmodeling": { "label": "Graph: EventModeling", "keywords": ["eventmodeling"] },
+    "flowchart": { "label": "Graph: Flow", "keywords": ["flowchart", "flowchart-elk", "graph"] },
+    "gantt": { "label": "Graph: Gantt", "keywords": ["gantt"] },
+    "git": { "label": "Graph: Git", "keywords": ["gitGraph"] },
+    "ishikawa": { "label": "Graph: Ishikawa", "keywords": ["ishikawa"] },
+    "kanban": { "label": "Graph: Kanban", "keywords": ["kanban"] },
+    "mindmap": { "label": "Graph: Mindmap", "keywords": ["mindmap"] },
+    "packet": { "label": "Graph: Packet", "keywords": ["packet"] },
+    "pie": { "label": "Graph: Pie", "keywords": ["pie"] },
+    "quadrant-chart": { "label": "Graph: Quadrant", "keywords": ["quadrantChart"] },
+    "radar": { "label": "Graph: Radar", "keywords": ["radar"] },
+    "railroad": {
+      "label": "Graph: Railroad",
+      "keywords": ["railroad", "railroad-abnf", "railroad-ebnf", "railroad-peg"]
+    },
+    "requirement": {
+      "label": "Graph: Requirement",
+      "keywords": ["requirementDiagram", "requirement"]
+    },
+    "sankey": { "label": "Graph: Sankey", "keywords": ["sankey"] },
+    "sequence": { "label": "Graph: Sequence", "keywords": ["sequenceDiagram"] },
+    "state": { "label": "Graph: State", "keywords": ["stateDiagram"] },
+    "swimlanes": { "label": "Graph: Swimlane", "keywords": ["swimlane"] },
+    "timeline": { "label": "Graph: Timeline", "keywords": ["timeline"] },
+    "treeView": { "label": "Graph: TreeView", "keywords": ["treeView"] },
+    "treemap": { "label": "Graph: Treemap", "keywords": ["treemap"] },
+    "usecase": { "label": "Graph: Use Case", "keywords": ["usecase"] },
+    "user-journey": { "label": "Graph: User journey", "keywords": ["journey"] },
+    "venn": { "label": "Graph: Venn", "keywords": ["venn"] },
+    "wardley": { "label": "Graph: Wardley", "keywords": ["wardley"] },
+    "xychart": { "label": "Graph: XY", "keywords": ["xychart"] }
+  }
+}

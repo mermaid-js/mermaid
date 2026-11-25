@@ -50,7 +50,7 @@ async function layOutWithSizes(name: string, sizes: SizesFixture): Promise<Layou
   }
   const layout = await parseMmdFileToLayoutData(
     `${resolve(process.cwd(), FIXTURES_DIR, name)}.mmd`,
-    { stampFlowchartRendererFields: true }
+    { stampRendererFields: true }
   );
   (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'swimlane';
   runSwimlanesDdlt(layout, sizes);

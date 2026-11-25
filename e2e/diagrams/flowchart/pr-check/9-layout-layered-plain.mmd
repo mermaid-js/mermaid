@@ -1,0 +1,16 @@
+---
+description:
+  A plain flowchart (no subgraphs) under the layered layout. Diamond, circle and
+  stadium nodes check that edge ends land on the shape outline, on the side the
+  engine chose; the fan-out from the decision spreads ends along one side.
+config:
+  layout: layered
+---
+flowchart TB
+  start([Start]) --> check{Is it valid?}
+  check -->|yes| save[(Save)]
+  check -->|no| fix[Fix the input]
+  check --> log((Log))
+  fix --> check
+  save --> done([Done])
+  log --> done

@@ -50,6 +50,8 @@ Requirement diagrams use the `redux-color` theme and the `neo` look by default, 
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
 
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
+
 The same diagram, drawn both ways:
 
 ### With the defaults

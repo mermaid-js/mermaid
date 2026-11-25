@@ -3,7 +3,6 @@ import DefaultTheme from 'vitepress/theme';
 import Contributors from '../components/Contributors.vue';
 import EditorSelectionModal from '../components/EditorSelectionModal.vue';
 import HomePage from '../components/HomePage.vue';
-import LandingIntentModal from '../components/LandingIntentModal.vue';
 import TopBar from '../components/TopBar.vue';
 import './custom.css';
 import Mermaid from './Mermaid.vue';
@@ -27,7 +26,7 @@ export default {
       'home-hero-after': () => h(OssHomeHeroNameClipApplier),
       'doc-before': () => h(TopBar),
       'layout-bottom': () => h(Tooltip),
-      'layout-top': () => [h(EditorSelectionModal), h(LandingIntentModal)],
+      'layout-top': () => h(EditorSelectionModal),
     });
   },
   enhanceApp({ app, router, siteData }: EnhanceAppContext) {
