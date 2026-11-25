@@ -842,10 +842,11 @@ This is equivalent to `{ animate: true, animation: fast }`.
 
 **Edge animation properties:**
 
-| Property    | Values          | Default | Description                                                                                                                              |
-| ----------- | --------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `animate`   | `true`, `false` | unset   | `true` animates the edge at the `fast` speed.                                                                                            |
-| `animation` | `fast`, `slow`  | unset   | Animates the edge at the given speed, so `animate: true` is not needed. If both are set, `animation` decides the speed of the animation. |
+| Property    | Values                                      | Default | Description                                                                                                                                                                                                     |
+| ----------- | ------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `animate`   | `true`, `false`                             | unset   | `true` animates the edge at the `fast` speed.                                                                                                                                                                   |
+| `animation` | `fast`, `slow`                              | unset   | Animates the edge at the given speed, so `animate: true` is not needed. If both are set, `animation` decides the speed of the animation.                                                                        |
+| `step`      | positive whole numbers (`1`, `2`, `3`, ...) | unset   | Plays the edge in order: a dot travels along it when its step comes up, and edges that share a number play together. Other values are ignored. See "Step-by-step flow animation" below. Available from v12.3.0. |
 
 These properties can only be set on edges that have an ID.
 
