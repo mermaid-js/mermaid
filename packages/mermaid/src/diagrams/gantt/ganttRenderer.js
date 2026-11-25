@@ -640,6 +640,12 @@ export const draw = function (text, id, version, diagObj) {
     return Math.ceil(timeDiffMs / intervalMs);
   }
 
+  function getDayTickValues(minTime, maxTime, every) {
+    // Preserve the first tick's alignment and step continuously across month boundaries.
+    const firstTick = timeDay.every(every)?.ceil(minTime);
+    return firstTick ? timeDay.range(firstTick, timeMillisecond.offset(maxTime, 1), every) : null;
+  }
+
   /**
    * @param theSidePad
    * @param theTopPad
@@ -706,7 +712,7 @@ export const draw = function (text, id, version, diagObj) {
               bottomXAxis.ticks(timeHour.every(every));
               break;
             case 'day':
-              bottomXAxis.ticks(timeDay.every(every));
+              bottomXAxis.tickValues(getDayTickValues(minTime, maxTime, every));
               break;
             case 'week':
               bottomXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
@@ -769,7 +775,7 @@ export const draw = function (text, id, version, diagObj) {
                 topXAxis.ticks(timeHour.every(every));
                 break;
               case 'day':
-                topXAxis.ticks(timeDay.every(every));
+                topXAxis.tickValues(getDayTickValues(minTime, maxTime, every));
                 break;
               case 'week':
                 topXAxis.ticks(mapWeekdayToTimeFunction[weekday].every(every));
