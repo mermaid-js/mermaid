@@ -28,7 +28,7 @@ The definitions that can be generated the Live-Editor are also backwards-compati
 
 [Elle Neal: Mind Mapping with AI: An Accessible Approach for Neurodiverse Learners Tutorial:](https://medium.com/@elle.neal_71064/mind-mapping-with-ai-an-accessible-approach-for-neurodiverse-learners-1a74767359ff)
 
-[Stepthrough: Turn a Purchase Approval Policy into a Flowchart with ChatGPT and the Live Editor](https://learn.ynteractive.com/content/mermaid-chatgpt-purchase-approval-flowchart-tutorial)
+[Stepthrough: Turn a Purchase Approval Policy into a Flowchart with ChatGPT and the Live Editor](https://ynteractive.com/content/mermaid-chatgpt-purchase-approval-flowchart-tutorial)
 
 ## Mermaid with HTML
 
