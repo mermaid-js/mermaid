@@ -69,6 +69,48 @@ describe('mermaidAPI', () => {
         'classDef this; is ; everything :something#not-nothing; and this too'
       );
     });
+    it('removes the ending ; from linkStyle [text1]:[optional word]#[text2]; (issue #5498)', () => {
+      const text = 'linkStyle 0 stroke-width:4px,stroke:#FF69B4;';
+      expect(encodeEntities(text)).toEqual('linkStyle 0 stroke-width:4px,stroke:#FF69B4');
+    });
+
+    it('keeps ; that separate statements on the same line (issue #5498)', () => {
+      const text = 'graph TD;A-->B;linkStyle 0 stroke:#f00,stroke-width:4px;B-->C;D-->E';
+      expect(encodeEntities(text)).toEqual(text);
+    });
+
+    it('keeps a ; inside a quoted label that mentions linkStyle (issue #5498)', () => {
+      const text = 'A["linkStyle:ref#35; total;"]';
+      // `#35;` still encodes as a numeric entity, but no `;` is stripped.
+      expect(encodeEntities(text)).toEqual('A["linkStyle:refﬂ°°35¶ß total;"]');
+    });
+
+    it('keeps a final hex color before a same-line statement (issue #5498)', () => {
+      const text = 'graph TD;A-->B;linkStyle 0 stroke-width:4px,stroke:#FF69B4;B-->C';
+      // `:#FF69B4` is a declaration color, not an entity; its `;` stays.
+      expect(encodeEntities(text)).toEqual(text);
+    });
+
+    it('does not start a declaration match inside a multi-line quoted label (issue #5498)', () => {
+      const text = 'A["linkStyle:ref#35; total;\ncontinued"]';
+      expect(encodeEntities(text)).toEqual('A["linkStyle:refﬂ°°35¶ß total;\ncontinued"]');
+    });
+
+    it('keeps colors in adjacent same-line declarations (issue #5498)', () => {
+      const text = 'graph TD;A-->B;B-->C;linkStyle 0 stroke:#f00;linkStyle 1 stroke:#0f0;A-->C';
+      // Both declarations share a `;` boundary; neither color may be encoded.
+      expect(encodeEntities(text)).toEqual(text);
+    });
+
+    it('still encodes entities after a colon inside quoted labels (issue #5498)', () => {
+      // Documented example: only `:#...;` inside declarations is a color.
+      const text = 'A["A double quote:#quot;"] --> B["A dec char:#9829;"]';
+      const encoded = encodeEntities(text);
+      expect(encoded).toEqual('A["A double quote:ﬂ°quot¶ß"] --> B["A dec char:ﬂ°°9829¶ß"]');
+      expect(decodeEntities(encoded)).toEqual(
+        'A["A double quote:&quot;"] --> B["A dec char:&#9829;"]'
+      );
+    });
 
     describe('replaces words starting with # and ending with ;', () => {
       const testStr = 'Hello #there;';

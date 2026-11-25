@@ -895,12 +895,29 @@ export default {
 export const encodeEntities = function (text: string): string {
   let txt = text;
 
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
-    return s.substring(0, s.length - 1);
-  });
+  // Only strip a `;` that ends a style/classDef/linkStyle declaration line:
+  // the declaration must start a statement (line start or after `;`) so the
+  // match cannot begin inside a quoted label, and the `;` must be the last
+  // non-whitespace char on the line so `;` separating same-line statements
+  // (e.g. `A-->B;linkStyle ...;C-->D`) is kept.
+  txt = txt.replace(
+    /(?<=^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r]*:\S*#[^\n\r]*;(?=[^\S\n\r]*(?:\r?\n|$))/gm,
+    function (s): string {
+      return s.substring(0, s.length - 1);
+    }
+  );
+
+  // Inside a style/classDef/linkStyle declaration statement, `:#...;` is a
+  // color value, not an entity — its `;` may separate same-line statements
+  // (e.g. `linkStyle 0 stroke:#FF69B4;B-->C`). Mask that `;` so the entity
+  // pass below leaves it alone. Outside declarations a `#...;` is an entity
+  // even after `:` (e.g. `A["A double quote:#quot;"]`).
+  txt = txt.replace(
+    /(?<=^|;)[^\S\n\r]*(?:style|classDef|linkStyle)[^\n\r;]*:#\w+;/gm,
+    function (s): string {
+      return s.substring(0, s.length - 1) + 'ﬂ§';
+    }
+  );
 
   txt = txt.replace(/#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);
@@ -913,7 +930,7 @@ export const encodeEntities = function (text: string): string {
     }
   });
 
-  return txt;
+  return txt.replace(/ﬂ§/g, ';');
 };
 
 /**
