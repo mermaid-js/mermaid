@@ -157,8 +157,21 @@ describe('hexagonEdgeEnd', () => {
     expect(end.y).toBeCloseTo(-150);
   });
 
-  it('leaves an edge that starts inside the frame alone', () => {
+  it('leaves an edge that stays inside the frame alone', () => {
     const to = { x: 0, y: -150 };
     expect(hexagonEdgeEnd({ x: 0, y: 0 }, to, frame)).toBe(to);
+    const inner = { x: 50, y: 50 };
+    expect(hexagonEdgeEnd({ x: 0, y: 0 }, inner, frame)).toBe(inner);
+  });
+
+  it('pulls an edge from a child to its own frame back from the bounding box to the roof', () => {
+    const end = hexagonEdgeEnd({ x: 100, y: 0 }, { x: 100, y: -150 }, frame);
+    expect(end.x).toBeCloseTo(100);
+    expect(end.y).toBeCloseTo(-130);
+  });
+
+  it('does the same through the floor', () => {
+    const end = hexagonEdgeEnd({ x: -100, y: 0 }, { x: -100, y: 150 }, frame);
+    expect(end.y).toBeCloseTo(130);
   });
 });

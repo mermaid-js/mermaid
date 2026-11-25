@@ -141,9 +141,9 @@ export function clusterVerticalInset(shape: string | undefined): number {
  * Where an edge arriving from `from` towards `to` meets the outline of a hexagon `frame`.
  *
  * Layouts end an edge to a subgraph on its bounding box. Along the flat sides that is the
- * outline, but above the roof and below the floor it is empty space, so the edge is carried
- * on along its last segment to the outline. Returns `to` unchanged when `from` is inside the
- * hexagon (the edge starts within the frame) or the segment's line misses it.
+ * outline, but above the roof and below the floor it is empty space, so the end moves along
+ * the edge's last segment to where it crosses the outline. Returns `to` unchanged when the
+ * segment stays inside the hexagon or its line misses it.
  */
 export function hexagonEdgeEnd(
   from: HexagonPoint,
@@ -161,13 +161,16 @@ export function hexagonEdgeEnd(
     return to;
   }
   // Clockwise corners (y down): a point is inside when it is on the inner side of every edge.
-  const inside = corners.every((a, i) => {
-    const b = corners[(i + 1) % corners.length];
-    return (b.x - a.x) * (from.y - a.y) - (b.y - a.y) * (from.x - a.x) >= 0;
-  });
-  if (inside) {
+  const isInside = (p: HexagonPoint) =>
+    corners.every((a, i) => {
+      const b = corners[(i + 1) % corners.length];
+      return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x) >= 0;
+    });
+  if (isInside(from) && isInside(to)) {
     return to;
   }
+  // The first crossing along the segment: the entry for an edge from outside, the exit for
+  // one from a child inside the frame to the frame itself.
   let nearest = Infinity;
   corners.forEach((a, i) => {
     const b = corners[(i + 1) % corners.length];
