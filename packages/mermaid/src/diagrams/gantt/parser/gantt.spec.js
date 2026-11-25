@@ -289,7 +289,7 @@ row2`;
 
   it('should allow a task named Gantt (issue #5660)', function () {
     const str =
-        'gantt\n' +
+      'gantt\n' +
       '    title A Gantt Diagram\n' +
       '    dateFormat  YYYY-MM-DD\n' +
       '    section Section\n' +
@@ -298,7 +298,7 @@ row2`;
       '    section Another\n' +
       '    Task in sec      :2014-01-12  , 12d\n' +
       '    Gantt      : 24d\n';
-expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(str)).not.toThrow();
     const tasks = parser.yy.getTasks();
     expect(tasks).toHaveLength(4);
     expect(tasks[3].task.trim()).toEqual('Gantt');
@@ -306,7 +306,7 @@ expect(parserFnConstructor(str)).not.toThrow();
 
   it('should allow a task whose name starts with gantt (issue #5660)', function () {
     const str =
-        'gantt\n' +
+      'gantt\n' +
       '    dateFormat YYYY-MM-DD\n' +
       '    section Section\n' +
       '    gantt chart :a1, 2014-01-01, 30d\n' +
