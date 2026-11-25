@@ -588,3 +588,73 @@ describe('flow db keys only a diagram with pools may set', () => {
     expect(nodes.find((n) => n.id === 'L1')?.metadata).toEqual({ algorithm: 'elk.box' });
   });
 });
+
+describe('flow db tooltips with <br> (issue #6631)', () => {
+  let flowDb: FlowDB;
+
+  beforeEach(() => {
+    flowDb = new FlowDB();
+    document.body.innerHTML = '';
+    document.querySelectorAll('.mermaidTooltip').forEach((el) => el.remove());
+  });
+
+  afterEach(() => {
+    document.querySelectorAll('.mermaidTooltip').forEach((el) => el.remove());
+  });
+
+  /**
+   * Hover a flowchart node whose title is the tooltip text, the same way setupToolTips
+   * reads the title attribute after render.
+   */
+  function hoverTooltip(title: string): HTMLElement {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const node = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    node.setAttribute('class', 'node');
+    node.setAttribute('title', title);
+    svg.appendChild(node);
+    document.body.appendChild(svg);
+
+    flowDb.bindFunctions(document.body);
+
+    const tooltip = document.querySelector('.mermaidTooltip');
+    expect(tooltip).not.toBeNull();
+
+    node.dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
+    return tooltip as HTMLElement;
+  }
+
+  /**
+   * The tooltip's top-level content in order, with each break shown as `<br>`, so a test
+   * can check that the break sits between the two lines rather than just somewhere in it.
+   */
+  function tooltipParts(tooltip: HTMLElement): string[] {
+    return [...tooltip.childNodes].map((child) =>
+      child.nodeName === 'BR' ? '<br>' : (child.textContent ?? '')
+    );
+  }
+
+  it('renders a bare <br> in a tooltip as a line break, not as literal text', () => {
+    const tooltip = hoverTooltip('first line<br>second line');
+
+    expect(tooltipParts(tooltip)).toEqual(['first line', '<br>', 'second line']);
+    expect(tooltip.innerHTML).not.toMatch(/&lt;br/);
+  });
+
+  it.each(['<br/>', '<br />'])(
+    'renders %s in a tooltip as a line break, not as literal text',
+    (breakTag) => {
+      const tooltip = hoverTooltip(`first line${breakTag}second line`);
+
+      expect(tooltipParts(tooltip)).toEqual(['first line', '<br>', 'second line']);
+      expect(tooltip.innerHTML).not.toMatch(/&lt;br/);
+    }
+  );
+
+  it('keeps a stored click tooltip containing <br> so the title attribute can render it', () => {
+    flowDb.setTooltip('A', 'first line<br>second line');
+
+    const stored = flowDb.getTooltip('A');
+    expect(stored).toMatch(/<br\s*\/?>/i);
+    expect(stored).not.toMatch(/&lt;br/i);
+  });
+});
