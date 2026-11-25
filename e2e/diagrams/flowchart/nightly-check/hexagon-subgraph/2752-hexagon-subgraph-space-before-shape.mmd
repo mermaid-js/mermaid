@@ -1,0 +1,10 @@
+%% Shape blocks after a space, in both header forms (issue #2752).
+flowchart LR
+  subgraph core @{ shape: hex }
+    a --> b
+  end
+  subgraph app["Application"] @{ shape: hex }
+    c --> d
+  end
+  x --> core
+  b --> app

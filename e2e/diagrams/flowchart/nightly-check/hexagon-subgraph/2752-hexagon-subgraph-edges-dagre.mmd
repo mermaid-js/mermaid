@@ -1,0 +1,15 @@
+---
+description:
+  Edges into and out of a hexagon subgraph (issue 2752) under dagre end on the drawn
+  outline, including on the slanted top and bottom, not on the bounding box.
+config:
+  layout: dagre
+---
+flowchart TD
+  x[Outside left] --> core
+  y[Outside right] --> core
+  core --> z[Below]
+  subgraph core["Core"]@{ shape: hex }
+    a[Wide node one] --> b[Wide node two]
+    c[Wide node three]
+  end

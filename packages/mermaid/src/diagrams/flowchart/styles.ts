@@ -75,7 +75,8 @@ const genColor = (options: FlowChartStyleOptions) => {
       `${slot}.swimlane.cluster .swimlane-title${suffix}, ${slot}.swimlane.cluster .swimlane-body${suffix}`;
     sections += `
 
-    ${slot}.cluster:not(.swimlane) rect {
+    ${slot}.cluster:not(.swimlane) rect,
+    ${slot}.cluster:not(.swimlane) polygon.cluster-hexagon {
       stroke: ${borderColor};
       ${fill}
     }
@@ -225,7 +226,8 @@ const getStyles = (options: FlowChartStyleOptions) =>
     // background-color:
   }
 
-  .cluster rect {
+  .cluster rect,
+  .cluster polygon.cluster-hexagon {
     fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};
     stroke-width: 1px;

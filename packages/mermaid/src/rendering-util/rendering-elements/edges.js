@@ -41,6 +41,7 @@ import {
 import { clipOrthogonalEndpointsToNodeOutlines } from './orthogonalEdgeClipping.js';
 import { curveKind, isAxisTaggedRoute, markerTrim, routePath } from './routePath.ts';
 import { styles2String } from './shapes/handDrawnShapeStyles.js';
+import { HEXAGON_POINT_DEPTH, hexagonEdgeEnd } from './clusters/hexagonGeometry.js';
 
 /**
  * Resolve the effective curve type for an edge.
@@ -562,6 +563,34 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   }
 };
 
+/**
+ * An edge to a hexagon subgraph ends on the frame's bounding box, which is the outline only
+ * along the flat sides. Carry each such end along its last segment to the drawn outline.
+ *
+ * @param {{x: number, y: number}[]} points - The edge route, start to end.
+ * @param {{start?: any, end?: any}} frames - What each end attaches to.
+ * @returns {{x: number, y: number}[]} The route, with ends on hexagon outlines moved there.
+ */
+export const endOnHexagonFrames = (points, { start, end }) => {
+  // Dagre hands over a subgraph it laid out on its own as a `clusterNode` wrapper whose
+  // `clusterData` holds the authored subgraph.
+  const isHexagonFrame = (node) =>
+    (node?.isGroup || node?.clusterNode) &&
+    (node.shape ?? node.clusterData?.shape) === 'hexagon' &&
+    Number.isFinite(node.x) &&
+    points.length >= 2;
+  const onOutline = (from, to, node) =>
+    hexagonEdgeEnd(from, to, node, node.hexagonPointDepth ?? HEXAGON_POINT_DEPTH);
+  let result = points;
+  if (isHexagonFrame(end)) {
+    result = [...result.slice(0, -1), onOutline(result.at(-2), result.at(-1), end)];
+  }
+  if (isHexagonFrame(start)) {
+    result = [onOutline(result[1], result[0], start), ...result.slice(1)];
+  }
+  return result;
+};
+
 const cutPathAtIntersect = (_points, boundaryNode) => {
   log.warn('abc88 cutPathAtIntersect', _points, boundaryNode);
   let points = [];
@@ -816,6 +845,13 @@ export const insertEdge = function (
     points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
 
     pointsHasChanged = true;
+  }
+
+  if (!axisRoute) {
+    points = endOnHexagonFrames(points, {
+      start: edge.fromCluster ? clusterDb.get(edge.fromCluster)?.node : tail,
+      end: edge.toCluster ? clusterDb.get(edge.toCluster)?.node : head,
+    });
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));

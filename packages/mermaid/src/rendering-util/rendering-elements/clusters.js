@@ -10,6 +10,13 @@ import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { compileStyles, styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
+import {
+  HEXAGON_POINT_DEPTH,
+  hexagonClusterPoints,
+  hexagonFrameDepth,
+  hexagonTitleTop,
+} from './clusters/hexagonGeometry.js';
+import intersectPolygon from './intersect/intersect-polygon.js';
 import { stampColorSlot } from '../../diagrams/common/colorThemeGate.js';
 
 const rect = async (parent, node) => {
@@ -131,7 +138,64 @@ const rect = async (parent, node) => {
     return intersectRect(node, point);
   };
 
-  return { cluster: shapeSvg, labelBBox: bbox };
+  return { cluster: shapeSvg, labelBBox: bbox, frame: rect };
+};
+
+/**
+ * Subgraph drawn as a pointed-top hexagon. Reuses the rect painter for the label and
+ * colour slot, then swaps its rectangle for a polygon over the same bounding box: a
+ * rough.js polygon for the handDrawn look, a plain one otherwise.
+ */
+const hexagon = async (parent, node) => {
+  const { cluster, labelBBox, frame } = await rect(parent, node);
+  const width = node.width;
+  const height = node.height;
+  // Capped once for a short frame, so the title sits in the roof that is actually drawn.
+  const pointDepth = hexagonFrameDepth(height, node.hexagonPointDepth ?? HEXAGON_POINT_DEPTH);
+  const points = hexagonClusterPoints(width, height, pointDepth);
+  const corners = points.map((p) => [node.x + p.x, node.y + p.y]);
+
+  frame.remove();
+  if (node.look === 'handDrawn') {
+    const { themeVariables, handDrawnSeed } = getConfig();
+    const { borderStyles, backgroundStyles } = styles2String(node);
+    // @ts-ignore TODO: Fix rough typings
+    const rc = rough.svg(cluster);
+    const options = userNodeOverrides(node, {
+      roughness: 0.7,
+      fill: themeVariables.clusterBkg,
+      stroke: themeVariables.clusterBorder,
+      fillWeight: 3,
+      seed: handDrawnSeed,
+    });
+    const roughNode = rc.polygon(corners, options);
+    const shape = cluster.insert(() => roughNode, ':first-child');
+    shape.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
+    shape.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));
+  } else {
+    const { nodeStyles } = styles2String(node);
+    cluster
+      .insert('polygon', ':first-child')
+      .attr('class', 'cluster-hexagon')
+      .attr('style', nodeStyles)
+      .attr('points', corners.map(([x, y]) => `${x},${y}`).join(' '));
+  }
+
+  // The title rides in the roof: as high as the slanted sides leave room for its width.
+  const titleTop = hexagonTitleTop(width, labelBBox.width, node.padding, pointDepth);
+  cluster
+    .select('.cluster-label')
+    .attr(
+      'transform',
+      `translate(${node.x - labelBBox.width / 2}, ${node.y - height / 2 + titleTop})`
+    );
+  // Layout adds `offsetY` to a child's y when the frame sits inside a parent.
+  node.offsetY = labelBBox.height - node.padding / 2;
+
+  node.intersect = function (point) {
+    return intersectPolygon(node, points, point);
+  };
+  return { cluster, labelBBox };
 };
 
 /**
@@ -809,6 +873,7 @@ const pool = (elem, node) => swimlane(elem, node, { variant: 'pool' });
 const shapes = {
   rect,
   squareRect,
+  hexagon,
   roundedWithTitle,
   noteGroup,
   divider,

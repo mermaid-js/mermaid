@@ -12,6 +12,7 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 }));
 
 import {
+  endOnHexagonFrames,
   generateRoundedPath,
   insertEdge,
   resolveEdgeCurveType,
@@ -1061,5 +1062,51 @@ describe('setTerminalWidth', () => {
     const fo = { style: {} };
     setTerminalWidth(fo, '1', { width: 7.8, height: 21 });
     expect(fo.style.width).toBe('9px');
+  });
+});
+
+describe('endOnHexagonFrames', () => {
+  const hexagon = { isGroup: true, shape: 'hexagon', x: 0, y: 0, width: 400, height: 300 };
+
+  it('moves the ends that attach to a hexagon frame onto its outline', () => {
+    const points = [
+      { x: 100, y: -150 }, // on the box, above the roof
+      { x: 100, y: -200 },
+      { x: -100, y: -200 },
+      { x: -100, y: -150 },
+    ];
+    const result = endOnHexagonFrames(points, { start: hexagon, end: hexagon });
+    expect(result[0].y).toBeCloseTo(-130);
+    expect(result[3].y).toBeCloseTo(-130);
+    expect(result.slice(1, 3)).toEqual(points.slice(1, 3));
+  });
+
+  it('uses the depth a layout fitted, and reads a dagre cluster wrapper', () => {
+    const wrapper = {
+      clusterNode: true,
+      clusterData: { shape: 'hexagon' },
+      hexagonPointDepth: 20,
+      x: 0,
+      y: 0,
+      width: 400,
+      height: 300,
+    };
+    const [, end] = endOnHexagonFrames(
+      [
+        { x: 100, y: -200 },
+        { x: 100, y: -150 },
+      ],
+      { end: wrapper }
+    );
+    expect(end.y).toBeCloseTo(-140);
+  });
+
+  it('leaves edges to other nodes untouched, including hexagon-shaped nodes', () => {
+    const points = [
+      { x: 100, y: -200 },
+      { x: 100, y: -150 },
+    ];
+    const node = { shape: 'hexagon', x: 0, y: 0, width: 400, height: 300 };
+    expect(endOnHexagonFrames(points, { start: undefined, end: node })).toBe(points);
   });
 });

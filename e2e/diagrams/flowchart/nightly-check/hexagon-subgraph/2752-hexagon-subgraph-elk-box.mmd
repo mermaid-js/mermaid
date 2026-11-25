@@ -1,0 +1,12 @@
+---
+description:
+  A hexagon subgraph (issue 2752) laid out with elk.box keeps its children inside the
+  slanted top and bottom.
+---
+flowchart TD
+  subgraph core["Core"]@{ shape: hex, algorithm: elk.box }
+    a[Node one]
+    b[Node two]
+    c[Node three]
+    d[Node four]
+  end

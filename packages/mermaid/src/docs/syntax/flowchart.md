@@ -1132,6 +1132,36 @@ id). When a subgraph is collapsed:
 `view: expanded` is the default and renders the subgraph normally, so omitting the
 metadata (or setting `view: expanded`) keeps the existing behavior.
 
+### Subgraph shapes (v<MERMAID_RELEASE_VERSION>+)
+
+A subgraph is drawn as a rectangle by default. Set `shape: hex` in its metadata to draw
+it as a pointed-top hexagon instead, for example for the rings of a hexagonal
+architecture diagram. The metadata can follow the subgraph header or be attached
+later with the `id@{ ... }` statement, as for collapsible subgraphs.
+
+```mermaid-example
+flowchart TD
+    client[Client] --> api
+    subgraph core["Application core"]@{ shape: hex }
+        api[Order API] --> place[Place order]
+        subgraph domain["Domain"]
+            order[Order] --> events[Order events]
+        end
+        place --> order
+    end
+    domain@{ shape: hex }
+    place --> db[(Database)]
+```
+
+The accepted values are the node shape names for the same figures: `hex`, `hexagon`
+and `prepare` draw a hexagon, and `rect`, `rectangle`, `proc` and `process` draw the
+default rectangle. Any other shape is a syntax error.
+
+The default `elk` layout leaves room inside the frame for the slanted top and bottom.
+Under `dagre`, which reserves no such room, the slanted sides only go as deep as the
+space dagre leaves around the subgraph's contents and title, so a crowded frame comes
+out flatter or as a rectangle.
+
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.

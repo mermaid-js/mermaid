@@ -1,0 +1,14 @@
+---
+description:
+  An edge from a node inside a hexagon subgraph (issue 2752) to the subgraph itself ends on
+  the slanted floor it leaves through, not on the bounding box below it.
+config:
+  layout: elk
+---
+flowchart TB
+  subgraph core["Application core"]@{ shape: hex }
+    a[Domain] --> b[Ports]
+    c[Rules] --> d[Adapters]
+    e[Events] --> f[Jobs]
+  end
+  f --> core

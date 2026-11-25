@@ -14,6 +14,7 @@ import { orderNestedEdgeEnds } from './nestedEdgeOrder.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { type EdgeEnds, type ElkDirection, nodesToSpreadPorts } from './spreadArrowheads.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
+import { clusterVerticalInset } from '../../rendering-elements/clusters/hexagonGeometry.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
   EDGE_ROUTING_OPTIONS,
@@ -428,7 +429,10 @@ export function buildSubgraphLayoutOptions(
     // than left to ELK's default of 12. The top gets the same value as the
     // rest: ELK reserves the subgraph's own title strip on top of whatever is
     // given here, so adding the label height again double-counts it.
-    'elk.padding': `[top=${SUBGRAPH_PADDING},left=${SUBGRAPH_PADDING},bottom=${SUBGRAPH_PADDING},right=${SUBGRAPH_PADDING}]`,
+    //
+    // A shape with slanted top and bottom edges (the hexagon) adds its inset there, so
+    // children sit below the roof and above the floor rather than crossing them.
+    'elk.padding': `[top=${SUBGRAPH_PADDING + clusterVerticalInset(node.shape)},left=${SUBGRAPH_PADDING},bottom=${SUBGRAPH_PADDING + clusterVerticalInset(node.shape)},right=${SUBGRAPH_PADDING}]`,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
 
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
@@ -464,13 +468,16 @@ export function buildSubgraphLayoutOptions(
   // runs instead of being swallowed by the root INCLUDE_CHILDREN policy.
   const algo = resolveContainerAlgorithm(node.metadata?.algorithm, log);
   if (algo) {
+    // A hexagon's slanted top and bottom need the same room here as in the default branch.
+    const inset = clusterVerticalInset(node.shape);
     // These algorithms also need a minimum height for their title strip.
-    const padTop = labelH + CONTAINER_PADDING;
+    const padTop = labelH + CONTAINER_PADDING + inset;
+    const padBottom = CONTAINER_PADDING + inset;
     layoutOptions['nodeSize.constraints'] = '[MINIMUM_SIZE, NODE_LABELS]';
     // The minimum has to clear the whole reserved strip — the label plus the
     // padding above and below it — not just the label height, or a container
     // whose children are shorter than its own chrome comes out too short.
-    layoutOptions['nodeSize.minimum'] = `(${minWidth}, ${padTop + CONTAINER_PADDING})`;
+    layoutOptions['nodeSize.minimum'] = `(${minWidth}, ${padTop + padBottom})`;
     layoutOptions['elk.algorithm'] = algo;
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
     layoutOptions['elk.aspectRatio'] = '2.0';
@@ -478,14 +485,15 @@ export function buildSubgraphLayoutOptions(
     layoutOptions['elk.expandNodes'] = 'true';
     // Reserve top padding for the label so children don't overlap it
     layoutOptions['elk.padding'] =
-      `[top=${padTop},left=${CONTAINER_PADDING},bottom=${CONTAINER_PADDING},right=${CONTAINER_PADDING}]`;
+      `[top=${padTop},left=${CONTAINER_PADDING},bottom=${padBottom},right=${CONTAINER_PADDING}]`;
 
     // Tighter spacing for rectpacking — uses smaller padding for nested containers.
     if (algo === 'elk.rectpacking') {
-      const rectPadTop = labelH + RECTPACKING_CONTAINER_PADDING;
+      const rectPadTop = labelH + RECTPACKING_CONTAINER_PADDING + inset;
+      const rectPadBottom = RECTPACKING_CONTAINER_PADDING + inset;
       Object.assign(layoutOptions, RECTPACKING_OPTIONS, {
-        'elk.padding': `[top=${rectPadTop},left=${RECTPACKING_CONTAINER_PADDING},bottom=${RECTPACKING_CONTAINER_PADDING},right=${RECTPACKING_CONTAINER_PADDING}]`,
-        'nodeSize.minimum': `(${minWidth}, ${rectPadTop + RECTPACKING_CONTAINER_PADDING})`,
+        'elk.padding': `[top=${rectPadTop},left=${RECTPACKING_CONTAINER_PADDING},bottom=${rectPadBottom},right=${RECTPACKING_CONTAINER_PADDING}]`,
+        'nodeSize.minimum': `(${minWidth}, ${rectPadTop + rectPadBottom})`,
       });
     }
   } else if (node.dir) {
@@ -1532,7 +1540,10 @@ export function evenGroupFrames(
     const origin = group.offset;
     const left = Math.max(origin.posX, Math.min(...xs) - SUBGRAPH_PADDING);
     const right = Math.min(origin.posX + group.width!, Math.max(...xs) + SUBGRAPH_PADDING);
-    const bottom = Math.min(origin.posY + group.height!, Math.max(...ys) + SUBGRAPH_PADDING);
+    const bottom = Math.min(
+      origin.posY + group.height!,
+      Math.max(...ys) + SUBGRAPH_PADDING + clusterVerticalInset(elkNode.shape)
+    );
     const top = origin.posY;
 
     // Keep the same title-plus-padding floor reserved before ELK routing and

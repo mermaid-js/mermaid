@@ -127,6 +127,8 @@ export interface GroupTitleRect {
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
+  /** Roof and floor depth of a `hexagon` frame in px. A layout that sizes frames sets it; unset keeps the fixed default. */
+  hexagonPointDepth?: number;
   isEdgeLabel?: boolean;
   edgeStart?: string;
   edgeEnd?: string;
