@@ -1,215 +1,117 @@
 import type { LayoutData, Node } from '../../types.js';
+import { boxOf, buildContext, type Context, type OnionArrangement } from './context.js';
+import { boxCorners, hexagonPolygon, segmentsCross, type Box, type Vec } from './geometry.js';
 import {
-  angleOf,
-  assignToSlots,
-  boxCorners,
-  boxIntersectsConvex,
-  boxesOverlap,
-  circularMean,
-  clipSegmentToBox,
-  hexagonPolygon,
-  inflateBox,
-  segmentHitsBox,
-  type Box,
-  type Vec,
-} from './geometry.js';
-import { analyseOnion, type OnionStructure, type PortKind } from './structure.js';
+  arrangeOrder,
+  FRAME_PAD,
+  remapGroup,
+  GRID_GAP,
+  sectorOffset,
+  sectorPitch,
+  ellipsePoint,
+  type Order,
+  type OrderParams,
+} from './ordering.js';
+import {
+  countConflicts,
+  edgeSegment,
+  makeFrameShape,
+  placedLabels,
+  scan,
+  scanNewNode,
+  type Frame,
+  type FrameShape,
+  type Scene,
+} from './scene.js';
+import type { PortKind } from './structure.js';
 
-export type OnionArrangement = 'horizontal' | 'vertical';
+export type { OnionArrangement } from './context.js';
+export { OnionLayoutError } from './structure.js';
 
-/** Clear space kept between two nodes, and between a node and an edge label. */
-const NODE_GAP = 16;
-/** Slack added around a label's measured box; the painter pulls edge ends back by an arrowhead, which shifts the label along the spoke. */
-const LABEL_SLACK = 20;
-const GRID_GAP = 28;
-/** Roof height as a share of the frame's half-width; one slope is used for every ring of a layout. */
-const HEX_SLOPES = [0.06, 0.1, 0.16] as const;
+/** Roof height as a share of the frame's half-width. */
+const HEX_SLOPE_INNER = 0.15;
+/** The core and adapters frames carry ports and adapters on their roofs, so a deep roof costs height there. */
+const HEX_SLOPE_OUTER = 0.1;
 /** How much of a band's thickness is also added across the spoke axis. */
 const CROSS_BAND_SHARE = 0.3;
-const FRAME_PAD = 22;
 const TITLE_GAP = 12;
-/** Ports only need an order from the angle machinery, so the nominal slot spread is one fixed value. */
-const NOMINAL_SECTOR_STEP_DEG = 30;
-const PITCH_SCALES = [1, 1.15, 1.35, 1.6, 2] as const;
-const ELLIPSE_ASPECTS = [1.4, 1.9, 2.4, 3, 3.8] as const;
-const PHASE_FRACTIONS = [0, 0.25, 0.5, 0.75] as const;
+const DEFAULT_OPTIONS: OnionOptions = { swapPasses: 2, sweeps: 2 };
+const ASPECT_RANGE = { min: 0.6, max: 1.6 } as const;
 
-interface Frame {
+/** Starting point and the alternatives tried one at a time around it. */
+/** Multiples of the port pitch tried when a layout still has overlaps. */
+const PORT_SPREADS = [1.5, 2.2, 3.2] as const;
+
+const BASE_PARAMS: OrderParams = {
+  aspect: 2.2,
+  phase: 0,
+  roundness: 2,
+  pitchScale: 1.2,
+  portPull: 0,
+};
+const ALTERNATIVES: { [K in keyof OrderParams]: readonly number[] } = {
+  aspect: [1.6, 3],
+  phase: [],
+  roundness: [3.5],
+  pitchScale: [1, 1.7],
+  portPull: [],
+};
+
+export interface OnionOptions {
+  /** Passes of neighbour swaps that cut edge crossings and length; 0 keeps the barycentre order. */
+  swapPasses: number;
+  /** Sweeps over the groups' reorderings, each reordering laid out for real; 0 keeps the order from the neighbour-barycentre and swap passes. */
+  sweeps: number;
+}
+
+export interface OnionResult {
+  /** Chosen box of each labelled edge's label, in layout space. */
+  labelBoxes: ReadonlyMap<string, Box>;
+  /** Outline and title box of each ring frame that is painted. */
+  frames: ReadonlyMap<string, { poly: readonly Vec[]; title: Box }>;
+  /** Overlaps the chosen layout still has (0 means every rule held). */
+  conflicts: number;
+  /** Each remaining overlap, named. */
+  conflictReport: readonly string[];
+  /** Pairs of edges with no shared node that cross. */
+  crossings: number;
+  /** Summed straight edge length between visible ends. */
+  edgeLengthPx: number;
   width: number;
   height: number;
-  depth: number;
-  poly: Vec[];
-  title: Box;
-}
-
-interface FrameShape extends Frame {
-  id: string;
-  members: ReadonlySet<string>;
-}
-
-interface Scene {
-  boxes: Map<string, Box>;
-  frames: FrameShape[];
-}
-
-interface Params {
-  aspect: number;
-  phase: number;
-  /** Port pitch as a multiple of the tightest pitch that keeps neighbouring ports apart. */
-  pitchScale: number;
-  slope: number;
 }
 
 interface Solution {
   boxes: Map<string, Box>;
   frames: Map<string, Frame>;
-  area: number;
-  aspect: number;
+  labels: Map<string, Box>;
   conflicts: number;
+  crossings: number;
+  width: number;
+  height: number;
+  order: Order;
+  scene: Scene;
 }
 
-interface LabeledEdge {
-  id: string;
-  start: string;
-  end: string;
-  label: Box | undefined;
-}
-
-interface Context {
-  arrangement: OnionArrangement;
-  structure: OnionStructure;
-  size: Map<string, { width: number; height: number }>;
-  edges: LabeledEdge[];
-  leafMembers: Map<string, Set<string>>;
-  groupById: Map<string, Node>;
-  /** Per side, how far a slanted shape's outline sits inside its box at mid-height. */
-  slantInset: Map<string, number>;
-}
-
-/** Part of the segment a→b between the two boxes, and its midpoint: where the painter puts the label. */
-export function visibleSegment(src: Box, dst: Box): { from: Vec; to: Vec; mid: Vec } {
-  const a = { x: src.x, y: src.y };
-  const b = { x: dst.x, y: dst.y };
-  const leaving = clipSegmentToBox(a, b, src);
-  const entering = clipSegmentToBox(a, b, dst);
-  const t0 = leaving ? leaving[1] : 0;
-  const t1 = entering ? entering[0] : 1;
-  const [lo, hi] = t0 <= t1 ? [t0, t1] : [(t0 + t1) / 2, (t0 + t1) / 2];
-  const at = (t: number): Vec => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
-  return { from: at(lo), to: at(hi), mid: at((lo + hi) / 2) };
-}
-
-function labelBoxFor(edge: LabeledEdge, src: Box, dst: Box): Box | undefined {
-  if (!edge.label) {
-    return undefined;
-  }
-  const mid = visibleSegment(src, dst).mid;
-  return { x: mid.x, y: mid.y, width: edge.label.width, height: edge.label.height };
-}
-
-/** The box a slanted shape is actually drawn in where an edge meets it. */
-function narrowed(ctx: Context, id: string, box: Box): Box {
-  return { ...box, width: box.width - 2 * (ctx.slantInset.get(id) ?? 0) };
-}
-
-/** Overlaps between nodes, frames, titles, edge labels and edges in the scene, each named. */
-export function findConflicts(ctx: Context, scene: Scene): string[] {
-  const found: string[] = [];
-  const ids = [...scene.boxes.keys()];
-  for (let i = 0; i < ids.length; i++) {
-    const a = scene.boxes.get(ids[i])!;
-    for (let j = i + 1; j < ids.length; j++) {
-      if (
-        boxesOverlap(
-          inflateBox(a, NODE_GAP / 2),
-          inflateBox(scene.boxes.get(ids[j])!, NODE_GAP / 2)
-        )
-      ) {
-        found.push(`node ${ids[i]} x node ${ids[j]}`);
-      }
-    }
-    for (const frame of scene.frames) {
-      if (
-        !frame.members.has(ids[i]) &&
-        boxIntersectsConvex(inflateBox(a, NODE_GAP / 2), frame.poly)
-      ) {
-        found.push(`node ${ids[i]} x frame ${frame.id}`);
-      }
-      if (boxesOverlap(inflateBox(a, NODE_GAP / 2), frame.title)) {
-        found.push(`node ${ids[i]} x title ${frame.id}`);
-      }
-    }
-  }
-  const labels: { edge: LabeledEdge; box: Box }[] = [];
-  for (const edge of ctx.edges) {
-    const src = scene.boxes.get(edge.start);
-    const dst = scene.boxes.get(edge.end);
-    if (!src || !dst) {
-      continue;
-    }
-    const seg = visibleSegment(narrowed(ctx, edge.start, src), narrowed(ctx, edge.end, dst));
-    for (const [id, box] of scene.boxes) {
-      if (
-        id !== edge.start &&
-        id !== edge.end &&
-        segmentHitsBox(seg.from, seg.to, inflateBox(box, 2))
-      ) {
-        found.push(`edge ${edge.id} through node ${id}`);
-      }
-    }
-    for (const frame of scene.frames) {
-      if (segmentHitsBox(seg.from, seg.to, frame.title)) {
-        found.push(`edge ${edge.id} through title ${frame.id}`);
-      }
-    }
-    const label = labelBoxFor(edge, narrowed(ctx, edge.start, src), narrowed(ctx, edge.end, dst));
-    if (label) {
-      const padded = inflateBox(label, LABEL_SLACK / 2);
-      labels.push({ edge, box: padded });
-      for (const [id, box] of scene.boxes) {
-        if (boxesOverlap(padded, inflateBox(box, NODE_GAP / 4))) {
-          found.push(`label ${edge.id} x node ${id}`);
-        }
-      }
-      for (const frame of scene.frames) {
-        if (boxesOverlap(padded, frame.title)) {
-          found.push(`label ${edge.id} x title ${frame.id}`);
-        }
-      }
-    }
-  }
-  for (let i = 0; i < labels.length; i++) {
-    for (let j = i + 1; j < labels.length; j++) {
-      if (boxesOverlap(labels[i].box, labels[j].box)) {
-        found.push(`label ${labels[i].edge.id} x label ${labels[j].edge.id}`);
-      }
-    }
-  }
-  return found;
-}
-
-function countConflicts(ctx: Context, scene: Scene): number {
-  return findConflicts(ctx, scene).length;
-}
-
-/** Hexagon centred on the origin that encloses the boxes and points with the ring's title above. */
+/** Hexagon centred on the origin that encloses the boxes and points, with the ring's title above. */
 function fitFrame(
   ctx: Context,
-  slope: number,
-  ringId: string,
+  ring: Node | undefined,
   boxes: readonly Box[],
   points: readonly Vec[],
   padX: number,
   padY: number
 ): Frame {
-  const ring = ctx.groupById.get(ringId)!;
-  const titleW = ring.labelBBox?.width ?? 0;
-  const titleH = ring.labelBBox?.height ?? 0;
-  const margin = ring.padding ?? 8;
+  const titleW = ring?.labelBBox?.width ?? 0;
+  const titleH = ring?.labelBBox?.height ?? 0;
+  const margin = ring?.padding ?? 8;
   const corners = [...boxes.flatMap((b) => boxCorners(b)), ...points];
-  const widest = Math.max(...corners.map((p) => Math.abs(p.x)));
-  const halfW = Math.max(widest + padX, titleW / 2 + margin);
-  const depth = slope * halfW;
+  const widest = Math.max(0, ...corners.map((p) => Math.abs(p.x)));
+  const halfW = Math.max(widest + padX, titleW / 2 + margin, 1);
+  const depth =
+    (ring && (ring === ctx.structure.core || ring === ctx.structure.outer)
+      ? HEX_SLOPE_OUTER
+      : HEX_SLOPE_INNER) * halfW;
   const titleTop = Math.min(depth, (depth * (titleW + margin)) / (2 * halfW));
   const titleZone = titleW / 2 + margin;
 
@@ -219,20 +121,20 @@ function fitFrame(
   }
   // Anything whose span reaches under the title pushes the roof up by the title's height.
   const reachesTitle = (xMin: number, xMax: number) => xMin < titleZone && xMax > -titleZone;
-  for (const b of boxes) {
-    if (reachesTitle(b.x - b.width / 2, b.x + b.width / 2)) {
-      halfH = Math.max(
-        halfH,
-        titleTop + titleH + TITLE_GAP + (b.y - b.height / 2 < 0 ? -(b.y - b.height / 2) : 0)
-      );
+  if (titleH > 0) {
+    for (const b of boxes) {
+      if (reachesTitle(b.x - b.width / 2, b.x + b.width / 2)) {
+        const top = b.y - b.height / 2;
+        halfH = Math.max(halfH, titleTop + titleH + TITLE_GAP + (top < 0 ? -top : 0));
+      }
+    }
+    for (const p of points) {
+      if (reachesTitle(p.x, p.x) && p.y < 0) {
+        halfH = Math.max(halfH, titleTop + titleH + TITLE_GAP - p.y);
+      }
     }
   }
-  for (const p of points) {
-    if (reachesTitle(p.x, p.x) && p.y < 0) {
-      halfH = Math.max(halfH, titleTop + titleH + TITLE_GAP - p.y);
-    }
-  }
-  halfH = Math.max(halfH, depth);
+  halfH = Math.max(halfH, depth, 1);
   const width = 2 * halfW;
   const height = 2 * halfH;
   return {
@@ -249,160 +151,6 @@ function bandOutline(frame: Frame, band: number, arrangement: OnionArrangement):
   const growX = arrangement === 'horizontal' ? band : band * CROSS_BAND_SHARE;
   const growY = arrangement === 'horizontal' ? band * CROSS_BAND_SHARE : band;
   return hexagonPolygon(frame.width + 2 * growX, frame.height + 2 * growY, frame.depth);
-}
-
-function frameShape(ctx: Context, ringId: string, frame: Frame): FrameShape {
-  return { ...frame, id: ringId, members: ctx.leafMembers.get(ringId)! };
-}
-
-function sectorCentre(arrangement: OnionArrangement, kind: 'driving' | 'driven'): number {
-  const drivingAt = arrangement === 'horizontal' ? Math.PI : -Math.PI / 2;
-  return kind === 'driving' ? drivingAt : drivingAt + Math.PI;
-}
-
-function sectorSlots(centre: number, count: number, stepRad: number): number[] {
-  return Array.from({ length: count }, (_, i) => centre + (i - (count - 1) / 2) * stepRad);
-}
-
-function meanAngleOfNeighbours(
-  ctx: Context,
-  id: string,
-  angles: ReadonlyMap<string, number>
-): number | undefined {
-  const known: number[] = [];
-  for (const n of ctx.structure.neighbours.get(id) ?? []) {
-    const a = angles.get(n);
-    if (a !== undefined) {
-      known.push(a);
-    }
-  }
-  return circularMean(known);
-}
-
-/** Slot centres of the packed grid used for the innermost ring, relative to the grid centre. */
-function gridSlotCentres(ctx: Context, leafIds: readonly string[]): Vec[] {
-  const cols = Math.ceil(Math.sqrt(leafIds.length));
-  const rows = Math.ceil(leafIds.length / cols);
-  const cellW = Math.max(...leafIds.map((id) => ctx.size.get(id)!.width)) + GRID_GAP;
-  const cellH = Math.max(...leafIds.map((id) => ctx.size.get(id)!.height)) + GRID_GAP;
-  return Array.from({ length: leafIds.length }, (_, i) => ({
-    x: ((i % cols) - (cols - 1) / 2) * cellW,
-    y: (Math.floor(i / cols) - (rows - 1) / 2) * cellH,
-  }));
-}
-
-/**
- * Orders every ring's leaves and the ports by the angle of their neighbours, a few passes over:
- * each node moves to the free slot closest to the mean direction of the nodes it is wired to.
- */
-function orderByNeighbourAngle(ctx: Context, params: Params): Map<string, number> {
-  const { structure, arrangement } = ctx;
-  const stepRad = (NOMINAL_SECTOR_STEP_DEG * Math.PI) / 180;
-  const angles = new Map<string, number>();
-  const portSlots = new Map<string, number[]>();
-  for (const kind of ['driving', 'driven'] as const) {
-    const group = structure.ports.filter((p) => p.kind === kind);
-    portSlots.set(kind, sectorSlots(sectorCentre(arrangement, kind), group.length, stepRad));
-    group.forEach((p, i) => angles.set(p.id, portSlots.get(kind)![i]));
-  }
-  const ringSlots = structure.innerLeafIds.map((ids, j) => {
-    const innermost = j === structure.innerLeafIds.length - 1;
-    if (innermost) {
-      return gridSlotCentres(ctx, ids).map(angleOf);
-    }
-    return ids.map((_, k) => params.phase + (k * 2 * Math.PI) / ids.length);
-  });
-  structure.innerLeafIds.forEach((ids, j) =>
-    ids.forEach((id, k) => angles.set(id, ringSlots[j][k]))
-  );
-
-  for (let pass = 0; pass < 6; pass++) {
-    structure.innerLeafIds.forEach((ids, j) => {
-      const slots = ringSlots[j];
-      const picked = assignToSlots(
-        ids.map((id) => meanAngleOfNeighbours(ctx, id, angles)),
-        slots
-      );
-      ids.forEach((id, k) => angles.set(id, slots[picked[k]]));
-    });
-    for (const kind of ['driving', 'driven'] as const) {
-      const group = structure.ports.filter((p) => p.kind === kind);
-      const slots = portSlots.get(kind)!;
-      const picked = assignToSlots(
-        group.map((p) => meanAngleOfNeighbours(ctx, p.id, angles)),
-        slots
-      );
-      group.forEach((p, k) => angles.set(p.id, slots[picked[k]]));
-    }
-  }
-  return angles;
-}
-
-function sizeBox(ctx: Context, id: string, x: number, y: number): Box {
-  const { width, height } = ctx.size.get(id)!;
-  return { x, y, width, height };
-}
-
-/** First value of a rising parameter that clears every overlap, or the one with the fewest. */
-function searchSmallest(
-  from: number,
-  to: number,
-  step: number,
-  conflictsAt: (value: number) => number,
-  allowed: number
-): number {
-  let best = from;
-  let bestCount = Number.POSITIVE_INFINITY;
-  for (let v = from; v <= to; v += step) {
-    const count = conflictsAt(v);
-    if (count <= allowed) {
-      return v;
-    }
-    if (count < bestCount) {
-      bestCount = count;
-      best = v;
-    }
-  }
-  return best;
-}
-
-function packInnermost(
-  ctx: Context,
-  ids: readonly string[],
-  angles: ReadonlyMap<string, number>,
-  gap: number
-): Map<string, Box> {
-  const cols = Math.ceil(Math.sqrt(ids.length));
-  const slotAngles = gridSlotCentres(ctx, ids).map(angleOf);
-  const slotOf = ids.map((id) => {
-    const angle = angles.get(id)!;
-    return slotAngles.findIndex((a) => Math.abs(a - angle) < 1e-9);
-  });
-  const cell = ids.map((id, k) => ({
-    id,
-    row: Math.floor(slotOf[k] / cols),
-    col: slotOf[k] % cols,
-  }));
-  const rowCount = Math.max(...cell.map((c) => c.row)) + 1;
-  const colWidth = Array.from({ length: cols }, (_, c) =>
-    Math.max(0, ...cell.filter((x) => x.col === c).map((x) => ctx.size.get(x.id)!.width))
-  );
-  const rowHeight = Array.from({ length: rowCount }, (_, r) =>
-    Math.max(0, ...cell.filter((x) => x.row === r).map((x) => ctx.size.get(x.id)!.height))
-  );
-  const offset = (sizes: readonly number[], i: number) =>
-    sizes.slice(0, i).reduce((s, v) => s + v + gap, 0) + sizes[i] / 2;
-  const totalW = colWidth.reduce((s, v) => s + v, 0) + gap * (cols - 1);
-  const totalH = rowHeight.reduce((s, v) => s + v, 0) + gap * (rowCount - 1);
-  const boxes = cell.map((c) => ({
-    id: c.id,
-    x: offset(colWidth, c.col) - totalW / 2,
-    y: offset(rowHeight, c.row) - totalH / 2,
-  }));
-  // Recentre on the mean of the node centres: the metric the domain's position is judged by.
-  const meanX = boxes.reduce((s, b) => s + b.x, 0) / boxes.length;
-  const meanY = boxes.reduce((s, b) => s + b.y, 0) / boxes.length;
-  return new Map(boxes.map((b) => [b.id, sizeBox(ctx, b.id, b.x - meanX, b.y - meanY)]));
 }
 
 /** Where the straight spoke at `perp` (across the spoke axis) leaves the outline on its sector's side. */
@@ -436,9 +184,110 @@ function spokePoint(
   return vertical ? { x: at, y: outer } : { x: outer, y: at };
 }
 
-/** Sort key that runs along a sector the same way as the perpendicular offset does. */
-function acrossKey(arrangement: OnionArrangement, angle: number): number {
-  return arrangement === 'vertical' ? Math.cos(angle) : Math.sin(angle);
+/**
+ * Smallest value of a rising parameter whose trial clears every overlap beyond `allowed`; the
+ * value with the fewest overlaps when none does. A coarse pass finds the neighbourhood, a fine
+ * pass walks back to the first clear step inside it.
+ */
+function searchSmallest(
+  from: number,
+  to: number,
+  step: number,
+  conflictsAt: (value: number) => number,
+  allowed: number
+): number {
+  const coarse = step * 5;
+  let best = from;
+  let bestCount = Number.POSITIVE_INFINITY;
+  let hit: number | undefined;
+  for (let v = from; v <= to; v += coarse) {
+    const count = conflictsAt(v);
+    if (count <= allowed) {
+      hit = v;
+      break;
+    }
+    if (count < bestCount) {
+      bestCount = count;
+      best = v;
+    }
+  }
+  if (hit === undefined) {
+    return best;
+  }
+  for (let v = Math.max(from, hit - coarse + step); v < hit; v += step) {
+    if (conflictsAt(v) <= allowed) {
+      return v;
+    }
+  }
+  return hit;
+}
+
+/** Runs `fn` with extra boxes and frames in the scene, then takes them out again. */
+function withTrial<T>(
+  scene: Scene,
+  boxes: ReadonlyMap<string, Box>,
+  frames: FrameShape[],
+  fn: () => T
+): T {
+  const previous = new Map<string, Box | undefined>();
+  for (const [id, box] of boxes) {
+    previous.set(id, scene.boxes.get(id));
+    scene.boxes.set(id, box);
+  }
+  scene.frames.push(...frames);
+  try {
+    return fn();
+  } finally {
+    scene.frames.length -= frames.length;
+    for (const [id, old] of previous) {
+      if (old) {
+        scene.boxes.set(id, old);
+      } else {
+        scene.boxes.delete(id);
+      }
+    }
+  }
+}
+
+function frameShape(ctx: Context, ringId: string | undefined, frame: Frame): FrameShape {
+  const members = ringId === undefined ? undefined : ctx.leafMembers.get(ringId);
+  return makeFrameShape(frame, ringId ?? '', members ?? new Set());
+}
+
+function packInnermost(
+  ctx: Context,
+  ids: readonly string[],
+  order: Order,
+  gap: number
+): Map<string, Box> {
+  if (ids.length === 0) {
+    return new Map();
+  }
+  const cols = Math.ceil(Math.sqrt(ids.length));
+  const cell = ids.map((id) => {
+    const slot = order.slot.get(id)!;
+    return { id, row: Math.floor(slot / cols), col: slot % cols };
+  });
+  const rowCount = Math.max(...cell.map((c) => c.row)) + 1;
+  const colWidth = Array.from({ length: cols }, (_, c) =>
+    Math.max(0, ...cell.filter((x) => x.col === c).map((x) => ctx.size.get(x.id)!.width))
+  );
+  const rowHeight = Array.from({ length: rowCount }, (_, r) =>
+    Math.max(0, ...cell.filter((x) => x.row === r).map((x) => ctx.size.get(x.id)!.height))
+  );
+  const offset = (sizes: readonly number[], i: number) =>
+    sizes.slice(0, i).reduce((s, v) => s + v + gap, 0) + sizes[i] / 2;
+  const totalW = colWidth.reduce((s, v) => s + v, 0) + gap * (cols - 1);
+  const totalH = rowHeight.reduce((s, v) => s + v, 0) + gap * (rowCount - 1);
+  const placed = cell.map((c) => ({
+    id: c.id,
+    x: offset(colWidth, c.col) - totalW / 2,
+    y: offset(rowHeight, c.row) - totalH / 2,
+  }));
+  // Recentre on the mean of the node centres: the metric the domain's position is judged by.
+  const meanX = placed.reduce((s, b) => s + b.x, 0) / placed.length;
+  const meanY = placed.reduce((s, b) => s + b.y, 0) / placed.length;
+  return new Map(placed.map((b) => [b.id, boxOf(ctx, b.id, b.x - meanX, b.y - meanY)]));
 }
 
 interface SpokeSide {
@@ -446,171 +295,170 @@ interface SpokeSide {
   perp: number;
 }
 
-function solve(ctx: Context, params: Params): Solution {
+function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Solution {
   const { structure, arrangement } = ctx;
-  const rings = structure.rings;
-  const angles = orderByNeighbourAngle(ctx, params);
   const scene: Scene = { boxes: new Map(), frames: [] };
   const frames = new Map<string, Frame>();
-  const ringCount = rings.length;
+  const lastRing = structure.innerRings.length - 1;
 
   // Innermost ring: a packed grid on the centre. The grid opens up until the labels of edges
   // inside the ring fit between its nodes.
-  const innermostIds = structure.innerLeafIds.at(-1)!;
+  const innermost = structure.innerRings[lastRing];
+  const innermostIds = structure.innerLeafIds[lastRing];
+  const fitInnermost = (gap: number) => {
+    const boxes = packInnermost(ctx, innermostIds, order, gap);
+    const frame = fitFrame(ctx, innermost, [...boxes.values()], [], FRAME_PAD, FRAME_PAD);
+    return { boxes, frame };
+  };
   const gridGap = searchSmallest(
     GRID_GAP,
     400,
     4,
-    (gap) =>
-      countConflicts(ctx, { boxes: packInnermost(ctx, innermostIds, angles, gap), frames: [] }),
+    (gap) => {
+      const trial = fitInnermost(gap);
+      return withTrial(scene, trial.boxes, [frameShape(ctx, innermost.id, trial.frame)], () =>
+        countConflicts(ctx, scene)
+      );
+    },
     0
   );
-  const packed = packInnermost(ctx, innermostIds, angles, gridGap);
-  packed.forEach((box, id) => scene.boxes.set(id, box));
-  const innermostId = rings[ringCount - 1].id;
-  let inner = fitFrame(
-    ctx,
-    params.slope,
-    innermostId,
-    [...packed.values()],
-    [],
-    FRAME_PAD,
-    FRAME_PAD
-  );
-  frames.set(innermostId, inner);
-  scene.frames.push(frameShape(ctx, innermostId, inner));
+  const first = fitInnermost(gridGap);
+  first.boxes.forEach((box, id) => scene.boxes.set(id, box));
+  let inner = first.frame;
+  frames.set(innermost.id, inner);
+  scene.frames.push(frameShape(ctx, innermost.id, inner));
 
-  // Middle rings: leaves on an ellipse around the next ring in.
-  for (let i = ringCount - 2; i >= 2; i--) {
-    const ids = structure.innerLeafIds[i - 2];
-    const ringId = rings[i].id;
+  // Middle rings: leaves on a generalised ellipse around the next ring in.
+  for (let j = lastRing - 1; j >= 0; j--) {
+    const ring = structure.innerRings[j];
+    const ids = structure.innerLeafIds[j];
     const baseline = countConflicts(ctx, scene);
-    const place = (t: number): Map<string, Box> =>
-      new Map(
+    const innerPoly = inner.poly;
+    const ringAt = (t: number) => {
+      const boxes = new Map<string, Box>(
         ids.map((id) => {
-          const a = angles.get(id)!;
-          return [id, sizeBox(ctx, id, params.aspect * t * Math.cos(a), t * Math.sin(a))];
+          const theta = order.ringAngles[j][order.slot.get(id)!];
+          const p = ellipsePoint(theta, params.aspect * t, t, params.roundness);
+          return [id, boxOf(ctx, id, p.x, p.y)];
         })
       );
+      const frame = fitFrame(ctx, ring, [...boxes.values()], innerPoly, FRAME_PAD, FRAME_PAD);
+      return { boxes, frame };
+    };
     const t = searchSmallest(
       30,
       3000,
       6,
       (value) => {
-        const trial: Scene = { boxes: new Map(scene.boxes), frames: scene.frames };
-        place(value).forEach((box, id) => trial.boxes.set(id, box));
-        return countConflicts(ctx, trial);
+        const trial = ringAt(value);
+        return withTrial(scene, trial.boxes, [frameShape(ctx, ring.id, trial.frame)], () =>
+          countConflicts(ctx, scene)
+        );
       },
       baseline
     );
-    const placed = place(t);
-    placed.forEach((box, id) => scene.boxes.set(id, box));
-    inner = fitFrame(
-      ctx,
-      params.slope,
-      ringId,
-      [...placed.values()],
-      inner.poly,
-      FRAME_PAD,
-      FRAME_PAD
-    );
-    frames.set(ringId, inner);
-    scene.frames.push(frameShape(ctx, ringId, inner));
+    const placed = ringAt(t);
+    placed.boxes.forEach((box, id) => scene.boxes.set(id, box));
+    inner = placed.frame;
+    frames.set(ring.id, inner);
+    scene.frames.push(frameShape(ctx, ring.id, inner));
   }
 
-  // Ports sit in a row along their sector, evenly pitched, in the order of their neighbours' angles.
+  // Ports sit in a row along their sector, evenly pitched, in the order the ordering stage found.
   const spoke = new Map<string, SpokeSide>();
   for (const kind of ['driving', 'driven'] as const) {
     const group = structure.ports
       .filter((p) => p.kind === kind)
-      .sort(
-        (p, q) =>
-          acrossKey(arrangement, angles.get(p.id)!) - acrossKey(arrangement, angles.get(q.id)!)
-      );
-    const extent = Math.max(
-      ...group.map((p) =>
-        arrangement === 'vertical' ? ctx.size.get(p.id)!.width : ctx.size.get(p.id)!.height
-      )
+      .sort((p, q) => order.slot.get(p.id)! - order.slot.get(q.id)!);
+    const pitch = sectorPitch(ctx, kind, params) * spread;
+    group.forEach((p, i) =>
+      spoke.set(p.id, { kind, perp: sectorOffset(ctx, kind, i, group.length, pitch) })
     );
-    const pitch = (extent + 2 * NODE_GAP) * params.pitchScale;
-    group.forEach((p, i) => spoke.set(p.id, { kind, perp: (i - (group.length - 1) / 2) * pitch }));
   }
 
   // Core: frame around the inner rings, ports centred on its border.
-  const coreId = rings[1].id;
-  const innerPoly = inner.poly;
+  const core = structure.core;
+  const coreInner = inner.poly;
   const baselineCore = countConflicts(ctx, scene);
   const coreAt = (t: number) => {
     const padX = arrangement === 'horizontal' ? t : FRAME_PAD + t * CROSS_BAND_SHARE;
     const padY = arrangement === 'horizontal' ? FRAME_PAD + t * CROSS_BAND_SHARE : t;
-    const frame = fitFrame(ctx, params.slope, coreId, [], innerPoly, padX, padY);
-    const trial: Scene = {
-      boxes: new Map(scene.boxes),
-      frames: [...scene.frames, frameShape(ctx, coreId, frame)],
-    };
+    const frame = fitFrame(ctx, core, [], coreInner, padX, padY);
+    const boxes = new Map<string, Box>();
     for (const port of structure.ports) {
       const side = spoke.get(port.id)!;
       const centre = spokePoint(frame.poly, arrangement, side.kind, side.perp);
-      trial.boxes.set(port.id, sizeBox(ctx, port.id, centre.x, centre.y));
+      boxes.set(port.id, boxOf(ctx, port.id, centre.x, centre.y));
     }
-    return { frame, trial };
+    return { frame, boxes };
   };
   const coreT = searchSmallest(
     10,
     2500,
     6,
-    (t) => countConflicts(ctx, coreAt(t).trial),
+    (t) => {
+      const trial = coreAt(t);
+      return withTrial(scene, trial.boxes, [frameShape(ctx, core.id, trial.frame)], () =>
+        countConflicts(ctx, scene)
+      );
+    },
     baselineCore
   );
-  const core = coreAt(coreT);
-  frames.set(coreId, core.frame);
-  core.trial.boxes.forEach((box, id) => scene.boxes.set(id, box));
-  scene.frames.push(frameShape(ctx, coreId, core.frame));
+  const placedCore = coreAt(coreT);
+  placedCore.boxes.forEach((box, id) => scene.boxes.set(id, box));
+  frames.set(core.id, placedCore.frame);
+  scene.frames.push(frameShape(ctx, core.id, placedCore.frame));
 
   // Adapters: straight out from their port, on the core outline pushed outwards together.
-  const outerId = rings[0].id;
   const adapterSpoke = new Map<string, SpokeSide>();
+  const stray = (id: string): SpokeSide => {
+    const known = (structure.neighbours.get(id) ?? []).flatMap(
+      (n) => spoke.get(n) ?? adapterSpoke.get(n) ?? []
+    );
+    return known[0] ?? { kind: 'driven', perp: 0 };
+  };
   for (const id of structure.adapterIds) {
     const port = structure.ports.find((p) => (structure.neighbours.get(id) ?? []).includes(p.id));
-    const side = port ? spoke.get(port.id) : undefined;
-    if (side) {
-      adapterSpoke.set(id, side);
-    }
+    adapterSpoke.set(id, port ? spoke.get(port.id)! : stray(id));
   }
   const baselineAdapters = countConflicts(ctx, scene);
-  const adaptersAt = (band: number): Scene => {
-    const outline = bandOutline(core.frame, band, arrangement);
-    const trial: Scene = { boxes: new Map(scene.boxes), frames: scene.frames };
+  const adaptersAt = (band: number): Map<string, Box> => {
+    const outline = bandOutline(placedCore.frame, band, arrangement);
+    const out = new Map<string, Box>();
     for (const [id, side] of adapterSpoke) {
       const c = spokePoint(outline, arrangement, side.kind, side.perp);
-      trial.boxes.set(id, sizeBox(ctx, id, c.x, c.y));
+      out.set(id, boxOf(ctx, id, c.x, c.y));
     }
-    return trial;
+    return out;
   };
   const adapterBand = searchSmallest(
     0,
     900,
     6,
-    (band) => countConflicts(ctx, adaptersAt(band)),
+    (band) => withTrial(scene, adaptersAt(band), [], () => countConflicts(ctx, scene)),
     baselineAdapters
   );
-  adaptersAt(adapterBand).boxes.forEach((box, id) => scene.boxes.set(id, box));
-  const outerBoxes = [...adapterSpoke.keys(), ...structure.ports.map((p) => p.id)].map(
+  adaptersAt(adapterBand).forEach((box, id) => scene.boxes.set(id, box));
+
+  // Outer ring (when the diagram has one) around adapters and ports. Without it a frame is still
+  // fitted, unpainted, to give the externals an outline to stand off from.
+  const outerBoxes = [...structure.adapterIds, ...structure.ports.map((p) => p.id)].map(
     (id) => scene.boxes.get(id)!
   );
   const outer = fitFrame(
     ctx,
-    params.slope,
-    outerId,
+    structure.outer,
     outerBoxes,
-    core.frame.poly,
+    placedCore.frame.poly,
     FRAME_PAD,
     FRAME_PAD
   );
-  frames.set(outerId, outer);
-  scene.frames.push(frameShape(ctx, outerId, outer));
+  if (structure.outer) {
+    frames.set(structure.outer.id, outer);
+    scene.frames.push(frameShape(ctx, structure.outer.id, outer));
+  }
 
-  // Externals: beyond the outermost frame, in line with the adapters they reach.
+  // Externals: beyond the outer frame, in line with the adapters they reach.
   for (const id of structure.externalIds) {
     const reached = (structure.neighbours.get(id) ?? []).flatMap((n) => adapterSpoke.get(n) ?? []);
     const side: SpokeSide = reached[0]
@@ -618,8 +466,8 @@ function solve(ctx: Context, params: Params): Solution {
           kind: reached[0].kind,
           perp: reached.reduce((sum, r) => sum + r.perp, 0) / reached.length,
         }
-      : { kind: 'driven', perp: 0 };
-    const baseline = countConflicts(ctx, scene);
+      : stray(id);
+    const settled = placedLabels(ctx, scene);
     const at = (band: number): Box => {
       const c = spokePoint(
         bandOutline(outer, band, arrangement),
@@ -627,37 +475,22 @@ function solve(ctx: Context, params: Params): Solution {
         side.kind,
         side.perp
       );
-      return sizeBox(ctx, id, c.x, c.y);
+      return boxOf(ctx, id, c.x, c.y);
     };
     const band = searchSmallest(
       0,
       900,
       6,
-      (value) => {
-        const trial: Scene = { boxes: new Map(scene.boxes), frames: scene.frames };
-        trial.boxes.set(id, at(value));
-        return countConflicts(ctx, trial);
-      },
-      baseline
+      (value) =>
+        withTrial(scene, new Map([[id, at(value)]]), [], () =>
+          scanNewNode(ctx, scene, id, settled)
+        ),
+      0
     );
     scene.boxes.set(id, at(band));
   }
 
-  const conflicts = countConflicts(ctx, scene);
-  const extent = layoutExtent(scene, frames);
-  return {
-    boxes: scene.boxes,
-    frames,
-    area: extent.width * extent.height,
-    aspect: extent.width / extent.height,
-    conflicts,
-  };
-}
-
-function layoutExtent(
-  scene: Scene,
-  frames: ReadonlyMap<string, Frame>
-): { width: number; height: number } {
+  const result = scan(ctx, scene, false);
   const xs: number[] = [];
   const ys: number[] = [];
   for (const b of scene.boxes.values()) {
@@ -672,99 +505,204 @@ function layoutExtent(
       ys.push(p.y);
     }
   }
-  return { width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
-}
-
-const ASPECT_RANGE = { min: 0.6, max: 1.6 } as const;
-
-function isOutsideAspectRange(s: Solution): number {
-  return s.aspect < ASPECT_RANGE.min || s.aspect > ASPECT_RANGE.max ? 1 : 0;
-}
-
-/** Fewer conflicts first, then an aspect inside the target range, then the smaller bounding area. */
-function compareSolutions(a: Solution, b: Solution): number {
-  return (
-    a.conflicts - b.conflicts ||
-    isOutsideAspectRange(a) - isOutsideAspectRange(b) ||
-    a.area - b.area
-  );
-}
-
-function buildContext(data: LayoutData, arrangement: OnionArrangement): Context {
-  const structure = analyseOnion(data);
-  const size = new Map<string, { width: number; height: number }>();
-  const slantInset = new Map<string, number>();
-  const groupById = new Map<string, Node>();
-  for (const n of data.nodes) {
-    if (n.isGroup) {
-      groupById.set(n.id, n);
-    } else {
-      size.set(n.id, { width: n.width ?? 0, height: n.height ?? 0 });
-      if (n.shape === 'lean_right' || n.shape === 'lean_left' || n.shape === 'hexagon') {
-        slantInset.set(n.id, 0.2 * (n.height ?? 0));
-      }
-    }
-  }
-  const leafMembers = new Map<string, Set<string>>();
-  for (const ring of structure.rings) {
-    const members = new Set<string>();
-    for (const n of data.nodes) {
-      let cursor: Node | undefined = n;
-      while (cursor && !n.isGroup) {
-        if (cursor.parentId === ring.id) {
-          members.add(n.id);
-          break;
-        }
-        cursor =
-          cursor.parentId === undefined
-            ? undefined
-            : data.nodes.find((x) => x.id === cursor!.parentId);
-      }
-    }
-    leafMembers.set(ring.id, members);
-  }
   return {
-    arrangement,
-    structure,
-    size,
-    groupById,
-    slantInset,
-    leafMembers,
-    edges: data.edges
-      .filter((e) => e.start && e.end)
-      .map((e) => ({
-        id: e.id,
-        start: e.start!,
-        end: e.end!,
-        label:
-          e.label && e.width && e.height
-            ? { x: 0, y: 0, width: e.width, height: e.height }
-            : undefined,
-      })),
+    boxes: scene.boxes,
+    frames,
+    labels: result.labels,
+    conflicts: result.count,
+    crossings: edgeStats(ctx, scene.boxes).crossings,
+    width: Math.max(...xs) - Math.min(...xs),
+    height: Math.max(...ys) - Math.min(...ys),
+    order,
+    scene,
   };
 }
 
-/** Writes node centres, frame sizes and straight edge routes onto `data`; reads only measured sizes. */
-export function runOnionLayoutCore(data: LayoutData, arrangement: OnionArrangement): void {
-  const ctx = buildContext(data, arrangement);
-  let best: Solution | undefined;
-  for (const aspect of ELLIPSE_ASPECTS) {
-    for (const fraction of PHASE_FRACTIONS) {
-      const phase =
-        (fraction * (2 * Math.PI)) / Math.max(1, ctx.structure.innerLeafIds.at(-2)?.length ?? 1);
-      for (const pitchScale of PITCH_SCALES) {
-        for (const slope of HEX_SLOPES) {
-          const solution = solve(ctx, { aspect, phase, pitchScale, slope });
-          if (!best || compareSolutions(solution, best) < 0) {
-            best = solution;
-          }
+function isOutsideAspectRange(s: Solution): number {
+  const aspect = s.width / s.height;
+  return aspect < ASPECT_RANGE.min || aspect > ASPECT_RANGE.max ? 1 : 0;
+}
+
+/** Bounding area, with each edge crossing counted as this many px² of it: a tie-break between near-equal areas. */
+const CROSSING_AREA_PX2 = 40_000;
+/** Each overlap the layout could not clear is priced as this share of its area. */
+const CONFLICT_AREA_SHARE = 0.5;
+
+function layoutCost(s: Solution): number {
+  return (
+    (s.width * s.height + s.crossings * CROSSING_AREA_PX2) * (1 + CONFLICT_AREA_SHARE * s.conflicts)
+  );
+}
+
+/** Fewer conflicts first, then an aspect inside the target range, then the lower area-plus-crossings cost. */
+function compareSolutions(a: Solution, b: Solution): number {
+  return isOutsideAspectRange(a) - isOutsideAspectRange(b) || layoutCost(a) - layoutCost(b);
+}
+
+/** Largest area growth the crossing polish may pay for removing a crossing. */
+const CROSSING_POLISH_AREA_SLACK = 1.04;
+
+/** Whether variant `i` of `variantsOf(order, g)` swaps two neighbouring slots (or turns a ring by one). */
+function isNeighbourSwap(order: Order, g: number, i: number): boolean {
+  const n = order.groups[g].ids.length;
+  return order.groups[g].cyclic ? i === 0 || i === n - 2 : i >= 1;
+}
+
+/** Reorderings of one group of an order: every turn and mirror of a ring, every neighbour swap and the reversal of a sector. */
+function variantsOf(order: Order, g: number, grid: boolean): ((slot: number) => number)[] {
+  const n = order.groups[g].ids.length;
+  if (n < 2) {
+    return [];
+  }
+  if (grid) {
+    // The innermost grid is small: try every pair of cells.
+    return Array.from({ length: n * n }, (_, k) => [Math.floor(k / n), k % n] as const)
+      .filter(([i, j]) => i < j)
+      .map(
+        ([i, j]) =>
+          (s: number) =>
+            s === i ? j : s === j ? i : s
+      );
+  }
+  if (order.groups[g].cyclic) {
+    return [
+      ...Array.from({ length: n - 1 }, (_, k) => (s: number) => (s + k + 1) % n),
+      ...Array.from({ length: n }, (_, k) => (s: number) => (k + n - s) % n),
+    ];
+  }
+  return [
+    (s) => n - 1 - s,
+    ...Array.from(
+      { length: n - 1 },
+      (_, i) => (s: number) => (s === i ? i + 1 : s === i + 1 ? i : s)
+    ),
+  ];
+}
+
+/**
+ * Starts from the neighbour-barycentre order and sweeps each group once: every reordering of it is
+ * laid out for real, and the best is kept. The innermost grid is tried cell pair by cell pair.
+ */
+function searchFrom(ctx: Context, options: OnionOptions, start: OrderParams): Solution {
+  let params = start;
+  let order = arrangeOrder(ctx, params, options.swapPasses);
+  let best = solve(ctx, params, order);
+  const lastRing = ctx.structure.innerRings.length - 1;
+  for (let sweep = 0; sweep < options.sweeps; sweep++) {
+    let improved = false;
+    for (let g = 0; g < order.groups.length; g++) {
+      const start = order;
+      for (const remap of variantsOf(start, g, g === lastRing)) {
+        const trialOrder = remapGroup(start, g, remap);
+        const trial = solve(ctx, params, trialOrder);
+        if (compareSolutions(trial, best) < 0) {
+          best = trial;
+          order = trialOrder;
+          improved = true;
+        }
+      }
+    }
+    if (!improved) {
+      break;
+    }
+  }
+  for (const key of ['aspect', 'pitchScale', 'roundness'] as const) {
+    for (const value of ALTERNATIVES[key]) {
+      const trialParams = { ...params, [key]: value };
+      const trial = solve(ctx, trialParams, order);
+      if (compareSolutions(trial, best) < 0) {
+        best = trial;
+        params = trialParams;
+      }
+    }
+  }
+  // Polish: accept a neighbour swap that removes a crossing for at most a little more area.
+  if (options.sweeps > 0 && best.crossings > 0) {
+    const areaBudget = best.width * best.height * CROSSING_POLISH_AREA_SLACK;
+    for (let g = 0; g < order.groups.length; g++) {
+      if (best.crossings === 0) {
+        continue;
+      }
+      const start = order;
+      for (const remap of variantsOf(start, g, false).filter((_, i) =>
+        isNeighbourSwap(start, g, i)
+      )) {
+        const trialOrder = remapGroup(start, g, remap);
+        const trial = solve(ctx, params, trialOrder);
+        if (
+          trial.conflicts <= best.conflicts &&
+          trial.crossings < best.crossings &&
+          trial.width * trial.height <= areaBudget
+        ) {
+          best = trial;
+          order = trialOrder;
         }
       }
     }
   }
-  if (!best) {
-    return;
+  // Fallback: when some overlap is left, spread the port rows further apart and lay out again.
+  for (const spread of best.conflicts > 0 ? PORT_SPREADS : []) {
+    const trial = solve(ctx, params, order, spread);
+    if (compareSolutions(trial, best) < 0) {
+      best = trial;
+    }
   }
+  return best;
+}
+
+/** Where the first slot of a middle ring sits, tried in turn while the layout still has overlaps. */
+const RESTART_PHASES = [0.5, 0.25, 0.75] as const;
+
+function searchLayouts(ctx: Context, options: OnionOptions): Solution {
+  let best = searchFrom(ctx, options, BASE_PARAMS);
+  for (const phase of best.conflicts > 0 && options.sweeps > 0 ? RESTART_PHASES : []) {
+    const trial = searchFrom(ctx, options, { ...BASE_PARAMS, phase });
+    if (compareSolutions(trial, best) < 0) {
+      best = trial;
+    }
+  }
+  return best;
+}
+
+function edgeStats(
+  ctx: Context,
+  boxes: ReadonlyMap<string, Box>
+): { crossings: number; length: number } {
+  const routes = ctx.edges.flatMap((e) => {
+    const a = boxes.get(e.start);
+    const b = boxes.get(e.end);
+    return a && b ? [{ e, seg: edgeSegment(ctx, e, a, b) }] : [];
+  });
+  let crossings = 0;
+  for (let i = 0; i < routes.length; i++) {
+    for (let j = i + 1; j < routes.length; j++) {
+      const p = routes[i];
+      const q = routes[j];
+      const shared =
+        p.e.start === q.e.start ||
+        p.e.start === q.e.end ||
+        p.e.end === q.e.start ||
+        p.e.end === q.e.end;
+      if (!shared && segmentsCross(p.seg.from, p.seg.to, q.seg.from, q.seg.to)) {
+        crossings++;
+      }
+    }
+  }
+  const length = routes.reduce(
+    (s, x) => s + Math.hypot(x.seg.to.x - x.seg.from.x, x.seg.to.y - x.seg.from.y),
+    0
+  );
+  return { crossings, length };
+}
+
+/** Writes node centres, frame sizes and straight edge routes onto `data`; reads only measured sizes. */
+export function runOnionLayoutCore(
+  data: LayoutData,
+  arrangement: OnionArrangement,
+  options: OnionOptions = DEFAULT_OPTIONS
+): OnionResult {
+  const ctx = buildContext(data, arrangement);
+  const best = searchLayouts(ctx, options);
   const byId = new Map(data.nodes.map((n) => [n.id, n]));
   best.boxes.forEach((box, id) => {
     const node = byId.get(id);
@@ -773,6 +711,7 @@ export function runOnionLayoutCore(data: LayoutData, arrangement: OnionArrangeme
       node.y = box.y;
     }
   });
+  const framesOut = new Map<string, { poly: readonly Vec[]; title: Box }>();
   best.frames.forEach((frame, id) => {
     const node = byId.get(id);
     if (node?.isGroup) {
@@ -781,6 +720,7 @@ export function runOnionLayoutCore(data: LayoutData, arrangement: OnionArrangeme
       node.width = frame.width;
       node.height = frame.height;
       node.hexagonPointDepth = frame.depth;
+      framesOut.set(id, { poly: frame.poly, title: frame.title });
     }
   });
   for (const id of ctx.structure.sideGroupIds) {
@@ -796,15 +736,49 @@ export function runOnionLayoutCore(data: LayoutData, arrangement: OnionArrangeme
       node.height = Math.max(...ys) - Math.min(...ys);
     }
   }
-  for (const edge of data.edges) {
-    const src = edge.start ? best.boxes.get(edge.start) : undefined;
-    const dst = edge.end ? best.boxes.get(edge.end) : undefined;
-    if (src && dst) {
-      const mid = { x: (src.x + dst.x) / 2, y: (src.y + dst.y) / 2 };
-      // Three collinear points: the shared painter drops the first and last and clips the middle.
-      edge.points = [{ x: src.x, y: src.y }, mid, { x: dst.x, y: dst.y }];
-      edge.x = mid.x;
-      edge.y = mid.y;
+  const edgeById = new Map(data.edges.map((e) => [e.id, e]));
+  for (const e of ctx.edges) {
+    const edge = edgeById.get(e.id);
+    const src = best.boxes.get(e.start);
+    const dst = best.boxes.get(e.end);
+    if (!edge || !src || !dst) {
+      continue;
     }
+    const seg = edgeSegment(ctx, e, src, dst);
+    // Three collinear points: the shared painter drops the first and last and clips the middle.
+    edge.points = [{ x: src.x, y: src.y }, seg.anchor, { x: dst.x, y: dst.y }];
+    const label = best.labels.get(e.id);
+    // The painter lands the label at edge.x/y plus how far clipping moved the path midpoint.
+    edge.x = (label?.x ?? seg.mid.x) - (seg.mid.x - seg.anchor.x);
+    edge.y = (label?.y ?? seg.mid.y) - (seg.mid.y - seg.anchor.y);
   }
+  for (const e of ctx.loops) {
+    const edge = edgeById.get(e.id);
+    const box = best.boxes.get(e.start);
+    if (!edge || !box) {
+      continue;
+    }
+    // A small loop off the right side; the painter clips its first and last points to the shape.
+    const rx = box.x + box.width / 2;
+    edge.points = [
+      { x: box.x, y: box.y },
+      { x: rx + 34, y: box.y - 18 },
+      { x: rx + 52, y: box.y },
+      { x: rx + 34, y: box.y + 18 },
+      { x: box.x, y: box.y },
+    ];
+    edge.x = rx + 52 + (e.label?.width ?? 0) / 2;
+    edge.y = box.y;
+  }
+  const stats = edgeStats(ctx, best.boxes);
+  return {
+    labelBoxes: best.labels,
+    frames: framesOut,
+    conflicts: best.conflicts,
+    conflictReport: best.conflicts > 0 ? scan(ctx, best.scene, true).report : [],
+    crossings: stats.crossings,
+    edgeLengthPx: stats.length,
+    width: best.width,
+    height: best.height,
+  };
 }

@@ -120,13 +120,15 @@ export function clipSegmentToBox(a: Vec, b: Vec, box: Box): [number, number] | u
   let t1 = 1;
   const dx = b.x - a.x;
   const dy = b.y - a.y;
-  const checks: [number, number][] = [
-    [-dx, a.x - boxLeft(box)],
-    [dx, boxRight(box) - a.x],
-    [-dy, a.y - boxTop(box)],
-    [dy, boxBottom(box) - a.y],
-  ];
-  for (const [p, q] of checks) {
+  const left = box.x - box.width / 2;
+  const right = box.x + box.width / 2;
+  const top = box.y - box.height / 2;
+  const bottom = box.y + box.height / 2;
+  // Liang–Barsky: each side contributes (p, q) = (direction against the side, room to it).
+  for (let side = 0; side < 4; side++) {
+    const p = side === 0 ? -dx : side === 1 ? dx : side === 2 ? -dy : dy;
+    const q =
+      side === 0 ? a.x - left : side === 1 ? right - a.x : side === 2 ? a.y - top : bottom - a.y;
     if (p === 0) {
       if (q < 0) {
         return undefined;
@@ -150,6 +152,16 @@ export function clipSegmentToBox(a: Vec, b: Vec, box: Box): [number, number] | u
 }
 
 export function segmentHitsBox(a: Vec, b: Vec, box: Box): boolean {
+  const hw = box.width / 2;
+  const hh = box.height / 2;
+  if (
+    Math.max(a.x, b.x) < box.x - hw ||
+    Math.min(a.x, b.x) > box.x + hw ||
+    Math.max(a.y, b.y) < box.y - hh ||
+    Math.min(a.y, b.y) > box.y + hh
+  ) {
+    return false;
+  }
   const hit = clipSegmentToBox(a, b, box);
   return hit !== undefined && hit[1] - hit[0] > 1e-9;
 }
@@ -232,4 +244,53 @@ export function assignToSlots(
   };
   walk(0, 0);
   return best;
+}
+
+export function pointAlong(a: Vec, b: Vec, t: number): Vec {
+  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+}
+
+/** Whether the segments a–b and c–d cross at a point interior to both. */
+export function segmentsCross(a: Vec, b: Vec, c: Vec, d: Vec): boolean {
+  const side = (p: Vec, q: Vec, r: Vec) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+  const d1 = side(a, b, c);
+  const d2 = side(a, b, d);
+  const d3 = side(c, d, a);
+  const d4 = side(c, d, b);
+  return d1 * d2 < -1e-9 && d3 * d4 < -1e-9;
+}
+
+/** Whether any side of the polygon passes through the box. */
+export function outlineHitsBox(poly: readonly Vec[], box: Box): boolean {
+  for (let i = 0; i < poly.length; i++) {
+    if (segmentHitsBox(poly[i], poly[(i + 1) % poly.length], box)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export interface Bounds {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+}
+
+export function boundsOf(poly: readonly Vec[]): Bounds {
+  return {
+    minX: Math.min(...poly.map((p) => p.x)),
+    maxX: Math.max(...poly.map((p) => p.x)),
+    minY: Math.min(...poly.map((p) => p.y)),
+    maxY: Math.max(...poly.map((p) => p.y)),
+  };
+}
+
+export function boxTouchesBounds(b: Box, bounds: Bounds): boolean {
+  return (
+    b.x + b.width / 2 > bounds.minX &&
+    b.x - b.width / 2 < bounds.maxX &&
+    b.y + b.height / 2 > bounds.minY &&
+    b.y - b.height / 2 < bounds.maxY
+  );
 }
