@@ -93,9 +93,6 @@ const registerDefaultLayoutLoaders = () => {
       name: 'grid',
       loader: async () => await import('./layout-algorithms/grid/index.js'),
     },
-    // Both names share one loader; `algorithm` picks the sector arrangement.
-    { name: 'onion', algorithm: 'onion', loader: onionLoader },
-    { name: 'onion-vertical', algorithm: 'onion-vertical', loader: onionLoader },
     // Small and dependency-free, so it ships in the tiny build too.
     {
       name: 'layered',
@@ -110,6 +107,9 @@ const registerDefaultLayoutLoaders = () => {
             name: 'cose-bilkent',
             loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
           },
+          // Both names share one loader; `algorithm` picks the sector arrangement.
+          { name: 'onion', algorithm: 'onion', loader: onionLoader },
+          { name: 'onion-vertical', algorithm: 'onion-vertical', loader: onionLoader },
           ...elkLayoutLoaders(),
         ]
       : []),
