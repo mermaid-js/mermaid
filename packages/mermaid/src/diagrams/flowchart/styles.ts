@@ -76,7 +76,7 @@ const genColor = (options: FlowChartStyleOptions) => {
     sections += `
 
     ${slot}.cluster:not(.swimlane) rect,
-    ${slot}.cluster polygon.cluster-hexagon {
+    ${slot}.cluster:not(.swimlane) polygon.cluster-hexagon {
       stroke: ${borderColor};
       ${fill}
     }
