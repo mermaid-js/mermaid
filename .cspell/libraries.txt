@@ -47,6 +47,7 @@ libavoid
 mathml
 matplotlib
 mdbook
+merIDK
 Mermerd
 mkdocs
 monocart
