@@ -28,7 +28,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \%\%(?!\{)*[^\n]*                                               /* skip comments */
 [^\}]\%\%*[^\n]*                                                /* skip comments */
 \%\%*[^\n]*[\n]*                                                /* do nothing */
-\#[ \t][^\n]*                                                   /* skip # comments */
+\#[ \t](?![^\n]*[ \t]":"[^#\n;]+)[^\n]*                          /* skip # comments, unless the line has the shape of a task line (name, ' :', task data) */
 
 [\n]+                   return 'NL';
 \s+                     /* skip whitespace */
