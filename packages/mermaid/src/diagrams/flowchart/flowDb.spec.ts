@@ -623,12 +623,20 @@ describe('flow db tooltips with <br> (issue #6631)', () => {
     return tooltip as HTMLElement;
   }
 
+  /**
+   * The tooltip's top-level content in order, with each break shown as `<br>`, so a test
+   * can check that the break sits between the two lines rather than just somewhere in it.
+   */
+  function tooltipParts(tooltip: HTMLElement): string[] {
+    return [...tooltip.childNodes].map((child) =>
+      child.nodeName === 'BR' ? '<br>' : (child.textContent ?? '')
+    );
+  }
+
   it('renders a bare <br> in a tooltip as a line break, not as literal text', () => {
     const tooltip = hoverTooltip('first line<br>second line');
 
-    expect(tooltip.querySelector('br')).not.toBeNull();
-    expect(tooltip.textContent).toContain('first line');
-    expect(tooltip.textContent).toContain('second line');
+    expect(tooltipParts(tooltip)).toEqual(['first line', '<br>', 'second line']);
     expect(tooltip.innerHTML).not.toMatch(/&lt;br/);
   });
 
@@ -637,9 +645,7 @@ describe('flow db tooltips with <br> (issue #6631)', () => {
     (breakTag) => {
       const tooltip = hoverTooltip(`first line${breakTag}second line`);
 
-      expect(tooltip.querySelector('br')).not.toBeNull();
-      expect(tooltip.textContent).toContain('first line');
-      expect(tooltip.textContent).toContain('second line');
+      expect(tooltipParts(tooltip)).toEqual(['first line', '<br>', 'second line']);
       expect(tooltip.innerHTML).not.toMatch(/&lt;br/);
     }
   );
