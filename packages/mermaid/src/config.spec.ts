@@ -113,6 +113,20 @@ describe('when working with site config', () => {
     }
     configApi.reset();
   });
+
+  it('should preserve themeCSS with child combinators during sanitization', () => {
+    const directive: MermaidConfig = {
+      themeCSS: 'g.node > rect { fill: red; }',
+    };
+    configApi.sanitize(directive);
+    expect(directive.themeCSS).toBe('g.node > rect { fill: red; }');
+
+    const unsafeDirective: MermaidConfig = {
+      themeCSS: '<script>alert(1)</script>',
+    };
+    configApi.sanitize(unsafeDirective);
+    expect(unsafeDirective.themeCSS).toBeUndefined();
+  });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
