@@ -39,10 +39,12 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
     node.cssStyles = styles.replaceAll('!important', '').split(';');
   }
 
-  const renderExtraBox =
-    classNode.members.length === 0 &&
-    classNode.methods.length === 0 &&
-    !config.class?.hideEmptyMembersBox;
+  const hasMembers = classNode.members.length > 0;
+  const hasMethods = classNode.methods.length > 0;
+  const hideEmptyMembersBox = Boolean(config.class?.hideEmptyMembersBox);
+  const collapseEmptyMembersRow = hideEmptyMembersBox && !hasMembers && hasMethods;
+
+  const renderExtraBox = !hasMembers && !hasMethods && !hideEmptyMembersBox;
 
   // Setup roughjs
   // @ts-ignore TODO: Fix rough typings
@@ -57,19 +59,16 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   const w = Math.max(node.width ?? 0, bbox.width);
   let h = Math.max(node.height ?? 0, bbox.height);
   const nodeHeightGreater = (node.height ?? 0) > bbox.height;
-  if (classNode.members.length === 0 && classNode.methods.length === 0) {
+  if (!hasMembers && !hasMethods) {
     h += GAP;
-  } else if (classNode.members.length > 0 && classNode.methods.length === 0) {
+  } else if (hasMembers && !hasMethods && !hideEmptyMembersBox) {
+    // Reserve the height of the empty methods row; it is hidden otherwise.
     h += GAP * 2;
   }
 
   const x = -w / 2;
   const y = -h / 2;
-  let extraHeight = renderExtraBox
-    ? PADDING * 2
-    : classNode.members.length === 0 && classNode.methods.length === 0
-      ? -PADDING
-      : 0;
+  let extraHeight = renderExtraBox ? PADDING * 2 : !hasMembers && !hasMethods ? -PADDING : 0;
   if (nodeHeightGreater) {
     extraHeight = PADDING * 2;
   }
@@ -77,13 +76,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   // Create and center rectangle
   const roughRect = rc.rectangle(
     x - PADDING,
-    y -
-      PADDING -
-      (renderExtraBox
-        ? PADDING
-        : classNode.members.length === 0 && classNode.methods.length === 0
-          ? -PADDING / 2
-          : 0),
+    y - PADDING - (renderExtraBox ? PADDING : !hasMembers && !hasMethods ? -PADDING / 2 : 0),
     w + 2 * PADDING,
     h + 2 * PADDING + extraHeight,
     options
@@ -146,26 +139,24 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
           : 0);
     if (text.attr('class').includes('methods-group')) {
       const membersGroupHeightForMethods = Math.max(membersGroupHeight, GAP / 2);
+      // Without members, the methods group sits directly under the label when the empty
+      // attributes row is hidden, instead of after the reserved members-group height.
+      const methodsRowOffset = collapseEmptyMembersRow
+        ? GAP * 2
+        : membersGroupHeightForMethods + GAP * 4;
       if (nodeHeightGreater) {
         newTranslateY =
           Math.max(
             methodsAreaPlacement,
             annotationGroupHeight +
               labelGroupHeight +
-              membersGroupHeightForMethods +
+              (collapseEmptyMembersRow ? GAP * 2 : membersGroupHeightForMethods + GAP * 2) +
               y +
-              GAP * 2 +
               PADDING
           ) +
           GAP * 2;
       } else {
-        newTranslateY =
-          annotationGroupHeight +
-          labelGroupHeight +
-          membersGroupHeightForMethods +
-          y +
-          GAP * 4 +
-          PADDING;
+        newTranslateY = annotationGroupHeight + labelGroupHeight + methodsRowOffset + y + PADDING;
       }
     }
     if (
@@ -204,7 +195,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   // Line y-values are offset by 0.001 so gradient stroke can apply.
   // If y-values are the same then the height of the bounding box is zero and it doesn't work.
   // First line (under label)
-  if (classNode.members.length > 0 || classNode.methods.length > 0 || renderExtraBox) {
+  if (hasMembers || hasMethods || renderExtraBox) {
     const firstLineY = annotationGroupHeight + labelGroupHeight + y + PADDING;
     const roughLine = rc.line(
       rectBBox.x,
@@ -219,8 +210,12 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
       .attr('style', styles);
   }
 
-  // Second line (under members)
-  if (renderExtraBox || classNode.members.length > 0 || classNode.methods.length > 0) {
+  // Second line (under members). Only separates two sections that both have content when
+  // empty member boxes are hidden; otherwise it also frames the empty row.
+  const renderSecondDivider = hideEmptyMembersBox
+    ? hasMembers && hasMethods
+    : renderExtraBox || hasMembers || hasMethods;
+  if (renderSecondDivider) {
     const secondLineY =
       annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 2 + PADDING;
     const roughLine = rc.line(
