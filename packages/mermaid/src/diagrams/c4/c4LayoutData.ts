@@ -151,6 +151,59 @@ const labelNudge = (rel: C4Rel): C4LabelNudge => {
   return nudge;
 };
 
+const PERSON_TYPES: ReadonlySet<string> = new Set(['person', 'external_person']);
+
+/**
+ * Whether `to` can be reached from `from` by following edges from start to end.
+ */
+const reaches = (outgoing: ReadonlyMap<string, string[]>, from: string, to: string): boolean => {
+  const seen = new Set([from]);
+  const queue = [from];
+  for (let node = queue.shift(); node !== undefined; node = queue.shift()) {
+    for (const next of outgoing.get(node) ?? []) {
+      if (next === to) {
+        return true;
+      }
+      if (!seen.has(next)) {
+        seen.add(next);
+        queue.push(next);
+      }
+    }
+  }
+  return false;
+};
+
+/**
+ * Lays out from the person every relationship into a person that closes a cycle, with its
+ * arrowheads swapped so it is drawn pointing the same way. People belong on the first rank,
+ * and a layout engine that breaks such a cycle elsewhere puts the person last instead, with
+ * every relationship out of it looping back up. A relationship into a person outside any
+ * cycle keeps its direction.
+ */
+const layOutFromPeople = (edges: Edge[], people: ReadonlySet<string>): Edge[] => {
+  const outgoing = new Map<string, string[]>();
+  for (const { start, end } of edges) {
+    if (start !== undefined && end !== undefined) {
+      outgoing.set(start, [...(outgoing.get(start) ?? []), end]);
+    }
+  }
+  return edges.map((edge) =>
+    edge.start !== undefined &&
+    edge.end !== undefined &&
+    edge.start !== edge.end &&
+    people.has(edge.end) &&
+    reaches(outgoing, edge.end, edge.start)
+      ? {
+          ...edge,
+          start: edge.end,
+          end: edge.start,
+          arrowTypeStart: edge.arrowTypeEnd,
+          arrowTypeEnd: edge.arrowTypeStart,
+        }
+      : edge
+  );
+};
+
 export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -232,9 +285,16 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
     });
   });
 
+  const people = new Set(
+    db
+      .getC4ShapeArray()
+      .filter((shape) => PERSON_TYPES.has(shape.typeC4Shape.text))
+      .map((shape) => shape.alias)
+  );
+
   return {
     nodes,
-    edges,
+    edges: layOutFromPeople(edges, people),
     config,
     direction: db.getDirection(),
   };

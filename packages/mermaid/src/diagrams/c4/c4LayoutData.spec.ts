@@ -503,3 +503,70 @@ Container_Boundary(warehouse, "Warehouse") {
     });
   });
 });
+
+describe('c4LayoutData.getData with a relationship into a person that closes a cycle', () => {
+  const edgeTo = (edges: Edge[], id: string) => edges.find((edge) => edge.id === id);
+
+  it('lays it out from the person, still pointing at the person', () => {
+    const db = parse(`C4Container
+Person(customer, "Customer")
+Container(web, "Web")
+System_Ext(mail, "Mail")
+Rel(customer, web, "Uses")
+Rel(web, mail, "Sends e-mails using")
+Rel(mail, customer, "Sends e-mails to")`);
+
+    const { edges } = getData(db, config());
+
+    expect(edgeTo(edges, 'c4-edge-2-mail-customer')).toMatchObject({
+      start: 'customer',
+      end: 'mail',
+      arrowTypeStart: 'arrow_point',
+    });
+    expect(edgeTo(edges, 'c4-edge-2-mail-customer')?.arrowTypeEnd).toBeUndefined();
+    expect(edgeTo(edges, 'c4-edge-0-customer-web')).toMatchObject({
+      start: 'customer',
+      end: 'web',
+    });
+  });
+
+  it('keeps the direction of a relationship into a person outside any cycle', () => {
+    const db = parse(`C4Context
+Person(customer, "Customer")
+System(bank, "Bank")
+Rel(bank, customer, "Sends statements to")`);
+
+    expect(getData(db, config()).edges[0]).toMatchObject({
+      start: 'bank',
+      end: 'customer',
+      arrowTypeEnd: 'arrow_point',
+    });
+  });
+
+  it('keeps a Rel_Back pointing at the element it names first', () => {
+    const db = parse(`C4Context
+Person_Ext(partner, "Partner")
+System(bank, "Bank")
+Rel(partner, bank, "Uses")
+Rel_Back(bank, partner, "Reports to")`);
+
+    expect(edgeTo(getData(db, config()).edges, 'c4-edge-1-bank-partner')).toMatchObject({
+      start: 'partner',
+      end: 'bank',
+      arrowTypeEnd: 'arrow_point',
+    });
+  });
+
+  it('leaves a cycle without a person alone', () => {
+    const db = parse(`C4Context
+System(a, "A")
+System(b, "B")
+Rel(a, b, "Calls")
+Rel(b, a, "Calls back")`);
+
+    expect(getData(db, config()).edges.map(({ start, end }) => [start, end])).toEqual([
+      ['a', 'b'],
+      ['b', 'a'],
+    ]);
+  });
+});
