@@ -20,6 +20,9 @@ export const internalHelpers = {
   common,
   // Plugins get a mutable copy, not the frozen snapshot. Published `@mermaid-js/layout-elk`
   // bundles pass this to their own `setConfig`, whose `sanitize()` deletes keys in place.
+  // TODO(v13, frozen config): return the frozen `getConfig` once layout-elk's peer range no longer
+  // allows versions <= 1.0.2 (they sanitize in place). Then drop the per-context cache in
+  // `elk/render.ts`.
   getConfig: () => getConfigCopy(),
   insertCluster,
   insertEdge,

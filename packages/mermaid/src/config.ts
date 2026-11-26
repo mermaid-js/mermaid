@@ -245,6 +245,10 @@ const copyConfig = <T>(value: T, freeze: boolean): T => {
   return (freeze ? Object.freeze(copy) : copy) as T;
 };
 
+// TODO(v13, frozen config): code outside mermaid (third-party diagrams, detectors, `init()`
+// hooks, layout plugins) still gets a mutable copy, so freezing stays invisible to it in v12.
+// Each of those copies carries this tag: in v13, hand out the snapshot there too, document
+// that config objects are read-only, and delete the copies (search the tag to find them all).
 /**
  * Returns the `currentConfig` as a deeply frozen object, shared by every caller until the
  * config next changes. Copy before modifying it.

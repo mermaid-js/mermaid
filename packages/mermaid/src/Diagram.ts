@@ -29,6 +29,8 @@ export class Diagram {
         ? { raw: codeObjectOrText, cleaned: codeObjectOrText }
         : codeObjectOrText;
     // A mutable copy: third-party detectors and `init()` hooks may still write to it.
+    // TODO(v13, frozen config): pass `configApi.getConfig()` and document `DiagramDetector`
+    // and `DiagramDefinition.init` as receiving a read-only config.
     const config = configApi.getConfigCopy();
     const type = detectType(code.cleaned, config);
     try {

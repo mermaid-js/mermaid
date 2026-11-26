@@ -45,6 +45,9 @@ export const registerLayoutLoaders = (loaders: LayoutLoaderDefinition[]) => {
  * Definitions registered by mermaid itself. Their layouts only read `data4Layout.config`, so
  * they get the shared frozen snapshot; anything else (a registered plugin, including the
  * standalone `@mermaid-js/layout-elk` overriding a built-in name) gets a mutable copy.
+ *
+ * TODO(v13, frozen config): document `LayoutData.config` as read-only, give every layout the
+ * snapshot, and delete this set, `registerBuiltInLayoutLoaders` and the copy in {@link render}.
  */
 const builtInLayouts = new WeakSet<LayoutLoaderDefinition>();
 
@@ -144,6 +147,7 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
+  // TODO(v13, frozen config): remove; see `builtInLayouts`.
   if (!builtInLayouts.has(layoutDefinition) && data4Layout.config) {
     data4Layout.config = getConfigCopy(data4Layout.config);
   }
