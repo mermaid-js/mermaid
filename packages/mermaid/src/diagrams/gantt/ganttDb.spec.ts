@@ -31,6 +31,48 @@ describe('when using the ganttDb', function () {
     });
   });
 
+    describe('when using Unix timestamp date formats (issue #5216)', function () {
+    it('should accept decimal seconds as start and end dates with dateFormat X', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '0.1, 0.2');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      // X is a Unix timestamp in seconds, so 0.1 is 100 ms after the epoch
+      expect(tasks[0].startTime).toEqual(new Date(100));
+      expect(tasks[0].endTime).toEqual(new Date(200));
+    });
+
+    it('should accept the documented decimal X example value', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1410715640.579, 1d');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1410715640579));
+    });
+
+    it('should treat integer X values as seconds, not milliseconds', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1, 400ms');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1000));
+      expect(tasks[0].endTime).toEqual(new Date(1400));
+    });
+
+    it('should accept decimal milliseconds as start dates with dateFormat x', function () {
+      ganttDb.setDateFormat('x');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1500.5, 100ms');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1500));
+      expect(tasks[0].endTime).toEqual(new Date(1600));
+    });
+  });
+
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
