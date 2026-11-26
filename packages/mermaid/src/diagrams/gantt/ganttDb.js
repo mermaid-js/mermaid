@@ -302,18 +302,37 @@ const warnAboutUnknownTaskIds = function (keyword, ids) {
   );
 };
 
+/**
+ * Parse a Unix timestamp date string for the `x`/`X` date formats.
+ *
+ * `X` is a Unix timestamp in seconds and `x` is a Unix timestamp in
+ * milliseconds, so `X` values are converted to milliseconds. Decimal values
+ * are accepted, e.g. the documented `X` example `1410715640.579`.
+ *
+ * @param {string} dateFormat - Dayjs date format string.
+ * @param {string} str - The date string to parse.
+ * @returns {Date | null} The parsed date, or null when the string is not a
+ *   timestamp for the given format.
+ */
+const parseTimestamp = function (dateFormat, str) {
+  const format = dateFormat.trim();
+  if (format !== 'x' && format !== 'X') {
+    return null;
+  }
+  if (!/^\d+(?:\.\d+)?$/.test(str)) {
+    return null;
+  }
+  const value = Number(str);
+  return new Date(format === 'X' ? value * 1000 : value);
+};
+
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
-  // Helper function to check if format is a timestamp format (x or X)
-  const isTimestampFormat = (format) => {
-    const trimmedFormat = format.trim();
-    return trimmedFormat === 'x' || trimmedFormat === 'X';
-  };
-
-  // Handle timestamp formats (x, X) with numeric strings
-  if (isTimestampFormat(dateFormat) && /^\d+$/.test(str)) {
-    return new Date(Number(str));
+  // Handle timestamp formats (x, X) with numeric strings, including decimals
+  const timestamp = parseTimestamp(dateFormat, str);
+  if (timestamp !== null) {
+    return timestamp;
   }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
@@ -408,6 +427,14 @@ const parseDuration = function (str) {
 
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
+  // Handle timestamp formats (x, X) with numeric strings, including decimals
+  const timestamp = parseTimestamp(dateFormat, str);
+  if (timestamp !== null) {
+    if (inclusive) {
+      return dayjs(timestamp).add(1, 'd').toDate();
+    }
+    return timestamp;
+  }
 
   // test for until
   const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
