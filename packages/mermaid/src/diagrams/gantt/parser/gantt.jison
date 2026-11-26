@@ -68,7 +68,13 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'click';
 
-"gantt"(?![^\n]*":"[^#\n;]+)  return 'gantt';
+/* The `gantt` keyword only matches when the rest of the line is not shaped
+   like a task line (a `:` followed by task data), so a task named `Gantt`
+   parses as a task. The scan stops at a `%%` inline comment: a colon inside
+   the comment (e.g. `gantt %% note: planning`) must not suppress the
+   diagram-start keyword. A single `%` does not stop the scan, so a task
+   named e.g. `Gantt 50% done` still parses as a task. */
+"gantt"(?!(?:[^%\n]|[%](?![%]))*":"[^#\n;]+)  return 'gantt';
 "dateFormat"\s[^#\n;]+          return 'dateFormat';
 "inclusiveEndDates"             return 'inclusiveEndDates';
 "topAxis"                       return 'topAxis';
