@@ -10,8 +10,9 @@ name: Nightly E2E
 # notification on failure (deliberately out of scope for now).
 #
 # Screenshot capture + Argos upload (RUN_VISUAL_TEST below, argos-upload job)
-# use the same gate e2e.yml's argos-batch job uses, reusing that same Argos
-# project/baseline. On a fork this is always a no-op: there's no Argos
+# use the same gate e2e.yml's argos-batch job uses and the same Argos project,
+# but upload in Argos monitoring mode, so the nightly keeps its own baseline
+# (see the argos-upload job). On a fork this is always a no-op: there's no Argos
 # project/credentials there, so capturing screenshots with nothing to upload
 # them to would just be wasted work. The e2e job below stays gated to
 # mermaid-js/mermaid the same way; a fork wanting its own safe environment to
@@ -103,11 +104,15 @@ jobs:
           if-no-files-found: ignore
 
   # Uploads the nightly pr-check+nightly-check screenshots to Argos as a
-  # single (subset) build, diffed against the same develop baseline the PR
-  # runs in e2e.yml use — same Argos project, same reference branch, no
-  # separate setup needed once this runs on mermaid-js/mermaid. Writes the
-  # build's review URL to this run's Summary page, since (unlike a PR run)
-  # there's no PR here for Argos's own check to attach a link to.
+  # single monitoring-mode build. Monitoring builds ignore Git history and are
+  # compared only against the latest *approved* monitoring build, and they are
+  # never auto-approved: a night with visual changes stays "waiting for your
+  # decision" until someone approves or rejects it in Argos, so a regression
+  # can't silently become the next night's baseline. Monitoring builds never
+  # share baselines with the ci-mode builds from e2e.yml, so approving or
+  # rejecting a nightly never affects PR comparisons. Writes the build's
+  # review URL to this run's Summary page, since (unlike a PR run) there's no
+  # PR here for Argos's own check to attach a link to.
   #
   # needs.e2e.result == 'success' requires every shard to pass (the matrix is
   # fail-fast: false, so its result is failure if any shard failed) — a
@@ -143,18 +148,25 @@ jobs:
           merge-multiple: true
           path: e2e/screenshots
 
-      # Not a superset baseline (that's the develop-push build in e2e.yml) —
-      # --subset so this diffs cleanly against it, same as PR/manual runs
-      # there. Split into K parallel uploads sharing one nonce for the same
-      # reason e2e.yml's "Upload images to Argos" step does: nightly-check's
-      # ~1,375 fixtures are in the same volume range that already overflowed
-      # a single finalize request there (HTTP 413, "request entity too
-      # large") — Argos combines the indices into one build once all K report.
+      # Deliberately NOT a subset build: subset builds are never eligible as
+      # baselines, so with --subset every nightly had no baseline and showed
+      # all screenshots as added. This upload is the complete set for the
+      # monitoring build, so once approved it becomes the next night's
+      # baseline.
+      #
+      # Manual (workflow_dispatch) runs use a separate build name so test runs
+      # from a branch can't become the scheduled nightly's baseline.
+      #
+      # Split into K parallel uploads sharing one nonce for the same reason
+      # e2e.yml's "Upload images to Argos" step does: nightly-check's ~1,375
+      # fixtures are in the same volume range that already overflowed a
+      # single finalize request there (HTTP 413, "request entity too large") —
+      # Argos combines the indices into one build once all K report.
       - name: Upload screenshots to Argos
         id: argos
         env:
-          ARGOS_SUBSET: true
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
+          ARGOS_BUILD_NAME: ${{ github.event_name == 'schedule' && 'Nightly E2E' || 'Nightly E2E (manual)' }}
         run: |
           set -euo pipefail
 
@@ -177,7 +189,8 @@ jobs:
             # empty, even though the Actions log view (which interleaves
             # both streams) makes it look like it's being captured.
             pnpm exec argos upload e2e/screenshots \
-              --build-name "Nightly E2E" \
+              --mode monitoring \
+              --build-name "$ARGOS_BUILD_NAME" \
               --files "${globs[@]}" \
               --parallel --parallel-total "$K" --parallel-index "$i" \
               2>&1 | tee -a argos-upload.log
@@ -199,9 +212,10 @@ jobs:
   # silently sit unnoticed in the Actions tab (see the no-Slack-yet note in
   # the file header above — this job is what replaces it). always() so it
   # still posts (as a failure summary) when e2e or argos-upload didn't
-  # succeed, instead of being skipped along with them.
+  # succeed, instead of being skipped along with them. Scheduled runs only:
+  # manual runs (e.g. testing this workflow from a branch) don't post.
   notify-slack:
-    if: always() && github.repository == 'mermaid-js/mermaid'
+    if: always() && github.repository == 'mermaid-js/mermaid' && github.event_name == 'schedule'
     needs: [e2e, argos-upload]
     runs-on: ubuntu-latest
     steps:
