@@ -139,24 +139,30 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
           : 0);
     if (text.attr('class').includes('methods-group')) {
       const membersGroupHeightForMethods = Math.max(membersGroupHeight, GAP / 2);
-      // Without members, the methods group sits directly under the label when the empty
-      // attributes row is hidden, instead of after the reserved members-group height.
-      const methodsRowOffset = collapseEmptyMembersRow
-        ? GAP * 2
-        : membersGroupHeightForMethods + GAP * 4;
-      if (nodeHeightGreater) {
+      if (collapseEmptyMembersRow) {
+        // Top-align the methods where the members group would start. A node rectangle that the
+        // layout made taller than its content must not push the methods below its bottom edge.
+        newTranslateY = annotationGroupHeight + labelGroupHeight + GAP * 2 + y + PADDING;
+      } else if (nodeHeightGreater) {
         newTranslateY =
           Math.max(
             methodsAreaPlacement,
             annotationGroupHeight +
               labelGroupHeight +
-              (collapseEmptyMembersRow ? GAP * 2 : membersGroupHeightForMethods + GAP * 2) +
+              membersGroupHeightForMethods +
               y +
+              GAP * 2 +
               PADDING
           ) +
           GAP * 2;
       } else {
-        newTranslateY = annotationGroupHeight + labelGroupHeight + methodsRowOffset + y + PADDING;
+        newTranslateY =
+          annotationGroupHeight +
+          labelGroupHeight +
+          membersGroupHeightForMethods +
+          GAP * 4 +
+          y +
+          PADDING;
       }
     }
     if (

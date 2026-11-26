@@ -257,4 +257,33 @@ describe('classDiagram hideEmptyMembersBox', () => {
 
     expect(methods.y + methods.height).toBeLessThanOrEqual(rect.y + rect.height);
   });
+
+  it('keeps the methods row inside a box taller than its content', async () => {
+    configApi.setConfig({ class: { hideEmptyMembersBox: true } });
+    const node = classNode({
+      methods: ['+ a()', '+ b()', '+ c()', '+ d()', '+ e()'],
+    });
+    // The layout can reserve a node height that is larger than the measured text.
+    node.height = 136;
+    await draw(node);
+
+    const methods = absoluteBounds('g.methods-group');
+    const rect = absoluteBounds('.outer-path');
+
+    expect(methods.y + methods.height).toBeLessThanOrEqual(rect.y + rect.height);
+  });
+
+  it('keeps the attributes row inside a box taller than its content', async () => {
+    configApi.setConfig({ class: { hideEmptyMembersBox: true } });
+    const node = classNode({
+      members: ['+ a', '+ b', '+ c', '+ d', '+ e'],
+    });
+    node.height = 136;
+    await draw(node);
+
+    const members = absoluteBounds('g.members-group');
+    const rect = absoluteBounds('.outer-path');
+
+    expect(members.y + members.height).toBeLessThanOrEqual(rect.y + rect.height);
+  });
 });
