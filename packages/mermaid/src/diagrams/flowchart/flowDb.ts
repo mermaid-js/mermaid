@@ -83,6 +83,21 @@ function pickFlowchartLayoutMetadata(
 // Set by a diagram that models pools and lanes itself, never by the author of a `@{ }` block.
 const INTERNAL_METADATA_KEYS = ['laneRole', 'laneIndex', 'drawnExtent'];
 
+/**
+ * YAML only reads `key: value` as a mapping entry when the colon is followed by
+ * a space. Without it, as in `A@{ shape:rounded }`, the entry is a plain scalar
+ * and the property is silently dropped, so put the space back for the colons
+ * that sit in a key position: at the start of a line, after the opening `{` of
+ * the flow mapping, or after the `,` that separates two entries. A colon inside
+ * a value, as in `label: https://example.com`, is left untouched.
+ *
+ * @param metadata - the text between `@{` and `}`
+ * @returns the text with a space after every mapping colon
+ */
+function spaceAfterMappingColons(metadata: string): string {
+  return metadata.replace(/(^|,|{)([\t ]*)([A-Z_a-z][\w-]*):(?![\s:])/gm, '$1$2$3: ');
+}
+
 function withoutInternalKeys(doc: NodeMetaData): NodeMetaData {
   if (!doc || typeof doc !== 'object') {
     return doc;
@@ -210,7 +225,9 @@ export class FlowDB implements DiagramDB {
         yamlData = metadata + '\n';
       }
       doc = withoutInternalKeys(
-        stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData)
+        stripPrototypeKeys(
+          yaml.load(spaceAfterMappingColons(yamlData), { schema: yaml.JSON_SCHEMA }) as NodeMetaData
+        )
       );
     }
 
