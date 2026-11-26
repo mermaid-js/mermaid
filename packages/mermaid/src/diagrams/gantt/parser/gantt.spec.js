@@ -321,31 +321,31 @@ row2`;
     expect(tasks[1].task.trim()).toEqual('Gantt');
   });
 
-    it('should allow an inline comment on the gantt header line (issue #5660)', function () {
-          const str =
-                  'gantt %% note: planning\n' +
-                  '    dateFormat YYYY-MM-DD\n' +
-                  '    section Section\n' +
-                  '    A task :a1, 2014-01-01, 30d\n';
+  it('should allow an inline comment on the gantt header line (issue #5660)', function () {
+    const str =
+      'gantt %% note: planning\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    A task :a1, 2014-01-01, 30d\n';
 
-          expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(str)).not.toThrow();
 
-          const tasks = parser.yy.getTasks();
-          expect(tasks).toHaveLength(1);
-          expect(tasks[0].task.trim()).toEqual('A task');
-    });
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task.trim()).toEqual('A task');
+  });
 
-    it('should allow a task named Gantt containing a single percent sign (issue #5660)', function () {
-          const str =
-                  'gantt\n' +
-                  '    dateFormat YYYY-MM-DD\n' +
-                  '    section Section\n' +
-                  '    Gantt 50% done :a1, 2014-01-01, 30d\n';
+  it('should allow a task named Gantt containing a single percent sign (issue #5660)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    Gantt 50% done :a1, 2014-01-01, 30d\n';
 
-          expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(str)).not.toThrow();
 
-          const tasks = parser.yy.getTasks();
-          expect(tasks).toHaveLength(1);
-          expect(tasks[0].task.trim()).toEqual('Gantt 50% done');
-    });
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task.trim()).toEqual('Gantt 50% done');
+  });
 });
