@@ -85,9 +85,23 @@ export async function textHelper<T extends SVGGraphicsElement>(
     `translate(${0}, ${annotationGroupHeight + labelGroupHeight + GAP * 2})`
   );
   bbox = shapeSvg.node()!.getBBox();
+  // Without members, only the (minimum) members-group height is reserved. When empty member
+  // boxes are hidden, methods sit directly under the label instead of leaving an empty row.
+  const collapseEmptyMembersRow =
+    Boolean(config.class?.hideEmptyMembersBox) &&
+    node.members.length === 0 &&
+    node.methods.length > 0;
   methodsGroup.attr(
     'transform',
-    `translate(${0}, ${annotationGroupHeight + labelGroupHeight + (membersGroupHeight ? membersGroupHeight + GAP * 4 : GAP * 2)})`
+    `translate(${0}, ${
+      annotationGroupHeight +
+      labelGroupHeight +
+      (collapseEmptyMembersRow
+        ? GAP * 2
+        : membersGroupHeight
+          ? membersGroupHeight + GAP * 4
+          : GAP * 2)
+    })`
   );
 
   bbox = shapeSvg.node()!.getBBox();
