@@ -848,6 +848,9 @@ function getElkLayoutContext(
   if (!helpers) {
     throw new Error('ELK layout requires Mermaid internal helpers');
   }
+  // `helpers.getConfig()` hands out a fresh copy, and label measurement reads it once per
+  // node. One copy per layout phase is enough: the host config does not change mid-render.
+  let config: ReturnType<typeof helpers.getConfig> | undefined;
 
   return {
     algorithm:
@@ -857,7 +860,7 @@ function getElkLayoutContext(
       context.options as { rootLayoutOptions?: Record<string, unknown> } | undefined
     )?.rootLayoutOptions,
     common: helpers.common,
-    getConfig: helpers.getConfig,
+    getConfig: () => (config ??= helpers.getConfig()),
     interpolateToCurve: helpers.interpolateToCurve as (
       interpolate: string | undefined,
       defaultCurve: unknown

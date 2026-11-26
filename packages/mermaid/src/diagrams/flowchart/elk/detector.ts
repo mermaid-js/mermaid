@@ -6,14 +6,11 @@ import type {
 
 const id = 'flowchart-elk';
 
-const detector: DiagramDetector = (txt, config = {}): boolean => {
+const detector: DiagramDetector = (txt): boolean => {
   // Only the explicit `flowchart-elk` keyword. A flowchart that wants ELK asks for it with
-  // `layout: elk`, which needs no detector of its own.
-  if (/^\s*flowchart-elk/.test(txt)) {
-    config.layout = 'elk';
-    return true;
-  }
-  return false;
+  // `layout: elk`, which needs no detector of its own. Detectors must not write to the
+  // config they are given: it is the shared, frozen `getConfig()` snapshot.
+  return /^\s*flowchart-elk/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

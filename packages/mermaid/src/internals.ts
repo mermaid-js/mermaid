@@ -1,4 +1,4 @@
-import { getConfig } from './config.js';
+import { getConfigCopy } from './config.js';
 import common from './diagrams/common/common.js';
 import { log } from './logger.js';
 import { insertCluster } from './rendering-util/rendering-elements/clusters.js';
@@ -18,7 +18,9 @@ import { interpolateToCurve } from './utils.js';
  */
 export const internalHelpers = {
   common,
-  getConfig,
+  // Plugins get a mutable copy, not the frozen snapshot. Published `@mermaid-js/layout-elk`
+  // bundles pass this to their own `setConfig`, whose `sanitize()` deletes keys in place.
+  getConfig: () => getConfigCopy(),
   insertCluster,
   insertEdge,
   insertEdgeLabel,

@@ -78,7 +78,7 @@ function processAndSetConfigs(text: string) {
   // matching nothing leaves the global defaults in charge; parse raises the real error.
   let diagramType: string | undefined;
   try {
-    diagramType = detectType(processed.code.cleaned, configApi.getConfig());
+    diagramType = detectType(processed.code.cleaned, configApi.getConfigCopy());
   } catch {
     diagramType = undefined;
   }
