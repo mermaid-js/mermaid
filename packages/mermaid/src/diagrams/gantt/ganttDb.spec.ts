@@ -31,7 +31,7 @@ describe('when using the ganttDb', function () {
     });
   });
 
-    describe('when using Unix timestamp date formats (issue #5216)', function () {
+  describe('when using Unix timestamp date formats (issue #5216)', function () {
     it('should accept decimal seconds as start and end dates with dateFormat X', function () {
       ganttDb.setDateFormat('X');
       ganttDb.addSection('S1');
