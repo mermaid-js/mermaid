@@ -12,7 +12,7 @@
 
 > **addDirective**(`directive`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:317](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L317)
+Defined in: [packages/mermaid/src/config.ts:321](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L321)
 
 Pushes in a directive to the configuration
 

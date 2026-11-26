@@ -12,7 +12,7 @@
 
 > **getUserDefinedConfig**(): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:373](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L373)
+Defined in: [packages/mermaid/src/config.ts:377](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L377)
 
 ## Returns
 
