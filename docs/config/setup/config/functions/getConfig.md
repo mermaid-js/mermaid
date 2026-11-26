@@ -12,7 +12,7 @@
 
 > **getConfig**(): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: packages/mermaid/src/config.ts:254
+Defined in: [packages/mermaid/src/config.ts:258](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L258)
 
 Returns the `currentConfig` as a deeply frozen object, shared by every caller until the
 config next changes. Copy before modifying it.
