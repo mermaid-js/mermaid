@@ -28,7 +28,8 @@ export class Diagram {
       typeof codeObjectOrText === 'string'
         ? { raw: codeObjectOrText, cleaned: codeObjectOrText }
         : codeObjectOrText;
-    const config = configApi.getConfig();
+    // A mutable copy: third-party detectors and `init()` hooks may still write to it.
+    const config = configApi.getConfigCopy();
     const type = detectType(code.cleaned, config);
     try {
       getDiagram(type);

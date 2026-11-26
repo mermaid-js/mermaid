@@ -40,6 +40,29 @@ describe('diagram detection', () => {
     expect(sequence.type).toBe('sequence');
   });
 
+  test('should let external detectors and init() hooks write to their config', async () => {
+    addDetector(
+      'scribbler',
+      (str, config) => {
+        if (!str.startsWith('scribbler')) {
+          return false;
+        }
+        // The pattern in-repo diagrams used before `getConfig()` was frozen.
+        config!.layout = 'scribbled';
+        return true;
+      },
+      () => {
+        const loaded = getDummyDiagram('scribbler');
+        loaded.diagram.init = (cnf) => {
+          cnf.flowchart = { ...cnf.flowchart, htmlLabels: false };
+        };
+        return Promise.resolve(loaded);
+      }
+    );
+    const diagram = await Diagram.fromText('scribbler TD; A-->B');
+    expect(diagram.type).toBe('scribbler');
+  });
+
   test('should detect external diagrams', async () => {
     addDetector(
       'loki',
