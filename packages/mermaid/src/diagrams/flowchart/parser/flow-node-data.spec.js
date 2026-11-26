@@ -32,6 +32,16 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('D');
   });
 
+  it('should not require a space after the colon in shape data', function () {
+    flow.parser.parse(`flowchart TB
+      D@{ shape:rounded, label:Hello }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('Hello');
+  });
+
   it('should allow a space between a node id and its shape data', function () {
     flow.parser.parse(`flowchart TB
       D @{ shape: rounded }`);
