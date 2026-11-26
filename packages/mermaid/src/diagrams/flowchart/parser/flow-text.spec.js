@@ -773,4 +773,49 @@ describe('[Text] when parsing', () => {
     expect(vert.get('A').type).toBe('diamond');
     expect(vert.get('A').text).toBe('x [/api]');
   });
+
+  it('should handle adjacent nested opening brackets in trapezoid node labels', function () {
+    const res = flow.parser.parse('graph TD;A[/x [[y]]/] --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('lean_right');
+    expect(vert.get('A').text).toBe('x [[y]]');
+  });
+
+  it('should handle adjacent nested opening brackets in inverted trapezoid node labels', function () {
+    const res = flow.parser.parse('graph TD;A[\\x [[y]]\\] --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('lean_left');
+    expect(vert.get('A').text).toBe('x [[y]]');
+  });
+
+  it('should handle a trapezoid opener inside a trapezoid node label', function () {
+    const res = flow.parser.parse('graph TD;A[/x [/api]/] --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('lean_right');
+    expect(vert.get('A').text).toBe('x [/api]');
+  });
+
+  it('should handle adjacent nested opening brackets in ellipse node labels', function () {
+    const res = flow.parser.parse('graph TD;A(-x [[y]]-) --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('ellipse');
+    expect(vert.get('A').text).toBe('x [[y]]');
+  });
+
+  it('should handle a trapezoid opener inside an ellipse node label', function () {
+    const res = flow.parser.parse('graph TD;A(-x [/api]-) --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('ellipse');
+    expect(vert.get('A').text).toBe('x [/api]');
+  });
 });
