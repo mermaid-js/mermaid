@@ -1,0 +1,18 @@
+C4Container
+    title A relationship back to a person keeps the person on top
+
+    System_Ext(mail, "E-Mail System", "Sends e-mails")
+    Person(customer, "Customer", "A customer of the bank")
+
+    Container_Boundary(bank, "Internet Banking") {
+        Container(web, "Web Application", "Java")
+        Container(spa, "Single-Page App", "JavaScript")
+        Container(api, "API Application", "Java")
+    }
+
+    Rel(customer, web, "Uses", "HTTPS")
+    Rel(customer, spa, "Uses", "HTTPS")
+    Rel(web, spa, "Delivers")
+    Rel(spa, api, "Uses", "JSON/HTTPS")
+    Rel(api, mail, "Sends e-mails using", "SMTP")
+    Rel(mail, customer, "Sends e-mails to")
