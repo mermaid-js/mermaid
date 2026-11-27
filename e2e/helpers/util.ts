@@ -289,14 +289,16 @@ export const verifyScreenshot = async (
     const snapshotName = `${name}.png`;
     const snapshotPath = testInfo.snapshotPath(snapshotName, { kind: 'screenshot' });
 
+    const screenshotOptions = { animations: 'disabled', scale: 'device' } as const;
+
     if (!existsSync(snapshotPath)) {
       mkdirSync(dirname(snapshotPath), { recursive: true });
-      const screenshot = await target.screenshot({ animations: 'disabled', scale: 'device' });
+      const screenshot = await target.screenshot(screenshotOptions);
       writeFileSync(snapshotPath, screenshot);
       return;
     }
 
-    await expect(target).toHaveScreenshot(snapshotName);
+    await expect(target).toHaveScreenshot(snapshotName, screenshotOptions);
   }
 };
 

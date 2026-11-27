@@ -3,12 +3,18 @@ name: Apply triage label to new issue
 on:
   issues:
     types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to classify
+        required: true
 
 permissions: # added using https://github.com/step-security/secure-repo
   contents: read
 
 jobs:
   triage:
+    if: github.event_name == 'issues'
     permissions:
       issues: write # for andymckay/labeler to label issues
       pull-requests: write # for andymckay/labeler to label PRs
@@ -18,3 +24,26 @@ jobs:
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           add-labels: 'Status: Triage'
+
+  classify:
+    name: Label diagram type
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write # to add labels
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          sparse-checkout: |
+            .github/triage-labels.json
+            scripts/triage-labels.mjs
+          sparse-checkout-cone-mode: false
+      # Adds a Graph label for each diagram type in the issue's code blocks, and queues
+      # the issue for the triage skill, which does the rest of the classification.
+      - name: Label issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ github.event.issue.number || inputs.issue }}
+        run: node scripts/triage-labels.mjs label "$ISSUE"
