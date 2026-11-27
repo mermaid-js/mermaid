@@ -1,5 +1,5 @@
 // Ported from mermaid-v13 `packages/core/src/layout/layered/layered.ts`.
-// Changes from Pele: `const enum`s are `as const` objects, and index reads carry `!` for
+// Changes: `const enum`s are `as const` objects, and index reads carry `!` for
 // noUncheckedIndexedAccess. `NODE_INPUTS`/`EDGE_INPUTS`/`layoutInputs` are new. `ease` moved to
 // rendering-elements/routeGeometry.ts (re-exported here) so edge drawing can share it without
 // depending on the engine. The algorithm
