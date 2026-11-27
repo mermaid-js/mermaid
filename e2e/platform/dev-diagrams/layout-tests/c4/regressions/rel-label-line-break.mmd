@@ -1,0 +1,7 @@
+C4Context
+    title Explicit line breaks in a relationship label
+
+    Person(customer, "Customer")
+    System(bank, "Bank")
+
+    Rel(customer, bank, "Reads<br/>accounts", "HTTPS<br>JSON", "Once a day<br/>at most")

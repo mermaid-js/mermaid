@@ -1,0 +1,18 @@
+---
+config:
+  c4:
+    boundaryFontSize: 20
+    boundaryFontWeight: bold
+    messageFontSize: 16
+    messageFontFamily: serif
+---
+C4Context
+    title Boundary and relationship fonts from c4.boundaryFont* and c4.messageFont*
+
+    Enterprise_Boundary(bank, "Bank") {
+        System(core, "Core banking")
+        System(cards, "Cards")
+        Rel(cards, core, "Posts transactions", "MQ")
+    }
+    Person(customer, "Customer")
+    Rel(customer, cards, "Pays with")
