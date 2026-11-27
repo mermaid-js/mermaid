@@ -68,6 +68,14 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'click';
 
+/* The `gantt` keyword always matches: the grammar only accepts it as the
+   diagram-start keyword in the first position (`start: gantt document`),
+   so a later `gantt` is a task name instead. Tasks named `Gantt` (or
+   starting with it) are handled by the `gantt taskData` and
+   `gantt taskTxt taskData` statement productions below — no lookahead is
+   needed, so same-line directives (`gantt title Project: phase 1`) and
+   inline comments (`gantt %% note: planning`) on the header line keep
+   working, as does a task named e.g. `Gantt 50% done`. */
 "gantt"                         return 'gantt';
 "dateFormat"\s[^#\n;]+          return 'dateFormat';
 "inclusiveEndDates"             return 'inclusiveEndDates';
@@ -153,6 +161,12 @@ statement
   | section { yy.addSection($1.substr(8));$$=$1.substr(8); }
   | clickStatement
   | taskTxt taskData {yy.addTask($1,$2);$$='task';}
+  /* A task whose name is (or starts with) `gantt`: the lexer emits a
+     `gantt` token for the name, so the task is spelled out here instead
+     of as `taskTxt taskData`. `$1 + ' ' + $2` restores the space the
+     lexer skipped between the name parts. */
+  | gantt taskData {yy.addTask($1,$2);$$='task';}
+  | gantt taskTxt taskData {yy.addTask($1 + ' ' + $2,$3);$$='task';}
   ;
 
 

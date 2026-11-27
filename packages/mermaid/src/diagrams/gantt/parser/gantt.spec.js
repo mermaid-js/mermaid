@@ -286,4 +286,81 @@ row2`;
     `)
     ).not.toThrow();
   });
+
+  it('should allow a task named Gantt (issue #5660)', function () {
+    const str =
+      'gantt\n' +
+      '    title A Gantt Diagram\n' +
+      '    dateFormat  YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    A task           :a1, 2014-01-01, 30d\n' +
+      '    Another task     :after a1  , 20d\n' +
+      '    section Another\n' +
+      '    Task in sec      :2014-01-12  , 12d\n' +
+      '    Gantt      : 24d\n';
+    expect(parserFnConstructor(str)).not.toThrow();
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(4);
+    expect(tasks[3].task.trim()).toEqual('Gantt');
+  });
+
+  it('should allow a task whose name starts with gantt (issue #5660)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    gantt chart :a1, 2014-01-01, 30d\n' +
+      '    Gantt: 24d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(2);
+    expect(tasks[0].task.trim()).toEqual('gantt chart');
+    expect(tasks[0].id).toEqual('a1');
+    expect(tasks[1].task.trim()).toEqual('Gantt');
+  });
+
+  it('should allow an inline comment on the gantt header line (issue #5660)', function () {
+    const str =
+      'gantt %% note: planning\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    A task :a1, 2014-01-01, 30d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task.trim()).toEqual('A task');
+  });
+
+  it('should allow a task named Gantt containing a single percent sign (issue #5660)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    Gantt 50% done :a1, 2014-01-01, 30d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task.trim()).toEqual('Gantt 50% done');
+  });
+
+  it('should allow a same-line title directive on the gantt header line (issue #5660)', function () {
+    const str =
+      'gantt title Project: phase 1\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    A task :a1, 2014-01-01, 30d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task.trim()).toEqual('A task');
+    expect(parser.yy.getDiagramTitle()).toEqual('Project: phase 1');
+  });
 });
