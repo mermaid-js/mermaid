@@ -398,9 +398,13 @@ const getStartDate = function (prevTime, dateFormat, str) {
  */
 const parseDuration = function (str) {
   // cspell:disable-next-line
-  const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
+  const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms|min)$/.exec(str.trim());
   if (statement !== null) {
-    return [Number.parseFloat(statement[1]), statement[2]];
+    // `min` is accepted as an alias for minutes (e.g. `10min`), as used in
+        // the documentation examples; dayjs only understands the `m` unit, so
+        // normalize it here.
+        const unit = statement[2] === 'min' ? 'm' : statement[2];
+        return [Number.parseFloat(statement[1]), unit];
   }
   // NaN means an invalid duration
   return [NaN, 'ms'];
