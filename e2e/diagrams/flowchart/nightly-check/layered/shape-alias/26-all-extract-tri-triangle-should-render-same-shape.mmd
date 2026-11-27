@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `extract`, `tri`, and `triangle` names all render the same
+  triangle extract shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/26-all-extract-tri-triangle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: extract, label: "extract" }
+ n1@{ shape: tri, label: "tri" }
+ n2@{ shape: triangle, label: "triangle" }

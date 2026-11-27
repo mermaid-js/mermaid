@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that trapezoid and inverse-trapezoid node shapes render correctly,
+  under the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  fontFamily: courier
+copyOf: flowchart/nightly-check/handdrawn/should-render-a-simple-flowchart-with-trapezoid-and-inverse-trapezoid-vertex-options.mmd
+---
+graph TD
+  A[/Christmas\]
+  A -->|Get money| B[\Go shopping/]
+  B --> C{Let me thinksssss<br/>ssssssssssssssssssssss<br/>sssssssssssssssssssssssssss}
+  C -->|One| D[/Laptop/]
+  C -->|Two| E[\iPhone\]
+  C -->|Three| F[Car]

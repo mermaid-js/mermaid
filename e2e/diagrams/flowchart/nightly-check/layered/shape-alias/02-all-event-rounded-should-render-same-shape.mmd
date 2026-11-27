@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `event` alias and the canonical `rounded` name render the
+  same rounded-rectangle event shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/02-all-event-rounded-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: event, label: "event" }
+ n1@{ shape: rounded, label: "rounded" }

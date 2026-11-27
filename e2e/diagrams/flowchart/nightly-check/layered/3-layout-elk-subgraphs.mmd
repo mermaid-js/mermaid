@@ -1,0 +1,21 @@
+---
+description:
+  Cross-boundary subgraph layout under the layered layout, for comparison with
+  the ELK fixture named in copyOf — three subgraphs (Frontend, Backend, Auth)
+  where Frontend has an edge crossing into each of the other two.
+config:
+  layout: layered
+copyOf: flowchart/pr-check/3-layout-elk-subgraphs.mmd
+---
+flowchart TD
+  subgraph Frontend
+    A[Client] --> B[Cache]
+  end
+  subgraph Backend
+    C[API] --> D[(Database)]
+  end
+  subgraph Auth
+    E[Auth Service] --> F[(Sessions)]
+  end
+  B --> C
+  B --> E

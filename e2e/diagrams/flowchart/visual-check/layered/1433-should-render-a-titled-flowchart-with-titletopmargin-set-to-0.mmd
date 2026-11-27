@@ -1,0 +1,14 @@
+---
+description: >-
+  Regression test for issue #1433 verifying that a flowchart still renders
+  correctly when the `flowchart.titleTopMargin` config option is set, exercising
+  the title-top-margin layout code path even though this fixture has no diagram
+  title text.
+config:
+  layout: layered
+  flowchart:
+    titleTopMargin: 0
+copyOf: flowchart/visual-check/1433-should-render-a-titled-flowchart-with-titletopmargin-set-to-0.mmd
+---
+flowchart TD
+  A --> B

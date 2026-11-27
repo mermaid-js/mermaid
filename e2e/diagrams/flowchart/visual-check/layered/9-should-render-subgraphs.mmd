@@ -1,0 +1,13 @@
+---
+description:
+  Baseline smoke test verifying that a simple named subgraph ('One') containing
+  a two-node chain (a1 --> a2) renders correctly.
+config:
+  layout: layered
+  fontFamily: courier
+copyOf: flowchart/visual-check/9-should-render-subgraphs.mmd
+---
+graph TB
+  subgraph One
+  a1-->a2
+  end

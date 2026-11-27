@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `tag-doc` and `tagged-document` names render the same
+  tagged-document shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/38-all-tag-doc-tagged-document-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: tag-doc, label: "tag-doc" }
+ n1@{ shape: tagged-document, label: "tagged-document" }

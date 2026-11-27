@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that edge labels are rendered horizontally centered on their
+  connecting link when the htmlLabels config option is disabled, exercising the
+  plain-SVG (non-foreignObject) edge-label positioning path.
+config:
+  layout: layered
+  logLevel: 1
+  htmlLabels: false
+copyOf: flowchart/visual-check/5a-should-render-flowchart-with-edge-labels-centered-when-htmllabels-is-false.mmd
+---
+flowchart TB
+  A[Start] -->|first| B[Middle]
+  B -->|second| C[End]

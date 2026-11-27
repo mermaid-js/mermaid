@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `cross-circ`, `summary`, and `crossed-circle` names all
+  render the same crossed-circle summary shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/37-all-cross-circ-summary-crossed-circle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: cross-circ, label: "cross-circ" }
+ n1@{ shape: summary, label: "summary" }
+ n2@{ shape: crossed-circle, label: "crossed-circle" }

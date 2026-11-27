@@ -1,5 +1,45 @@
 # mermaid
 
+## 12.4.0
+
+### Minor Changes
+
+- [#8834](https://github.com/mermaid-js/mermaid/pull/8834) [`68114ea`](https://github.com/mermaid-js/mermaid/commit/68114eaf565558971737d0dea1f3c10c8d97990e) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: agentflow diagrams accept the `agentflow` keyword. `agentflow-beta` keeps working as an alias
+
+- [#8745](https://github.com/mermaid-js/mermaid/pull/8745) [`619b6ab`](https://github.com/mermaid-js/mermaid/commit/619b6aba10661f6d6fbe3e2cb92a573a20436c56) Thanks [@timmy-wright](https://github.com/timmy-wright)! - feat: add a grid layout with configurable row and column placement, recursive subgraphs, alignment, and orthogonal edge routing
+
+  Flowchart subgraph metadata forwarded to layout engines is now limited to `row`, `column`, `horizontalAlign`, `verticalAlign`, and `algorithm`. Custom layouts registered through `registerLayoutLoaders` no longer receive other authored subgraph metadata fields.
+
+- [#8676](https://github.com/mermaid-js/mermaid/pull/8676) [`fca5f3f`](https://github.com/mermaid-js/mermaid/commit/fca5f3fe5e01bd3ea8c55cd8d53855920b52f95b) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: add the `layered` layout (beta), selected with `layout: layered`, for flowchart, class, state, ER, requirement and mindmap diagrams, with a `layered.edgeRouting` option (`rounded` by default, `curved`, `stepped` or `straight`)
+
+- [#8851](https://github.com/mermaid-js/mermaid/pull/8851) [`08f406c`](https://github.com/mermaid-js/mermaid/commit/08f406c1aed1fa6ac8155478b1feecadbfec98c8) Thanks [@pbrolin47](https://github.com/pbrolin47)! - feat(layered): draw a hop where two edges cross, as the elk layout does; the new `layered.lineHops` option sets `arc` (default), `gap` or `false` for plain crossings
+
+### Patch Changes
+
+- [#8886](https://github.com/mermaid-js/mermaid/pull/8886) [`cef7109`](https://github.com/mermaid-js/mermaid/commit/cef7109c8b6c699d56919bb562a6cea41040944e) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix: centre the label of `braces` nodes between the two braces in the neo look, and centre the label of `braces`, `brace-l` and `brace-r` nodes vertically
+
+- [#8581](https://github.com/mermaid-js/mermaid/pull/8581) [`4e923df`](https://github.com/mermaid-js/mermaid/commit/4e923dff0ac0ea856a5ad1e4fe6af5d362c548c9) Thanks [@lrharboe](https://github.com/lrharboe)! - fix: ELK edge straightening no longer lets the labels of a bidirectional labelled pair run into each other or into the nodes
+
+- [#8621](https://github.com/mermaid-js/mermaid/pull/8621) [`ca0f683`](https://github.com/mermaid-js/mermaid/commit/ca0f683f300dae3a68f5a9253c6151b5565aa1ba) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix: ELK keeps the arrowheads of several edges that end on one short node apart, instead of drawing them on top of each other
+
+- [#8659](https://github.com/mermaid-js/mermaid/pull/8659) [`6db148a`](https://github.com/mermaid-js/mermaid/commit/6db148a1b25f5b30dea7bfe43560c9104d1c9663) Thanks [@lazerg](https://github.com/lazerg)! - fix: Escape the diagram id in scoped styles so ids starting with a digit keep their styling
+
+- [#8591](https://github.com/mermaid-js/mermaid/pull/8591) [`f36133e`](https://github.com/mermaid-js/mermaid/commit/f36133e59c9574d9b4439eaf53d5f3cadf7614b3) Thanks [@dipak5501](https://github.com/dipak5501)! - fix(flowchart): allow a space or tab between a node id and its `@{ ... }` shape data
+
+- [#8842](https://github.com/mermaid-js/mermaid/pull/8842) [`fb28759`](https://github.com/mermaid-js/mermaid/commit/fb2875968a0796cbe3dbca7d3e90256ee9ea21f1) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix(layered): keep an edge from a subgraph to its own node apart from other edges into that node instead of drawing it on top of them
+
+- [#8848](https://github.com/mermaid-js/mermaid/pull/8848) [`ff6f2ec`](https://github.com/mermaid-js/mermaid/commit/ff6f2ecab0ac60dfe19b6284ec9ee9bb7b564815) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix(layered): draw every level of nested subgraphs when an outer subgraph is declared after the ones inside it, instead of its box hiding them
+
+- [#8852](https://github.com/mermaid-js/mermaid/pull/8852) [`1525f22`](https://github.com/mermaid-js/mermaid/commit/1525f2275f05c1bff391a2d78c2bc1e1b80a0045) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix(layered): end an edge where it first meets a node's outline, so edges to a lightning-bolt node stop on the bolt instead of inside it
+
+- [#8670](https://github.com/mermaid-js/mermaid/pull/8670) [`9b4d5b7`](https://github.com/mermaid-js/mermaid/commit/9b4d5b775cd5024abc43627dcd9c10a48a49a8e4) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlane): an edge between two aligned nodes in different groups (lanes, or the subgraphs inside them) is now one straight line between their facing sides, when nothing is in the way
+
+- [#8670](https://github.com/mermaid-js/mermaid/pull/8670) [`af46d84`](https://github.com/mermaid-js/mermaid/commit/af46d84a6d114e99f579b2494e6c2d89f539f981) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlane): an edge from a decision diamond now leaves at the diamond's vertex, and an edge that ended against a node's corner now enters the middle of that face
+
+- [#8668](https://github.com/mermaid-js/mermaid/pull/8668) [`8754b65`](https://github.com/mermaid-js/mermaid/commit/8754b658814b09e464725038c36b33fdc643692d) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlane): size LR edge-label gaps from the same nodes the transform stretches by, so anchored nodes no longer add extra room
+
+- [#8693](https://github.com/mermaid-js/mermaid/pull/8693) [`7df8903`](https://github.com/mermaid-js/mermaid/commit/7df890371201b38dd92eb911abeb819197a4a865) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlane): keep a straight connector straight when two edges meet one side of a box, and keep separated edges clear of the box's corners
+
 ## 12.3.0
 
 ### Minor Changes

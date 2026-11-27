@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that the `process`, `rect`, `proc`, and `rectangle` names all render
+  the same standard process rectangle shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/01-all-process-rect-proc-rectangle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: process, label: "process" }
+ n1@{ shape: rect, label: "rect" }
+ n2@{ shape: proc, label: "proc" }
+ n3@{ shape: rectangle, label: "rectangle" }

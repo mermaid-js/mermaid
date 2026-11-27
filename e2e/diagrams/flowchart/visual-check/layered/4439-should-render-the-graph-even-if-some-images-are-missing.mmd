@@ -1,0 +1,12 @@
+---
+description:
+  Regression check that the graph still renders without breaking layout when
+  node labels contain <img> tags that have no src attribute, i.e. missing/broken
+  images.
+config:
+  layout: layered
+copyOf: flowchart/visual-check/4439-should-render-the-graph-even-if-some-images-are-missing.mmd
+---
+flowchart TD
+  B[<img>]
+  B-->C[<img>]

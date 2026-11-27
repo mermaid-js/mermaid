@@ -1,0 +1,16 @@
+---
+description:
+  Verifies that FontAwesome icon shorthand syntax (fa:fa-car) renders correctly
+  both inside an edge label and inside a node's own text label, using the
+  `flowchart` keyword (same case as the '-2' fixture but with the newer
+  keyword).
+config:
+  layout: layered
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/visual-check/61-fontawesome-icons-in-edge-labels.mmd
+---
+flowchart TD
+  C -->|fa:fa-car Car| F[fa:fa-car Car]

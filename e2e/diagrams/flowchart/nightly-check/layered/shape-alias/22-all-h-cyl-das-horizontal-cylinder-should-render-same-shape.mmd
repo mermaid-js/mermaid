@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `h-cyl`, `das`, and `horizontal-cylinder` names all render
+  the same tilted horizontal-cylinder direct-access-storage shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/22-all-h-cyl-das-horizontal-cylinder-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: h-cyl, label: "h-cyl" }
+ n1@{ shape: das, label: "das" }
+ n2@{ shape: horizontal-cylinder, label: "horizontal-cylinder" }

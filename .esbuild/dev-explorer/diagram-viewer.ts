@@ -121,11 +121,19 @@ type MermaidTheme =
   | 'redux-dark'
   | 'redux-color'
   | 'redux-dark-color';
-type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane' | 'grid';
+type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane' | 'grid' | 'layered';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
-const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane', 'grid'];
+const ALL_LAYOUTS: MermaidLayout[] = [
+  'dagre',
+  'elk',
+  'domus',
+  'hola',
+  'swimlane',
+  'grid',
+  'layered',
+];
 
 // Phases emitted by the profiler tree, in display order. "total" is taken from
 // the root `render` span. See packages/mermaid/src/profiler.ts.
@@ -331,7 +339,8 @@ function isLayout(v: unknown): v is MermaidLayout {
     v === 'domus' ||
     v === 'hola' ||
     v === 'swimlane' ||
-    v === 'grid'
+    v === 'grid' ||
+    v === 'layered'
   );
 }
 
@@ -356,7 +365,8 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
     v === 'domus' ||
     v === 'hola' ||
     v === 'swimlane' ||
-    v === 'grid'
+    v === 'grid' ||
+    v === 'layered'
   ) {
     return v;
   }
@@ -1368,6 +1378,7 @@ export class DevDiagramViewer extends LitElement {
               <sl-option value="domus">domus</sl-option>
               <sl-option value="hola">hola</sl-option>
               <sl-option value="swimlane">swimlane</sl-option>
+              <sl-option value="layered">layered</sl-option>
             </sl-select>
           </div>
 

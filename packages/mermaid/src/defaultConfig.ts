@@ -44,6 +44,7 @@ const config: RequiredDeep<MermaidConfig> = {
   // it a `layered:` directive) finds this one.
   layered: {
     edgeRouting: 'rounded',
+    lineHops: true,
   },
   themeCSS: undefined,
 

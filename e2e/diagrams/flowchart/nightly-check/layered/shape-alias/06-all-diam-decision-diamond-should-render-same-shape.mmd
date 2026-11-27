@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `diam`, `decision`, and `diamond` names all render the same
+  diamond decision shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/06-all-diam-decision-diamond-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: diam, label: "diam" }
+ n1@{ shape: decision, label: "decision" }
+ n2@{ shape: diamond, label: "diamond" }

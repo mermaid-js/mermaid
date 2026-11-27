@@ -1,0 +1,12 @@
+---
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/8292-elk-edge-label-jog.mmd
+---
+flowchart TD
+    A --> B{Decision}
+    B -- Yes --> C[Done]
+    B -- No --> D[Step 1]
+    D --> E{Again?}
+    E -- Yes --> C
+    E -- No --> F[Stop]

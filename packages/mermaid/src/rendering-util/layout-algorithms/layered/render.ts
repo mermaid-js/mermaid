@@ -16,6 +16,7 @@ import {
   defaultMeasureLayout,
 } from '../common/index.js';
 import { layeredThrowsOnFailure } from './failureMode.js';
+import { applyLayeredLineJumps } from './lineHops.js';
 import { runLayeredLayoutCore } from './layoutData.js';
 
 export { setLayeredThrowsOnFailure } from './failureMode.js';
@@ -26,7 +27,34 @@ const renderLayered = createCommonLayoutRenderer({
   measureLayout: (data4Layout, context) =>
     defaultMeasureLayout(data4Layout, context, { unwrapGroupLabels: true }),
   runLayoutCore: runLayeredLayoutCore,
+  paintOptions: { getNodes: (data) => paintOrder(data.nodes) },
+  // Crossings get hops once every edge is drawn, as the elk layout draws them (#8835).
+  afterPaint: applyLayeredLineJumps,
 });
+
+// Subgraphs are painted in turn, each one's filled box over what came before, so every subgraph
+// goes before the subgraphs inside it (#8821). Diagrams list them in the order they are
+// declared, which can put a subgraph after the ones it holds. Ties, and the other nodes, keep
+// their order.
+function paintOrder(nodes: LayoutData['nodes']): LayoutData['nodes'] {
+  const parentOf = new Map(nodes.filter((n) => n.isGroup).map((n) => [n.id, n.parentId]));
+  const depth = (id: string): number => {
+    const seen = new Set([id]);
+    let d = 0;
+    for (let p = parentOf.get(id); p !== undefined && parentOf.has(p) && !seen.has(p); ) {
+      seen.add(p);
+      d++;
+      p = parentOf.get(p);
+    }
+    return d;
+  };
+  const groups = nodes
+    .map((n, i) => ({ n, i, d: n.isGroup ? depth(n.id) : 0 }))
+    .filter(({ n }) => n.isGroup)
+    .sort((a, b) => a.d - b.d || a.i - b.i)
+    .map(({ n }) => n);
+  return [...groups, ...nodes.filter((n) => !n.isGroup)];
+}
 
 interface Snapshot {
   nodes: LayoutData['nodes'];

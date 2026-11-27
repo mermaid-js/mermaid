@@ -1,0 +1,25 @@
+---
+description: >-
+  Renders three sibling subgraphs (First, Second, Third) under the plain redux
+  theme where the middle one is marked with the @{ view: collapsed } shape data,
+  checking that a collapsed subgraph still receives themed container coloring
+  alongside its expanded neighbors.
+config:
+  layout: layered
+  theme: "redux"
+copyOf: flowchart/nightly-check/redux-color-subgraphs/03-should-render-collapsed-subgraph-containers.mmd
+---
+
+  flowchart TB
+    subgraph first[First]
+      A[a] --> B[b]
+    end
+    subgraph second[Second]
+      C[c]
+    end
+    second@{ view: collapsed }
+    subgraph third[Third]
+      D[d]
+    end
+    B --> C
+    C --> D

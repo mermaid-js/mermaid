@@ -4,6 +4,7 @@
 // the node's bounding box; `clipRouteEnds` moves them onto the drawn shape with the shape's own
 // `intersect`, along the flow only, so each end keeps the side and port the engine chose.
 import type { Edge, LayoutData, Node } from '../../types.js';
+import { withLineIntersectionOrigin } from '../../rendering-elements/intersect/intersection-query.js';
 import { isAxisTaggedRoute } from '../../rendering-elements/routeGeometry.js';
 import { layered, layoutSettings } from './index.js';
 import type {
@@ -286,7 +287,14 @@ function inside(n: Outline, p: { x: number; y: number }): boolean {
 function onOutline(n: Outline, end: RoutePoint): RoutePoint {
   const onTopOrBottom = Math.abs(Math.abs(end.y - n.y!) - size(n.height) / 2) < 0.5;
   const onLeftOrRight = Math.abs(Math.abs(end.x - n.x!) - size(n.width) / 2) < 0.5;
-  if ((!onTopOrBottom && !onLeftOrRight) || inside(n, end)) {
+  if (!onTopOrBottom && !onLeftOrRight) {
+    return end;
+  }
+  const met = firstMet(n, end, onTopOrBottom);
+  if (met) {
+    return met;
+  }
+  if (inside(n, end)) {
     return end;
   }
   // Towards the centre line, from the box side.
@@ -312,6 +320,35 @@ function onOutline(n: Outline, end: RoutePoint): RoutePoint {
     x: end.x + (to.x - end.x) * within,
     y: end.y + (to.y - end.y) * within,
   };
+}
+
+// Where the route, carried on along the flow from its end on the box side, first meets the
+// outline (#8833). The shared `intersect.rect`, `intersect.ellipse` and `intersect.polygon`
+// honour a line origin, so most built-in shapes answer this directly, which also holds for
+// outlines that are not star-shaped, such as the lightning bolt's zigzag: there the bisection
+// below settles on an inner kink, in the middle of the shape. A custom `intersect` that ignores
+// the origin answers for the line from the centre instead, which does not lie on the route
+// unless the end is on the centre line; then `undefined`, and the caller carries on.
+function firstMet(n: Outline, end: RoutePoint, onTopOrBottom: boolean): RoutePoint | undefined {
+  // The same point on the box's opposite side: the line through the two is the route's.
+  const far = onTopOrBottom ? { x: end.x, y: 2 * n.y! - end.y } : { x: 2 * n.x! - end.x, y: end.y };
+  const o = n.intersect(withLineIntersectionOrigin(end, far));
+  if (!o || !Number.isFinite(o.x) || !Number.isFinite(o.y)) {
+    return undefined;
+  }
+  // No crossing at all comes back as the node itself, its centre.
+  if ((o as unknown) === n || (o.x === n.x && o.y === n.y)) {
+    return undefined;
+  }
+  const onRoute = onTopOrBottom ? Math.abs(o.x - end.x) < 0.5 : Math.abs(o.y - end.y) < 0.5;
+  const inBox =
+    Math.abs(o.x - n.x!) <= size(n.width) / 2 + 0.5 &&
+    Math.abs(o.y - n.y!) <= size(n.height) / 2 + 0.5;
+  if (!onRoute || !inBox) {
+    return undefined;
+  }
+  // Only moved along the flow, so the end keeps its place along the side exactly.
+  return onTopOrBottom ? { ...end, y: o.y } : { ...end, x: o.x };
 }
 
 /**

@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that the diagramPadding config option, set to 0, removes the outer
+  padding around the whole rendered flowchart SVG.
+config:
+  layout: layered
+  flowchart:
+    diagramPadding: 0
+copyOf: flowchart/visual-check/33-should-render-a-simple-flowchart-with-diagrampadding-set-to-0.mmd
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  %% this is a comment
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

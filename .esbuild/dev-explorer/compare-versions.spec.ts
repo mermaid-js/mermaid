@@ -282,6 +282,15 @@ describe('buildRenderConfig', () => {
       maxEdges: 1_000_000,
       theme: 'dark',
       layout: 'elk',
+      secure: [
+        'secure',
+        'securityLevel',
+        'startOnLoad',
+        'maxTextSize',
+        'suppressErrorRendering',
+        'maxEdges',
+        'layout',
+      ],
       look: 'classic',
       logLevel: 'warn',
       flowchart: {
@@ -301,6 +310,7 @@ describe('buildRenderConfig', () => {
     });
     expect(config).not.toHaveProperty('theme');
     expect(config).not.toHaveProperty('layout');
+    expect(config).not.toHaveProperty('secure');
     expect(config).not.toHaveProperty('look');
     expect(Object.values(config)).not.toContain(undefined);
     expect(config.securityLevel).toBe('strict');

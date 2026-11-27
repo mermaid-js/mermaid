@@ -3,6 +3,9 @@ import { layered, MAX_MIN_LEN } from './index.js';
 import type { Dir, LayoutGraph, LayoutModel } from './types.js';
 
 const pad = { top: 20, right: 20, bottom: 20, left: 20 };
+// From index.ts: the room between edge ends on a side, and what each corner of a side keeps clear.
+const PORT_SEP = 20;
+const CORNER = 12;
 const label = { width: 26, height: 25 };
 
 // A group `A` that holds `x`, and one edge between the two.
@@ -151,6 +154,160 @@ describe('layered: an edge between a group and a node inside it', () => {
     expect(overlap(labelBox!, model.groups.get('B')!)).toBe(false);
   });
 });
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+// Length of the stretch two segments share when they lie on one line, else 0.
+const sharedLength = (a1: Point, a2: Point, b1: Point, b2: Point): number => {
+  const dx = a2.x - a1.x;
+  const dy = a2.y - a1.y;
+  const len = Math.hypot(dx, dy);
+  if (len < 1e-6) return 0;
+  const ux = dx / len;
+  const uy = dy / len;
+  const offLine = (p: Point): number => Math.abs((p.x - a1.x) * uy - (p.y - a1.y) * ux);
+  if (offLine(b1) > 0.5 || offLine(b2) > 0.5) return 0;
+  const along = (p: Point): number => (p.x - a1.x) * ux + (p.y - a1.y) * uy;
+  const [lo, hi] = [along(b1), along(b2)].sort((p, q) => p - q);
+  return Math.max(0, Math.min(len, hi!) - Math.max(0, lo!));
+};
+
+const longestShared = (p: Point[], q: Point[]): number => {
+  let worst = 0;
+  for (let i = 0; i + 1 < p.length; i++) {
+    for (let j = 0; j + 1 < q.length; j++) {
+      worst = Math.max(worst, sharedLength(p[i]!, p[i + 1]!, q[j]!, q[j + 1]!));
+    }
+  }
+  return worst;
+};
+
+// Issue #8824: `Out --> In` and `Sub --> In`, where `Sub` holds `In`.
+describe('layered: an edge between a group and its member beside an edge from outside', () => {
+  const graph = (direction: Dir, into: boolean, routing: LayoutGraph['routing']): LayoutGraph => ({
+    direction,
+    nodes: [
+      { id: 'Out', width: 60, height: 54 },
+      { id: 'In', width: 60, height: 54, parent: 'Sub' },
+    ],
+    groups: [{ id: 'Sub', padding: pad }],
+    edges: into
+      ? [
+          { id: 'outside', source: 'Out', target: 'In', minLen: 1 },
+          { id: 'inner', source: 'Sub', target: 'In', minLen: 1 },
+        ]
+      : [
+          { id: 'outside', source: 'In', target: 'Out', minLen: 1 },
+          { id: 'inner', source: 'In', target: 'Sub', minLen: 1 },
+        ],
+    spacing: { node: 50, rank: 50, edge: 20 },
+    diagramPadding: 0,
+    routing,
+    headRoom: 7,
+  });
+
+  const dirs: Dir[] = ['TB', 'BT', 'LR', 'RL'];
+  const routings: LayoutGraph['routing'][] = ['stepped', 'curved', 'straight'];
+  for (const routing of routings) {
+    for (const dir of dirs) {
+      for (const into of [true, false]) {
+        const name = into ? 'Out --> In and Sub --> In' : 'In --> Out and In --> Sub';
+        it(`does not draw ${name} on top of each other in ${dir} (${routing})`, () => {
+          const model = layered(graph(dir, into, routing));
+          const outside = model.edges.get('outside')!.points;
+          const inner = model.edges.get('inner')!.points;
+
+          expect(longestShared(outside, inner)).toBeLessThan(1);
+          // Their ends on `In` are `PORT_SEP` apart, or as far as the side's usable half allows.
+          const across = runsAcross(dir) ? 'y' : 'x';
+          const at = (p: Point[]): number => (into ? p[p.length - 1]! : p[0]!)[across];
+          const node = model.nodes.get('In')!;
+          const half = (across === 'x' ? node.width : node.height) / 2;
+          const usable = half - Math.min(CORNER, half / 2);
+          expect(Math.abs(at(outside) - at(inner))).toBeGreaterThanOrEqual(
+            Math.min(PORT_SEP, usable) - 1e-6
+          );
+        });
+      }
+    }
+
+    // As in the issue's diagram: the group has a title and the nodes are wide.
+    it(`does not draw Out --> In and Sub --> In on top of each other under a title (${routing})`, () => {
+      const g = graph('TB', true, routing);
+      g.nodes = g.nodes.map((n) => ({ ...n, width: 150, height: 45 }));
+      g.groups[0]!.title = { width: 30, height: 18 };
+      const model = layered(g);
+      const outside = model.edges.get('outside')!.points;
+      const inner = model.edges.get('inner')!.points;
+
+      expect(longestShared(outside, inner)).toBeLessThan(1);
+      // A wide node has room for the full gap.
+      expect(
+        Math.abs(outside[outside.length - 1]!.x - inner[inner.length - 1]!.x)
+      ).toBeGreaterThanOrEqual(PORT_SEP - 1e-6);
+    });
+
+    // Moved aside from `Out --> In`, the edge no longer lies under the title, so it starts on the
+    // border, as the edge from outside does.
+    it(`starts Sub --> In on the border when it runs beside the title (${routing})`, () => {
+      const title = { width: 30, height: 18 };
+      const g = graph('TB', true, routing);
+      g.nodes = g.nodes.map((n) => ({ ...n, width: 150, height: 45 }));
+      g.groups[0]!.title = title;
+      const model = layered(g);
+      const [from, to] = model.edges.get('inner')!.points;
+      const group = model.groups.get('Sub')!;
+      const node = model.nodes.get('In')!;
+
+      expect(Math.abs(from!.x - group.title!.x)).toBeGreaterThanOrEqual(title.width / 2);
+      expect(from!.y).toBeCloseTo(group.y - group.height / 2);
+      expect(to!.y).toBeCloseTo(node.y - node.height / 2);
+    });
+  }
+
+  // The label of `Sub --> In` sits on its own edge, clear of `Out --> In` and inside the group.
+  for (const routing of routings) {
+    for (const dir of dirs) {
+      for (const width of [26, 60]) {
+        it(`keeps a ${width}px label of Sub --> In off Out --> In in ${dir} (${routing})`, () => {
+          const g = graph(dir, true, routing);
+          g.nodes = g.nodes.map((n) => ({ ...n, width: 150, height: 45 }));
+          const size = { width, height: 25 };
+          g.edges[1]!.label = size;
+          const model = layered(g);
+          const inner = model.edges.get('inner')!;
+          const labelBox = { ...inner.label!, ...size };
+          const across = runsAcross(dir) ? 'y' : 'x';
+          const [from] = inner.points;
+
+          expect(crossesBox(model.edges.get('outside')!.points, labelBox)).toBe(false);
+          expect(within(labelBox, model.groups.get('Sub')!)).toBe(true);
+          // The label still covers its own edge.
+          const half = (across === 'x' ? size.width : size.height) / 2;
+          expect(Math.abs(labelBox[across] - from![across])).toBeLessThan(half);
+        });
+      }
+    }
+  }
+});
+
+const runsAcross = (dir: Dir): boolean => dir === 'LR' || dir === 'RL';
+
+// Whether a polyline of axis-aligned segments touches the inside of a box.
+const crossesBox = (points: Point[], b: Box): boolean =>
+  points.some((p, k) => {
+    const q = points[k - 1];
+    if (!q) return false;
+    return (
+      Math.max(p.x, q.x) > b.x - b.width / 2 + 1e-6 &&
+      Math.min(p.x, q.x) < b.x + b.width / 2 - 1e-6 &&
+      Math.max(p.y, q.y) > b.y - b.height / 2 + 1e-6 &&
+      Math.min(p.y, q.y) < b.y + b.height / 2 - 1e-6
+    );
+  });
 
 describe('layered: the ranks one edge may ask for', () => {
   const chain = (minLen: number): LayoutGraph => ({

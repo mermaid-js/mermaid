@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `comment` and `brace-l` names render the same left-facing
+  curly-brace comment shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/17-all-comment-brace-l-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: comment, label: "comment" }
+ n1@{ shape: brace-l, label: "brace-l" }

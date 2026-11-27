@@ -1,0 +1,165 @@
+---
+editLink: false
+---
+
+<!-- This page is ported from the Agentflow language reference, which is maintained outside this repository. Changes made only here are lost at the next port: please open an issue instead of editing this file. -->
+
+# Triggers
+
+A trigger is what starts a flow. You set it on an [input](./shapes/input.md) with `trigger: "schedule"`. A schedule is the only trigger: it starts the flow on repeat, or once at a set time.
+
+## Schedule
+
+A schedule takes exactly one of `cron` and `at`. You can add a `timezone`.
+
+### `cron`: repeat
+
+`cron` repeats the flow. Write it in crontab format: five fields, separated by spaces.
+
+| Field        | Values                                        |
+| ------------ | --------------------------------------------- |
+| minute       | 0–59                                          |
+| hour         | 0–23                                          |
+| day of month | 1–31                                          |
+| month        | 1–12, or `JAN`–`DEC`                          |
+| day of week  | 0–7, where 0 and 7 are Sunday, or `SUN`–`SAT` |
+
+Names can be in any case. Each field is one of these, or a comma list of them:
+
+- `*` matches any value.
+- A value, such as `9`, matches that value.
+- A range from a lower value to a higher one, such as `9-17` or `MON-FRI`, matches every value in it. `SAT-SUN` isn't valid, because `SUN` counts as 0: write `6-7` instead.
+
+`*` and a range can take a step: `*/15` is every 15th minute, and `9-17/2` every second hour from 9 to 17.
+
+Only these five fields are allowed. Shortcuts such as `@daily`, a sixth field for seconds or years, and the characters `?`, `L`, `W` and `#` aren't valid.
+
+<!-- expect: valid -->
+
+```mermaid-example
+agentflow TB
+  weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", cron: "0 9 * * 1-5" }
+  office[/"Every 15 minutes, office hours"/]@{ trigger: "schedule", cron: "*/15 9-17 * * MON-FRI" }
+  monthly[/"1st and 15th"/]@{ trigger: "schedule", cron: "0 8 1,15 * *" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
+  end
+
+  weekday --> triage
+  office --> triage
+  monthly --> triage
+```
+
+### `at`: run once
+
+`at` runs the flow once. Write a date and a 24-hour time as `YYYY-MM-DDTHH:MM`. The date has to exist, so `2026-02-30T09:00` isn't valid.
+
+<!-- expect: valid -->
+
+```mermaid-example
+agentflow TB
+  launch[/"Launch day"/]@{ trigger: "schedule", at: "2026-12-24T09:00" }
+
+  flow announce["Announce"]
+    post["Post"]@{ instruction: "Post the launch announcement." }
+  end
+
+  launch --> announce
+```
+
+### `timezone`
+
+`cron` and `at` are read in `timezone`. When you leave it out, they are read in UTC. Use a time zone name, such as `"UTC"`, `"Europe/Madrid"` or `"America/New_York"`.
+
+<!-- expect: valid -->
+
+```mermaid-example
+agentflow TB
+  weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule", cron: "0 9 * * 1-5", timezone: "Europe/Madrid" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
+  end
+
+  weekday --> triage
+```
+
+## Rules
+
+- An input has a `trigger`. → [`METADATA_REQUIRED`](./diagnostics.md#metadata_required) (error)
+- A schedule has a `cron` or an `at`. → [`METADATA_REQUIRED`](./diagnostics.md#metadata_required) (error)
+- A schedule doesn't have both `cron` and `at`. → [`METADATA_KEY_CONFLICT`](./diagnostics.md#metadata_key_conflict) (error)
+- An input takes no settings other than `trigger`, `cron`, `at` and `timezone`. → [`METADATA_UNKNOWN_KEY`](./diagnostics.md#metadata_unknown_key) (warning)
+- The trigger is `"schedule"`. → [`METADATA_INVALID_VALUE`](./diagnostics.md#metadata_invalid_value) (error)
+- `cron` is text in crontab format, `at` is text naming a real date and time, and `timezone` is text naming a known time zone. → [`METADATA_INVALID_VALUE`](./diagnostics.md#metadata_invalid_value) (error)
+
+## Common mistakes
+
+An input with no trigger.
+
+<!-- expect: METADATA_REQUIRED -->
+
+```mermaid-example
+agentflow TB
+  weekday[/"Weekdays at 09:00"/]@{ cron: "0 9 * * 1-5" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
+  end
+
+  weekday --> triage
+```
+
+> Input "weekday" is missing its "trigger" setting. Add trigger: "schedule".
+
+A schedule with neither `cron` nor `at`.
+
+<!-- expect: METADATA_REQUIRED -->
+
+```mermaid-example
+agentflow TB
+  weekday[/"Weekdays at 09:00"/]@{ trigger: "schedule" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
+  end
+
+  weekday --> triage
+```
+
+> Input "weekday" is missing its schedule, which a "schedule" trigger needs. Add "cron" to repeat, such as "0 9 \* \* 1-5", or "at" to run once, such as "2026-12-24T09:00".
+
+A crontab shortcut instead of the five fields.
+
+<!-- expect: METADATA_INVALID_VALUE -->
+
+```mermaid-example
+agentflow TB
+  daily[/"Every day"/]@{ trigger: "schedule", cron: "@daily" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
+  end
+
+  daily --> triage
+```
+
+> The "cron" setting on input "daily" isn't valid: "@daily" is not a valid schedule. Use the crontab format, such as "0 9 \* \* 1-5".
+
+The setting name as the trigger. The trigger is always `"schedule"`; `cron` is a setting next to it.
+
+<!-- expect: METADATA_INVALID_VALUE -->
+
+```mermaid-example
+agentflow TB
+  weekday[/"Weekdays at 09:00"/]@{ trigger: "cron" }
+
+  flow triage["Issue triage"]
+    read["Read issues"]@{ instruction: "Summarise every open issue." }
+  end
+
+  weekday --> triage
+```
+
+> The "trigger" setting on input "weekday" can't be "cron". Use "schedule".

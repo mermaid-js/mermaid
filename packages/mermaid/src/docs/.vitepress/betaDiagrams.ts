@@ -3,7 +3,6 @@
  * Shown with a Beta badge in the sidebar; `betaDiagrams.spec.ts` checks this against the pages.
  */
 export const betaSyntaxPages = new Set([
-  'agentflow',
   'architecture',
   'cynefin',
   'radar',

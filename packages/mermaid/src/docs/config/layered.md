@@ -2,7 +2,7 @@
 description: 'Use the layered layout (beta) in Mermaid to arrange flowcharts and other graph diagrams in ranks, with rounded, curved, stepped or straight edge routing.'
 ---
 
-# Layered Layout (v<MERMAID_RELEASE_VERSION>+)
+# Layered Layout (v12.3.0+)
 
 ```warning
 The layered layout is in beta. It is opt-in: diagrams use it only when they ask for `layout: layered`. Its output may still change between releases, and it is not yet a replacement for the default layout.
@@ -89,6 +89,39 @@ flowchart TD
 
 With `rounded`, edges and self-loops have small circular bends, with the radius reduced where a segment is too short. `stepped` uses the same tracks, but softens each turn with a wider curve of up to 12 px. Set `layered.edgeRouting: curved` for the previous smooth curves. With `curved`, an edge keeps its own curve, so `linkStyle 0 interpolate linear` still gives a straight line. With `rounded`, `stepped` or `straight`, the routing mode applies to every edge and replaces the edge's own `interpolate` / `curve` setting.
 
+## Line hops
+
+Where two edges cross, one of them hops over the other with a small arc, as in the `elk` layout, so it is clear which line goes where. `layered.lineHops` sets how a crossing is drawn:
+
+| Value            | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `true` (default) | The edge that gives way hops over with a small arc. |
+| `'arc'`          | The same as `true`.                                 |
+| `'gap'`          | The edge that gives way is broken around the other. |
+| `false`          | The edges cross plainly.                            |
+
+```mermaid-example
+---
+config:
+  layout: layered
+  layered:
+    lineHops: gap
+---
+flowchart TD
+  A --> B
+  A --> C
+  A --> D
+  A --> E
+  B --> C
+  B --> D
+  B --> E
+  C --> D
+  C --> E
+  D --> E
+```
+
+The edge that gives way loses its corner rounding on the segment with the hop. With `edgeRouting: curved`, edges are left as smooth curves and get no hops.
+
 ## Parity with dagre
 
 The table below compares the layered layout with dagre for the features that most often differ between layouts. **Works** means the result matches dagre; **Gap** means it is visibly different or worse; **n/a** means the diagram does not have the feature.
@@ -106,7 +139,7 @@ The table below compares the layered layout with dagre for the features that mos
 Other known differences:
 
 - **Cycles** are broken differently than in dagre, so in a diagram with cycles some edges point the other way (for example a class relation drawn upwards, or a state choice ranked first). The result is valid but looks different from dagre.
-- **Line hops** are not drawn. Where two edges cross, the lines cross plainly, as in dagre; only the `elk` and `swimlane` layouts have a `lineHops` setting.
+- **Line hops** are drawn where two edges cross, as in the `elk` layout; dagre draws plain crossings. Set `layered.lineHops: false` for plain crossings.
 - **Markers** sit square to the node with `rounded`, `stepped` and `straight`. The tilt named in the table happens only with `edgeRouting: curved`.
 - **An edge between a subgraph and a node inside it** is drawn along the flow, between the subgraph's border and the node, and the subgraph grows to keep the edge's label clear of the node.
 - **A subgraph nested inside itself** (`subgraph a` … `subgraph b` … `subgraph a`) is refused, as in dagre.

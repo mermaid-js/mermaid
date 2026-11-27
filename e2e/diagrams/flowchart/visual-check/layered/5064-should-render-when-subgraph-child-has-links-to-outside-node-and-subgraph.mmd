@@ -1,0 +1,15 @@
+---
+description:
+  Checks that a node (In) inside a subgraph (Sub) can simultaneously receive an
+  edge from an outside node (Out --> In) and an edge from its own parent
+  subgraph container (Sub --> In) without layout errors.
+config:
+  layout: layered
+copyOf: flowchart/visual-check/5064-should-render-when-subgraph-child-has-links-to-outside-node-and-subgraph.mmd
+---
+flowchart TB
+  Out --> In
+  subgraph Sub
+  In
+  end
+  Sub --> In

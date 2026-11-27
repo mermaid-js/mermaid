@@ -28,6 +28,10 @@ const LOOP = 26;
 const LOOP_GAP = 6;
 // The part of a side that edge ends keep clear of at each corner when the node sets no span.
 const CORNER = 12;
+// Room between the label of an edge from a group to a member and other edges at that member.
+const LABEL_CLEAR = 4;
+// How much of its label an edge from a group to a member keeps under it when the label slides.
+const LABEL_HOLD = 4;
 // A drawing that runs across is turned to run down only when the width budget is under this.
 export const TURN_BREAKPOINT = 640;
 // Tight layouts (`availableWidth`): node and rank spacing and group padding are scaled by these.
@@ -193,11 +197,12 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     const c = cnodes[group]!;
     const atTop = down && out === (dir === 'TB');
     const band = !down ? c.padX : atTop ? c.padTop : c.padBottom;
-    // The title sits in the top padding; the edge starts below it instead of crossing it.
+    // The title sits in the top padding; an edge that would cross it starts below it instead.
     const j = group - nodeCount;
     const title = atTop ? graph.groups[j]!.title : undefined;
     const skip = title ? padTops[j]! / 2 + title.height : 0;
-    return { group, member: out ? dst : src, out, dir, band, skip, labelLen };
+    const titleW = title ? title.width : 0;
+    return { group, member: out ? dst : src, out, dir, band, skip, titleW, labelLen };
   });
   for (const edge of inner) {
     if (!edge || (edge.labelLen === 0 && edge.skip === 0)) continue;
@@ -299,6 +304,8 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     return { x: c.x + pad, y: c.y + pad, width: size.width, height: size.height };
   };
   const edges = new Map<string, LayoutModelEdge>();
+  // Edges between a group and a member are drawn last, clear of the edges already at the member.
+  const deferred: number[] = [];
   graph.edges.forEach((e, k) => {
     const ce = cedges[k]!;
     const [src, dst] = ends[k]!;
@@ -317,9 +324,8 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
       );
       return;
     }
-    const within = inner[k];
-    if (within) {
-      edges.set(e.id, innerEdge(box(within.group), box(within.member), within, e.label));
+    if (inner[k]) {
+      deferred.push(k);
       return;
     }
     const points: RoutePoint[] = [];
@@ -340,6 +346,16 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     if (ce.labelW > 0 || ce.labelH > 0) model.label = { x: ce.labelX + pad, y: ce.labelY + pad };
     edges.set(e.id, model);
   });
+  for (const k of deferred) {
+    const within = inner[k]!;
+    const member = box(within.member);
+    const group = box(within.group);
+    const label = graph.edges[k]!.label;
+    const taken = endsAt(member, within, edges.values());
+    const across = freeAcross(member, within, taken);
+    const labelAt = label ? labelAcross(group, within, label, across, taken) : across;
+    edges.set(graph.edges[k]!.id, innerEdge(group, member, within, label, across, labelAt));
+  }
 
   return {
     width: total.width + 2 * pad,
@@ -363,6 +379,8 @@ interface InnerEdge {
   band: number;
   // How far in from the border the group's title reaches on that side, 0 without one there.
   skip: number;
+  // The width of the title on that border, 0 without one there. The title is centred on it.
+  titleW: number;
   // The label's size along the flow, 0 without a label.
   labelLen: number;
 }
@@ -391,25 +409,25 @@ function flowIn(cnodes: CNode[], g: number, rootDir: Dir): Dir {
 }
 
 // Draws an edge between a group and a member along the flow: from the border the flow starts at
-// to the member, or from the member to the border the flow ends at. Where the title is on that
-// border, the edge ends below the title. The label sits in the room the group keeps for it,
-// clear of the title and of the member.
+// to the member, or from the member to the border the flow ends at. Where it would cross the
+// title on that border, the edge ends below the title instead. The label sits in the room the
+// group keeps for it, clear of the title and of the member, centred across at `labelAt`.
 function innerEdge(
   group: LayoutModelNode,
   member: LayoutModelNode,
-  { out, dir, band, skip, labelLen }: InnerEdge,
-  label: { width: number; height: number } | undefined
+  { out, dir, band, skip, titleW, labelLen }: InnerEdge,
+  label: { width: number; height: number } | undefined,
+  across: number,
+  labelAt: number
 ): LayoutModelEdge {
-  const down = !runsAcross(dir);
-  const sign = dir === 'TB' || dir === 'LR' ? 1 : -1;
-  const side = out ? -sign : sign;
+  const { down, side, face } = innerFace(member, out, dir);
   const centre = down ? group.y : group.x;
   const border = centre + (side * (down ? group.height : group.width)) / 2;
-  const face = (down ? member.y : member.x) + (side * (down ? member.height : member.width)) / 2;
-  const across = down ? member.x : member.y;
   const at = (along: number): RoutePoint =>
     down ? { x: across, y: along, axis: 'v' } : { x: along, y: across, axis: 'h' };
-  const edge = border - side * skip;
+  // Only an edge in line with the title would cross it; one beside it starts on the border.
+  const underTitle = down && Math.abs(across - group.x) < titleW / 2;
+  const edge = underTitle ? border - side * skip : border;
   const [from, to] = out ? [edge, face] : [face, edge];
   const model: LayoutModelEdge = {
     points: [at(from), at(to)],
@@ -420,9 +438,103 @@ function innerEdge(
   };
   if (label) {
     const along = border - side * (band + labelLen / 2);
-    model.label = down ? { x: across, y: along } : { x: along, y: across };
+    model.label = down ? { x: labelAt, y: along } : { x: along, y: labelAt };
   }
   return model;
+}
+
+// The side of the member an edge between it and its group runs to: whether the flow runs down,
+// which way the side faces along the flow (-1 or 1), and where the side lies along the flow.
+function innerFace(
+  member: LayoutModelNode,
+  out: boolean,
+  dir: Dir
+): { down: boolean; side: number; face: number } {
+  const down = !runsAcross(dir);
+  const sign = dir === 'TB' || dir === 'LR' ? 1 : -1;
+  const side = out ? -sign : sign;
+  const face = (down ? member.y : member.x) + (side * (down ? member.height : member.width)) / 2;
+  return { down, side, face };
+}
+
+// Where across the member's side the edges already drawn end on the side an edge between the
+// member and its group runs to.
+function endsAt(
+  member: LayoutModelNode,
+  { out, dir }: InnerEdge,
+  drawn: Iterable<LayoutModelEdge>
+): number[] {
+  const { down, face } = innerFace(member, out, dir);
+  const centre = down ? member.x : member.y;
+  const half = (down ? member.width : member.height) / 2;
+  const along = (p: RoutePoint): number => (down ? p.y : p.x);
+  const acrossOf = (p: RoutePoint): number => (down ? p.x : p.y);
+  const taken: number[] = [];
+  for (const edge of drawn) {
+    for (const p of [edge.points[0], edge.points[edge.points.length - 1]]) {
+      if (!p || Math.abs(along(p) - face) > 1 || Math.abs(acrossOf(p) - centre) > half + 1) {
+        continue;
+      }
+      taken.push(acrossOf(p));
+    }
+  }
+  return taken;
+}
+
+// How far `x` is from the nearest of `taken`; Infinity when there are none.
+const gapTo = (x: number, taken: number[]): number =>
+  taken.reduce((min, t) => Math.min(min, Math.abs(x - t)), Infinity);
+
+// Where across the member's side an edge between it and its group runs (#8824): in line with
+// the member when that is free, otherwise the nearest place on the side at least `PORT_SEP` from
+// the ends of the edges already there (`taken`), so the two do not run on top of each other.
+// With no such place, the one furthest from those ends.
+function freeAcross(member: LayoutModelNode, { dir }: InnerEdge, taken: number[]): number {
+  const down = !runsAcross(dir);
+  const centre = down ? member.x : member.y;
+  const half = (down ? member.width : member.height) / 2;
+  const gap = (x: number): number => gapTo(x, taken);
+  if (gap(centre) >= PORT_SEP) return centre;
+  const reach = Math.max(0, half - Math.min(CORNER, half / 2));
+  let best = centre;
+  for (let step = 1; step * PORT_SEP <= reach + 1e-6; step++) {
+    for (const x of [centre + step * PORT_SEP, centre - step * PORT_SEP]) {
+      if (gap(x) >= PORT_SEP) return x;
+      if (gap(x) > gap(best)) best = x;
+    }
+  }
+  for (const x of [centre + reach, centre - reach]) if (gap(x) > gap(best)) best = x;
+  return best;
+}
+
+// Where across the label of an edge between a group and a member is centred: on the edge at
+// `across` when that keeps it clear of the other edges at the member (`taken`), otherwise slid
+// across just far enough to clear them, still over its own edge and inside the group. With no
+// such place, the one that keeps it furthest from them.
+function labelAcross(
+  group: LayoutModelNode,
+  { dir }: InnerEdge,
+  label: { width: number; height: number },
+  across: number,
+  taken: number[]
+): number {
+  const down = !runsAcross(dir);
+  const half = (down ? label.width : label.height) / 2;
+  const clear = half + LABEL_CLEAR;
+  const room = (down ? group.width : group.height) / 2 - half;
+  const centre = down ? group.x : group.y;
+  const [lo, hi] = room >= 0 ? [centre - room, centre + room] : [centre, centre];
+  const slide = Math.max(0, half - LABEL_HOLD);
+  const fits = (x: number): boolean =>
+    x >= lo - 1e-6 && x <= hi + 1e-6 && Math.abs(x - across) <= slide + 1e-6;
+  const gap = (x: number): number => gapTo(x, taken);
+  if (taken.length === 0 || (gap(across) >= clear && fits(across))) return across;
+  const options = [across, ...taken.flatMap((t) => [t - clear, t + clear])].filter(fits);
+  options.sort((a, b) => Math.abs(a - across) - Math.abs(b - across));
+  const free = options.find((x) => gap(x) >= clear);
+  if (free !== undefined) return free;
+  const clamp = (x: number): number => Math.min(hi, Math.max(lo, x));
+  return [clamp(across), ...options].reduce((best, x) => (gap(x) > gap(best) ? x : best));
 }
 
 const FLOW_START: Readonly<Record<Dir, Side>> = {

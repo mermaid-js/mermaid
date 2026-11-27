@@ -6,8 +6,10 @@ import type {
 
 const id = 'agentflow';
 
+// `agentflow-beta` is the keyword the diagram shipped with while it was in beta.
+// It stays as an alias so those diagrams keep rendering.
 const detector: DiagramDetector = (txt) => {
-  return /^\s*agentflow-beta\b/.test(txt);
+  return /^\s*agentflow(?:-beta)?(?=\s|;|$)/.test(txt);
 };
 
 const loader: DiagramLoader = async () => {

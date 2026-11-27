@@ -1,0 +1,23 @@
+---
+description:
+  Three levels of subgraphs under the layered layout, with the outer subgraph
+  declared after the ones inside it (O holds A holds B). Every level is drawn,
+  outer boxes behind inner ones, instead of the outer box hiding the inner
+  ones (#8821).
+config:
+  layout: layered
+---
+flowchart TB
+  b-->B
+  a-->c
+  subgraph O
+  A
+  end
+  subgraph B
+  c
+  end
+  subgraph A
+    a
+    b
+    B
+  end

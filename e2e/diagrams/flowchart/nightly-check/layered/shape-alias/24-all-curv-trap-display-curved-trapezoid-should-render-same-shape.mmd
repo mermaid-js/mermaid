@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `curv-trap`, `display`, and `curved-trapezoid` names all
+  render the same curved-trapezoid display shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/24-all-curv-trap-display-curved-trapezoid-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: curv-trap, label: "curv-trap" }
+ n1@{ shape: display, label: "display" }
+ n2@{ shape: curved-trapezoid, label: "curved-trapezoid" }

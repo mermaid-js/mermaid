@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that a markdown-string node label containing an explicit newline plus
+  **bold** formatting, and a bold-formatted edge label, render correctly when
+  htmlLabels is disabled, forcing the non-HTML/SVG-text markdown rendering path.
+config:
+  layout: layered
+  flowchart:
+    titleTopMargin: 0
+copyOf: flowchart/visual-check/new-line-in-node-and-formatted-edge-label-2.mmd
+---
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+  b("`The dog in **the** hog.(1)
+  NL`") --"`1o **bold**`"--> c

@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that FontAwesome icons render correctly both inside a node label and
+  inside an edge label, under the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/nightly-check/handdrawn/fontawesome-icons-in-edge-labels.mmd
+---
+graph TD
+  C -->|fa:fa-car Car| F[fa:fa-car Car]

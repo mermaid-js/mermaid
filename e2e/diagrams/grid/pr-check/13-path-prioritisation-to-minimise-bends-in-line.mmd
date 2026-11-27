@@ -1,0 +1,19 @@
+---
+description:
+  Five nodes over three rows and columns, where routes are chosen to keep each
+  line with as few bends as possible.
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 1, column: 1 }
+  B@{ row: 1, column: 2 }
+  C@{ column: 1, row: 2 }
+  D@{ column: 3, row: 1 }
+  E@{ row: 3, column: 3 }
+
+  A --> B
+  A --> C
+  B --> D
+  C --> D
+  D --> E

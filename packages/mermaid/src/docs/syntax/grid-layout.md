@@ -1,4 +1,4 @@
-# Grid Layout (v<MERMAID_RELEASE_VERSION>+)
+# Grid Layout (v12.3.0+)
 
 ## Introduction
 

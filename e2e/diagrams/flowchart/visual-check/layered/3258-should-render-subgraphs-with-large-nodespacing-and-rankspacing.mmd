@@ -1,0 +1,24 @@
+---
+description:
+  Checks that a large nodeSpacing/rankSpacing config value (250) is honored for
+  layout of nodes inside subgraphs that declare their own direction (LR) nested
+  within an LR flowchart.
+title: Subgraph nodeSpacing and rankSpacing example
+config:
+  layout: layered
+  flowchart:
+    nodeSpacing: 250
+    rankSpacing: 250
+copyOf: flowchart/visual-check/3258-should-render-subgraphs-with-large-nodespacing-and-rankspacing.mmd
+---
+flowchart LR
+  X --> Y
+  subgraph X
+    direction LR
+    A
+    C
+  end
+  subgraph Y
+    B
+    D
+  end
