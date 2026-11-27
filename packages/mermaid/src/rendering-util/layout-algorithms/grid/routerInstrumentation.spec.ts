@@ -26,6 +26,8 @@ describe('grid routing instrumentation checkpoints', () => {
       Object.keys(createGridRoutingInstrumentation()).sort()
     );
     expect(gridRoutingMetricDisposition.compatibilityFastPaths).toBe('cumulative');
+    expect(gridRoutingMetricDisposition.labelOverlayBuilds).toBe('cumulative');
+    expect(gridRoutingMetricDisposition.labelOverlayVertices).toBe('cumulative');
 
     const checkpoint = createGridRoutingInstrumentationCheckpoint(
       createGridRoutingInstrumentation()

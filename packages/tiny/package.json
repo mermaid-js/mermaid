@@ -20,7 +20,8 @@
   "devDependencies": {},
   "files": [
     "dist/",
-    "README.md"
+    "README.md",
+    "THIRD_PARTY_NOTICES"
   ],
   "publishConfig": {
     "access": "public"

@@ -1,0 +1,13 @@
+---
+description:
+  Edges into and out of a lightning-bolt node under the layered layout. The
+  bolt's outline is a zigzag, so each edge must stop where it first meets the
+  outline, as in the elk layout, instead of inside the bolt (#8833).
+config:
+  layout: layered
+---
+flowchart TB
+  a[Top left] --> bolt@{ shape: lightning-bolt }
+  b[Top right] --> bolt
+  bolt --> c[Bottom left]
+  bolt --> d[Bottom right]

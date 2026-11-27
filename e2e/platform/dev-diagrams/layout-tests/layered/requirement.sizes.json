@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "login",
+      "width": 164.734375,
+      "height": 166
+    },
+    {
+      "id": "reset",
+      "width": 230.875,
+      "height": 166
+    },
+    {
+      "id": "speed",
+      "width": 256.59375,
+      "height": 166
+    },
+    {
+      "id": "auth_service",
+      "width": 105.609375,
+      "height": 103
+    },
+    {
+      "id": "load_test",
+      "width": 118.0625,
+      "height": 103
+    },
+    {
+      "id": "edge-label-login-reset-login-reset-0",
+      "width": 84.859375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-login-speed-login-speed-1",
+      "width": 84.859375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-auth_service-login-auth_service-login-2",
+      "width": 83.28125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-load_test-speed-load_test-speed-3",
+      "width": 77.0625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-reset-login-reset-login-4",
+      "width": 77.84375,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "f2c8ca1b380da58878e9779d309a379dbf835ffb88e8abc420ca5f97c5007fd1",
+    "capturedAt": "2026-11-03T13:59:17.601Z",
+    "capturedFrom": "browser-dev layout-tests/layered/requirement.mmd layout=layered theme=default look=classic"
+  }
+}

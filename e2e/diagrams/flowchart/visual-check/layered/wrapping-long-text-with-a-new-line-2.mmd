@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that a markdown string node label containing very long text, an
+  inline bold/italic run, and an explicit blank-line paragraph break wraps
+  correctly onto multiple lines, with htmlLabels disabled so wrapping is
+  computed for SVG text rather than HTML.
+config:
+  layout: layered
+  flowchart:
+    titleTopMargin: 0
+copyOf: flowchart/visual-check/wrapping-long-text-with-a-new-line-2.mmd
+---
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+  b("`The dog in **the** hog.(1).. a a a a *very long text* about it
+  Word!
+
+  Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. Another line with many, many words. `") --> c

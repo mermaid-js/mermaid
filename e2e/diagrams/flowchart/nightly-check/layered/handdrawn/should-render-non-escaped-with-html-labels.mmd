@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that HTML tags inside a node label are rendered as actual markup
+  rather than escaped, when HTML labels are enabled, under the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/nightly-check/handdrawn/should-render-non-escaped-with-html-labels.mmd
+---
+graph TD
+  a["<strong>Haiya</strong>"]-->b

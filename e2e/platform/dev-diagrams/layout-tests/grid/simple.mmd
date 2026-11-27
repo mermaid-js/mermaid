@@ -1,0 +1,13 @@
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 40
+    columnGap: 40
+---
+flowchart TB
+  A["Start"]@{ row: 1, column: 1 }
+  B["Review"]@{ row: 2, column: 1 }
+  C["Done"]@{ row: 2, column: 2 }
+  A --> B
+  B --> C

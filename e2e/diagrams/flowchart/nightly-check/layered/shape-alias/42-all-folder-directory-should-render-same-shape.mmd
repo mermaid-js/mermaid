@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `folder` and `directory` names render the same
+  folder/directory shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/42-all-folder-directory-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: folder, label: "folder" }
+ n1@{ shape: directory, label: "directory" }

@@ -1,0 +1,19 @@
+---
+description:
+  Nested subgraphs under the layered layout. Each cluster is sized by the engine around
+  its content and title band, with edges crossing borders between levels.
+config:
+  layout: layered
+---
+flowchart TB
+  start([Start]) --> a1
+  subgraph outer [Outer service]
+    subgraph inner [Inner worker]
+      a1[Receive] --> a2{Valid?}
+      a2 -->|yes| a3[Process]
+    end
+    a3 --> b1[Store]
+    a2 -->|no| b2[Reject]
+  end
+  b1 --> done((Done))
+  b2 --> done

@@ -1,0 +1,22 @@
+---
+description:
+  Verifies that markdown formatting (bold text via backtick-quoted strings)
+  inside a diamond/decision node label renders correctly alongside multiple
+  incoming and outgoing labeled edges, with htmlLabels disabled so formatting is
+  rendered as SVG text spans.
+config:
+  layout: layered
+  flowchart:
+    titleTopMargin: 0
+copyOf: flowchart/visual-check/with-formatting-in-a-node-2.mmd
+---
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+  a{"`The **cat** in the hat`"} -- 1o --> b
+  a -- 2o --> c
+  a -- 3o --> d
+  g --2i--> a
+  d --1i--> a
+  h --3i -->a
+  b --> d(The dog in the hog)
+  c --> d

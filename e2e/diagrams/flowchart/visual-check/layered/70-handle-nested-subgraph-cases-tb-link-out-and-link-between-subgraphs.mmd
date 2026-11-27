@@ -1,0 +1,23 @@
+---
+description:
+  Tests a flowchart in TB direction with both a link between two subgraph
+  containers (S1 --> S2) and a direct link between individual nodes that belong
+  to two different subgraphs (sub1 --> sub4), verifying edges correctly cross
+  subgraph boundaries.
+config:
+  layout: layered
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/visual-check/70-handle-nested-subgraph-cases-tb-link-out-and-link-between-subgraphs.mmd
+---
+flowchart TB
+  subgraph S1
+   sub1 -->sub2
+  end
+  subgraph S2
+   sub4
+  end
+  S1 --> S2
+  sub1 --> sub4

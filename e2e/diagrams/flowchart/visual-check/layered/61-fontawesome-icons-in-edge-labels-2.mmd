@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that FontAwesome icon shorthand syntax (fa:fa-car) renders correctly
+  both inside an edge label and inside a node's own text label, using the legacy
+  `graph` keyword.
+config:
+  layout: layered
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/visual-check/61-fontawesome-icons-in-edge-labels-2.mmd
+---
+graph TD
+  C -->|fa:fa-car Car| F[fa:fa-car Car]

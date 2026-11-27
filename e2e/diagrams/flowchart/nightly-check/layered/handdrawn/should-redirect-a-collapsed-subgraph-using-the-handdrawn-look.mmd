@@ -1,0 +1,17 @@
+---
+description: >-
+  Verifies that a subgraph collapsed via the '@{ view: collapsed }' metadata
+  redirects its incoming edge to the collapsed subgraph node correctly, under
+  the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  fontFamily: courier
+copyOf: flowchart/nightly-check/handdrawn/should-redirect-a-collapsed-subgraph-using-the-handdrawn-look.mmd
+---
+flowchart TD
+  X --> grp
+  subgraph grp [Hand Drawn Group]
+    P --> Q
+  end
+  grp@{ view: collapsed }

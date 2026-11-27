@@ -1,0 +1,28 @@
+---
+description:
+  Edges from a node beside two nested groups into both members of the inner
+  group.
+config:
+  layout: grid
+  grid:
+    rowGap: 45
+    columnGap: 70
+    placements:
+      C: { row: 1, column: 1 }
+      Work: { row: 1, column: 2 }
+      Nested: { row: 2, column: 1 }
+      D: { row: 1, column: 1 }
+      E: { row: 2, column: 1 }
+---
+flowchart TB
+  C[C]
+
+  subgraph Work["Work"]
+    subgraph Nested["Nested"]
+      D[D]
+      E[E]
+    end
+  end
+
+  C --> D
+  C --> E

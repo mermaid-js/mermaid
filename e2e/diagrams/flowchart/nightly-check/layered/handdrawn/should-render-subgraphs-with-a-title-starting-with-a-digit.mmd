@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that a subgraph whose title starts with a digit is parsed and
+  rendered correctly, under the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  fontFamily: courier
+copyOf: flowchart/nightly-check/handdrawn/should-render-subgraphs-with-a-title-starting-with-a-digit.mmd
+---
+graph TB
+  subgraph 2Two
+  a1-->a2
+  end

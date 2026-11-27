@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `flip-tri`, `manual-file`, and `flipped-triangle` names all
+  render the same flipped-triangle manual-file shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/31-all-flip-tri-manual-file-flipped-triangle-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: flip-tri, label: "flip-tri" }
+ n1@{ shape: manual-file, label: "manual-file" }
+ n2@{ shape: flipped-triangle, label: "flipped-triangle" }

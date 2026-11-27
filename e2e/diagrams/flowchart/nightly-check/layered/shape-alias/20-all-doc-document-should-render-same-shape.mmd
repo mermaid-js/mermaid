@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that the `doc` and `document` names render the same wave-edged
+  document shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/20-all-doc-document-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: doc, label: "doc" }
+ n1@{ shape: document, label: "document" }

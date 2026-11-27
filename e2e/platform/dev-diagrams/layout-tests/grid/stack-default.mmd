@@ -1,0 +1,17 @@
+---
+config:
+  layout: grid
+---
+flowchart TB
+  TopLeft["Top left"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: top }
+  TopRight([Top right])@{ row: 1, column: 1, horizontalAlign: right, verticalAlign: top }
+  TopPeer["Tall peer<br/>line two<br/>line three"]@{ row: 1, column: 2 }
+
+  CenterLeft["Center left"]@{ row: 2, column: 1, horizontalAlign: left, verticalAlign: center }
+  CenterRight([Center right])@{ row: 2, column: 1, horizontalAlign: right, verticalAlign: center }
+  CenterPeer["Tall peer<br/>line two<br/>line three"]@{ row: 2, column: 2 }
+
+  BottomLeft["Bottom left"]@{ row: 3, column: 1, horizontalAlign: left, verticalAlign: bottom }
+  BottomCenter["Bottom center"]@{ row: 3, column: 1, horizontalAlign: center, verticalAlign: bottom }
+  BottomRight([Bottom right])@{ row: 3, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  BottomPeer["Tall peer<br/>line two<br/>line three"]@{ row: 3, column: 2 }

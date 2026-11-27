@@ -1,0 +1,65 @@
+{
+  "nodes": [
+    {
+      "id": "0",
+      "width": 73.73551940917969,
+      "height": 73.73551940917969
+    },
+    {
+      "id": "1",
+      "width": 96.984375,
+      "height": 34
+    },
+    {
+      "id": "2",
+      "width": 81.015625,
+      "height": 44
+    },
+    {
+      "id": "3",
+      "width": 92.203125,
+      "height": 54
+    },
+    {
+      "id": "4",
+      "width": 93.671875,
+      "height": 34
+    },
+    {
+      "id": "5",
+      "width": 88.359375,
+      "height": 34
+    },
+    {
+      "id": "6",
+      "width": 97.015625,
+      "height": 34
+    },
+    {
+      "id": "7",
+      "width": 79.859375,
+      "height": 34
+    },
+    {
+      "id": "8",
+      "width": 127.671875,
+      "height": 34
+    },
+    {
+      "id": "9",
+      "width": 71.203125,
+      "height": 34
+    },
+    {
+      "id": "10",
+      "width": 104.546875,
+      "height": 44
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "8209fa5acca5f2a61a113d396ece013e290055040039bd85bea726d02001812e",
+    "capturedAt": "2026-11-03T13:59:17.625Z",
+    "capturedFrom": "browser-dev layout-tests/layered/mindmap.mmd layout=layered theme=default look=classic"
+  }
+}

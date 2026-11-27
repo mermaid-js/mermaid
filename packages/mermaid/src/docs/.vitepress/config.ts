@@ -170,6 +170,7 @@ function sidebarSyntax() {
       collapsed: false,
       items: [
         syntaxItem('Flowchart', 'flowchart'),
+        syntaxItem('Grid Layout', 'grid-layout'),
         syntaxItem('Swimlanes Diagram', 'swimlanes'),
         syntaxItem('Sequence Diagram', 'sequenceDiagram'),
         syntaxItem('Class Diagram', 'classDiagram'),
@@ -275,6 +276,7 @@ function sidebarConfig() {
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
         { text: 'Layouts', link: '/config/layouts' },
+        { text: 'Layered Layout (beta)', link: '/config/layered' },
       ],
     },
   ];

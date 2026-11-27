@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `lean-l`, `lean-left`, and `out-in` names all render the
+  same lean-left parallelogram used for data input/output.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/08-all-lean-l-lean-left-out-in-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: lean-l, label: "lean-l" }
+ n1@{ shape: lean-left, label: "lean-left" }
+ n2@{ shape: out-in, label: "out-in" }

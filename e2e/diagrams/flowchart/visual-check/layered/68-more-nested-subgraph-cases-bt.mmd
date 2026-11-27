@@ -1,0 +1,23 @@
+---
+description:
+  Tests edge resolution between two sibling subgraphs and their child nodes (a
+  subgraph-to-subgraph edge plus a subgraph-to-inner-node edge) laid out in the
+  bottom-to-top (BT) flowchart direction.
+config:
+  layout: layered
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+copyOf: flowchart/visual-check/68-more-nested-subgraph-cases-bt.mmd
+---
+flowchart BT
+  subgraph two
+  b1
+  end
+  subgraph three
+  c2
+  end
+
+  three --> two
+  two --> c2

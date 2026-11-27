@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that a flowchart rendered with the hand-drawn look fills its
+  container width when useMaxWidth defaults to true.
+config:
+  layout: layered
+  look: "handDrawn"
+  flowchart:
+    useMaxWidth: true
+copyOf: flowchart/nightly-check/handdrawn/02-fdh38-should-render-a-flowchart-when-usemaxwidth-is-true-default.mmd
+---
+flowchart TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      

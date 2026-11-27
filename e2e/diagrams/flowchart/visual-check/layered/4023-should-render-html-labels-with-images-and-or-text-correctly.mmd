@@ -1,0 +1,14 @@
+---
+description:
+  Checks that <img> tags inside HTML node labels render correctly whether used
+  alone, combined with surrounding text, mixed with another image, or omitted
+  entirely in favor of plain text.
+config:
+  layout: layered
+copyOf: flowchart/visual-check/4023-should-render-html-labels-with-images-and-or-text-correctly.mmd
+---
+flowchart TD
+  B[<img src='https://mermaid.js.org/mermaid-logo.svg'>]
+  B-->C[<img src="https://mermaid.js.org/mermaid-logo.svg"> more text <img src='https://mermaid.js.org/mermaid-logo.svg'>]
+  B-->D(<img src='https://mermaid.js.org/mermaid-logo.svg'> some text)
+  B-->E(plain)

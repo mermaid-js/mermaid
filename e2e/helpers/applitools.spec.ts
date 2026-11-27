@@ -43,35 +43,56 @@ describe('applitoolsBatch', () => {
   });
 });
 
+/**
+ * Applitools finds a check's baseline by app name, test name and environment within the
+ * branch. The batch only groups results for display, so the test name alone has to tell
+ * two checks apart.
+ */
 describe('applitoolsTestName', () => {
-  it('names mmd fixtures by their base name (the batch already names the folder)', () => {
-    expect(
-      applitoolsTestName(
-        'rendering/mmd-snapshots.spec.ts-mmd-snapshots-flowchart-foo',
-        'rendering/mmd-snapshots.spec.ts',
-        'diagrams/flowchart/foo'
-      )
-    ).toBe('foo');
+  const MMD_SPEC = 'rendering/mmd-snapshots.spec.ts';
+  const fixtureName = (path: string) =>
+    applitoolsTestName(`${MMD_SPEC}-mmd-snapshots-${path.replace(/\//g, '-')}`, MMD_SPEC, path);
+
+  it('names an mmd fixture by its path inside diagrams/', () => {
+    expect(fixtureName('diagrams/flowchart/visual-check/foo')).toBe('flowchart/visual-check/foo');
   });
 
-  it('drops the spec-file prefix Playwright prepends to the title path', () => {
+  it('tells a fixture apart from a copy of it in a subfolder', () => {
+    expect(fixtureName('diagrams/flowchart/visual-check/layered/foo')).not.toBe(
+      fixtureName('diagrams/flowchart/visual-check/foo')
+    );
+  });
+
+  it('tells fixtures with the same file name in different diagram types apart', () => {
+    expect(fixtureName('diagrams/journey/pr-check/dark-theme')).not.toBe(
+      fixtureName('diagrams/state-diagram-v2/nightly-check/dark-theme')
+    );
+  });
+
+  it('keeps the spec path Playwright puts at the start of the title path', () => {
     expect(
       applitoolsTestName(
         'rendering/flowchart/flowchart.spec.js-Flowchart-1:-should-render',
         'rendering/flowchart/flowchart.spec.js'
       )
-    ).toBe('Flowchart-1:-should-render');
+    ).toBe('rendering/flowchart/flowchart.spec.js-Flowchart-1:-should-render');
   });
 
-  it('keeps explicit names untouched', () => {
+  it('puts the spec path in front of an explicit name', () => {
     expect(applitoolsTestName('Basic-States', 'rendering/state/stateDiagram-neo.spec.js')).toBe(
-      'Basic-States'
+      'rendering/state/stateDiagram-neo.spec.js-Basic-States'
+    );
+  });
+
+  it('tells the same explicit name in two specs apart', () => {
+    expect(applitoolsTestName('class', 'rendering/grid/pr-check/grid-layout.spec.ts')).not.toBe(
+      applitoolsTestName('class', 'rendering/class/pr-check/class.spec.ts')
     );
   });
 
   it('falls back to the spec rule when the screenshot path has no folder', () => {
     expect(applitoolsTestName('other/xss.spec.js-XSS-1', 'other/xss.spec.js', 'flat')).toBe(
-      'XSS-1'
+      'other/xss.spec.js-XSS-1'
     );
   });
 });

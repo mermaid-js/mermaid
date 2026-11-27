@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `win-pane`, `internal-storage`, and `window-pane` names all
+  render the same window-pane internal-storage shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/27-all-win-pane-internal-storage-window-pane-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: win-pane, label: "win-pane" }
+ n1@{ shape: internal-storage, label: "internal-storage" }
+ n2@{ shape: window-pane, label: "window-pane" }

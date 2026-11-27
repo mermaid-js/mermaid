@@ -118,9 +118,11 @@ export async function curlyBraces<T extends SVGGraphicsElement>(
 
   curlyBracesShape.attr('transform', `translate(${radius - radius / 4}, 0)`);
 
+  // Centre the label on its own box: the neo look pads the shape by more than
+  // `node.padding`, so an offset from the shape's edge drifts off centre there.
   label.attr(
     'transform',
-    `translate(${-w / 2 + (node.padding ?? 0) / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${-bbox.height / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, curlyBracesShape);

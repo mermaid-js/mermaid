@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that the `bolt`, `com-link`, and `lightning-bolt` names all render
+  the same lightning-bolt communication-link shape.
+config:
+  layout: layered
+copyOf: flowchart/nightly-check/shape-alias/19-all-bolt-com-link-lightning-bolt-should-render-same-shape.mmd
+---
+flowchart 
+ n0@{ shape: bolt, label: "bolt" }
+ n1@{ shape: com-link, label: "com-link" }
+ n2@{ shape: lightning-bolt, label: "lightning-bolt" }

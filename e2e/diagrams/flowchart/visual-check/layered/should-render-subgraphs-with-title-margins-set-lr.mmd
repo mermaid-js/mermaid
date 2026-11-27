@@ -1,0 +1,28 @@
+---
+description:
+  Verifies that the subGraphTitleMargin config renders correctly for a
+  left-to-right flowchart containing nested subgraphs with mixed inner
+  directions (TB, RL, BT), using the default htmlLabels rendering.
+config:
+  layout: layered
+  flowchart:
+    subGraphTitleMargin:
+      top: 10
+      bottom: 5
+copyOf: flowchart/visual-check/should-render-subgraphs-with-title-margins-set-lr.mmd
+---
+flowchart LR
+
+  subgraph TOP
+  direction TB
+  subgraph B1
+      direction RL
+      i1 -->f1
+  end
+  subgraph B2
+      direction BT
+      i2 -->f2
+  end
+  end
+  A --> TOP --> B
+  B1 --> B2

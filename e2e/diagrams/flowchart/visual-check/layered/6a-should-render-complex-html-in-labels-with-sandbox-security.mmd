@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that flowchart nodes with HTML-enabled labels, including a decision
+  diamond and a Font Awesome icon label (fa:fa-car), render correctly under
+  securityLevel 'sandbox', which renders the diagram inside a sandboxed iframe.
+config:
+  layout: layered
+  securityLevel: sandbox
+  flowchart:
+    htmlLabels: true
+copyOf: flowchart/visual-check/6a-should-render-complex-html-in-labels-with-sandbox-security.mmd
+---
+flowchart TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that a simple flowchart renders correctly with HTML labels enabled,
+  under the hand-drawn look.
+config:
+  layout: layered
+  look: handDrawn
+  flowchart:
+    htmlLabels: true
+  fontFamily: courier
+copyOf: flowchart/nightly-check/handdrawn/should-render-a-simple-flowchart-with-htmllabels.mmd
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

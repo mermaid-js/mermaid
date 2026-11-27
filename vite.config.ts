@@ -15,6 +15,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    setupFiles: ['./packages/mermaid/src/tests/setup.ts'],
     exclude: [
       ...defaultExclude,
       'e2e/rendering/**',

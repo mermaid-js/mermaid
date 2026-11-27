@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that a custom icon registered via mermaid's icon-pack API
+  (fa:fa-bell, not the live Font Awesome library) renders correctly inside a
+  single node label under the forest theme.
+config:
+  layout: layered
+  theme: "forest"
+copyOf: flowchart/nightly-check/icon/04-should-render-registered-icons-on-theme-forest.mmd
+---
+flowchart TD
+            A("fa:fa-bell Bell")
+        

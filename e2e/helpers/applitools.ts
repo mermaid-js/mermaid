@@ -14,7 +14,13 @@ export const applitoolsBatch = (
   return { id: `mermaid-batch-${runId}-${name}`, name };
 };
 
-/** Test name within the batch: fixture base name, or the title path without the spec-file prefix. */
+/**
+ * Test name of a check. Applitools finds a check's baseline by app name, test name and
+ * environment within the branch; the batch only groups results for display. So the name has
+ * to identify the test on its own: an mmd fixture's path inside `diagrams/`, or the spec path
+ * followed by the test's title path or explicit name. Two fixtures with the same file name in
+ * different folders, such as a layered copy and its ELK source, would otherwise share a baseline.
+ */
 export const applitoolsTestName = (
   name: string,
   specRelPath: string,
@@ -22,8 +28,8 @@ export const applitoolsTestName = (
 ): string => {
   const segments = screenshotPath?.split('/') ?? [];
   if (segments.length > 1) {
-    return segments[segments.length - 1];
+    return (segments[0] === 'diagrams' ? segments.slice(1) : segments).join('/');
   }
   const specPrefix = `${specRelPath.replace(/\s+/g, '-')}-`;
-  return name.startsWith(specPrefix) ? name.slice(specPrefix.length) : name;
+  return name.startsWith(specPrefix) ? name : `${specPrefix}${name}`;
 };

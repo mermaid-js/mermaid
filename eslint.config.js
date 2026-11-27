@@ -267,6 +267,20 @@ export default tseslint.config(
     },
   },
   {
+    // The `layered` engine is ported nearly verbatim from mermaid-v13 so later v13 fixes can be
+    // brought over by hand. It is written for `noUncheckedIndexedAccess` (hence the `!` reads)
+    // and in v13's style, so these style-only rules are relaxed here.
+    files: ['packages/mermaid/src/rendering-util/layout-algorithms/layered/**/*.ts'],
+    rules: {
+      curly: 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/no-confusing-non-null-assertion': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      'unicorn/no-for-loop': 'off',
+      'unicorn/prefer-spread': 'off',
+    },
+  },
+  {
     files: ['*.html', '*.md', '**/*.md/*'],
     rules: {
       'no-var': 'error',

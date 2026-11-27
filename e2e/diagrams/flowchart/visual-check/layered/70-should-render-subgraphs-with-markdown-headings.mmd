@@ -1,0 +1,14 @@
+---
+description:
+  Checks that a subgraph title written as a markdown string (backtick-delimited,
+  using **bold** markdown syntax) is parsed and rendered as a formatted heading
+  rather than literal text.
+config:
+  layout: layered
+  fontFamily: courier
+copyOf: flowchart/visual-check/70-should-render-subgraphs-with-markdown-headings.mmd
+---
+graph TB
+  subgraph "`**strong**`"
+  a1-->a2
+  end
