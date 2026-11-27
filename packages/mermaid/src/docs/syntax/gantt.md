@@ -103,16 +103,16 @@ Support for keyword `until` was added in (v10.9.0+). This can be used to define 
 
 When specifying a `<length>`, use a number followed by one of these unit suffixes:
 
-| Unit         | Suffix | Example |
-| ------------ | ------ | ------- |
-| Milliseconds | `ms`   | `500ms` |
-| Seconds      | `s`    | `30s`   |
-| Minutes      | `m`    | `30m`   |
-| Hours        | `h`    | `4h`    |
-| Days         | `d`    | `3d`    |
-| Weeks        | `w`    | `2w`    |
-| Months       | `M`    | `1M`    |
-| Years        | `y`    | `1y`    |
+| Unit         | Suffix       | Example |
+| ------------ | ------------ | ------- |
+| Milliseconds | `ms`         | `500ms` |
+| Seconds      | `s`          | `30s`   |
+| Minutes      | `m` or `min` | `30m`   |
+| Hours        | `h`          | `4h`    |
+| Days         | `d`          | `3d`    |
+| Weeks        | `w`          | `2w`    |
+| Months       | `M`          | `1M`    |
+| Years        | `y`          | `1y`    |
 
 Decimal values are also supported (e.g., `1.5d`). Invalid duration tokens (e.g., `3dX`) will be ignored and the task will default to zero duration.
 
