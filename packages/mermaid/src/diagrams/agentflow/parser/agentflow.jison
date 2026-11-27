@@ -26,8 +26,8 @@
  * something a flowchart does not, which is exactly the failure this grammar
  * exists to avoid.
  *
- * This is revisitable: the diagram ships as `agentflow-beta`, and the natural
- * time to move is when flowchart's own operator and shape-data lexing gains a
+ * This is revisitable. The natural time to move is when flowchart's own
+ * operator and shape-data lexing gains a
  * Langium implementation that agentflow can share. Porting agentflow alone
  * buys compliance at the cost of the duplication above.
  */
@@ -140,6 +140,12 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "agentflow-beta"         {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+/*
+The header keyword is `agentflow`; `agentflow-beta` above is the alias kept from
+the beta. Only the first occurrence is the header. After that `agentflow` is an
+ordinary word, so it stays usable as a node id.
+*/
+"agentflow"(?=[\s;]|$)  {if(yy.lex.firstGraph()){this.begin("dir"); return 'GRAPH';} return 'NODE_STRING';}
 "flow"                   return 'flow';
 "connector"              return 'connector';
 "global"\b[ \t]*         return 'global';

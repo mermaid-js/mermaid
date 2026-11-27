@@ -15,6 +15,17 @@ describe('getPlausibleSettings', () => {
     );
   });
 
+  it('reads DOCS_PLAUSIBLE_DOMAIN over the docs hostname, ignoring an empty value', () => {
+    const siteUrl = { DOCS_SITE_URL: 'https://mermaid.ai/open-source/' };
+    expect(getPlausibleSettings({ ...siteUrl, DOCS_PLAUSIBLE_DOMAIN: 'mermaid.js.org' })).toEqual({
+      domain: 'mermaid.js.org',
+      endpoint: 'https://p.mermaid.live/api/event',
+    });
+    expect(getPlausibleSettings({ ...siteUrl, DOCS_PLAUSIBLE_DOMAIN: '' }).domain).toBe(
+      'mermaid.ai'
+    );
+  });
+
   it('reads DOCS_PLAUSIBLE_ENDPOINT, ignoring an empty value', () => {
     expect(
       getPlausibleSettings({ DOCS_PLAUSIBLE_ENDPOINT: 'https://plausible.io/api/event' }).endpoint

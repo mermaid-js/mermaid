@@ -3854,3 +3854,103 @@ railroad-peg-beta
 ```
 
 </details>
+
+## Swimlane Diagram
+
+Divide a process into lanes to show who owns each step and where work is handed off
+
+### Support Request
+
+```mermaid
+swimlane-beta LR
+  subgraph Customer
+    request[Request service]
+    receive[Receive update]
+  end
+
+  subgraph Support
+    triage[Triage request]
+    answer[Send answer]
+  end
+
+  subgraph Engineering
+    investigate[Investigate issue]
+    fix[Prepare fix]
+  end
+
+  request --> triage
+  triage -->|Known issue| answer
+  triage -->|Needs code change| investigate
+  investigate --> fix --> answer
+  answer --> receive
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+swimlane-beta LR
+  subgraph Customer
+    request[Request service]
+    receive[Receive update]
+  end
+
+  subgraph Support
+    triage[Triage request]
+    answer[Send answer]
+  end
+
+  subgraph Engineering
+    investigate[Investigate issue]
+    fix[Prepare fix]
+  end
+
+  request --> triage
+  triage -->|Known issue| answer
+  triage -->|Needs code change| investigate
+  investigate --> fix --> answer
+  answer --> receive
+```
+
+</details>
+
+### Quote Approval
+
+```mermaid
+swimlane-beta LR
+  subgraph sales [Sales team]
+    lead([Qualify lead])
+    quote[Prepare quote]
+  end
+
+  subgraph finance [Finance team]
+    review{Terms OK?}
+    approve((Approved))
+  end
+
+  lead --> quote --> review
+  review -->|Yes| approve
+  review -->|No| quote
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+swimlane-beta LR
+  subgraph sales [Sales team]
+    lead([Qualify lead])
+    quote[Prepare quote]
+  end
+
+  subgraph finance [Finance team]
+    review{Terms OK?}
+    approve((Approved))
+  end
+
+  lead --> quote --> review
+  review -->|Yes| approve
+  review -->|No| quote
+```
+
+</details>

@@ -6,9 +6,6 @@
 
 # Agentflow (v12.0.0+)
 
-> **Warning**
-> Agentflow is in beta. Diagrams start with the `agentflow-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
-
 > An agentflow diagram describes an agentic workflow: the agents that do the work, the flows they run, the tasks and tools inside those flows, and how control and data move between them.
 
 ## Introduction
@@ -20,10 +17,12 @@ A flowchart tells you what happens next. An agentflow tells you _who_ is doing i
 - **Edges** carry meaning: sequence, reference, and failure are three different arrows.
 - **Metadata** (`@{ … }`) attaches the non-visual detail — the model, the instruction, the parameter and return types, the connector a tool is bound to.
 
+This page covers how an agentflow diagram is written and drawn. [Agentflow Semantics](../agentflow/index.md) covers what makes one a valid workflow: which shapes go where, what each arrow can connect, and which settings each shape takes.
+
 ## Basic example
 
 ```mermaid
-agentflow-beta TB
+agentflow TB
   flow reviewer["Review Agent"]
     changes["Gather changes"]@{ shape: input }
     analyse["Analyse diff"]@{ shape: task }
@@ -35,7 +34,7 @@ agentflow-beta TB
 ```
 
 ```mermaid-example
-agentflow-beta TB
+agentflow TB
   flow reviewer["Review Agent"]
     changes["Gather changes"]@{ shape: input }
     analyse["Analyse diff"]@{ shape: task }
@@ -59,7 +58,7 @@ The same diagram, drawn both ways:
 ### With the defaults
 
 ```mermaid
-agentflow-beta TB
+agentflow TB
   brief["Release brief"]@{ shape: input }
   flow writer["Drafting Agent"]
     draft["Draft the notes"]@{ shape: task }
@@ -80,7 +79,7 @@ agentflow-beta TB
 ```
 
 ```mermaid-example
-agentflow-beta TB
+agentflow TB
   brief["Release brief"]@{ shape: input }
   flow writer["Drafting Agent"]
     draft["Draft the notes"]@{ shape: task }
@@ -112,7 +111,7 @@ config:
   look: classic
   layout: dagre
 ---
-agentflow-beta TB
+agentflow TB
   brief["Release brief"]@{ shape: input }
   flow writer["Drafting Agent"]
     draft["Draft the notes"]@{ shape: task }
@@ -139,7 +138,7 @@ config:
   look: classic
   layout: dagre
 ---
-agentflow-beta TB
+agentflow TB
   brief["Release brief"]@{ shape: input }
   flow writer["Drafting Agent"]
     draft["Draft the notes"]@{ shape: task }
@@ -165,10 +164,12 @@ does it for that type alone. `layout` is a top-level option, so it applies to ev
 
 ## Declaring a diagram
 
-Every diagram starts with the `agentflow-beta` keyword, optionally followed by a direction — `TB`, `TD`, `BT`, `LR`, or `RL`.
+Every diagram starts with the `agentflow` keyword, optionally followed by a direction — `TB`, `TD`, `BT`, `LR`, or `RL`.
+
+The `agentflow` keyword is available from v12.3.0. Earlier versions only accept `agentflow-beta`, which still works as an alias.
 
 ```txt
-agentflow-beta LR
+agentflow LR
 ```
 
 ## Nodes and shapes
@@ -193,7 +194,7 @@ The shape is chosen with the `shape` key in an `@{ … }` block. Agentflow provi
 Any canonical Mermaid shape name also works, so the aliases are a convenience rather than a restriction.
 
 ```mermaid
-agentflow-beta LR
+agentflow LR
   brief["Brief"]@{ shape: input }
   draft["Draft copy"]@{ shape: task }
   spellcheck["spell_check"]@{ shape: tool }
@@ -205,7 +206,7 @@ agentflow-beta LR
 ```
 
 ```mermaid-example
-agentflow-beta LR
+agentflow LR
   brief["Brief"]@{ shape: input }
   draft["Draft copy"]@{ shape: task }
   spellcheck["spell_check"]@{ shape: tool }
@@ -229,7 +230,7 @@ Agentflow uses three edge operators, each with a distinct meaning:
 Labels are written in the middle of the arrow, as in a flowchart:
 
 ```mermaid
-agentflow-beta TB
+agentflow TB
   check["Tests pass?"]@{ shape: decision }
   ship["Ship it"]@{ shape: action }
   fix["Fix the build"]@{ shape: task }
@@ -242,7 +243,7 @@ agentflow-beta TB
 ```
 
 ```mermaid-example
-agentflow-beta TB
+agentflow TB
   check["Tests pass?"]@{ shape: decision }
   ship["Ship it"]@{ shape: action }
   fix["Fix the build"]@{ shape: task }
@@ -261,7 +262,7 @@ Chained edges work too: `a --> b --> c`.
 A `flow … end` block groups nodes into a container. Containers nest, and a node referenced inside a container belongs to it.
 
 ```mermaid
-agentflow-beta TB
+agentflow TB
   flow team["Content Team"]
     flow researcher["Researcher"]
       gather["Gather sources"]@{ shape: task }
@@ -276,7 +277,7 @@ agentflow-beta TB
 ```
 
 ```mermaid-example
-agentflow-beta TB
+agentflow TB
   flow team["Content Team"]
     flow researcher["Researcher"]
       gather["Gather sources"]@{ shape: task }
@@ -295,7 +296,7 @@ agentflow-beta TB
 Sometimes a node is shared by several flows and should not be pulled into whichever one happens to mention it first. Declare it inside a `global … end` block and it stays at the top level no matter where it is referenced:
 
 ```mermaid
-agentflow-beta TB
+agentflow TB
   global
     corpus["Shared corpus"]@{ shape: refdoc }
   end
@@ -312,7 +313,7 @@ agentflow-beta TB
 ```
 
 ```mermaid-example
-agentflow-beta TB
+agentflow TB
   global
     corpus["Shared corpus"]@{ shape: refdoc }
   end
@@ -335,7 +336,7 @@ agentflow-beta TB
 `@{ view: collapsed }` folds a container down to a single summary node while keeping its edges. Edges that crossed the boundary terminate at the collapsed node instead of disappearing.
 
 ```mermaid
-agentflow-beta TB
+agentflow TB
   flow intake["Intake"]
     receive["Receive request"]@{ shape: input }
   end
@@ -356,7 +357,7 @@ agentflow-beta TB
 ```
 
 ```mermaid-example
-agentflow-beta TB
+agentflow TB
   flow intake["Intake"]
     receive["Receive request"]@{ shape: input }
   end
@@ -423,7 +424,7 @@ The one exception is prototype-shaped keys: `__proto__`, `constructor`, and `pro
 A connector describes an external system a tool talks to. Declare it with the `connector` keyword and configure it with metadata; tools then point at one of its capabilities with `connectorRef`.
 
 ```mermaid
-agentflow-beta LR
+agentflow LR
   connector github["GitHub API"]
   github@{ protocol: "http", endpoint: "https://api.github.com" }
 
@@ -434,7 +435,7 @@ agentflow-beta LR
 ```
 
 ```mermaid-example
-agentflow-beta LR
+agentflow LR
   connector github["GitHub API"]
   github@{ protocol: "http", endpoint: "https://api.github.com" }
 
@@ -449,7 +450,7 @@ A `connectorRef` value may be a bare node id, a dotted `connector.capability` fo
 ## A worked example
 
 ```mermaid
-agentflow-beta TB
+agentflow TB
   connector llm["LLM API"]
   llm@{ protocol: "http", endpoint: "https://api.example.com/chat" }
 
@@ -474,7 +475,7 @@ agentflow-beta TB
 ```
 
 ```mermaid-example
-agentflow-beta TB
+agentflow TB
   connector llm["LLM API"]
   llm@{ protocol: "http", endpoint: "https://api.example.com/chat" }
 
@@ -517,7 +518,7 @@ config:
     nodeSpacing: 70
     rankSpacing: 70
 ---
-agentflow-beta TB
+agentflow TB
   a["A"] --> b["B"]
 ```
 
@@ -528,7 +529,7 @@ config:
     nodeSpacing: 70
     rankSpacing: 70
 ---
-agentflow-beta TB
+agentflow TB
   a["A"] --> b["B"]
 ```
 
@@ -547,7 +548,7 @@ Agentflow renders through the unified renderer, so it works with any registered 
 config:
   layout: elk
 ---
-agentflow-beta TB
+agentflow TB
   flow tools["Tools"]
     a["a"]@{ shape: tool }
     b["b"]@{ shape: tool }
@@ -560,7 +561,7 @@ agentflow-beta TB
 config:
   layout: elk
 ---
-agentflow-beta TB
+agentflow TB
   flow tools["Tools"]
     a["a"]@{ shape: tool }
     b["b"]@{ shape: tool }

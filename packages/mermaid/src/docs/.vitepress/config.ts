@@ -155,6 +155,7 @@ function sidebarAll() {
       ],
     },
     ...sidebarSyntax(),
+    ...sidebarAgentflow(),
     ...sidebarEcosystem(),
     ...sidebarConfig(),
     ...sidebarCommunity(),
@@ -201,6 +202,50 @@ function sidebarSyntax() {
         syntaxItem('Cynefin', 'cynefin'),
         syntaxItem('TreeView', 'treeView'),
         syntaxItem('Agentflow', 'agentflow'),
+      ],
+    },
+  ];
+}
+
+function sidebarAgentflow() {
+  return [
+    {
+      text: '🤖 Agentflow Semantics',
+      collapsed: true,
+      items: [
+        { text: 'Overview', link: '/agentflow/' },
+        {
+          text: 'Learn',
+          collapsed: true,
+          items: [
+            { text: 'Your first agent', link: '/agentflow/learn/your-first-agent' },
+            { text: 'Steps in a flow', link: '/agentflow/learn/steps-in-a-flow' },
+            {
+              text: 'Branching with decisions',
+              link: '/agentflow/learn/branching-with-decisions',
+            },
+            { text: 'Loops', link: '/agentflow/learn/loops' },
+            { text: 'Using connectors', link: '/agentflow/learn/using-connectors' },
+            { text: 'Starting a flow', link: '/agentflow/learn/starting-a-flow' },
+            { text: 'Cheat sheet', link: '/agentflow/learn/cheat-sheet' },
+          ],
+        },
+        {
+          text: 'Shapes',
+          collapsed: true,
+          items: [
+            { text: 'Overview', link: '/agentflow/shapes/' },
+            { text: 'Flow', link: '/agentflow/shapes/flow' },
+            { text: 'Task', link: '/agentflow/shapes/task' },
+            { text: 'Decision', link: '/agentflow/shapes/decision' },
+            { text: 'Input', link: '/agentflow/shapes/input' },
+            { text: 'Connector', link: '/agentflow/shapes/connector' },
+            { text: 'Arrow', link: '/agentflow/shapes/arrow' },
+            { text: 'Dotted link', link: '/agentflow/shapes/dotted-link' },
+          ],
+        },
+        { text: 'Triggers', link: '/agentflow/triggers' },
+        { text: 'Diagnostics', link: '/agentflow/diagnostics' },
       ],
     },
   ];

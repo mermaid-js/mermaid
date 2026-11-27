@@ -1,0 +1,94 @@
+---
+editLink: false
+---
+
+<!-- This page is ported from the Agentflow language reference, which is maintained outside this repository. Changes made only here are lost at the next port: please open an issue instead of editing this file. -->
+
+# Arrow
+
+An arrow (`-->`) sets the order of steps: `a --> b` runs `b` after `a`.
+
+## Syntax
+
+```text
+a --> b
+a --> b --> c
+a --> b & c
+b & c --> d
+decision -- label --> b
+decision -->|label| b
+decision e1@-- label --> b
+```
+
+`&` puts several nodes on one side. An arrow leaving a decision is a branch and carries a label. `e1@` gives an arrow an id, so you can give it settings on their own line: `e1@{ instruction: "…" }`.
+
+## Settings
+
+| Setting       | Required                               | Value | Example                                          |
+| ------------- | -------------------------------------- | ----- | ------------------------------------------------ |
+| label         | yes on a branch, not allowed elsewhere | text  | `kind -- bug --> fix`                            |
+| `instruction` | no; only on a branch                   | text  | `e1@{ instruction: "Include the app version." }` |
+
+An arrow uses no other setting. Any other setting is ignored: a branch warns about it, and a regular arrow doesn't.
+
+## Connects
+
+| From     | To                   |
+| -------- | -------------------- |
+| flow     | flow, task, decision |
+| task     | flow, task, decision |
+| decision | flow, task, decision |
+| input    | flow                 |
+
+An arrow never touches a connector. Use a [dotted link](./dotted-link.md) for that.
+
+## Rules
+
+- An arrow only connects the pairs in the table above. → [`EDGE_KIND_INVALID`](../diagnostics.md#edge_kind_invalid) (error)
+- Both ends are nodes that exist. → [`REF_UNRESOLVED`](../diagnostics.md#ref_unresolved) (error)
+- An arrow doesn't point at a node inside a flow from outside that flow. An input's arrow is the exception: it can start any flow. → [`REF_OUT_OF_SCOPE`](../diagnostics.md#ref_out_of_scope) (error)
+- Only a branch has a label. → [`EDGE_LABEL_UNSUPPORTED`](../diagnostics.md#edge_label_unsupported) (error)
+- Only a branch has an instruction. → [`EDGE_INSTRUCTION_UNSUPPORTED`](../diagnostics.md#edge_instruction_unsupported) (error)
+- The same arrow isn't drawn twice. → [`EDGE_REDUNDANT`](../diagnostics.md#edge_redundant) (warning)
+- An arrow doesn't skip a step its source already reaches. → [`EDGE_SHORTCUT`](../diagnostics.md#edge_shortcut) (error)
+- Every loop can end: a decision in it has a branch that leaves the loop, and every loop inside it, however small, takes at least one decision branch. → [`CYCLE_NO_EXIT`](../diagnostics.md#cycle_no_exit) (error)
+- A task in a loop doesn't have an arrow that leaves the loop. → [`CYCLE_TASK_EXIT`](../diagnostics.md#cycle_task_exit) (warning)
+- A branch takes only the `instruction` setting. → [`METADATA_UNKNOWN_KEY`](../diagnostics.md#metadata_unknown_key) (warning)
+- The instruction has no unfilled placeholder such as `<REPO>`. → [`INSTRUCTION_PLACEHOLDER`](../diagnostics.md#instruction_placeholder) (error)
+
+## Example
+
+<!-- expect: valid -->
+
+```mermaid-example
+agentflow TB
+  flow support["Support"]
+    read["Read ticket"]@{ instruction: "Read the ticket and decide whether it is a bug or a question." }
+    kind{"Bug or question?"}
+    fix["File a bug"]@{ instruction: "Open a bug report with steps to reproduce." }
+    answer["Answer"]@{ instruction: "Reply to the question using the help center." }
+    close["Close ticket"]@{ instruction: "Close the ticket with a one-line note." }
+    read --> kind
+    kind e1@-- bug --> fix
+    kind -->|question| answer
+    fix & answer --> close
+    e1@{ instruction: "Include the customer's app version." }
+  end
+```
+
+### Common mistake
+
+A label on an arrow that doesn't leave a decision.
+
+<!-- expect: EDGE_LABEL_UNSUPPORTED -->
+
+```mermaid-example
+agentflow TB
+  flow support["Support"]
+    read["Read ticket"]@{ instruction: "Summarise the ticket in two lines." }
+    reply["Reply"]@{ instruction: "Write a polite reply that answers the ticket." }
+    read -- then --> reply
+  end
+```
+
+> The arrow from "read" to "reply" has a label, but only branches leaving a decision can have one. Remove the label, or add a decision.
