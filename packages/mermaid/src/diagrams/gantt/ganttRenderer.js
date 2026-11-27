@@ -124,7 +124,9 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   categories = checkUnique(categories);
-  const categoryHeights = {};
+  // A Map keeps sections in declaration order; plain object keys would put
+  // integer-like section names (e.g. "501") first.
+  const categoryHeights = new Map();
 
   let h = 2 * conf.topPadding;
   if (diagObj.db.getDisplayMode() === 'compact' || conf.displayMode === 'compact') {
@@ -138,16 +140,19 @@ export const draw = function (text, id, version, diagObj) {
     }
 
     let intersections = 0;
-    for (const category of Object.keys(categoryElements)) {
+    for (const category of categories) {
       const categoryHeight = getMaxIntersections(categoryElements[category], intersections) + 1;
       intersections += categoryHeight;
       h += categoryHeight * (conf.barHeight + conf.barGap);
-      categoryHeights[category] = categoryHeight;
+      categoryHeights.set(category, categoryHeight);
     }
   } else {
     h += tasksWithoutVert.length * (conf.barHeight + conf.barGap);
     for (const category of categories) {
-      categoryHeights[category] = tasksWithoutVert.filter((task) => task.type === category).length;
+      categoryHeights.set(
+        category,
+        tasksWithoutVert.filter((task) => task.type === category).length
+      );
     }
   }
 
@@ -803,7 +808,7 @@ export const draw = function (text, id, version, diagObj) {
   function vertLabels(theGap, theTopPad) {
     let prevGap = 0;
 
-    const numOccurrences = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
+    const numOccurrences = [...categoryHeights];
 
     svg
       .append('g') // without doing this, impossible to put grid lines behind text

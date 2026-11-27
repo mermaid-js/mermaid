@@ -1,0 +1,20 @@
+---
+description: >-
+  Issue #5732: a section with a number-like name ("501") must keep its
+  declared position, with its label next to its own tasks.
+---
+gantt
+  title Releases
+  dateFormat YYYY-MM
+
+  section ZZ
+  Main Development1 :2024-06-01, 10d
+  Release Branch: 5d
+  Validate  : 1d
+  Stage     : 1d
+  Release : 1d
+
+  section 501
+  Main Development3 :2024-06-15, 10d
+  Release Branch: 5d
+  Validate  :2d
