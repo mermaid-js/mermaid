@@ -22,12 +22,8 @@ export const createFlowDiagram = ({
   renderer,
   styles,
   init: (cnf: MermaidConfig) => {
-    if (!cnf.flowchart) {
-      cnf.flowchart = {};
-    }
     // The layout is not forced here: swimlanes declare `layout: swimlane` in the schema,
     // which puts it below a user's `layout` or `swimlane.layout` instead of above both.
-    cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
   },
 });

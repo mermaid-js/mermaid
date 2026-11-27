@@ -78,7 +78,9 @@ function processAndSetConfigs(text: string) {
   // matching nothing leaves the global defaults in charge; parse raises the real error.
   let diagramType: string | undefined;
   try {
-    diagramType = detectType(processed.code.cleaned, configApi.getConfig());
+    // TODO(v13, frozen config): third-party detectors may write to their config. Pass
+    // `configApi.getConfig()` once detectors are documented as receiving a read-only one.
+    diagramType = detectType(processed.code.cleaned, configApi.getConfigCopy());
   } catch {
     diagramType = undefined;
   }
@@ -785,12 +787,17 @@ export const mermaidAPI = Object.freeze({
   parse,
   getDiagramFromText,
   initialize,
-  getConfig: configApi.getConfig,
+  // TODO(v13, frozen config): optional. Integrators may modify the result, so this stays a
+  // copy. Returning the frozen snapshot would be a breaking change to the public API.
+  getConfig: (): MermaidConfig => configApi.getConfigCopy(),
   /**
    * @deprecated This function does nothing. It will be overwritten by the next
    *             call to {@link render} or {@link parse}.
    */
-  setConfig: configApi.setConfig,
+  setConfig: (conf: MermaidConfig): MermaidConfig => {
+    configApi.setConfig(conf);
+    return configApi.getConfigCopy();
+  },
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,
   reset: () => {

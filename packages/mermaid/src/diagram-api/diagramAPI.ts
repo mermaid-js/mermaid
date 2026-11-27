@@ -2,6 +2,7 @@ import { addDetector } from './detectType.js';
 import { log as _log, setLogLevel as _setLogLevel } from '../logger.js';
 import {
   getConfig as _getConfig,
+  getConfigCopy as _getConfigCopy,
   setConfig as _setConfig,
   defaultConfig as _defaultConfig,
   setSiteConfig as _setSiteConfig,
@@ -58,7 +59,11 @@ export const registerDiagram = (
   diagram.injectUtils?.(
     log,
     setLogLevel,
-    getConfig,
+    // External diagrams get a mutable copy per call, as before the snapshot was frozen: some
+    // fill in defaults on the object they are given. In-repo diagrams import the frozen one.
+    // TODO(v13, frozen config): inject `getConfig` (frozen) and add a migration note telling external
+    // diagrams to copy before modifying.
+    () => _getConfigCopy(),
     sanitizeText,
     setupGraphViewbox,
     getCommonDb(),

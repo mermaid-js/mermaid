@@ -1,6 +1,7 @@
 import type { SVG } from '../diagram-api/types.js';
 import type { InternalHelpers } from '../internals.js';
 import { internalHelpers } from '../internals.js';
+import { getConfigCopy } from '../config.js';
 import { log } from '../logger.js';
 import { insertLookDefs } from './insertLookDefs.js';
 import { placeQueuedStepBadges } from './rendering-elements/edgeStepAnimation.js';
@@ -41,6 +42,16 @@ export const registerLayoutLoaders = (loaders: LayoutLoaderDefinition[]) => {
 };
 
 /**
+ * Definitions registered by mermaid itself. Their layouts only read `data4Layout.config`, so
+ * they get the shared frozen snapshot; anything else (a registered plugin, including the
+ * standalone `@mermaid-js/layout-elk` overriding a built-in name) gets a mutable copy.
+ *
+ * TODO(v13, frozen config): document `LayoutData.config` as read-only, give every layout the
+ * snapshot, and delete this set, `registerBuiltInLayoutLoaders` and the copy in {@link render}.
+ */
+const builtInLayouts = new WeakSet<LayoutLoaderDefinition>();
+
+/**
  * Look up a registered layout by name.
  *
  * @internal Not part of the public API; it exists so the registration of the
@@ -70,13 +81,20 @@ const elkLayoutLoaders = (): LayoutLoaderDefinition[] => {
   ];
 };
 
+const registerBuiltInLayoutLoaders = (loaders: LayoutLoaderDefinition[]) => {
+  registerLayoutLoaders(loaders);
+  for (const loader of loaders) {
+    builtInLayouts.add(loader);
+  }
+};
+
 // TODO: Should we load dagre without lazy loading?
 /**
  * Registers built-in layout names without eagerly importing their implementations.
  * Large-feature loaders are omitted from tiny builds.
  */
 const registerDefaultLayoutLoaders = () => {
-  registerLayoutLoaders([
+  registerBuiltInLayoutLoaders([
     {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
@@ -129,6 +147,10 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
+  // TODO(v13, frozen config): remove; see `builtInLayouts`.
+  if (!builtInLayouts.has(layoutDefinition) && data4Layout.config) {
+    data4Layout.config = getConfigCopy(data4Layout.config);
+  }
 
   insertLookDefs(svg, data4Layout.config);
 

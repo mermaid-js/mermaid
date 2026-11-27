@@ -69,6 +69,8 @@ let configFromInitialize: MermaidConfig;
 let siteConfigDelta: MermaidConfig = {};
 let directives: MermaidConfig[] = [];
 let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
+/** Frozen copy of `currentConfig` handed out by {@link getConfig}; dropped whenever it changes. */
+let configSnapshot: MermaidConfig | undefined;
 /** Config section of the diagram in scope; `undefined` leaves the global defaults in charge. */
 let diagramConfigKey: string | undefined;
 
@@ -134,10 +136,13 @@ const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[
       tmpConfigFromInitialize.themeVariables || {},
       sumOfDirectives.themeVariables
     );
-    cfg.themeVariables = theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables);
+    cfg.themeVariables = {
+      ...theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables),
+    };
   }
 
   currentConfig = cfg;
+  configSnapshot = undefined;
   checkConfig(currentConfig);
   return currentConfig;
 };
@@ -208,22 +213,61 @@ export const getSiteConfig = (): MermaidConfig => {
  * @returns The currentConfig merged with the sanitized conf
  */
 export const setConfig = (conf: MermaidConfig): MermaidConfig => {
-  updateCurrentConfig(currentConfig, [conf]);
+  // Sanitizing edits the directive in place, and `conf` may be a frozen `getConfig()` result.
+  updateCurrentConfig(currentConfig, [copyConfig(conf, false)]);
 
   return getConfig();
 };
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+  if (value === null || typeof value !== 'object') {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+};
+
+const copyConfig = <T>(value: T, freeze: boolean): T => {
+  if (Array.isArray(value)) {
+    const copy = value.map((item: unknown) => copyConfig(item, freeze));
+    return (freeze ? Object.freeze(copy) : copy) as T;
+  }
+  if (!isPlainObject(value)) {
+    return value;
+  }
+  const copy: Record<string, unknown> = {};
+  for (const key of Object.keys(value)) {
+    if (key === '__proto__') {
+      continue;
+    }
+    copy[key] = copyConfig(value[key], freeze);
+  }
+  return (freeze ? Object.freeze(copy) : copy) as T;
+};
+
+// TODO(v13, frozen config): code outside mermaid (third-party diagrams, detectors, `init()`
+// hooks, layout plugins) still gets a mutable copy, so freezing stays invisible to it in v12.
+// Each of those copies carries this tag: in v13, hand out the snapshot there too, document
+// that config objects are read-only, and delete the copies (search the tag to find them all).
 /**
- * Returns a copy of the `currentConfig`.
- *
- * @remarks Avoid calling this function repeatedly.
- * Instead, store the result in a variable and use it, and pass it down to function calls.
+ * Returns the `currentConfig` as a deeply frozen object, shared by every caller until the
+ * config next changes. Copy before modifying it.
  *
  * @returns The currentConfig
  */
 export const getConfig = (): MermaidConfig => {
-  return assignWithDepth({}, currentConfig);
+  return (configSnapshot ??= copyConfig(currentConfig, true));
 };
+
+/**
+ * Returns a mutable deep copy of `config` (the `currentConfig` by default), for callers outside
+ * the render path or that need to modify a `getConfig()` result.
+ *
+ * @param config - The config to copy
+ * @returns A mutable deep copy of the config
+ */
+export const getConfigCopy = (config: MermaidConfig = currentConfig): MermaidConfig =>
+  copyConfig(config, false);
 
 /**
  * Ensures options parameter does not attempt to override `siteConfig` secure keys.

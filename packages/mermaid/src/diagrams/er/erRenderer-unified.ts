@@ -23,8 +23,14 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
 
   // Workaround as when rendering and setting up the graph it uses flowchart spacing before data4Layout spacing?
-  data4Layout.config.flowchart!.nodeSpacing = conf?.nodeSpacing || 140;
-  data4Layout.config.flowchart!.rankSpacing = conf?.rankSpacing || 80;
+  data4Layout.config = {
+    ...data4Layout.config,
+    flowchart: {
+      ...data4Layout.config.flowchart,
+      nodeSpacing: conf?.nodeSpacing || 140,
+      rankSpacing: conf?.rankSpacing || 80,
+    },
+  };
   data4Layout.direction = diag.db.getDirection();
   const { config } = data4Layout;
   const { look } = config;

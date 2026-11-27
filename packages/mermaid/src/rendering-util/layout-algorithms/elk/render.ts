@@ -799,6 +799,11 @@ export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLay
  * plugin's copy, `setSiteConfig` is the call that survives sanitization.
  *
  * Compiled into mermaid itself the two are the same module and this is a no-op.
+ *
+ * TODO(v13, frozen config): remove this whole sync by passing the render config down
+ * explicitly (`LayoutData.config`, `ShapeRenderOptions.config`) instead of having shapes and
+ * labels call `getConfig()`. Then lint against internal `getConfig()` calls in `diagrams/**`
+ * and `rendering-util/**`.
  */
 function syncHostConfig(elkContext: ElkLayoutContext): void {
   setConfig(elkContext.getConfig());
@@ -848,6 +853,11 @@ function getElkLayoutContext(
   if (!helpers) {
     throw new Error('ELK layout requires Mermaid internal helpers');
   }
+  // `helpers.getConfig()` hands out a fresh copy, and label measurement reads it once per
+  // node. One copy per layout phase is enough: the host config does not change mid-render.
+  // TODO(v13, frozen config): drop this cache once `helpers.getConfig` returns the frozen
+  // snapshot (see `internals.ts`).
+  let config: ReturnType<typeof helpers.getConfig> | undefined;
 
   return {
     algorithm:
@@ -857,7 +867,7 @@ function getElkLayoutContext(
       context.options as { rootLayoutOptions?: Record<string, unknown> } | undefined
     )?.rootLayoutOptions,
     common: helpers.common,
-    getConfig: helpers.getConfig,
+    getConfig: () => (config ??= helpers.getConfig()),
     interpolateToCurve: helpers.interpolateToCurve as (
       interpolate: string | undefined,
       defaultCurve: unknown

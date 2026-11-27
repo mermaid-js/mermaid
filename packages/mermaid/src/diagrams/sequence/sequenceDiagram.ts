@@ -15,11 +15,7 @@ export const diagram: DiagramDefinition = {
   renderer,
   styles,
   init: (cnf: MermaidConfig) => {
-    if (!cnf.sequence) {
-      cnf.sequence = {};
-    }
     if (cnf.wrap) {
-      cnf.sequence.wrap = cnf.wrap;
       setConfig({ sequence: { wrap: cnf.wrap } });
     }
   },

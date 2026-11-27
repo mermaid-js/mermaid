@@ -116,7 +116,7 @@ function drawActorLegend(diagram) {
 }
 
 // TODO: Cleanup?
-const conf = getConfig().journey;
+const conf = { ...getConfig().journey };
 let leftMargin = 0;
 export const draw = function (text, id, version, diagObj) {
   const configObject = getConfig();

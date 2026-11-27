@@ -59,9 +59,15 @@ function stampRendererFields(layoutData: LayoutData, diagramType: string): void 
     }
     case 'er': {
       const conf = config.er;
-      const flowchart = (layoutData.config.flowchart ??= {});
-      flowchart.nodeSpacing = conf?.nodeSpacing || 140;
-      flowchart.rankSpacing = conf?.rankSpacing || 80;
+      // `layoutData.config` is the frozen `getConfig()` snapshot; copy, as erRenderer-unified does.
+      layoutData.config = {
+        ...layoutData.config,
+        flowchart: {
+          ...layoutData.config.flowchart,
+          nodeSpacing: conf?.nodeSpacing || 140,
+          rankSpacing: conf?.rankSpacing || 80,
+        },
+      };
       layoutData.markers = neo
         ? ['only_one_neo', 'zero_or_one_neo', 'one_or_more_neo', 'zero_or_more_neo']
         : ['only_one', 'zero_or_one', 'one_or_more', 'zero_or_more'];
@@ -110,8 +116,9 @@ export async function parseMmdTextToLayoutData(
   }
   const layoutData = db.getData();
   if (options.config) {
+    // `layoutData.config` is the frozen `getConfig()` snapshot, so merge into a copy.
     layoutData.config = assignWithDepth(
-      layoutData.config ?? {},
+      configApi.getConfigCopy(layoutData.config ?? {}),
       structuredClone(options.config)
     ) as MermaidConfig;
   }
