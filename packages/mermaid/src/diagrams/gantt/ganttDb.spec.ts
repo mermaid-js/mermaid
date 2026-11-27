@@ -71,6 +71,28 @@ describe('when using the ganttDb', function () {
       expect(tasks[0].startTime).toEqual(new Date(1500));
       expect(tasks[0].endTime).toEqual(new Date(1600));
     });
+
+    it('should preserve exact millisecond boundaries with dateFormat X', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1.000, 1.001');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1000));
+      expect(tasks[0].endTime).toEqual(new Date(1001));
+    });
+
+    it('should ignore an out-of-range timestamp end date with dateFormat x', function () {
+      ganttDb.setDateFormat('x');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '0, 8640000000000001');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(0));
+      // The end date is not a valid Date, so it falls back to a zero
+      // duration instead of an Invalid Date end time.
+      expect(tasks[0].endTime).toEqual(new Date(0));
+    });
   });
 
   describe('when calling the clear function', function () {
