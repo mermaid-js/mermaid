@@ -288,30 +288,30 @@ row2`;
   });
 
   it('should render bars for minute-length tasks with dateFormat HH:mm (issue #3870)', function () {
-        const str =
-                'gantt\n' +
-                '    dateFormat HH:mm\n' +
-                '    axisFormat %H:%M\n' +
-                '    Initial milestone : milestone, mm1, 17:49, 2min\n' +
-                '    taska2 : 10min\n' +
-                '    taska3 : 5min\n' +
-                '    Final milestone : milestone, mm2, 18:14, 2min\n';
-      expect(parserFnConstructor(str)).not.toThrow();
-  
-      const at = (hours, minutes) => {
-              const date = new Date();
-              date.setHours(hours, minutes, 0, 0);
-              return date;
-      };
-        const tasks = parser.yy.getTasks();
-        expect(tasks).toHaveLength(4);
-        expect(tasks[0].startTime).toEqual(at(17, 49));
-        expect(tasks[0].endTime).toEqual(at(17, 51));
-        expect(tasks[1].startTime).toEqual(at(17, 51));
-        expect(tasks[1].endTime).toEqual(at(18, 1));
-        expect(tasks[2].startTime).toEqual(at(18, 1));
-        expect(tasks[2].endTime).toEqual(at(18, 6));
-        expect(tasks[3].startTime).toEqual(at(18, 14));
-        expect(tasks[3].endTime).toEqual(at(18, 16));
+    const str =
+      'gantt\n' +
+      '    dateFormat HH:mm\n' +
+      '    axisFormat %H:%M\n' +
+      '    Initial milestone : milestone, mm1, 17:49, 2min\n' +
+      '    taska2 : 10min\n' +
+      '    taska3 : 5min\n' +
+      '    Final milestone : milestone, mm2, 18:14, 2min\n';
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const at = (hours, minutes) => {
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return date;
+    };
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(4);
+    expect(tasks[0].startTime).toEqual(at(17, 49));
+    expect(tasks[0].endTime).toEqual(at(17, 51));
+    expect(tasks[1].startTime).toEqual(at(17, 51));
+    expect(tasks[1].endTime).toEqual(at(18, 1));
+    expect(tasks[2].startTime).toEqual(at(18, 1));
+    expect(tasks[2].endTime).toEqual(at(18, 6));
+    expect(tasks[3].startTime).toEqual(at(18, 14));
+    expect(tasks[3].endTime).toEqual(at(18, 16));
   });
-      });
+});

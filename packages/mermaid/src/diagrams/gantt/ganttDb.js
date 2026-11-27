@@ -401,10 +401,10 @@ const parseDuration = function (str) {
   const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms|min)$/.exec(str.trim());
   if (statement !== null) {
     // `min` is accepted as an alias for minutes (e.g. `10min`), as used in
-        // the documentation examples; dayjs only understands the `m` unit, so
-        // normalize it here.
-        const unit = statement[2] === 'min' ? 'm' : statement[2];
-        return [Number.parseFloat(statement[1]), unit];
+    // the documentation examples; dayjs only understands the `m` unit, so
+    // normalize it here.
+    const unit = statement[2] === 'min' ? 'm' : statement[2];
+    return [Number.parseFloat(statement[1]), unit];
   }
   // NaN means an invalid duration
   return [NaN, 'ms'];

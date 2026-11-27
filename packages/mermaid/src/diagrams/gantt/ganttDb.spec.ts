@@ -34,35 +34,35 @@ describe('when using the ganttDb', function () {
   });
 
   describe('when using minute durations (issue #3870)', function () {
-        const at = (hours, minutes) => {
-                const date = new Date();
-                date.setHours(hours, minutes, 0, 0);
-                return date;
-        };
-    
-        it('should apply min durations instead of giving zero-duration tasks', function () {
-                ganttDb.setDateFormat('HH:mm');
-                ganttDb.addSection('S1');
-                // Milestone ids are mm1/mm2, not the issue's m1/m2: `clear()` does not
-                // reset the id lookup, so m1 would leak into the later "unknown ids"
-                // tests in this file and they would stop warning about it.
-                ganttDb.addTask('Initial milestone', 'milestone, mm1, 17:49, 2min');
-                ganttDb.addTask('taska2', '10min');
-                ganttDb.addTask('taska3', '5min');
-                ganttDb.addTask('Final milestone', 'milestone, mm2, 18:14, 2min');
-                const tasks = ganttDb.getTasks();
-                expect(tasks).toHaveLength(4);
-                expect(tasks[0].startTime).toEqual(at(17, 49));
-                expect(tasks[0].endTime).toEqual(at(17, 51));
-                expect(tasks[1].startTime).toEqual(at(17, 51));
-                expect(tasks[1].endTime).toEqual(at(18, 1));
-                expect(tasks[2].startTime).toEqual(at(18, 1));
-                expect(tasks[2].endTime).toEqual(at(18, 6));
-                expect(tasks[3].startTime).toEqual(at(18, 14));
-                expect(tasks[3].endTime).toEqual(at(18, 16));
-        });
+    const at = (hours, minutes) => {
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return date;
+    };
+
+    it('should apply min durations instead of giving zero-duration tasks', function () {
+      ganttDb.setDateFormat('HH:mm');
+      ganttDb.addSection('S1');
+      // Milestone ids are mm1/mm2, not the issue's m1/m2: `clear()` does not
+      // reset the id lookup, so m1 would leak into the later "unknown ids"
+      // tests in this file and they would stop warning about it.
+      ganttDb.addTask('Initial milestone', 'milestone, mm1, 17:49, 2min');
+      ganttDb.addTask('taska2', '10min');
+      ganttDb.addTask('taska3', '5min');
+      ganttDb.addTask('Final milestone', 'milestone, mm2, 18:14, 2min');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(4);
+      expect(tasks[0].startTime).toEqual(at(17, 49));
+      expect(tasks[0].endTime).toEqual(at(17, 51));
+      expect(tasks[1].startTime).toEqual(at(17, 51));
+      expect(tasks[1].endTime).toEqual(at(18, 1));
+      expect(tasks[2].startTime).toEqual(at(18, 1));
+      expect(tasks[2].endTime).toEqual(at(18, 6));
+      expect(tasks[3].startTime).toEqual(at(18, 14));
+      expect(tasks[3].endTime).toEqual(at(18, 16));
+    });
   });
-  
+
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
