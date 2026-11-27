@@ -2,7 +2,7 @@
 description: 'Use the layered layout (beta) in Mermaid to arrange flowcharts and other graph diagrams in ranks, with rounded, curved, stepped or straight edge routing.'
 ---
 
-# Layered Layout (v<MERMAID_RELEASE_VERSION>+)
+# Layered Layout (v12.3.0+)
 
 ```warning
 The layered layout is in beta. It is opt-in: diagrams use it only when they ask for `layout: layered`. Its output may still change between releases, and it is not yet a replacement for the default layout.

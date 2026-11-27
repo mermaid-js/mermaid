@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/config/layered.md](../../packages/mermaid/src/docs/config/layered.md).
 
-# Layered Layout (v\<MERMAID_RELEASE_VERSION>+)
+# Layered Layout (v12.3.0+)
 
 > **Warning**
 > The layered layout is in beta. It is opt-in: diagrams use it only when they ask for `layout: layered`. Its output may still change between releases, and it is not yet a replacement for the default layout.
