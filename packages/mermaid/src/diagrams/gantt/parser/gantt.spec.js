@@ -348,4 +348,19 @@ row2`;
     expect(tasks).toHaveLength(1);
     expect(tasks[0].task.trim()).toEqual('Gantt 50% done');
   });
+
+  it('should allow a same-line title directive on the gantt header line (issue #5660)', function () {
+    const str =
+      'gantt title Project: phase 1\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    A task :a1, 2014-01-01, 30d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task.trim()).toEqual('A task');
+    expect(parser.yy.getDiagramTitle()).toEqual('Project: phase 1');
+  });
 });
