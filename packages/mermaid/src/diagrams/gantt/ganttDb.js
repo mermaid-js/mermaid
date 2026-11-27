@@ -309,6 +309,18 @@ const warnAboutUnknownTaskIds = function (keyword, ids) {
  * milliseconds, so `X` values are converted to milliseconds. Decimal values
  * are accepted, e.g. the documented `X` example `1410715640.579`.
  *
+ * For `X`, the millisecond value is built from the whole seconds and the
+ * fractional digits instead of `Number(str) * 1000`: binary64
+ * multiplication loses a millisecond at exact boundaries (e.g. `1.001`
+ * seconds becomes 1000.999... ms, which `Date` truncates to 1000).
+ * Sub-millisecond fractions are truncated, matching what `Date` did
+ * before. For `x`, sub-millisecond fractions are likewise truncated by
+ * `Date`, as before.
+ *
+ * A timestamp outside the `Date` range (e.g. `8640000000000001` ms)
+ * constructs an Invalid Date; that is treated as "not a timestamp" so the
+ * callers fall through to their usual invalid-date handling.
+ *
  * @param {string} dateFormat - Dayjs date format string.
  * @param {string} str - The date string to parse.
  * @returns {Date | null} The parsed date, or null when the string is not a
@@ -322,8 +334,21 @@ const parseTimestamp = function (dateFormat, str) {
   if (!/^\d+(?:\.\d+)?$/.test(str)) {
     return null;
   }
-  const value = Number(str);
-  return new Date(format === 'X' ? value * 1000 : value);
+  let ms;
+  if (format === 'X') {
+    const [whole, fraction = ''] = str.split('.');
+    // Keep only the first three fractional digits: milliseconds, with any
+    // sub-millisecond remainder truncated.
+    const fractionMs = Number((fraction + '000').slice(0, 3));
+    ms = Number(whole) * 1000 + fractionMs;
+  } else {
+    ms = Number(str);
+  }
+  const date = new Date(ms);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+  return date;
 };
 
 const getStartDate = function (prevTime, dateFormat, str) {
