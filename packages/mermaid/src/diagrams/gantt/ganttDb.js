@@ -754,7 +754,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-                rawTasks[pos].manualEndTime = isManualEndDate(rawTasks[pos].raw.endTime.data);
+        rawTasks[pos].manualEndTime = isManualEndDate(rawTasks[pos].raw.endTime.data);
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
