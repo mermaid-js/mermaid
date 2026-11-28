@@ -302,18 +302,82 @@ const warnAboutUnknownTaskIds = function (keyword, ids) {
   );
 };
 
+/**
+ * Parse a Unix timestamp date string for the `x`/`X` date formats.
+ *
+ * `X` is a Unix timestamp in seconds and `x` is a Unix timestamp in
+ * milliseconds, so `X` values are converted to milliseconds. Decimal values
+ * are accepted, e.g. the documented `X` example `1410715640.579`.
+ *
+ * For `X`, the millisecond value is built from the whole seconds and the
+ * fractional digits instead of `Number(str) * 1000`: binary64
+ * multiplication loses a millisecond at exact boundaries (e.g. `1.001`
+ * seconds becomes 1000.999... ms, which `Date` truncates to 1000).
+ * Sub-millisecond fractions are truncated, matching what `Date` did
+ * before. For `x`, sub-millisecond fractions are likewise truncated by
+ * `Date`, as before.
+ *
+ * A timestamp outside the `Date` range (e.g. `8640000000000001` ms)
+ * constructs an Invalid Date; that is treated as "not a timestamp" so the
+ * callers fall through to their usual invalid-date handling.
+ *
+ * @param {string} dateFormat - Dayjs date format string.
+ * @param {string} str - The date string to parse.
+ * @returns {Date | null} The parsed date, or null when the string is not a
+ *   timestamp for the given format.
+ */
+const parseTimestamp = function (dateFormat, str) {
+  const format = dateFormat.trim();
+  if (format !== 'x' && format !== 'X') {
+    return null;
+  }
+  if (!/^\d+(?:\.\d+)?$/.test(str)) {
+    return null;
+  }
+  let ms;
+  if (format === 'X') {
+    const [whole, fraction = ''] = str.split('.');
+    // Keep only the first three fractional digits: milliseconds, with any
+    // sub-millisecond remainder truncated.
+    const fractionMs = Number((fraction + '000').slice(0, 3));
+    ms = Number(whole) * 1000 + fractionMs;
+  } else {
+    ms = Number(str);
+  }
+  const date = new Date(ms);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+  return date;
+};
+
+/**
+ * Whether the end-date data names an explicit date, rather than a duration
+ * or an `after`/`until` reference. Explicit end dates are not shifted by
+ * `excludes` (see checkTaskDates). Only `YYYY-MM-DD` used to be recognized
+ * here, so a Unix timestamp end date (dateFormat `X`/`x`) — and any date
+ * written in the diagram's own format — was shifted over excluded days
+ * instead of being kept as the fixed end date.
+ *
+ * @param {string} str - The raw end-date data for a task.
+ * @returns {boolean} True when the data is an explicit date.
+ */
+const isManualEndDate = function (str) {
+  const data = str.trim();
+  return (
+    dayjs(data, 'YYYY-MM-DD', true).isValid() ||
+    dayjs(data, dateFormat.trim(), true).isValid() ||
+    parseTimestamp(dateFormat, data) !== null
+  );
+};
+
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
-  // Helper function to check if format is a timestamp format (x or X)
-  const isTimestampFormat = (format) => {
-    const trimmedFormat = format.trim();
-    return trimmedFormat === 'x' || trimmedFormat === 'X';
-  };
-
-  // Handle timestamp formats (x, X) with numeric strings
-  if (isTimestampFormat(dateFormat) && /^\d+$/.test(str)) {
-    return new Date(Number(str));
+  // Handle timestamp formats (x, X) with numeric strings, including decimals
+  const timestamp = parseTimestamp(dateFormat, str);
+  if (timestamp !== null) {
+    return timestamp;
   }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
@@ -408,6 +472,14 @@ const parseDuration = function (str) {
 
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
+  // Handle timestamp formats (x, X) with numeric strings, including decimals
+  const timestamp = parseTimestamp(dateFormat, str);
+  if (timestamp !== null) {
+    if (inclusive) {
+      return dayjs(timestamp).add(1, 'd').toDate();
+    }
+    return timestamp;
+  }
 
   // test for until
   const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
@@ -526,7 +598,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = isManualEndDate(endTimeData);
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -682,11 +754,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+        rawTasks[pos].manualEndTime = isManualEndDate(rawTasks[pos].raw.endTime.data);
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }

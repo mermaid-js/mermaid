@@ -286,4 +286,44 @@ row2`;
     `)
     ).not.toThrow();
   });
+
+  it('should handle decimal Unix timestamps with dateFormat X (issue #5216)', function () {
+    const str =
+      'gantt\n' +
+      '    title A Gantt Diagram\n' +
+      '    dateFormat X\n' +
+      '    Section S1\n' +
+      '    Task 1 : 0.1, 0.2\n' +
+      '    Task 2 : 1.1, 0.4\n' +
+      '    Section S2\n' +
+      '    Task 3 : 0, 200ms\n' +
+      '    Task 4 : 1, 400ms\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(4);
+    // X is a Unix timestamp in seconds: 0.1 is 100 ms after the epoch
+    expect(tasks[0].startTime).toEqual(new Date(100));
+    expect(tasks[0].endTime).toEqual(new Date(200));
+    expect(tasks[2].startTime).toEqual(new Date(0));
+    expect(tasks[2].endTime).toEqual(new Date(200));
+    expect(tasks[3].startTime).toEqual(new Date(1000));
+    expect(tasks[3].endTime).toEqual(new Date(1400));
+  });
+  it('should not shift an explicit X timestamp end date over excluded weekends (issue #5216)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat X\n' +
+      '    excludes weekends\n' +
+      '    Section S1\n' +
+      '    Task 1 : 1410480000, 1410739200\n';
+    expect(parserFnConstructor(str)).not.toThrow();
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    // Fri 2014-09-12 to Mon 2014-09-15: the explicit end date stays fixed
+    // instead of moving past the excluded weekend.
+    expect(tasks[0].startTime).toEqual(new Date(Date.UTC(2014, 8, 12)));
+    expect(tasks[0].endTime).toEqual(new Date(Date.UTC(2014, 8, 15)));
+  });
 });

@@ -31,6 +31,95 @@ describe('when using the ganttDb', function () {
     });
   });
 
+  describe('when using Unix timestamp date formats (issue #5216)', function () {
+    it('should accept decimal seconds as start and end dates with dateFormat X', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '0.1, 0.2');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      // X is a Unix timestamp in seconds, so 0.1 is 100 ms after the epoch
+      expect(tasks[0].startTime).toEqual(new Date(100));
+      expect(tasks[0].endTime).toEqual(new Date(200));
+    });
+
+    it('should accept the documented decimal X example value', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1410715640.579, 1d');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1410715640579));
+    });
+
+    it('should treat integer X values as seconds, not milliseconds', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1, 400ms');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1000));
+      expect(tasks[0].endTime).toEqual(new Date(1400));
+    });
+
+    it('should accept decimal milliseconds as start dates with dateFormat x', function () {
+      ganttDb.setDateFormat('x');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1500.5, 100ms');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1500));
+      expect(tasks[0].endTime).toEqual(new Date(1600));
+    });
+
+    it('should preserve exact millisecond boundaries with dateFormat X', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '1.000, 1.001');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(1000));
+      expect(tasks[0].endTime).toEqual(new Date(1001));
+    });
+
+    it('should ignore an out-of-range timestamp end date with dateFormat x', function () {
+      ganttDb.setDateFormat('x');
+      ganttDb.addSection('S1');
+      ganttDb.addTask('Task 1', '0, 8640000000000001');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(0));
+      // The end date is not a valid Date, so it falls back to a zero
+      // duration instead of an Invalid Date end time.
+      expect(tasks[0].endTime).toEqual(new Date(0));
+    });
+    it('should not shift an explicit X timestamp end date over excluded weekends', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.setExcludes('weekends');
+      ganttDb.addSection('S1');
+      // Fri 2014-09-12 to Mon 2014-09-15 as Unix seconds: an explicit end
+      // date must stay fixed, not move past the excluded weekend.
+      ganttDb.addTask('Task 1', 'id1,1410480000,1410739200');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(Date.UTC(2014, 8, 12)));
+      expect(tasks[0].endTime).toEqual(new Date(Date.UTC(2014, 8, 15)));
+      expect(tasks[0].renderEndTime).toBeNull();
+    });
+    it('should not shift an explicit x timestamp end date over excluded weekends', function () {
+      ganttDb.setDateFormat('x');
+      ganttDb.setExcludes('weekends');
+      ganttDb.addSection('S1');
+      // Same weekend span as Unix milliseconds.
+      ganttDb.addTask('Task 1', 'id1,1410480000000,1410739200000');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(Date.UTC(2014, 8, 12)));
+      expect(tasks[0].endTime).toEqual(new Date(Date.UTC(2014, 8, 15)));
+      expect(tasks[0].renderEndTime).toBeNull();
+    });
+  });
+
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
