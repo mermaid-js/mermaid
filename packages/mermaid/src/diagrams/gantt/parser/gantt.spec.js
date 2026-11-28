@@ -286,4 +286,93 @@ row2`;
     `)
     ).not.toThrow();
   });
+  it('should ignore end-of-line # comments after a task (issue #5934)', function () {
+    const str =
+      'gantt\n' +
+      '    title A Gantt Diagram\n' +
+      '    dateFormat  YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    A task           :a1, 2014-01-01, 30d # comment\n' +
+      '    Another task     :after a1  , 20d\n' +
+      '    section Another\n' +
+      '    Task in sec      :2014-01-12  , 12d\n' +
+      '    another task      : 24d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks[0].id).toEqual('a1');
+    // The task name keeps the padding spaces before the ':' (pre-existing
+    // taskTxt behaviour); the comment must not leak into the name or dates.
+    expect(tasks[0].task.trim()).toEqual('A task');
+    expect(tasks[0].startTime).toEqual(new Date(2014, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2014, 0, 31));
+    expect(tasks[1].task.trim()).toEqual('Another task');
+    expect(tasks).toHaveLength(4);
+  });
+
+  it('should ignore a # comment on its own line (issue #5934)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    # just a comment\n' +
+      '    A task :a1, 2014-01-01, 30d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toEqual('a1');
+  });
+
+  it('should keep a # at the start of a task name (issue #5934)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    #Design jison grammar:des1, 2014-01-01, 2014-01-04\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task).toEqual('#Design jison grammar');
+    expect(tasks[0].id).toEqual('des1');
+  });
+
+  it('should parse a task line starting with `# ` as a task, not a comment (issue #5934)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    # Design :a1, 2014-01-01, 30d\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    // The `# ` is part of the task name here: the line has the shape of a
+    // task line (name, colon, task data), so it is not a comment.
+    expect(tasks[0].task.trim()).toEqual('# Design');
+    expect(tasks[0].id).toEqual('a1');
+    expect(tasks[0].startTime).toEqual(new Date(2014, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2014, 0, 31));
+  });
+
+  it('should still ignore # comments containing a colon (issue #5934)', function () {
+    const str =
+      'gantt\n' +
+      '    dateFormat YYYY-MM-DD\n' +
+      '    section Section\n' +
+      '    # note: check the dates\n' +
+      '    A task :a1, 2014-01-01, 30d # see: docs\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toEqual('a1');
+  });
 });

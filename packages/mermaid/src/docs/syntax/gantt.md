@@ -322,7 +322,7 @@ gantt
 
 ## Comments
 
-Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax.
+Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax. A `#` comment can also follow a task on the same line, or stand on its own line: everything from the `#` to the end of the line is ignored. A trailing `#` comment containing ` :` followed by task-like data is not skipped. A `#` only starts a comment when it is followed by a space or tab. A `#` at the start of a task name, such as `#Design`, is part of the name, not a comment, and a line starting with `# ` is parsed as a task when it has the shape of a task line (`# Design :a1, 2014-01-01, 30d`).
 
 ```mermaid
 gantt
