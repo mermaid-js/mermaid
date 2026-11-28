@@ -91,6 +91,7 @@ LLM integrations to create mermaid diagrams using AI from text descriptions.
 - [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
 - [MCP Server Mermaid](https://github.com/hustcc/mcp-mermaid) - Generate mermaid diagram and chart with AI MCP dynamically.
 - [Mermaid Studio](https://mermaidstudio.dev) - Leverage Mermaid Studio's code intelligence and diagram generation capabilities via MCP to create high-quality diagrams (requires a [JetBrains IDE](https://jetbrains.com/ides)) using your favorite coding agent.
+- [Onigio](https://onigio.com) - Desktop and web AI agent that renders Mermaid diagrams in its answers and blog posts, including while an answer is still streaming. ✅
 
 ### CRM/ERP
 
