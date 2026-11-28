@@ -82,6 +82,10 @@ const getStyles = (options) =>
 .noteLabel .nodeLabel, .noteLabel .edgeLabel {
   color: ${options.noteTextColor};
 }
+.node.note .outer-path path {
+  fill: ${options.noteBkgColor};
+  stroke: ${options.noteBorderColor};
+}
 .edgeLabel .label rect {
   fill: ${options.mainBkg};
 }
