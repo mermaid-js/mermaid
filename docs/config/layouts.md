@@ -39,6 +39,7 @@ build can opt back in.
 - **grid**: Built-in deterministic row/column layout for unified renderers. See [Grid Layout](/syntax/grid-layout.html).
 - **cose-bilkent**: Cose Bilkent layout for force-directed graphs
 - **layered** (beta, v\<MERMAID_RELEASE_VERSION>+): Built-in layered layout for flowcharts and other graph diagrams, with curved, stepped or straight edge routing. [Layered Layout](/config/layered)
+- **onion** and **onion-vertical** (v\<MERMAID_RELEASE_VERSION>+): Built-in layout for hexagonal, clean and onion architecture diagrams: nested subgraphs become concentric hexagon rings. [Onion Layout](/config/onion)
 - **tidy-tree**: Tidy tree layout for hierarchical diagrams, from the [`@mermaid-js/layout-tidy-tree`](https://www.npmjs.com/package/@mermaid-js/layout-tidy-tree) package [Tidy Tree Configuration](/config/tidy-tree)
 
 Mindmaps are the one diagram type not laid out with ELK by default; they use

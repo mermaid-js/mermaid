@@ -1,0 +1,59 @@
+---
+description:
+  The horizontal onion layout, with the driving side on the left, driven side on the right, edges ending
+  on the slanted sides of the port shapes.
+config:
+  layout: onion
+---
+flowchart TD
+    intake_q[["Ticket queue<br/>from the help desk"]]
+    subgraph adapters["ADAPTERS · infrastructure"]@{ shape: hex }
+        subgraph driving["Driving side"]
+            handler["Queue handler<br/>message → command"]
+        end
+        subgraph core["APPLICATION CORE"]@{ shape: hex }
+            ticket_port[/"Ticket commands<br/>«driving port»"/]
+            subgraph app["Application layer"]@{ shape: hex }
+                open_ticket["Open ticket"]
+                assign_ticket["Assign ticket"]
+                close_ticket["Close ticket"]
+                audit["Audit trail"]
+                subgraph domain["Domain layer"]@{ shape: hex }
+                    ticket["Ticket<br/>status, assignee"]
+                end
+            end
+            store_port[\"Ticket store<br/>«driven port»"\]
+            mail_port[\"Mailer<br/>«driven port»"\]
+        end
+        subgraph driven["Driven side"]
+            sql_store["SQL store"]
+            mailer["SMTP mailer"]
+        end
+    end
+    database{{"Database"}}
+    relay{{"Mail relay"}}
+    intake_q -->|"ticket message"| handler
+    handler -->|"command"| ticket_port
+    ticket_port -.-|"implemented by"| open_ticket
+    open_ticket -->|"assign"| assign_ticket
+    assign_ticket -->|"update"| ticket
+    close_ticket -->|"close"| ticket
+    close_ticket -->|"record"| audit
+    open_ticket -->|"new ticket"| ticket
+    close_ticket -->|"save"| store_port
+    assign_ticket -->|"notify"| mail_port
+    store_port -.-|"implemented by"| sql_store
+    mail_port -.-|"implemented by"| mailer
+    sql_store -->|"queries"| database
+    mailer -->|"send mail"| relay
+
+classDef hexCore fill:#8c959f1f,stroke:#57606a,stroke-width:3px
+classDef hexApp fill:#8c959f2e,stroke:#8c959f,stroke-width:1px
+classDef hexDomain fill:#8c959f4d,stroke:#6e7781,stroke-width:1px
+classDef hexSide fill:#00000000,stroke:#8c959f,stroke-width:1px,stroke-dasharray:4 3
+classDef hexAdapters fill:#8c959f0f,stroke:#8c959f,stroke-width:1px
+class core hexCore
+class app hexApp
+class domain hexDomain
+class driving,driven hexSide
+class adapters hexAdapters

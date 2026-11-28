@@ -1,0 +1,57 @@
+---
+description:
+  The onion layout, horizontal, on the bookmark service.
+config:
+  layout: onion
+---
+flowchart TD
+    client[["HTTP client"]]
+    subgraph adapters["ADAPTERS · src/adapters"]@{ shape: hex }
+        subgraph driving["Driving side"]
+            fastify["FastifyHttpServer<br/>REST routes /bookmarks"]
+        end
+        subgraph core["APPLICATION CORE"]@{ shape: hex }
+            service_port[/"BookmarkServicePort<br/>«driving port»"/]
+            subgraph app["BookmarkService"]@{ shape: hex }
+                create["Create bookmark"]
+                update["Update bookmark"]
+                remove["Delete bookmark"]
+                find["Get, list,<br/>search by tag"]
+                subgraph domain["Domain · Bookmark.ts"]@{ shape: hex }
+                    factory["BookmarkFactory<br/>validates URL"]
+                    bookmark["Bookmark<br/>url, title, tags"]
+                end
+            end
+            repo_port[\"BookmarkRepository<br/>«driven port»"\]
+        end
+        subgraph driven["Driven side"]
+            sqlite["SqliteBookmarkRepository"]
+            memory["InMemoryBookmarkRepository<br/>used in tests"]
+        end
+    end
+    db[("bookmarks.db")]
+    client -->|"HTTP /bookmarks"| fastify
+    fastify -->|"calls"| service_port
+    service_port -->|"create"| create
+    service_port -->|"update"| update
+    service_port -->|"delete"| remove
+    service_port -->|"getById · list · searchByTag"| find
+    create -->|"create"| factory
+    update -->|"update"| factory
+    factory -->|"builds"| bookmark
+    create -->|"save"| repo_port
+    update -->|"findById · save"| repo_port
+    remove -->|"delete"| repo_port
+    find -->|"findById · findAll"| repo_port
+    repo_port -.-|"implemented by"| sqlite
+    repo_port -.-|"implemented by"| memory
+    sqlite -->|"better-sqlite3"| db
+
+    classDef hexAdapters fill:#8c959f0f,stroke:#8c959f,stroke-width:1px
+    classDef hexCore fill:#8c959f1f,stroke:#57606a,stroke-width:3px
+    classDef hexApp fill:#8c959f2e,stroke:#8c959f,stroke-width:1px
+    classDef hexDomain fill:#8c959f4d,stroke:#6e7781,stroke-width:1px
+    class adapters hexAdapters
+    class core hexCore
+    class app hexApp
+    class domain hexDomain
