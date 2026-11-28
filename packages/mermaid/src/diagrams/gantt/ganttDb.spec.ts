@@ -31,6 +31,35 @@ describe('when using the ganttDb', function () {
     });
   });
 
+    describe('when the end date carries a time (issue #4664)', function () {
+      it('should keep an end date with a time instead of a zero duration', function () {
+        ganttDb.setDateFormat('YYYY-MM-DD');
+        ganttDb.addSection('S1');
+        ganttDb.addTask('test1', '2023-07-21 8:00, 2023-07-22 18:00');
+        const tasks = ganttDb.getTasks();
+        expect(tasks).toHaveLength(1);
+        expect(tasks[0].startTime).toEqual(new Date('2023-07-21 8:00'));
+        expect(tasks[0].endTime).toEqual(new Date('2023-07-22 18:00'));
+      });
+      it('should add a day to a time-carrying end date when end dates are inclusive', function () {
+        ganttDb.setDateFormat('YYYY-MM-DD');
+        ganttDb.enableInclusiveEndDates();
+        ganttDb.addSection('S1');
+        ganttDb.addTask('test1', '2023-07-21 8:00, 2023-07-22 18:00');
+        const tasks = ganttDb.getTasks();
+        expect(tasks).toHaveLength(1);
+        expect(tasks[0].endTime).toEqual(new Date('2023-07-23 18:00'));
+      });
+      it('should keep a pre-1000 end year with dateFormat YYYY (issue #5184)', function () {
+        ganttDb.setDateFormat('YYYY');
+        ganttDb.addSection('S1');
+        ganttDb.addTask('test1', '990, 998');
+        const tasks = ganttDb.getTasks();
+        expect(tasks).toHaveLength(1);
+        expect(tasks[0].startTime.getFullYear()).toBe(990);
+        expect(tasks[0].endTime.getFullYear()).toBe(998);
+      });
+    });
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
