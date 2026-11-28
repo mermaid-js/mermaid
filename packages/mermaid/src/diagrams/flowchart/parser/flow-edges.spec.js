@@ -742,6 +742,35 @@ A@{ shape: 'rect' }
         expect(vert.get('A.-B').id).toBe('A.-B');
         expect(flow.parser.yy.getEdges().length).toBe(0);
       });
+      it('should keep three dots inside node ids', function () {
+        const res = flow.parser.parse('graph TD;\nA...B-->C;');
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+        expect(vert.get('A...B').id).toBe('A...B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A...B');
+        expect(edges[0].end).toBe('C');
+        expect(edges[0].stroke).toBe('normal');
+      });
+      it('should keep four dots inside node ids', function () {
+        const res = flow.parser.parse('graph TD;\nA....B-->C;');
+        const vert = flow.parser.yy.getVertices();
+        const edges = flow.parser.yy.getEdges();
+        expect(vert.get('A....B').id).toBe('A....B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A....B');
+        expect(edges[0].end).toBe('C');
+        expect(edges[0].stroke).toBe('normal');
+      });
+      it('should handle ...-> attached to the preceding node id', function () {
+        const res = flow.parser.parse('graph TD;\nA...->B;');
+        const edges = flow.parser.yy.getEdges();
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow_point');
+        expect(edges[0].stroke).toBe('dotted');
+      });
     });
 
     for (let length = 1; length <= 3; ++length) {
