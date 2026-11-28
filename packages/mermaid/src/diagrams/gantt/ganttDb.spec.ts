@@ -93,6 +93,31 @@ describe('when using the ganttDb', function () {
       // duration instead of an Invalid Date end time.
       expect(tasks[0].endTime).toEqual(new Date(0));
     });
+    it('should not shift an explicit X timestamp end date over excluded weekends', function () {
+      ganttDb.setDateFormat('X');
+      ganttDb.setExcludes('weekends');
+      ganttDb.addSection('S1');
+      // Fri 2014-09-12 to Mon 2014-09-15 as Unix seconds: an explicit end
+      // date must stay fixed, not move past the excluded weekend.
+      ganttDb.addTask('Task 1', 'id1,1410480000,1410739200');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(Date.UTC(2014, 8, 12)));
+      expect(tasks[0].endTime).toEqual(new Date(Date.UTC(2014, 8, 15)));
+      expect(tasks[0].renderEndTime).toBeNull();
+    });
+    it('should not shift an explicit x timestamp end date over excluded weekends', function () {
+      ganttDb.setDateFormat('x');
+      ganttDb.setExcludes('weekends');
+      ganttDb.addSection('S1');
+      // Same weekend span as Unix milliseconds.
+      ganttDb.addTask('Task 1', 'id1,1410480000000,1410739200000');
+      const tasks = ganttDb.getTasks();
+      expect(tasks).toHaveLength(1);
+      expect(tasks[0].startTime).toEqual(new Date(Date.UTC(2014, 8, 12)));
+      expect(tasks[0].endTime).toEqual(new Date(Date.UTC(2014, 8, 15)));
+      expect(tasks[0].renderEndTime).toBeNull();
+    });
   });
 
   describe('when calling the clear function', function () {
