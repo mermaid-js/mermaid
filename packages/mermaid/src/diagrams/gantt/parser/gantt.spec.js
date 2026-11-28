@@ -288,12 +288,12 @@ row2`;
   });
   it('should handle an end date with a time (issue #4664)', function () {
     const str =
-        'gantt\n' +
+      'gantt\n' +
       '    title A Gantt Diagram\n' +
       '    dateFormat  YYYY-MM-DD\n' +
       '    test1: 2023-07-21 8:00, 2023-07-22 18:00\n' +
       '    test2: 2023-07-21, 2023-07-24\n';
-expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(str)).not.toThrow();
     const tasks = parser.yy.getTasks();
     expect(tasks).toHaveLength(2);
     expect(tasks[0].startTime).toEqual(new Date('2023-07-21 8:00'));

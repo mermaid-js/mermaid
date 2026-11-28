@@ -462,7 +462,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     !isNaN(fallbackDate.getTime()) &&
     fallbackDate.getFullYear() >= -10000 &&
     fallbackDate.getFullYear() <= 10000
-) {
+  ) {
     if (inclusive) {
       return dayjs(fallbackDate).add(1, 'd').toDate();
     }
