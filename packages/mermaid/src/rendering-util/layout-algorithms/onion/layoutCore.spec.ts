@@ -1,7 +1,11 @@
-import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
+import { setLogLevel } from '../../../logger.js';
 import type { ClusterNode, LayoutData, Node } from '../../types.js';
+import { applyMeasuredSizes } from '../ddlt/backends.js';
+import { loadFreshSizesFixture } from '../ddlt/fixtureSizes.js';
+import { parseMmdFileToLayoutData } from '../ddlt/parseToLayoutData.js';
 import {
   boxesOverlap,
   boxCorners,
@@ -17,14 +21,43 @@ import {
   type OnionArrangement,
   type OnionResult,
 } from './layoutCore.js';
+import { nodeOutline } from './outline.js';
 import { analyseOnion } from './structure.js';
 
-const FIXTURES_DIR = 'packages/mermaid/src/rendering-util/layout-algorithms/onion/fixtures';
+const FIXTURES_DIR = 'e2e/platform/dev-diagrams/layout-tests/onion';
+const FIXTURES = [
+  'bookmark-service',
+  'order-service',
+  'small-onion',
+  'no-adapters',
+  'no-domain',
+  'no-driven',
+  'parallel',
+  'self-loop',
+] as const;
+type FixtureName = (typeof FIXTURES)[number];
 
-/** Measured graphs dumped from rendered diagrams, so the core runs on real node sizes without a browser. */
-function loadLayoutData(name: string): LayoutData {
-  const raw = readFileSync(resolve(FIXTURES_DIR, `${name}.layout.json`), 'utf8');
-  return JSON.parse(raw) as LayoutData;
+const measured = new Map<FixtureName, string>();
+
+/**
+ * The DDLT fixtures, parsed by the real parser and sized from their captured browser sizes:
+ * the graph the browser hands to `runOnionLayoutCore`, before layout.
+ */
+beforeAll(async () => {
+  setLogLevel('fatal');
+  addDiagrams();
+  for (const name of FIXTURES) {
+    const mmdPath = resolve(FIXTURES_DIR, `${name}.mmd`);
+    const sizes = loadFreshSizesFixture(resolve(FIXTURES_DIR, `${name}.sizes.json`), mmdPath, name);
+    const layout = await parseMmdFileToLayoutData(mmdPath, { stampRendererFields: true });
+    applyMeasuredSizes(layout, sizes);
+    measured.set(name, JSON.stringify(layout));
+  }
+});
+
+/** A fresh copy of a measured fixture, so each test lays out its own. */
+function loadLayoutData(name: FixtureName): LayoutData {
+  return JSON.parse(measured.get(name)!) as LayoutData;
 }
 
 function leaf(id: string, parentId?: string): Node {
@@ -283,6 +316,48 @@ describe('runOnionLayoutCore on the order service onion', () => {
   });
 });
 
+describe('runOnionLayoutCore on the bookmark service', () => {
+  it.each(ARRANGEMENTS)('keeps every rule in the %s arrangement', (arrangement) => {
+    const data = loadLayoutData('bookmark-service');
+    const result = runOnionLayoutCore(data, arrangement);
+    expect(allInvariants(data, result, arrangement)).toEqual(CLEAN);
+  });
+
+  it.each(ARRANGEMENTS)('sets two adapters of one port side by side (%s)', (arrangement) => {
+    const data = loadLayoutData('bookmark-service');
+    runOnionLayoutCore(data, arrangement);
+    const [sqlite, memory] = ['sqlite', 'memory'].map((id) => leafBoxes(data).get(id)!);
+    expect(boxesOverlap(inflateBox(sqlite, 8), inflateBox(memory, 8))).toBe(false);
+  });
+
+  it('keeps the driving port off the core title on the top roof', () => {
+    const data = loadLayoutData('bookmark-service');
+    const result = runOnionLayoutCore(data, 'vertical');
+    const title = result.frames.get('core')!.title;
+    expect(boxesOverlap(leafBoxes(data).get('service_port')!, title)).toBe(false);
+  });
+
+  it('ends every edge on the outline of the shapes it joins', () => {
+    const data = loadLayoutData('bookmark-service');
+    runOnionLayoutCore(data, 'horizontal');
+    const byId = new Map(data.nodes.map((n) => [n.id, n]));
+    for (const edge of data.edges.filter((e) => e.start !== e.end)) {
+      const ends = [
+        [edge.points![0], byId.get(edge.start!)!],
+        [edge.points!.at(-1)!, byId.get(edge.end!)!],
+      ] as const;
+      for (const [point, node] of ends) {
+        const outline = nodeOutline(node, node.width!, node.height!).map((p) => ({
+          x: node.x! + p.x,
+          y: node.y! + p.y,
+        }));
+        expect(pointInConvex(outline, point, -0.5)).toBe(true);
+        expect(pointInConvex(outline, point, 0.5)).toBe(false);
+      }
+    }
+  });
+});
+
 describe('runOnionLayoutCore on other shapes of input', () => {
   it.each(ARRANGEMENTS)('lays out a diagram with no adapters ring (%s)', (arrangement) => {
     const data = loadLayoutData('no-adapters');
@@ -295,13 +370,16 @@ describe('runOnionLayoutCore on other shapes of input', () => {
     const data = loadLayoutData('no-domain');
     const result = runOnionLayoutCore(data, arrangement);
     expect([...result.frames.keys()].sort()).toEqual(['adapters', 'app', 'core']);
-    // The packed application grid can leave one edge across a neighbour; the core reports it.
+    // With no domain the application ring is packed as the centre grid, and an edge from a
+    // centred port can run down a grid column across the cell above its target: at most one per
+    // port. The core reports them.
     expect({
       ...allInvariants(data, result, arrangement),
       conflicts: [],
       edgesThroughNodes: [],
     }).toEqual(CLEAN);
-    expect(result.conflictReport.length).toBeLessThanOrEqual(1);
+    expect(result.conflictReport.length).toBeLessThanOrEqual(2);
+    expect(result.conflictReport.every((c) => c.includes(' through node '))).toBe(true);
   });
 
   it.each(ARRANGEMENTS)('lays out a diagram with no driven ports (%s)', (arrangement) => {
@@ -318,7 +396,13 @@ describe('runOnionLayoutCore on other shapes of input', () => {
   });
 
   it('stops with an error that names the problem when there are no subgraphs', () => {
-    const data = loadLayoutData('no-groups');
+    const data = graph(
+      [leaf('a'), leaf('b'), leaf('c')],
+      [
+        ['a', 'b'],
+        ['b', 'c'],
+      ]
+    );
     expect(() => runOnionLayoutCore(data, 'vertical')).toThrow(OnionLayoutError);
     expect(() => runOnionLayoutCore(data, 'vertical')).toThrow(/no subgraphs/);
   });

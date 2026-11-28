@@ -1,0 +1,185 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c4523fe6fcfa547411a88e8f4b771c354a73f293fc54806278e6b725ccae1f3a",
+    "capturedAt": "2026-11-28T16:07:05.111Z",
+    "capturedFrom": "theme=default&look=classic"
+  },
+  "nodes": [
+    {
+      "id": "client",
+      "width": 164,
+      "height": 33
+    },
+    {
+      "id": "fastify",
+      "width": 152,
+      "height": 87
+    },
+    {
+      "id": "service_port",
+      "width": 222.390625,
+      "height": 57
+    },
+    {
+      "id": "create",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "update",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "remove",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "find",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "factory",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "bookmark",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "repo_port",
+      "width": 216.9375,
+      "height": 57
+    },
+    {
+      "id": "sqlite",
+      "width": 196.96875,
+      "height": 45
+    },
+    {
+      "id": "memory",
+      "width": 224.171875,
+      "height": 66
+    },
+    {
+      "id": "db",
+      "width": 144,
+      "height": 85.14869689941406
+    },
+    {
+      "id": "edge-label-client-fastify-L_client_fastify_0",
+      "width": 112.546875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-fastify-service_port-L_fastify_service_port_0",
+      "width": 28.015625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-service_port-create-L_service_port_create_0",
+      "width": 38.921875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-service_port-update-L_service_port_update_0",
+      "width": 42.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-service_port-remove-L_service_port_remove_0",
+      "width": 38.15625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-service_port-find-L_service_port_find_0",
+      "width": 170.40625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-create-factory-L_create_factory_0",
+      "width": 38.921875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-update-factory-L_update_factory_0",
+      "width": 42.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-factory-bookmark-L_factory_bookmark_0",
+      "width": 36.59375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-create-repo_port-L_create_repo_port_0",
+      "width": 29.578125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-update-repo_port-L_update_repo_port_0",
+      "width": 92.609375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-remove-repo_port-L_remove_repo_port_0",
+      "width": 38.15625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-find-repo_port-L_find_repo_port_0",
+      "width": 101.171875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-repo_port-sqlite-L_repo_port_sqlite_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-repo_port-memory-L_repo_port_memory_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-sqlite-db-L_sqlite_db_0",
+      "width": 80.9375,
+      "height": 21
+    },
+    {
+      "id": "group-title-adapters",
+      "width": 164.9375,
+      "height": 21
+    },
+    {
+      "id": "group-title-driven",
+      "width": 70.03125,
+      "height": 21
+    },
+    {
+      "id": "group-title-core",
+      "width": 135.890625,
+      "height": 21
+    },
+    {
+      "id": "group-title-app",
+      "width": 109.703125,
+      "height": 21
+    },
+    {
+      "id": "group-title-domain",
+      "width": 138.484375,
+      "height": 21
+    },
+    {
+      "id": "group-title-driving",
+      "width": 73.140625,
+      "height": 21
+    }
+  ]
+}

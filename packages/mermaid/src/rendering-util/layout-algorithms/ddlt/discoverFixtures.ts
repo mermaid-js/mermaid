@@ -26,6 +26,9 @@ function defaultProfileForRelId(relId: string): DdltFixtureProfile {
   if (relId.startsWith('grid/')) {
     return 'grid';
   }
+  if (relId.startsWith('onion/')) {
+    return 'onion';
+  }
   return 'flowchart-domus';
 }
 
