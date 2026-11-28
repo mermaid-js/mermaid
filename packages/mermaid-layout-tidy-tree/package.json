@@ -35,7 +35,7 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
-    "d3": "^7.9.0"
+    "d3": "^7.9.2"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
