@@ -301,4 +301,4 @@ expect(parserFnConstructor(str)).not.toThrow();
     expect(tasks[1].startTime).toEqual(new Date('2023-07-21'));
     expect(tasks[1].endTime).toEqual(new Date('2023-07-24'));
   });
-})
+});
