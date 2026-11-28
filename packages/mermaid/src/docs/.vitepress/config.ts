@@ -234,6 +234,7 @@ function sidebarConfig() {
         { text: 'FAQ', link: '/config/faq' },
         { text: 'Layouts', link: '/config/layouts' },
         { text: 'Layered Layout (beta)', link: '/config/layered' },
+        { text: 'Onion Layout', link: '/config/onion' },
       ],
     },
   ];

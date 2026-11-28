@@ -75,6 +75,8 @@ const elkLayoutLoaders = (): LayoutLoaderDefinition[] => {
  * Registers built-in layout names without eagerly importing their implementations.
  * Large-feature loaders are omitted from tiny builds.
  */
+const onionLoader = async () => await import('./layout-algorithms/onion/index.js');
+
 const registerDefaultLayoutLoaders = () => {
   registerLayoutLoaders([
     {
@@ -105,6 +107,9 @@ const registerDefaultLayoutLoaders = () => {
             name: 'cose-bilkent',
             loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
           },
+          // Both names share one loader; `algorithm` picks the sector arrangement.
+          { name: 'onion', algorithm: 'onion', loader: onionLoader },
+          { name: 'onion-vertical', algorithm: 'onion-vertical', loader: onionLoader },
           ...elkLayoutLoaders(),
         ]
       : []),

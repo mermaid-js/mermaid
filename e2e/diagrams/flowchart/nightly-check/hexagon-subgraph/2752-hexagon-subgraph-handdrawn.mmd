@@ -1,0 +1,17 @@
+---
+description:
+  Hexagon subgraphs (issue 2752) in the handDrawn look.
+config:
+  look: handDrawn
+---
+flowchart TD
+  client[Client] --> api
+  subgraph core["Application core"]@{ shape: hex }
+    api[Order API] --> place[Place order]
+    place --> quote[Price order]
+    subgraph domain["Domain"]@{ shape: hex }
+      order[Order] --> events[Order events]
+    end
+    place --> order
+  end
+  place --> db[(Database)]

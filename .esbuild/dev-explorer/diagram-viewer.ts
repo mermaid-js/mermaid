@@ -121,11 +121,28 @@ type MermaidTheme =
   | 'redux-dark'
   | 'redux-color'
   | 'redux-dark-color';
-type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane' | 'grid';
+type MermaidLayout =
+  | 'dagre'
+  | 'elk'
+  | 'domus'
+  | 'hola'
+  | 'swimlane'
+  | 'grid'
+  | 'onion'
+  | 'onion-vertical';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
-const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane', 'grid'];
+const ALL_LAYOUTS: MermaidLayout[] = [
+  'dagre',
+  'elk',
+  'domus',
+  'hola',
+  'swimlane',
+  'grid',
+  'onion',
+  'onion-vertical',
+];
 
 // Phases emitted by the profiler tree, in display order. "total" is taken from
 // the root `render` span. See packages/mermaid/src/profiler.ts.
@@ -331,7 +348,9 @@ function isLayout(v: unknown): v is MermaidLayout {
     v === 'domus' ||
     v === 'hola' ||
     v === 'swimlane' ||
-    v === 'grid'
+    v === 'grid' ||
+    v === 'onion' ||
+    v === 'onion-vertical'
   );
 }
 
@@ -356,7 +375,9 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
     v === 'domus' ||
     v === 'hola' ||
     v === 'swimlane' ||
-    v === 'grid'
+    v === 'grid' ||
+    v === 'onion' ||
+    v === 'onion-vertical'
   ) {
     return v;
   }
@@ -365,8 +386,9 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
 }
 
 function sizeCaptureUnavailableReason(layout: MermaidLayout | undefined) {
-  if (layout !== 'swimlane') {
-    return 'No size data is available for this layout. Select swimlanes to capture DDLT sizes.';
+  // Both measure through `createGraphWithElements`, where the capture hooks in.
+  if (layout !== 'swimlane' && layout !== 'onion' && layout !== 'onion-vertical') {
+    return 'No size data is available for this layout. Select swimlanes or an onion layout to capture DDLT sizes.';
   }
   return '';
 }

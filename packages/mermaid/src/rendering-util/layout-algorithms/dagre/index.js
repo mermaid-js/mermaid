@@ -1,7 +1,11 @@
 /* global injected */ // build-time constant injected via esbuild `define` (see .esbuild/util.ts)
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { createLayoutElementGroups, insertMeasuredNode } from '../../createGraph.js';
+import {
+  createLayoutElementGroups,
+  insertMeasuredNode,
+  measureGroupLabel,
+} from '../../createGraph.js';
 import { createCommonLayoutRenderer } from '../common/index.js';
 import { profiler } from '../../../profiler.js';
 import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
@@ -13,6 +17,7 @@ import {
 } from './mermaid-graphlib.js';
 import { positionNode, setNodeElem } from '../../rendering-elements/nodes.js';
 import { insertCluster } from '../../rendering-elements/clusters.js';
+import { fitHexagonPointDepth } from '../../rendering-elements/clusters/hexagonGeometry.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge } from '../../rendering-elements/edges.js';
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
@@ -55,6 +60,7 @@ const DAGRE_NODE_LAYOUT_PROPERTIES = [
   'calcIntersect',
   'diff',
   'clusterNode',
+  'hexagonPointDepth',
 ];
 
 // Use dagre's dummy self-loop placement as a hint, so loops are not always forced above the node.
@@ -335,6 +341,8 @@ const measureDagreGraph = async ({
         });
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
+        // The frame was painted inside the recursive layout; edges reach it through this node.
+        node.hexagonPointDepth = node.graph.node(v)?.hexagonPointDepth;
         // node.height = o.diff;
         node.diff = o.diff || 0;
         log.info(
@@ -369,6 +377,23 @@ const measureDagreGraph = async ({
           log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
           await insertMeasuredNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
+      }
+    })
+  );
+
+  // A hexagon frame fits its roof around its title (see fitDagreHexagon), so the title
+  // is measured before layout. Other frames are measured when painted, as before.
+  // Measured as it is painted: a plain title unwrapped (`createLabel`), a markdown title
+  // wrapped at the frame width, as `createGraph` does for layouts that size frames.
+  await Promise.all(
+    graph.nodes().map(async (v) => {
+      const node = graph.node(v);
+      if (node?.shape === 'hexagon' && graph.children(v).length > 0) {
+        await measureGroupLabel(
+          nodes,
+          node,
+          node.labelType === 'markdown' ? undefined : Number.POSITIVE_INFINITY
+        );
       }
     })
   );
@@ -452,6 +477,21 @@ const runDagreGraphLayout = (graph) => {
   // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
 };
 
+/**
+ * Dagre leaves no room inside a frame for a hexagon's slanted roof and floor, so they
+ * take only the gap dagre left above and below the children. Measured before the title
+ * margin grows the frame, which can only widen that gap.
+ */
+const fitDagreHexagon = (graph, clusterId) => {
+  const cluster = graph.node(clusterId);
+  const label = cluster.labelBBox;
+  return fitHexagonPointDepth(
+    cluster,
+    graph.children(clusterId).map((child) => graph.node(child)),
+    label ? { width: label.width, height: label.height, margin: cluster.padding ?? 0 } : undefined
+  );
+};
+
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
   const node = graph.node(nodeId);
   if (!node) {
@@ -462,6 +502,9 @@ const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
   if (node?.clusterNode) {
     normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin;
   } else if (graph.children(nodeId).length > 0) {
+    if (node.shape === 'hexagon') {
+      normalizedNode.hexagonPointDepth = fitDagreHexagon(graph, nodeId);
+    }
     normalizedNode.height = (node.height ?? 0) + subGraphTitleTotalMargin;
   } else {
     normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2;
@@ -578,6 +621,9 @@ const paintDagreLayoutCore = async ({
             node.height,
             graph.parent(v)
           );
+          if (node.shape === 'hexagon') {
+            node.hexagonPointDepth = fitDagreHexagon(graph, v);
+          }
           node.height += subGraphTitleTotalMargin;
           graph.node(node.parentId);
           const halfPadding = node?.padding / 2 || 0;

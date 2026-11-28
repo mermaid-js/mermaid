@@ -24,9 +24,26 @@ export const createHexagonPathD = (
   ].join(' ');
 };
 
+/** Height over point depth of a hexagon node: its pointed sides are `h / f` deep. */
+export function hexagonPointFactor(look: string | undefined): number {
+  return look === 'neo' ? 3.5 : 4;
+}
+
+/** Outline of a `w` by `h` hexagon node whose pointed sides are `m` deep, before it is centred. */
+export function hexagonPoints(w: number, h: number, m: number): { x: number; y: number }[] {
+  return [
+    { x: m, y: 0 },
+    { x: w - m, y: 0 },
+    { x: w, y: -h / 2 },
+    { x: w - m, y: -h },
+    { x: m, y: -h },
+    { x: 0, y: -h / 2 },
+  ];
+}
+
 export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
-  const f = node.look === 'neo' ? 3.5 : 4;
+  const f = hexagonPointFactor(node.look);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
   const wa = 70;
@@ -47,14 +64,7 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
   const m = h / f;
 
   const w = (node?.width ? node?.width : bbox.width) + 2 * m + labelPaddingY;
-  const points = [
-    { x: m, y: 0 },
-    { x: w - m, y: 0 },
-    { x: w, y: -h / 2 },
-    { x: w - m, y: -h },
-    { x: m, y: -h },
-    { x: 0, y: -h / 2 },
-  ];
+  const points = hexagonPoints(w, h, m);
 
   let polygon: D3Selection<SVGGElement> | Awaited<ReturnType<typeof insertPolygonShape>>;
   const { cssStyles } = node;

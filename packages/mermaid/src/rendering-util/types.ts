@@ -127,6 +127,14 @@ export interface GroupTitleRect {
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
+  /** Roof and floor depth of a `hexagon` frame in px. A layout that sizes frames sets it; unset keeps the fixed default. */
+  hexagonPointDepth?: number;
+  /**
+   * Where a `hexagon` frame's title sits, for a layout that keeps the apex free for something
+   * else: `x` is the title's centre right of the frame's centre, `top` its top below the frame's
+   * top edge. Unset keeps the title centred, as high as the roof allows.
+   */
+  hexagonTitleAt?: { x: number; top: number };
   isEdgeLabel?: boolean;
   edgeStart?: string;
   edgeEnd?: string;

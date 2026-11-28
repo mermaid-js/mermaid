@@ -77,6 +77,11 @@
     {
       "id": "grid/routing-hierarchy-portals",
       "profile": "grid"
+    },
+    {
+      "id": "onion/parallel",
+      "profile": "onion",
+      "allowLevel1Failure": true
     }
   ]
 }

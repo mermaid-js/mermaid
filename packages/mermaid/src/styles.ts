@@ -117,7 +117,7 @@ const getStyles = (
     stroke: ${options.nodeBorder};
   }
 
-  [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
+  [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon, [data-look="neo"].cluster polygon.cluster-hexagon {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
   }

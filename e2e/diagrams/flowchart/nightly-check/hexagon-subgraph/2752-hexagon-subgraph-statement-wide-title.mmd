@@ -1,0 +1,10 @@
+%% Shape set with the id@{ } statement, a title wider than the content, and a plain subgraph alongside (issue #2752).
+flowchart LR
+  subgraph wide["A subgraph title much wider than its content"]
+    a --> b
+  end
+  subgraph plain["Plain"]
+    c --> d
+  end
+  b --> c
+  wide@{ shape: hex }

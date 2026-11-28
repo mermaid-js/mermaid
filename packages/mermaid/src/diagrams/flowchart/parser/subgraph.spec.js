@@ -352,4 +352,90 @@ describe('when parsing subgraphs', function () {
     expect(edges.find((e) => e.start === 'C' && e.end === 'one')).toBeDefined();
     expect(edges.find((e) => e.end === 'A')).toBeUndefined();
   });
+
+  describe('subgraph shape metadata', function () {
+    const shapeOf = (id) => flow.parser.yy.getData().nodes.find((n) => n.id === id)?.shape;
+
+    it('should accept an @{ shape } block after a bare id', function () {
+      flow.parser.parse('graph TB\nsubgraph core@{ shape: hex }\n  a1-->a2\nend');
+      const subgraphs = flow.parser.yy.getSubGraphs();
+      expect(subgraphs.length).toBe(1);
+      expect(subgraphs[0].id).toBe('core');
+      expect(subgraphs[0].title).toBe('core');
+      expect(subgraphs[0].nodes.sort()).toEqual(['a1', 'a2']);
+      expect(shapeOf('core')).toBe('hexagon');
+    });
+
+    it('should accept an @{ shape } block after a bracketed title', function () {
+      flow.parser.parse('graph TB\nsubgraph core["Application core"]@{ shape: hex }\n  a1\nend');
+      const [subgraph] = flow.parser.yy.getSubGraphs();
+      expect(subgraph.id).toBe('core');
+      expect(subgraph.title).toBe('Application core');
+      expect(shapeOf('core')).toBe('hexagon');
+    });
+
+    it('should accept a space between a bracketed title and the @{ shape } block', function () {
+      flow.parser.parse('graph TB\nsubgraph core["Application core"] @{ shape: hex }\n  a1\nend');
+      const [subgraph] = flow.parser.yy.getSubGraphs();
+      expect(subgraph.id).toBe('core');
+      expect(subgraph.title).toBe('Application core');
+      expect(shapeOf('core')).toBe('hexagon');
+    });
+
+    it('should keep the id of a bare header followed by a space and an @{ shape } block', function () {
+      flow.parser.parse('graph TB\nsubgraph core @{ shape: hex }\n  a1\nend\nx --> core');
+      const [subgraph] = flow.parser.yy.getSubGraphs();
+      expect(subgraph.id).toBe('core');
+      expect(shapeOf('core')).toBe('hexagon');
+      // The edge targets the subgraph, not a new node named `core`.
+      const cores = flow.parser.yy.getData().nodes.filter((n) => n.id === 'core');
+      expect(cores).toHaveLength(1);
+    });
+
+    it('should accept the same aliases a node does for the hexagon', function () {
+      for (const alias of ['hex', 'hexagon', 'prepare']) {
+        flow.parser.yy.clear();
+        flow.parser.yy.setGen('gen-2');
+        flow.parser.parse(`graph TB\nsubgraph s@{ shape: ${alias} }\n  a1\nend`);
+        expect(shapeOf('s')).toBe('hexagon');
+      }
+    });
+
+    it('should nest shaped subgraphs', function () {
+      flow.parser.parse(
+        'graph TB\nsubgraph outer@{ shape: hex }\n subgraph inner@{ shape: hex }\n  a1\n end\nend'
+      );
+      expect(shapeOf('outer')).toBe('hexagon');
+      expect(shapeOf('inner')).toBe('hexagon');
+      const { nodes } = flow.parser.yy.getData();
+      expect(nodes.find((n) => n.id === 'inner')?.parentId).toBe('outer');
+    });
+
+    it('should apply a shape given after the subgraph closes', function () {
+      flow.parser.parse('graph TB\nsubgraph core\n  a1\nend\ncore@{ shape: hex }');
+      expect(shapeOf('core')).toBe('hexagon');
+    });
+
+    it('should keep drawing a subgraph without a shape as a rectangle', function () {
+      flow.parser.parse('graph TB\nsubgraph core\n  a1\nend');
+      expect(shapeOf('core')).toBe('rect');
+    });
+
+    it('should draw rect explicitly as a rectangle', function () {
+      flow.parser.parse('graph TB\nsubgraph core@{ shape: rect }\n  a1\nend');
+      expect(shapeOf('core')).toBe('rect');
+    });
+
+    it('should reject a shape that is not a subgraph shape', function () {
+      expect(() => flow.parser.parse('graph TB\nsubgraph core@{ shape: cyl }\n  a1\nend')).toThrow(
+        'No such subgraph shape: cyl.'
+      );
+    });
+
+    it('should reject an unknown shape given after the subgraph closes', function () {
+      expect(() =>
+        flow.parser.parse('graph TB\nsubgraph core\n  a1\nend\ncore@{ shape: nope }')
+      ).toThrow('No such subgraph shape: nope.');
+    });
+  });
 });

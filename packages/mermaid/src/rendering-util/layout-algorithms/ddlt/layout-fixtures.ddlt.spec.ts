@@ -7,13 +7,19 @@ import {
   countIssuesByType,
   type NamedValidateResult,
 } from './aggregateValidate.js';
-import { DdltUnsupportedFixtureError, parseApplySizesAndLayout } from './backends.js';
+import { validateOnionLayout } from '../onion/validate.js';
+import {
+  backendsForProfile,
+  DdltUnsupportedFixtureError,
+  parseApplySizesAndLayout,
+} from './backends.js';
 import { discoverLayoutTestFixtures } from './discoverFixtures.js';
 import { loadDdltFixture } from './loadDdltFixture.js';
 import type { LayoutTestBackendId } from './types.js';
 
 const SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE = 11754;
 const GRID_TOTAL_SCORE_BASELINE = 10980;
+const ONION_TOTAL_SCORE_BASELINE = 13967;
 
 describe('DDLT layout-test fixture sweep', () => {
   it('aggregate validateLayout report — swimlanes', { timeout: 20_000 }, async () => {
@@ -82,6 +88,48 @@ describe('DDLT layout-test fixture sweep', () => {
     const nonExemptInvalid = report.byCase.filter((row) => !exemptIds.has(row.id) && !row.valid);
     expect(nonExemptInvalid.map((row) => `${row.id}: ${row.issueTypes.join(', ')}`)).toEqual([]);
     expect(report.totalScore).toBeGreaterThanOrEqual(GRID_TOTAL_SCORE_BASELINE);
+  });
+
+  /**
+   * Each onion fixture in both arrangements, judged by the checks of `validateLayout` that apply
+   * to straight edges and hexagon rings (`validateOnionLayout` lists the rest and why).
+   * `onion/parallel` is exempt: three labelled edges between one pair of nodes run 26 px apart,
+   * closer than a label is wide, so a label always lies across a neighbouring edge.
+   */
+  it('validates the onion fixtures in both arrangements', { timeout: 120_000 }, async () => {
+    const fixtures = discoverLayoutTestFixtures().filter((fixture) => fixture.profile === 'onion');
+    expect(fixtures.map((fixture) => fixture.id)).toEqual(
+      expect.arrayContaining([
+        'onion/bookmark-service',
+        'onion/order-service',
+        'onion/small-onion',
+        'onion/no-adapters',
+        'onion/no-domain',
+        'onion/no-driven',
+        'onion/parallel',
+        'onion/self-loop',
+      ])
+    );
+
+    const items: NamedValidateResult[] = [];
+    const exemptIds = new Set<string>();
+    for (const fixture of fixtures) {
+      for (const backendId of backendsForProfile('onion')) {
+        const id = `${fixture.id} (${backendId})`;
+        const layout = await loadDdltFixture(fixture.id, { backendId });
+        items.push({ id, result: validateOnionLayout(layout) });
+        if (fixture.allowLevel1Failure) {
+          exemptIds.add(id);
+        }
+      }
+    }
+
+    const report = combineValidateLayoutResults(items);
+    console.log('DDLT-ONION-AGG:', JSON.stringify(report, null, 2));
+
+    const nonExemptInvalid = report.byCase.filter((row) => !exemptIds.has(row.id) && !row.valid);
+    expect(nonExemptInvalid.map((row) => `${row.id}: ${row.issueTypes.join(', ')}`)).toEqual([]);
+    expect(report.totalScore).toBeGreaterThanOrEqual(ONION_TOTAL_SCORE_BASELINE);
   });
 });
 

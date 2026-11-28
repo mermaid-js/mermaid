@@ -6,6 +6,19 @@ import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
 
+/**
+ * Outline of a lean-right shape with a `w`-wide label band and height `h`, before the shape is
+ * centred: the slant adds `h / 2` on each side, so the drawn box is `w + h` wide.
+ */
+export function leanRightPoints(w: number, h: number): { x: number; y: number }[] {
+  return [
+    { x: (-3 * h) / 6, y: 0 },
+    { x: w, y: 0 },
+    { x: w + (3 * h) / 6, y: -h },
+    { x: 0, y: -h },
+  ];
+}
+
 export async function lean_right<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -16,12 +29,7 @@ export async function lean_right<T extends SVGGraphicsElement>(parent: D3Selecti
   const h = Math.max(bbox.height + labelPaddingY, node.height ?? 0);
   const w = Math.max(bbox.width + labelPaddingX, (node.width ?? 0) - h);
 
-  const points = [
-    { x: (-3 * h) / 6, y: 0 },
-    { x: w, y: 0 },
-    { x: w + (3 * h) / 6, y: -h },
-    { x: 0, y: -h },
-  ];
+  const points = leanRightPoints(w, h);
 
   let polygon: typeof shapeSvg | ReturnType<typeof insertPolygonShape>;
   const { cssStyles } = node;

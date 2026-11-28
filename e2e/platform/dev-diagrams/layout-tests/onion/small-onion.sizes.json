@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "8d94c6bd54d163cd0d47377fa6762cd4bc7553163c3e454eccd6f1a4276fa7c8",
+    "capturedAt": "2026-11-28T15:52:04.357Z",
+    "capturedFrom": "theme=default&look=classic"
+  },
+  "nodes": [
+    {
+      "id": "intake_q",
+      "width": 164,
+      "height": 54
+    },
+    {
+      "id": "handler",
+      "width": 152,
+      "height": 87
+    },
+    {
+      "id": "ticket_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "open_ticket",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "assign_ticket",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "close_ticket",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "audit",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "ticket",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "store_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "mail_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "sql_store",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "mailer",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "database",
+      "width": 204,
+      "height": 91
+    },
+    {
+      "id": "relay",
+      "width": 204,
+      "height": 91
+    },
+    {
+      "id": "edge-label-intake_q-handler-L_intake_q_handler_0",
+      "width": 93.375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-handler-ticket_port-L_handler_ticket_port_0",
+      "width": 61.46875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-ticket_port-open_ticket-L_ticket_port_open_ticket_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-open_ticket-assign_ticket-L_open_ticket_assign_ticket_0",
+      "width": 40.46875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-assign_ticket-ticket-L_assign_ticket_ticket_0",
+      "width": 42.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-close_ticket-ticket-L_close_ticket_ticket_0",
+      "width": 32.6875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-close_ticket-audit-L_close_ticket_audit_0",
+      "width": 39.6875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-open_ticket-ticket-L_open_ticket_ticket_0",
+      "width": 62.25,
+      "height": 21
+    },
+    {
+      "id": "edge-label-close_ticket-store_port-L_close_ticket_store_port_0",
+      "width": 29.578125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-assign_ticket-mail_port-L_assign_ticket_mail_port_0",
+      "width": 33.46875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-store_port-sql_store-L_store_port_sql_store_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-mail_port-mailer-L_mail_port_mailer_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-sql_store-database-L_sql_store_database_0",
+      "width": 45.921875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-mailer-relay-L_mailer_relay_0",
+      "width": 59.921875,
+      "height": 21
+    },
+    {
+      "id": "group-title-adapters",
+      "width": 169.609375,
+      "height": 21
+    },
+    {
+      "id": "group-title-driven",
+      "width": 70.03125,
+      "height": 21
+    },
+    {
+      "id": "group-title-core",
+      "width": 135.890625,
+      "height": 21
+    },
+    {
+      "id": "group-title-app",
+      "width": 102.734375,
+      "height": 21
+    },
+    {
+      "id": "group-title-domain",
+      "width": 82.484375,
+      "height": 21
+    },
+    {
+      "id": "group-title-driving",
+      "width": 73.140625,
+      "height": 21
+    }
+  ]
+}

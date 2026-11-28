@@ -26,7 +26,7 @@ export interface SizesFixture {
 }
 
 /** Selects the diagram-specific preparation contract used before a DDLT backend runs. */
-export type DdltFixtureProfile = 'flowchart-domus' | 'swimlanes' | 'grid';
+export type DdltFixtureProfile = 'flowchart-domus' | 'swimlanes' | 'grid' | 'onion';
 
 export interface DdltManifestEntry {
   /** Relative path without extension, e.g. `swimlanes/1-simple` or `Company-simp`. */
@@ -41,7 +41,14 @@ export interface DdltManifest {
 }
 
 /** Runtime backend selected from a fixture profile; kept separate so profiles can fan out later. */
-export type LayoutTestBackendId = 'domus-orthogonal' | 'swimlanes' | 'grid' | 'layered' | 'dagre';
+export type LayoutTestBackendId =
+  | 'domus-orthogonal'
+  | 'swimlanes'
+  | 'grid'
+  | 'layered'
+  | 'dagre'
+  | 'onion'
+  | 'onion-vertical';
 
 /** Pure layout stage: mutates `layout` in place (DOM-free). */
 export type LayoutTestBackend = (layout: LayoutData) => void | Promise<void>;

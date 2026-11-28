@@ -1,0 +1,92 @@
+---
+config:
+  layout: onion-vertical
+---
+flowchart TD
+    storefront[["Storefront<br/>browser and mobile app"]]
+    stock_topic[["Stock topic<br/>from the warehouse"]]
+    subgraph adapters["ADAPTERS · infrastructure"]@{ shape: hex }
+        subgraph driving["Driving side"]
+            rest["REST controller<br/>HTTP → place order command"]
+            consumer["Message consumer<br/>envelope → stock event"]
+        end
+        subgraph core["APPLICATION CORE"]@{ shape: hex }
+            order_port[/"Order commands<br/>«driving port»"/]
+            stock_port[/"Stock events<br/>«driving port»"/]
+            subgraph app["Application layer"]@{ shape: hex }
+                place_order["Place order<br/>validate and save"]
+                price_order["Price order"]
+                on_stock["Handle stock event"]
+                ship_order["Ship order"]
+                send_receipt["Send receipt"]
+                publish_events["Publish order events"]
+                subgraph domain["Domain layer"]@{ shape: hex }
+                    order["Order"]
+                    customer["Customer"]
+                    pricing["Pricing policy"]
+                    order_events["Order events"]
+                end
+            end
+            repo_port[\"Order repository<br/>«driven port»"\]
+            payment_port[\"Payment gateway<br/>«driven port»"\]
+            notify_port[\"Notifications<br/>«driven port»"\]
+            publish_port[\"Event publisher<br/>«driven port»"\]
+        end
+        subgraph driven["Driven side"]
+            pg_repo["Postgres repository"]
+            payment_client["Payment client<br/>HTTPS · retries"]
+            smtp_sender["SMTP sender"]
+            broker_publisher["Broker publisher<br/>outbox relay"]
+        end
+    end
+    postgres[("Postgres<br/>orders")]
+    payments{{"Payments API"}}
+    smtp{{"SMTP relay"}}
+    broker{{"Message broker"}}
+    storefront -->|"HTTP request"| rest
+    stock_topic -->|"stock message"| consumer
+    rest -->|"place order"| order_port
+    consumer -->|"stock event"| stock_port
+    order_port -.-|"implemented by"| place_order
+    stock_port -.-|"implemented by"| on_stock
+    place_order -->|"quote"| price_order
+    place_order -->|"new order"| order
+    price_order -->|"rules"| pricing
+    price_order -->|"buyer"| customer
+    on_stock -->|"ready to ship"| ship_order
+    ship_order -->|"receipt"| send_receipt
+    ship_order -->|"events"| publish_events
+    publish_events -->|"collect"| order_events
+    order -->|"raises"| order_events
+    customer -->|"tier"| pricing
+    place_order -->|"save order"| repo_port
+    ship_order -->|"update order"| repo_port
+    place_order -->|"authorise"| payment_port
+    send_receipt -->|"send mail"| notify_port
+    publish_events -->|"publish"| publish_port
+    repo_port -.-|"implemented by"| pg_repo
+    payment_port -.-|"implemented by"| payment_client
+    notify_port -.-|"implemented by"| smtp_sender
+    publish_port -.-|"implemented by"| broker_publisher
+    pg_repo -->|"SQL"| postgres
+    payment_client -->|"charge"| payments
+    smtp_sender -->|"deliver"| smtp
+    broker_publisher -->|"publish events"| broker
+    place_order -->|"retry"| place_order
+
+classDef hexCore fill:#8c959f1f,stroke:#57606a,stroke-width:3px
+classDef hexApp fill:#8c959f2e,stroke:#8c959f,stroke-width:1px
+classDef hexDomain fill:#8c959f4d,stroke:#6e7781,stroke-width:1px
+classDef hexSide fill:#00000000,stroke:#8c959f,stroke-width:1px,stroke-dasharray:4 3
+classDef hexAdapters fill:#8c959f0f,stroke:#8c959f,stroke-width:1px
+class core hexCore
+class app hexApp
+class domain hexDomain
+class driving,driven hexSide
+class adapters hexAdapters
+classDef added fill:#dafbe1,stroke:#1a7f37,stroke-width:3px,color:#1f2328
+class send_receipt added
+classDef changed fill:#ffdfb8,stroke:#bc4c00,stroke-width:3px,color:#1f2328
+class place_order,order_port changed
+classDef touched fill:#b6e3ff,stroke:#0969da,stroke-width:2px,color:#1f2328
+class rest,repo_port,pg_repo touched

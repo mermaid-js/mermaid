@@ -1,0 +1,330 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "d03544863ccfdc5950c2198f170b7cc7645f57c2abf31dd46c0f3e0ea0bd07bb",
+    "capturedAt": "2026-11-28T15:52:02.958Z",
+    "capturedFrom": "theme=default&look=classic"
+  },
+  "nodes": [
+    {
+      "id": "storefront",
+      "width": 164,
+      "height": 75
+    },
+    {
+      "id": "stock_topic",
+      "width": 164,
+      "height": 75
+    },
+    {
+      "id": "rest",
+      "width": 152,
+      "height": 87
+    },
+    {
+      "id": "consumer",
+      "width": 152,
+      "height": 108
+    },
+    {
+      "id": "order_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "stock_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "place_order",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "price_order",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "on_stock",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "ship_order",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "send_receipt",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "publish_events",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "order",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "customer",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "pricing",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "order_events",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "repo_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "payment_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "notify_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "publish_port",
+      "width": 207,
+      "height": 57
+    },
+    {
+      "id": "pg_repo",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "payment_client",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "smtp_sender",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "broker_publisher",
+      "width": 152,
+      "height": 66
+    },
+    {
+      "id": "postgres",
+      "width": 144,
+      "height": 106.14868927001953
+    },
+    {
+      "id": "payments",
+      "width": 204,
+      "height": 91
+    },
+    {
+      "id": "smtp",
+      "width": 204,
+      "height": 91
+    },
+    {
+      "id": "broker",
+      "width": 204,
+      "height": 91
+    },
+    {
+      "id": "edge-label-storefront-rest-L_storefront_rest_0",
+      "width": 86.890625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-stock_topic-consumer-L_stock_topic_consumer_0",
+      "width": 93.375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-rest-order_port-L_rest_order_port_0",
+      "width": 70.046875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-consumer-stock_port-L_consumer_stock_port_0",
+      "width": 70.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-order_port-place_order-L_order_port_place_order_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-stock_port-on_stock-L_stock_port_on_stock_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-place_order-price_order-L_place_order_price_order_0",
+      "width": 35.046875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-place_order-order-L_place_order_order_0",
+      "width": 62.265625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-price_order-pricing-L_price_order_pricing_0",
+      "width": 30.359375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-price_order-customer-L_price_order_customer_0",
+      "width": 35.03125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-on_stock-ship_order-L_on_stock_ship_order_0",
+      "width": 80.171875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-ship_order-send_receipt-L_ship_order_send_receipt_0",
+      "width": 42.03125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-ship_order-publish_events-L_ship_order_publish_events_0",
+      "width": 41.25,
+      "height": 21
+    },
+    {
+      "id": "edge-label-publish_events-order_events-L_publish_events_order_events_0",
+      "width": 39.6875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-order-order_events-L_order_order_events_0",
+      "width": 37.359375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-customer-pricing-L_customer_pricing_0",
+      "width": 19.453125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-place_order-repo_port-L_place_order_repo_port_0",
+      "width": 66.15625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-ship_order-repo_port-L_ship_order_repo_port_0",
+      "width": 79.40625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-place_order-payment_port-L_place_order_payment_port_0",
+      "width": 57.59375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-send_receipt-notify_port-L_send_receipt_notify_port_0",
+      "width": 59.921875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-publish_events-publish_port-L_publish_events_publish_port_0",
+      "width": 44.375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-repo_port-pg_repo-L_repo_port_pg_repo_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-payment_port-payment_client-L_payment_port_payment_client_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-notify_port-smtp_sender-L_notify_port_smtp_sender_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-publish_port-broker_publisher-L_publish_port_broker_publisher_0",
+      "width": 98.828125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-pg_repo-postgres-L_pg_repo_postgres_0",
+      "width": 28.015625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-payment_client-payments-L_payment_client_payments_0",
+      "width": 42.8125,
+      "height": 21
+    },
+    {
+      "id": "edge-label-smtp_sender-smtp-L_smtp_sender_smtp_0",
+      "width": 41.25,
+      "height": 21
+    },
+    {
+      "id": "edge-label-broker_publisher-broker-L_broker_publisher_broker_0",
+      "width": 89.515625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-place_order-place_order-L_place_order_place_order_0",
+      "width": 28,
+      "height": 21
+    },
+    {
+      "id": "group-title-adapters",
+      "width": 169.609375,
+      "height": 21
+    },
+    {
+      "id": "group-title-driven",
+      "width": 70.03125,
+      "height": 21
+    },
+    {
+      "id": "group-title-core",
+      "width": 135.890625,
+      "height": 21
+    },
+    {
+      "id": "group-title-app",
+      "width": 102.734375,
+      "height": 21
+    },
+    {
+      "id": "group-title-domain",
+      "width": 82.484375,
+      "height": 21
+    },
+    {
+      "id": "group-title-driving",
+      "width": 73.140625,
+      "height": 21
+    }
+  ]
+}

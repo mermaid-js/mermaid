@@ -11,6 +11,7 @@ import { prepareLayoutForSwimlanes } from '../swimlanes/helpers.js';
 import { runSwimlaneLayoutCore } from '../swimlanes/layoutCore.js';
 import { prepareGridLayout } from '../grid/edgeLabels.js';
 import { runGridLayoutCore } from '../grid/layoutCore.js';
+import { runOnionLayoutCore } from '../onion/layoutCore.js';
 import type { LayoutTestBackend, LayoutTestBackendId, OrthogonalTrace } from './types.js';
 import {
   applyFixtureContentSizesStrict,
@@ -108,6 +109,16 @@ export function runGridDdlt(layout: LayoutData, sizes: SizesFixture): void {
 }
 
 /**
+ * `layout: onion` and `layout: onion-vertical`: the core the browser renderer hands to the common
+ * renderer (`onion/index.ts`), with the arrangement its loader's `algorithm` picks. Expects sizes
+ * already applied: leaves, labels on the edges and the one-line ring titles.
+ */
+export function runOnionDdlt(layout: LayoutData, backendId: 'onion' | 'onion-vertical'): void {
+  layout.layoutAlgorithm = backendId;
+  runOnionLayoutCore(layout, backendId === 'onion-vertical' ? 'vertical' : 'horizontal');
+}
+
+/**
  * The size step shared by every backend that measures on the `LayoutData` itself (`layered`,
  * `dagre`): content sizes onto leaf nodes, centre-label sizes onto labelled edges and, where the
  * fixture has them, title sizes onto subgraphs. This stands in for `createGraphWithElements` /
@@ -196,7 +207,9 @@ export async function parseApplySizesAndLayout(
     return layout;
   }
   applyMeasuredSizes(layout, sizes);
-  if (backendId === 'layered') {
+  if (backendId === 'onion' || backendId === 'onion-vertical') {
+    runOnionDdlt(layout, backendId);
+  } else if (backendId === 'layered') {
     runLayeredDdlt(layout);
   } else {
     runDagreDdlt(layout);
@@ -220,6 +233,9 @@ export function getLayoutTestBackend(id: LayoutTestBackendId): LayoutTestBackend
       return runLayeredDdlt;
     case 'dagre':
       return runDagreDdlt;
+    case 'onion':
+    case 'onion-vertical':
+      return (layout: LayoutData) => runOnionDdlt(layout, id);
     default:
       return domusBackendUnavailable();
   }
@@ -235,6 +251,9 @@ export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBacke
   }
   if (profile === 'grid') {
     return ['grid'];
+  }
+  if (profile === 'onion') {
+    return ['onion-vertical', 'onion'];
   }
   // Legacy flowchart fixtures retain their historical DOMUS backend rather than changing meaning
   // when new profiles are added.
