@@ -351,6 +351,26 @@ const parseTimestamp = function (dateFormat, str) {
   return date;
 };
 
+/**
+ * Whether the end-date data names an explicit date, rather than a duration
+ * or an `after`/`until` reference. Explicit end dates are not shifted by
+ * `excludes` (see checkTaskDates). Only `YYYY-MM-DD` used to be recognized
+ * here, so a Unix timestamp end date (dateFormat `X`/`x`) — and any date
+ * written in the diagram's own format — was shifted over excluded days
+ * instead of being kept as the fixed end date.
+ *
+ * @param {string} str - The raw end-date data for a task.
+ * @returns {boolean} True when the data is an explicit date.
+ */
+const isManualEndDate = function (str) {
+  const data = str.trim();
+  return (
+    dayjs(data, 'YYYY-MM-DD', true).isValid() ||
+    dayjs(data, dateFormat.trim(), true).isValid() ||
+    parseTimestamp(dateFormat, data) !== null
+  );
+};
+
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
@@ -578,7 +598,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = isManualEndDate(endTimeData);
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -734,11 +754,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+                rawTasks[pos].manualEndTime = isManualEndDate(rawTasks[pos].raw.endTime.data);
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
