@@ -70,6 +70,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermaid Studio by webtoolz](https://webtoolz.dev/mermaid) - Browser-based Mermaid editor with live preview, curated themes, and PNG/SVG export
 - [Mermerd](https://github.com/KarnerTh/mermerd)
+- [Mernyx](https://mernyx.com) - Native Mermaid editor for macOS. Canvas, source, and properties panes edit the same document — move a node on the canvas and the Mermaid source comes with it. ✅
 - [Slab](https://slab.com) ✅
 - [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
 - [NotesHub](https://noteshub.app) ✅

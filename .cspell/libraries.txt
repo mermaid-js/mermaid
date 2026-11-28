@@ -48,6 +48,7 @@ mathml
 matplotlib
 mdbook
 Mermerd
+Mernyx
 mkdocs
 monocart
 Nextra
