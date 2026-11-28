@@ -450,6 +450,24 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     return parsedDate.toDate();
   }
 
+  // Fall back to new Date(), like getStartDate does: a date carrying a
+  // time (e.g. `2023-07-22 18:00` with dateFormat `YYYY-MM-DD`) fails
+  // strict parsing but is a valid date. Without this, the string falls
+  // through to parseDuration, which returns NaN and the task gets a zero
+  // duration. The same ±10,000-year guard applies, and anything that still
+  // does not parse falls through to the duration path below unchanged.
+  const fallbackDate = new Date(str);
+  if (
+    fallbackDate !== undefined &&
+    !isNaN(fallbackDate.getTime()) &&
+    fallbackDate.getFullYear() >= -10000 &&
+    fallbackDate.getFullYear() <= 10000
+) {
+    if (inclusive) {
+      return dayjs(fallbackDate).add(1, 'd').toDate();
+    }
+    return fallbackDate;
+  }
   let endTime = dayjs(prevTime);
   const [durationValue, durationUnit] = parseDuration(str);
   if (Number.isNaN(durationValue)) {
