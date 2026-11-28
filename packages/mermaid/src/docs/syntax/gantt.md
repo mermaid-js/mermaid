@@ -99,6 +99,14 @@ After processing the tags, the remaining metadata items are interpreted as follo
 Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 ```
 
+The keyword `today` can be used in place of an `<endDate>` to end a task on the current date, which is useful for tasks that are still ongoing (v<MERMAID_RELEASE_VERSION>+).
+
+```mermaid-example
+gantt
+    dateFormat YYYY-MM-DD
+    Ongoing task :a1, 2024-01-01, today
+```
+
 #### Duration format
 
 When specifying a `<length>`, use a number followed by one of these unit suffixes:

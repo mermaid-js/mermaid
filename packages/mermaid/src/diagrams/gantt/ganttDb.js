@@ -442,7 +442,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   }
 
   // check for actual date
-  let parsedDate = dayjs(str, dateFormat.trim(), true);
+  let parsedDate = str === 'today' ? dayjs().startOf('day') : dayjs(str, dateFormat.trim(), true);
   if (parsedDate.isValid()) {
     if (inclusive) {
       parsedDate = parsedDate.add(1, 'd');
@@ -463,6 +463,10 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     }
   }
   return endTime.toDate();
+};
+
+const isFixedEndDate = function (str) {
+  return str === 'today' || dayjs(str, 'YYYY-MM-DD', true).isValid();
 };
 
 let taskCnt = 0;
@@ -526,7 +530,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = isFixedEndDate(endTimeData);
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -682,11 +686,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+        rawTasks[pos].manualEndTime = isFixedEndDate(rawTasks[pos].raw.endTime.data);
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }

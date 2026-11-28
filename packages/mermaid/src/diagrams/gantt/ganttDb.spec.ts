@@ -530,6 +530,52 @@ describe('when using the ganttDb', function () {
     });
   });
 
+  describe('when using today as the end date (issue #5911)', function () {
+    beforeEach(function () {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(2024, 9, 15, 13, 45));
+      ganttDb.setDateFormat('YYYY-MM-DD');
+    });
+    afterEach(function () {
+      vi.useRealTimers();
+    });
+
+    it('should end the task at the start of the current day', function () {
+      ganttDb.addTask('test1', 'id1,2024-10-01,today');
+      ganttDb.addTask('test2', '2024-10-02,today');
+      ganttDb.addTask('test3', 'today');
+      const tasks = ganttDb.getTasks();
+      const today = dayjs('2024-10-15', 'YYYY-MM-DD').toDate();
+      expect(tasks[0].startTime).toEqual(dayjs('2024-10-01', 'YYYY-MM-DD').toDate());
+      expect(tasks[0].endTime).toEqual(today);
+      expect(tasks[1].endTime).toEqual(today);
+      expect(tasks[2].endTime).toEqual(today);
+    });
+
+    it('should resolve today for tasks that start after another task', function () {
+      ganttDb.addTask('test1', 'id1,2024-10-01,2d');
+      ganttDb.addTask('test2', 'id2,after id1,today');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[1].startTime).toEqual(dayjs('2024-10-03', 'YYYY-MM-DD').toDate());
+      expect(tasks[1].endTime).toEqual(dayjs('2024-10-15', 'YYYY-MM-DD').toDate());
+    });
+
+    it('should include the current day when inclusive end dates are enabled', function () {
+      ganttDb.enableInclusiveEndDates();
+      ganttDb.addTask('test1', 'id1,2024-10-01,today');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].endTime).toEqual(dayjs('2024-10-16', 'YYYY-MM-DD').toDate());
+    });
+
+    it('should not move the end date past excluded days', function () {
+      ganttDb.setExcludes('weekends');
+      ganttDb.addTask('test1', 'id1,2024-10-01,today');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].endTime).toEqual(dayjs('2024-10-15', 'YYYY-MM-DD').toDate());
+      expect(tasks[0].manualEndTime).toBe(true);
+    });
+  });
+
   it.each(convert`
     type       | expected
     ${'hide'}  | ${'off'}
