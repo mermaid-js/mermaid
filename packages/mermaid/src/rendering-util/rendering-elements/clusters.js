@@ -181,13 +181,17 @@ const hexagon = async (parent, node) => {
       .attr('points', corners.map(([x, y]) => `${x},${y}`).join(' '));
   }
 
-  // The title rides in the roof: as high as the slanted sides leave room for its width.
-  const titleTop = hexagonTitleTop(width, labelBBox.width, node.padding, pointDepth);
+  // The title rides in the roof: as high as the slanted sides leave room for its width, unless
+  // the layout placed it.
+  const titleAt = node.hexagonTitleAt ?? {
+    x: 0,
+    top: hexagonTitleTop(width, labelBBox.width, node.padding, pointDepth),
+  };
   cluster
     .select('.cluster-label')
     .attr(
       'transform',
-      `translate(${node.x - labelBBox.width / 2}, ${node.y - height / 2 + titleTop})`
+      `translate(${node.x + titleAt.x - labelBBox.width / 2}, ${node.y - height / 2 + titleAt.top})`
     );
   // Layout adds `offsetY` to a child's y when the frame sits inside a parent.
   node.offsetY = labelBBox.height - node.padding / 2;

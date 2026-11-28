@@ -1,5 +1,6 @@
 import type { LayoutData, Node } from '../../types.js';
 import type { Box, Vec } from './geometry.js';
+import { nodeOutline } from './outline.js';
 import { analyseOnion, type OnionStructure } from './structure.js';
 
 export type OnionArrangement = 'horizontal' | 'vertical';
@@ -26,8 +27,8 @@ export interface Context {
   readonly loops: readonly LabeledEdge[];
   readonly leafMembers: ReadonlyMap<string, ReadonlySet<string>>;
   readonly groupById: ReadonlyMap<string, Node>;
-  /** Per side, how far a slanted shape's outline sits inside its box at mid-height. */
-  readonly slantInset: ReadonlyMap<string, number>;
+  /** Outline each leaf is drawn with, relative to its centre: where its edges start and end. */
+  readonly outline: ReadonlyMap<string, readonly Vec[]>;
 }
 
 export function boxOf(ctx: Context, id: string, x: number, y: number): Box {
@@ -44,16 +45,14 @@ export function normalOf(a: Vec, b: Vec): Vec {
 export function buildContext(data: LayoutData, arrangement: OnionArrangement): Context {
   const structure = analyseOnion(data);
   const size = new Map<string, { width: number; height: number }>();
-  const slantInset = new Map<string, number>();
+  const outline = new Map<string, Vec[]>();
   const groupById = new Map<string, Node>();
   for (const n of data.nodes) {
     if (n.isGroup) {
       groupById.set(n.id, n);
     } else {
       size.set(n.id, { width: n.width ?? 0, height: n.height ?? 0 });
-      if (n.shape === 'lean_right' || n.shape === 'lean_left' || n.shape === 'hexagon') {
-        slantInset.set(n.id, 0.2 * (n.height ?? 0));
-      }
+      outline.set(n.id, nodeOutline(n, n.width ?? 0, n.height ?? 0));
     }
   }
   const byId = new Map(data.nodes.map((n) => [n.id, n]));
@@ -107,7 +106,7 @@ export function buildContext(data: LayoutData, arrangement: OnionArrangement): C
     structure,
     size,
     groupById,
-    slantInset,
+    outline,
     leafMembers,
     edges,
     loops: all.filter((e) => e.start === e.end).map((e) => ({ ...e, shift: 0 })),

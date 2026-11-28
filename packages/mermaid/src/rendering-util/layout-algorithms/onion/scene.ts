@@ -4,7 +4,7 @@ import {
   boxTouchesBounds,
   boxIntersectsConvex,
   boxesOverlap,
-  clipSegmentToBox,
+  clipSegmentToConvex,
   inflateBox,
   pointAlong,
   outlineHitsBox,
@@ -56,9 +56,9 @@ export interface EdgeSegment {
   anchor: Vec;
 }
 
-/** The box a slanted shape is actually drawn in where an edge meets it. */
-function narrowed(ctx: Context, id: string, box: Box): Box {
-  return { ...box, width: box.width - 2 * (ctx.slantInset.get(id) ?? 0) };
+/** The outline node `id` is drawn with, placed at `box`. */
+export function outlineAt(ctx: Context, id: string, box: Box): Vec[] {
+  return (ctx.outline.get(id) ?? []).map((p) => ({ x: box.x + p.x, y: box.y + p.y }));
 }
 
 /** Part of the edge between the two shapes: where the painter draws it and anchors its label. */
@@ -68,8 +68,8 @@ export function edgeSegment(ctx: Context, edge: LabeledEdge, src: Box, dst: Box)
   const n = normalOf(a, b);
   const a2 = { x: a.x + n.x * edge.shift, y: a.y + n.y * edge.shift };
   const b2 = { x: b.x + n.x * edge.shift, y: b.y + n.y * edge.shift };
-  const leaving = clipSegmentToBox(a2, b2, narrowed(ctx, edge.start, src));
-  const entering = clipSegmentToBox(a2, b2, narrowed(ctx, edge.end, dst));
+  const leaving = clipSegmentToConvex(a2, b2, outlineAt(ctx, edge.start, src));
+  const entering = clipSegmentToConvex(a2, b2, outlineAt(ctx, edge.end, dst));
   const t0 = leaving ? leaving[1] : 0;
   const t1 = entering ? entering[0] : 1;
   const [lo, hi] = t0 <= t1 ? [t0, t1] : [(t0 + t1) / 2, (t0 + t1) / 2];
@@ -99,22 +99,66 @@ interface GrownNode {
   box: Box;
 }
 
-/** First clear position along the edge for its label, or the one with the fewest overlaps. */
+/** The visible part of each edge in the scene, by edge id. */
+function edgeSegments(ctx: Context, scene: Scene): Map<string, EdgeSegment> {
+  const out = new Map<string, EdgeSegment>();
+  for (const edge of ctx.edges) {
+    const src = scene.boxes.get(edge.start);
+    const dst = scene.boxes.get(edge.end);
+    if (src && dst) {
+      out.set(edge.id, edgeSegment(ctx, edge, src, dst));
+    }
+  }
+  return out;
+}
+
+/**
+ * First clear position along the edge for its label, or the one with the fewest overlaps:
+ * with nodes, frame outlines and titles, labels already placed, and the lines of other edges.
+ */
 function bestLabelSpot(
+  edgeId: string,
   label: { width: number; height: number },
   seg: EdgeSegment,
   nodes: readonly GrownNode[],
   frames: readonly FrameShape[],
-  placed: readonly Box[]
+  placed: readonly Box[],
+  lines: ReadonlyMap<string, EdgeSegment>
 ): { box: Box; hits: number } {
   let bestBox: Box | undefined;
   let bestHits = Number.POSITIVE_INFINITY;
+  // Every spot lies on this edge, and the padded label reaches at most this far from it, so
+  // only nodes and lines within that distance can meet it.
+  const reach = Math.max(label.width, label.height) / 2 + LABEL_ALONG_PAD;
+  const minX = Math.min(seg.from.x, seg.to.x) - reach;
+  const maxX = Math.max(seg.from.x, seg.to.x) + reach;
+  const minY = Math.min(seg.from.y, seg.to.y) - reach;
+  const maxY = Math.max(seg.from.y, seg.to.y) + reach;
+  const near = (x0: number, x1: number, y0: number, y1: number) =>
+    x1 >= minX && x0 <= maxX && y1 >= minY && y0 <= maxY;
+  const nearLines: EdgeSegment[] = [];
+  for (const [otherId, line] of lines) {
+    if (
+      otherId !== edgeId &&
+      near(
+        Math.min(line.from.x, line.to.x),
+        Math.max(line.from.x, line.to.x),
+        Math.min(line.from.y, line.to.y),
+        Math.max(line.from.y, line.to.y)
+      )
+    ) {
+      nearLines.push(line);
+    }
+  }
+  const nearNodes = nodes.filter(({ box: b }) =>
+    near(b.x - b.width / 2, b.x + b.width / 2, b.y - b.height / 2, b.y + b.height / 2)
+  );
   for (const step of LABEL_STEPS) {
     const at = pointAlong(seg.from, seg.to, step);
     const box: Box = { x: at.x, y: at.y, width: label.width, height: label.height };
     const padded = paddedLabel(box, seg);
     let hits = 0;
-    for (const n of nodes) {
+    for (const n of nearNodes) {
       if (boxesOverlap(padded, n.box)) {
         hits++;
       }
@@ -129,6 +173,11 @@ function bestLabelSpot(
     }
     for (const other of placed) {
       if (boxesOverlap(padded, other)) {
+        hits++;
+      }
+    }
+    for (const line of nearLines) {
+      if (segmentHitsBox(line.from, line.to, box)) {
         hits++;
       }
     }
@@ -149,6 +198,8 @@ export interface ScanResult {
   labels: Map<string, Box>;
   /** Each conflict named; filled only when asked for. */
   report: string[];
+  /** Nodes taking part in a conflict: both ends of a blocked edge and what blocks it. */
+  involved: Set<string>;
 }
 
 /**
@@ -158,10 +209,12 @@ export interface ScanResult {
 export function scan(ctx: Context, scene: Scene, detailed: boolean): ScanResult {
   let count = 0;
   const report: string[] = [];
-  const note = (text: () => string) => {
+  const involved = new Set<string>();
+  const note = (text: () => string, ...ids: string[]) => {
     count++;
     if (detailed) {
       report.push(text());
+      ids.forEach((id) => involved.add(id));
     }
   };
   const entries = [...scene.boxes];
@@ -172,7 +225,7 @@ export function scan(ctx: Context, scene: Scene, detailed: boolean): ScanResult 
     const grownA = grownBoxes[i];
     for (let j = i + 1; j < entries.length; j++) {
       if (boxesOverlap(grownA, grownBoxes[j])) {
-        note(() => `node ${idA} x node ${entries[j][0]}`);
+        note(() => `node ${idA} x node ${entries[j][0]}`, idA, entries[j][0]);
       }
     }
     for (const frame of scene.frames) {
@@ -181,10 +234,10 @@ export function scan(ctx: Context, scene: Scene, detailed: boolean): ScanResult 
         boxTouchesBounds(grownA, frame.bounds) &&
         boxIntersectsConvex(grownA, frame.poly)
       ) {
-        note(() => `node ${idA} x frame ${frame.id}`);
+        note(() => `node ${idA} x frame ${frame.id}`, idA);
       }
       if (boxesOverlap(grownA, frame.title)) {
-        note(() => `node ${idA} x title ${frame.id}`);
+        note(() => `node ${idA} x title ${frame.id}`, idA);
       }
     }
   }
@@ -193,6 +246,7 @@ export function scan(ctx: Context, scene: Scene, detailed: boolean): ScanResult 
   const placed: Box[] = [];
   const quarter = NODE_GAP / 4;
   const grownNodes = entries.map(([id, b]) => ({ id, box: inflateBox(b, quarter) }));
+  const lines = edgeSegments(ctx, scene);
   for (const edge of ctx.edges) {
     const src = scene.boxes.get(edge.start);
     const dst = scene.boxes.get(edge.end);
@@ -206,27 +260,55 @@ export function scan(ctx: Context, scene: Scene, detailed: boolean): ScanResult 
         id !== edge.end &&
         segmentHitsBox(seg.from, seg.to, inflateBox(box, 2))
       ) {
-        note(() => `edge ${edge.id} through node ${id}`);
+        note(() => `edge ${edge.id} through node ${id}`, edge.start, edge.end, id);
       }
     }
     for (const frame of scene.frames) {
       if (segmentHitsBox(seg.from, seg.to, frame.title)) {
-        note(() => `edge ${edge.id} through title ${frame.id}`);
+        note(() => `edge ${edge.id} through title ${frame.id}`, edge.start, edge.end);
+      }
+      if (crossesForeignFrame(edge, seg, frame)) {
+        note(() => `edge ${edge.id} through frame ${frame.id}`, edge.start, edge.end);
       }
     }
     if (!edge.label) {
       continue;
     }
-    const spot = bestLabelSpot(edge.label, seg, grownNodes, scene.frames, placed);
+    const spot = bestLabelSpot(edge.id, edge.label, seg, grownNodes, scene.frames, placed, lines);
     const bestBox = spot.box;
     const bestHits = spot.hits;
     labels.set(edge.id, bestBox);
     placed.push(paddedLabel(bestBox, seg));
     for (let h = 0; h < bestHits; h++) {
-      note(() => `label ${edge.id} blocked`);
+      note(() => `label ${edge.id} blocked`, edge.start, edge.end);
     }
   }
-  return { count, labels, report };
+  return { count, labels, report, involved };
+}
+
+/** Deepest a segment may cut into a ring it has no end in, in px: a graze is not a crossing. */
+const FRAME_GRAZE = 4;
+
+/**
+ * Whether an edge with neither end inside a ring cuts through that ring: a call between two use
+ * cases that runs across the domain, say.
+ */
+function crossesForeignFrame(edge: LabeledEdge, seg: EdgeSegment, frame: FrameShape): boolean {
+  if (frame.members.has(edge.start) || frame.members.has(edge.end)) {
+    return false;
+  }
+  const { minX, maxX, minY, maxY } = frame.bounds;
+  if (
+    Math.max(seg.from.x, seg.to.x) < minX ||
+    Math.min(seg.from.x, seg.to.x) > maxX ||
+    Math.max(seg.from.y, seg.to.y) < minY ||
+    Math.min(seg.from.y, seg.to.y) > maxY
+  ) {
+    return false;
+  }
+  const inside = clipSegmentToConvex(seg.from, seg.to, frame.poly);
+  const length = Math.hypot(seg.to.x - seg.from.x, seg.to.y - seg.from.y);
+  return inside !== undefined && (inside[1] - inside[0]) * length > 2 * FRAME_GRAZE;
 }
 
 export function countConflicts(ctx: Context, scene: Scene): number {
@@ -277,6 +359,7 @@ export function scanNewNode(
   }
   const nodes = entries.map(([nid, b]) => ({ id: nid, box: inflateBox(b, NODE_GAP / 4) }));
   const taken = [...labels];
+  const lines = edgeSegments(ctx, scene);
   for (const l of labels) {
     if (boxesOverlap(l, inflateBox(box, NODE_GAP / 4))) {
       count++;
@@ -310,7 +393,7 @@ export function scanNewNode(
       }
     }
     if (edge.label) {
-      const spot = bestLabelSpot(edge.label, seg, nodes, scene.frames, taken);
+      const spot = bestLabelSpot(edge.id, edge.label, seg, nodes, scene.frames, taken, lines);
       count += spot.hits;
       taken.push(paddedLabel(spot.box, seg));
     }

@@ -1,21 +1,29 @@
 import type { LayoutData, Node } from '../../types.js';
 import { boxOf, buildContext, type Context, type OnionArrangement } from './context.js';
-import { boxCorners, hexagonPolygon, segmentsCross, type Box, type Vec } from './geometry.js';
+import {
+  boxCorners,
+  clipSegmentToConvex,
+  hexagonPolygon,
+  pointAlong,
+  segmentsCross,
+  type Box,
+  type Vec,
+} from './geometry.js';
 import {
   arrangeOrder,
   FRAME_PAD,
   remapGroup,
   GRID_GAP,
-  sectorOffset,
-  sectorPitch,
   ellipsePoint,
   type Order,
   type OrderParams,
 } from './ordering.js';
 import {
   countConflicts,
+  NODE_GAP,
   edgeSegment,
   makeFrameShape,
+  outlineAt,
   placedLabels,
   scan,
   scanNewNode,
@@ -35,6 +43,8 @@ const HEX_SLOPE_OUTER = 0.1;
 /** How much of a band's thickness is also added across the spoke axis. */
 const CROSS_BAND_SHARE = 0.3;
 const TITLE_GAP = 12;
+/** How far above and below a node's centre a self-loop leaves and re-enters it. */
+const LOOP_SPREAD = 8;
 const DEFAULT_OPTIONS: OnionOptions = { swapPasses: 2, sweeps: 2 };
 const ASPECT_RANGE = { min: 0.6, max: 1.6 } as const;
 
@@ -81,7 +91,19 @@ export interface OnionResult {
   height: number;
 }
 
+/** Local repairs on top of an order: see `nudgeAside`. */
+interface Nudges {
+  /** Turn of a middle-ring leaf away from its slot angle, in radians. */
+  readonly turns: ReadonlyMap<string, number>;
+  /** Extra gap between the cells of the innermost grid, in px. */
+  readonly gridGap: number;
+}
+
+const NO_NUDGES: Nudges = { turns: new Map(), gridGap: 0 };
+
 interface Solution {
+  spread: number;
+  nudges: Nudges;
   boxes: Map<string, Box>;
   frames: Map<string, Frame>;
   labels: Map<string, Box>;
@@ -100,19 +122,21 @@ function fitFrame(
   boxes: readonly Box[],
   points: readonly Vec[],
   padX: number,
-  padY: number
+  padY: number,
+  titleX = 0
 ): Frame {
   const titleW = ring?.labelBBox?.width ?? 0;
   const titleH = ring?.labelBBox?.height ?? 0;
   const margin = ring?.padding ?? 8;
   const corners = [...boxes.flatMap((b) => boxCorners(b)), ...points];
   const widest = Math.max(0, ...corners.map((p) => Math.abs(p.x)));
-  const halfW = Math.max(widest + padX, titleW / 2 + margin, 1);
+  const halfW = Math.max(widest + padX, Math.abs(titleX) + titleW / 2 + margin, 1);
   const depth =
     (ring && (ring === ctx.structure.core || ring === ctx.structure.outer)
       ? HEX_SLOPE_OUTER
       : HEX_SLOPE_INNER) * halfW;
-  const titleTop = Math.min(depth, (depth * (titleW + margin)) / (2 * halfW));
+  // As high as the roof leaves room for the title's outer end (centred, that is half its width).
+  const titleTop = Math.min(depth, (depth * (Math.abs(titleX) + (titleW + margin) / 2)) / halfW);
   const titleZone = titleW / 2 + margin;
 
   let halfH = 0;
@@ -120,7 +144,8 @@ function fitFrame(
     halfH = Math.max(halfH, Math.abs(p.y) + padY + depth * (Math.abs(p.x) / halfW));
   }
   // Anything whose span reaches under the title pushes the roof up by the title's height.
-  const reachesTitle = (xMin: number, xMax: number) => xMin < titleZone && xMax > -titleZone;
+  const reachesTitle = (xMin: number, xMax: number) =>
+    xMin < titleX + titleZone && xMax > titleX - titleZone;
   if (titleH > 0) {
     for (const b of boxes) {
       if (reachesTitle(b.x - b.width / 2, b.x + b.width / 2)) {
@@ -142,7 +167,7 @@ function fitFrame(
     height,
     depth,
     poly: hexagonPolygon(width, height, depth),
-    title: { x: 0, y: -halfH + titleTop + titleH / 2, width: titleW, height: titleH },
+    title: { x: titleX, y: -halfH + titleTop + titleH / 2, width: titleW, height: titleH },
   };
 }
 
@@ -295,7 +320,113 @@ interface SpokeSide {
   perp: number;
 }
 
-function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Solution {
+/** Extent of node `id` across the spoke axis. */
+function across(ctx: Context, id: string): number {
+  const size = ctx.size.get(id)!;
+  return ctx.arrangement === 'vertical' ? size.width : size.height;
+}
+
+/** Centres, across the spoke axis, of `ids` laid side by side `gap` px apart around `centre`. */
+function spreadAcross(ctx: Context, ids: readonly string[], centre: number, gap: number): number[] {
+  const total = ids.reduce((s, id) => s + across(ctx, id), 0) + gap * (ids.length - 1);
+  let cursor = centre - total / 2;
+  return ids.map((id) => {
+    const at = cursor + across(ctx, id) / 2;
+    cursor += across(ctx, id) + gap;
+    return at;
+  });
+}
+
+/** The port each adapter hangs off: the first port it has an edge with. */
+function adapterPorts(ctx: Context): Map<string, string> {
+  const { structure } = ctx;
+  const out = new Map<string, string>();
+  for (const id of structure.adapterIds) {
+    const port = structure.ports.find((p) => (structure.neighbours.get(id) ?? []).includes(p.id));
+    if (port) {
+      out.set(id, port.id);
+    }
+  }
+  return out;
+}
+
+/**
+ * Offsets across the spoke axis of a sector's ports, in slot order, as one centred row. Each
+ * port takes the room of itself or of the adapters that hang off it side by side, whichever is
+ * wider.
+ */
+function portOffsets(
+  ctx: Context,
+  ids: readonly string[],
+  hangers: ReadonlyMap<string, readonly string[]>,
+  scale: number
+): number[] {
+  const gap = 2 * NODE_GAP;
+  const footprint = (id: string) => {
+    const adapters = hangers.get(id) ?? [];
+    const adapterRow =
+      adapters.reduce((s, a) => s + across(ctx, a), 0) + gap * Math.max(0, adapters.length - 1);
+    return Math.max(across(ctx, id), adapterRow);
+  };
+  const widths = ids.map((id) => (footprint(id) + gap) * scale);
+  const total = widths.reduce((s, w) => s + w, 0);
+  let cursor = -total / 2;
+  return widths.map((w) => {
+    const at = cursor + w / 2;
+    cursor += w;
+    return at;
+  });
+}
+
+/**
+ * Centre of a ring's title across the axis. In the vertical arrangement the nodes on the driving
+ * spokes stand under the ring's apex, where its title would sit; the title then steps left of
+ * them, so neither they nor the edges running down the spokes cover it.
+ */
+function titleBeside(
+  ctx: Context,
+  ring: Node | undefined,
+  sides: ReadonlyMap<string, SpokeSide>
+): number {
+  const titleW = ring?.labelBBox?.width ?? 0;
+  if (ctx.arrangement !== 'vertical' || !ring || titleW === 0) {
+    return 0;
+  }
+  const zone = titleW / 2 + (ring.padding ?? 8) + NODE_GAP;
+  const below = [...sides].filter(([, side]) => side.kind === 'driving');
+  const lefts = below.map(([id, side]) => side.perp - across(ctx, id) / 2);
+  const rights = below.map(([id, side]) => side.perp + across(ctx, id) / 2);
+  if (!below.some((_, i) => lefts[i] < zone && rights[i] > -zone)) {
+    return 0;
+  }
+  return Math.min(...lefts) - NODE_GAP - (ring.padding ?? 8) - titleW / 2;
+}
+
+/** Nodes that landed on one spoke are spread side by side across it, in declaration order. */
+function fanOut(ctx: Context, sides: Map<string, SpokeSide>): void {
+  const bySpoke = new Map<string, string[]>();
+  for (const [id, side] of sides) {
+    const key = `${side.kind}:${side.perp.toFixed(3)}`;
+    bySpoke.set(key, [...(bySpoke.get(key) ?? []), id]);
+  }
+  for (const ids of bySpoke.values()) {
+    if (ids.length < 2) {
+      continue;
+    }
+    const { kind, perp } = sides.get(ids[0])!;
+    spreadAcross(ctx, ids, perp, 2 * NODE_GAP).forEach((at, i) =>
+      sides.set(ids[i], { kind, perp: at })
+    );
+  }
+}
+
+function solve(
+  ctx: Context,
+  params: OrderParams,
+  order: Order,
+  spread = 1,
+  nudges: Nudges = NO_NUDGES
+): Solution {
   const { structure, arrangement } = ctx;
   const scene: Scene = { boxes: new Map(), frames: [] };
   const frames = new Map<string, Frame>();
@@ -311,7 +442,7 @@ function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Sol
     return { boxes, frame };
   };
   const gridGap = searchSmallest(
-    GRID_GAP,
+    GRID_GAP + nudges.gridGap,
     400,
     4,
     (gap) => {
@@ -337,7 +468,7 @@ function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Sol
     const ringAt = (t: number) => {
       const boxes = new Map<string, Box>(
         ids.map((id) => {
-          const theta = order.ringAngles[j][order.slot.get(id)!];
+          const theta = order.ringAngles[j][order.slot.get(id)!] + (nudges.turns.get(id) ?? 0);
           const p = ellipsePoint(theta, params.aspect * t, t, params.roundness);
           return [id, boxOf(ctx, id, p.x, p.y)];
         })
@@ -364,26 +495,36 @@ function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Sol
     scene.frames.push(frameShape(ctx, ring.id, inner));
   }
 
-  // Ports sit in a row along their sector, evenly pitched, in the order the ordering stage found.
+  // Ports sit in a row along their sector, in the order the ordering stage found, each with room
+  // for the adapters that hang off it.
+  const hangsOff = adapterPorts(ctx);
+  const hangers = new Map<string, string[]>();
+  for (const [adapter, port] of hangsOff) {
+    hangers.set(port, [...(hangers.get(port) ?? []), adapter]);
+  }
   const spoke = new Map<string, SpokeSide>();
   for (const kind of ['driving', 'driven'] as const) {
     const group = structure.ports
       .filter((p) => p.kind === kind)
       .sort((p, q) => order.slot.get(p.id)! - order.slot.get(q.id)!);
-    const pitch = sectorPitch(ctx, kind, params) * spread;
-    group.forEach((p, i) =>
-      spoke.set(p.id, { kind, perp: sectorOffset(ctx, kind, i, group.length, pitch) })
+    const offsets = portOffsets(
+      ctx,
+      group.map((p) => p.id),
+      hangers,
+      params.pitchScale * spread
     );
+    group.forEach((p, i) => spoke.set(p.id, { kind, perp: offsets[i] }));
   }
 
   // Core: frame around the inner rings, ports centred on its border.
   const core = structure.core;
   const coreInner = inner.poly;
   const baselineCore = countConflicts(ctx, scene);
+  const coreTitleX = titleBeside(ctx, core, spoke);
   const coreAt = (t: number) => {
     const padX = arrangement === 'horizontal' ? t : FRAME_PAD + t * CROSS_BAND_SHARE;
     const padY = arrangement === 'horizontal' ? FRAME_PAD + t * CROSS_BAND_SHARE : t;
-    const frame = fitFrame(ctx, core, [], coreInner, padX, padY);
+    const frame = fitFrame(ctx, core, [], coreInner, padX, padY, coreTitleX);
     const boxes = new Map<string, Box>();
     for (const port of structure.ports) {
       const side = spoke.get(port.id)!;
@@ -418,9 +559,10 @@ function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Sol
     return known[0] ?? { kind: 'driven', perp: 0 };
   };
   for (const id of structure.adapterIds) {
-    const port = structure.ports.find((p) => (structure.neighbours.get(id) ?? []).includes(p.id));
-    adapterSpoke.set(id, port ? spoke.get(port.id)! : stray(id));
+    const port = hangsOff.get(id);
+    adapterSpoke.set(id, port ? spoke.get(port)! : stray(id));
   }
+  fanOut(ctx, adapterSpoke);
   const baselineAdapters = countConflicts(ctx, scene);
   const adaptersAt = (band: number): Map<string, Box> => {
     const outline = bandOutline(placedCore.frame, band, arrangement);
@@ -451,7 +593,8 @@ function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Sol
     outerBoxes,
     placedCore.frame.poly,
     FRAME_PAD,
-    FRAME_PAD
+    FRAME_PAD,
+    titleBeside(ctx, structure.outer, adapterSpoke)
   );
   if (structure.outer) {
     frames.set(structure.outer.id, outer);
@@ -459,14 +602,22 @@ function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Sol
   }
 
   // Externals: beyond the outer frame, in line with the adapters they reach.
+  const externalSpoke = new Map<string, SpokeSide>();
   for (const id of structure.externalIds) {
     const reached = (structure.neighbours.get(id) ?? []).flatMap((n) => adapterSpoke.get(n) ?? []);
-    const side: SpokeSide = reached[0]
-      ? {
-          kind: reached[0].kind,
-          perp: reached.reduce((sum, r) => sum + r.perp, 0) / reached.length,
-        }
-      : stray(id);
+    externalSpoke.set(
+      id,
+      reached[0]
+        ? {
+            kind: reached[0].kind,
+            perp: reached.reduce((sum, r) => sum + r.perp, 0) / reached.length,
+          }
+        : stray(id)
+    );
+  }
+  fanOut(ctx, externalSpoke);
+  for (const id of structure.externalIds) {
+    const side = externalSpoke.get(id)!;
     const settled = placedLabels(ctx, scene);
     const at = (band: number): Box => {
       const c = spokePoint(
@@ -506,6 +657,8 @@ function solve(ctx: Context, params: OrderParams, order: Order, spread = 1): Sol
     }
   }
   return {
+    spread,
+    nudges,
     boxes: scene.boxes,
     frames,
     labels: result.labels,
@@ -647,6 +800,59 @@ function searchFrom(ctx: Context, options: OnionOptions, start: OrderParams): So
       best = trial;
     }
   }
+  return options.sweeps > 0 ? nudgeAside(ctx, params, order, best) : best;
+}
+
+/** Turns tried for one leaf of a middle ring, smallest first, either way round. */
+const NUDGES = [0.12, -0.12, 0.24, -0.24, 0.36, -0.36] as const;
+const NUDGE_ROUNDS = 3;
+/** Extra gaps tried between the cells of the innermost grid. */
+const GRID_NUDGES = [16, 32, 56] as const;
+/** Largest area growth a turn may pay for clearing an overlap. */
+const NUDGE_AREA_SLACK = 1.2;
+
+/**
+ * Repair for overlaps the ordering cannot clear: an edge from a port that runs through a leaf
+ * standing in its way, or a label with nowhere to go. Even slots leave no room to step aside, so
+ * each leaf of a middle ring that takes part in an overlap is turned a little along its ring, and
+ * the innermost grid opens up when one of its cells does; a step is kept when it leaves fewer
+ * overlaps for at most a little more area.
+ */
+function nudgeAside(ctx: Context, params: OrderParams, order: Order, start: Solution): Solution {
+  const rings = ctx.structure.innerLeafIds;
+  const middle = new Set(rings.slice(0, -1).flat());
+  const grid = new Set(rings.at(-1) ?? []);
+  const areaBudget = start.width * start.height * NUDGE_AREA_SLACK;
+  let best = start;
+  const tryNudges = (nudges: Nudges): boolean => {
+    const trial = solve(ctx, params, order, best.spread, nudges);
+    if (trial.conflicts < best.conflicts && trial.width * trial.height <= areaBudget) {
+      best = trial;
+      return true;
+    }
+    return false;
+  };
+  for (let round = 0; round < NUDGE_ROUNDS && best.conflicts > 0; round++) {
+    const involved = [...scan(ctx, best.scene, true).involved];
+    let moved = false;
+    for (const id of involved.filter((n) => middle.has(n))) {
+      moved =
+        NUDGES.some((turn) => {
+          const turns = new Map(best.nudges.turns);
+          turns.set(id, (turns.get(id) ?? 0) + turn);
+          return tryNudges({ ...best.nudges, turns });
+        }) || moved;
+    }
+    if (involved.some((n) => grid.has(n))) {
+      moved =
+        GRID_NUDGES.some((extra) =>
+          tryNudges({ ...best.nudges, gridGap: best.nudges.gridGap + extra })
+        ) || moved;
+    }
+    if (!moved) {
+      break;
+    }
+  }
   return best;
 }
 
@@ -720,6 +926,12 @@ export function runOnionLayoutCore(
       node.width = frame.width;
       node.height = frame.height;
       node.hexagonPointDepth = frame.depth;
+      if (frame.title.x !== 0) {
+        node.hexagonTitleAt = {
+          x: frame.title.x,
+          top: frame.title.y - frame.title.height / 2 + frame.height / 2,
+        };
+      }
       framesOut.set(id, { poly: frame.poly, title: frame.title });
     }
   });
@@ -745,12 +957,11 @@ export function runOnionLayoutCore(
       continue;
     }
     const seg = edgeSegment(ctx, e, src, dst);
-    // Three collinear points: the shared painter drops the first and last and clips the middle.
-    edge.points = [{ x: src.x, y: src.y }, seg.anchor, { x: dst.x, y: dst.y }];
+    // Already clipped to both outlines; the painter draws it as given (`skipIntersect`).
+    edge.points = [seg.from, seg.to];
     const label = best.labels.get(e.id);
-    // The painter lands the label at edge.x/y plus how far clipping moved the path midpoint.
-    edge.x = (label?.x ?? seg.mid.x) - (seg.mid.x - seg.anchor.x);
-    edge.y = (label?.y ?? seg.mid.y) - (seg.mid.y - seg.anchor.y);
+    edge.x = label?.x ?? seg.mid.x;
+    edge.y = label?.y ?? seg.mid.y;
   }
   for (const e of ctx.loops) {
     const edge = edgeById.get(e.id);
@@ -758,14 +969,20 @@ export function runOnionLayoutCore(
     if (!edge || !box) {
       continue;
     }
-    // A small loop off the right side; the painter clips its first and last points to the shape.
+    // A small loop off the right side, leaving and re-entering the outline either side of centre.
     const rx = box.x + box.width / 2;
+    const exitAt = (dy: number): Vec => {
+      const a = { x: box.x, y: box.y + dy };
+      const b = { x: rx + 60, y: box.y + dy };
+      const hit = clipSegmentToConvex(a, b, outlineAt(ctx, e.start, box));
+      return pointAlong(a, b, hit ? hit[1] : 0);
+    };
     edge.points = [
-      { x: box.x, y: box.y },
+      exitAt(-LOOP_SPREAD),
       { x: rx + 34, y: box.y - 18 },
       { x: rx + 52, y: box.y },
       { x: rx + 34, y: box.y + 18 },
-      { x: box.x, y: box.y },
+      exitAt(LOOP_SPREAD),
     ];
     edge.x = rx + 52 + (e.label?.width ?? 0) / 2;
     edge.y = box.y;

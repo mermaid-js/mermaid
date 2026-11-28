@@ -151,6 +151,53 @@ export function clipSegmentToBox(a: Vec, b: Vec, box: Box): [number, number] | u
   return t0 <= t1 ? [t0, t1] : undefined;
 }
 
+/**
+ * Parameter interval of the segment a→b inside the convex polygon (either winding), or undefined
+ * when it misses (Cyrus–Beck).
+ */
+export function clipSegmentToConvex(
+  a: Vec,
+  b: Vec,
+  poly: readonly Vec[]
+): [number, number] | undefined {
+  let area = 0;
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i];
+    const q = poly[(i + 1) % poly.length];
+    area += p.x * q.y - q.x * p.y;
+  }
+  const inward = area > 0 ? 1 : -1;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  let t0 = 0;
+  let t1 = 1;
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i];
+    const q = poly[(i + 1) % poly.length];
+    // Inward normal of side p→q: a point x is inside when n·(x − p) ≥ 0.
+    const nx = -(q.y - p.y) * inward;
+    const ny = (q.x - p.x) * inward;
+    const num = nx * (a.x - p.x) + ny * (a.y - p.y);
+    const den = nx * dx + ny * dy;
+    if (den === 0) {
+      if (num < 0) {
+        return undefined;
+      }
+      continue;
+    }
+    const t = -num / den;
+    if (den > 0) {
+      t0 = Math.max(t0, t);
+    } else {
+      t1 = Math.min(t1, t);
+    }
+    if (t0 > t1) {
+      return undefined;
+    }
+  }
+  return [t0, t1];
+}
+
 export function segmentHitsBox(a: Vec, b: Vec, box: Box): boolean {
   const hw = box.width / 2;
   const hh = box.height / 2;
