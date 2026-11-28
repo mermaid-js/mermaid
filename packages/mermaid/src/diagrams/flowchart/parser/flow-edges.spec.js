@@ -771,6 +771,21 @@ A@{ shape: 'rect' }
         expect(edges[0].type).toBe('arrow_point');
         expect(edges[0].stroke).toBe('dotted');
       });
+      it('should keep a node id ending in a dot and a dash at end of input', function () {
+        const res = flow.parser.parse('graph TD\nA.-');
+        const vert = flow.parser.yy.getVertices();
+        expect(vert.get('A.-').id).toBe('A.-');
+        expect(flow.parser.yy.getEdges().length).toBe(0);
+      });
+      it('should keep a node id ending in dots and a dash at end of input', function () {
+        const res = flow.parser.parse('graph TD\nA...-');
+        const vert = flow.parser.yy.getVertices();
+        expect(vert.get('A...-').id).toBe('A...-');
+        expect(flow.parser.yy.getEdges().length).toBe(0);
+      });
+      it('should still reject a dangling dotted edge at end of input', function () {
+        expect(() => flow.parser.parse('graph TD\nA.->')).toThrow();
+      });
     });
 
     for (let length = 1; length <= 3; ++length) {
